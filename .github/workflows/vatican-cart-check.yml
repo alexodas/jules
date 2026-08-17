@@ -1,0 +1,166 @@
+name: Temporary Vatican cart verification
+on:
+  push:
+    paths:
+      - '.github/workflows/vatican-cart-check.yml'
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - name: Install Playwright
+        run: |
+          python -m pip install --quiet playwright
+          python -m playwright install --with-deps chromium
+      - name: Verify 22 Aug 12:00 for two people
+        run: |
+          python - <<'PY'
+          import re, json
+          from playwright.sync_api import sync_playwright
+
+          URL='https://tickets.museivaticani.va/home/calendar/visit/MV-Biglietti/1'
+          with sync_playwright() as p:
+              browser=p.chromium.launch(headless=True)
+              ctx=browser.new_context(locale='it-IT',timezone_id='Europe/Rome',viewport={'width':1440,'height':1200})
+              page=ctx.new_page()
+              page.goto(URL,wait_until='domcontentloaded',timeout=90000)
+              page.wait_for_timeout(3500)
+
+              def body(tag):
+                  print('\n====',tag,'URL',page.url,'====')
+                  try: print(page.locator('body').inner_text()[:18000])
+                  except Exception as e: print('BODYERR',e)
+
+              body('START')
+
+              # Click day 22 directly among visible enabled buttons.
+              clicked=False
+              for i in range(page.locator('button').count()):
+                  b=page.locator('button').nth(i)
+                  try:
+                      txt=' '.join(b.inner_text().split())
+                      if txt=='22' and b.is_visible() and b.is_enabled():
+                          print('CLICK_DAY',i,b.evaluate('(e)=>e.outerHTML'))
+                          b.click(); page.wait_for_timeout(800); clicked=True; break
+                  except: pass
+              print('DAY_CLICKED',clicked)
+
+              # Find likely visitor count input and set 2.
+              best=None
+              for i in range(page.locator('input').count()):
+                  e=page.locator('input').nth(i)
+                  try:
+                      if not (e.is_visible() and e.is_enabled()): continue
+                      typ=(e.get_attribute('type') or '').lower()
+                      meta=' '.join([(e.get_attribute(x) or '') for x in ['name','placeholder','aria-label']]).lower()
+                      score=(10 if typ=='number' else 0)+(7 if any(k in meta for k in ['visit','persone','people','numero','number']) else 0)
+                      if best is None or score>best[0]: best=(score,i)
+                  except: pass
+              print('BEST_INPUT',best)
+              if best:
+                  e=page.locator('input').nth(best[1]); e.fill('2'); page.wait_for_timeout(200)
+
+              # Confirm search.
+              for i in range(page.locator('button').count()):
+                  b=page.locator('button').nth(i)
+                  try:
+                      txt=' '.join(b.inner_text().split())
+                      if re.search(r'conferma|confirm',txt,re.I) and b.is_visible() and b.is_enabled():
+                          print('CLICK_CONFIRM',i,repr(txt)); b.click(); break
+                  except: pass
+              try: page.wait_for_load_state('domcontentloaded',timeout=20000)
+              except: pass
+              page.wait_for_timeout(3000)
+              body('RESULTS')
+
+              # Click PRENOTA associated with standard ticket card.
+              card=None
+              for sel in ['article','mat-card','div']:
+                  loc=page.locator(sel).filter(has_text=re.compile(r"Musei Vaticani\s*-\s*Biglietti d'ingresso",re.I))
+                  if loc.count():
+                      for j in range(loc.count()):
+                          c=loc.nth(j)
+                          try:
+                              if c.is_visible() and len(c.inner_text())<5000:
+                                  card=c; print('CARD_SEL',sel,j); break
+                          except: pass
+                  if card: break
+              if card:
+                  btn=card.locator('button').filter(has_text=re.compile(r'PRENOTA|BOOK',re.I))
+                  if btn.count() and btn.first.is_visible() and btn.first.is_enabled():
+                      print('CLICK_BOOK'); btn.first.click(); page.wait_for_timeout(2500)
+                  else:
+                      print('NO_BOOK_BUTTON_IN_CARD',card.inner_text()[:3000])
+              else:
+                  print('NO_STANDARD_CARD')
+              body('PRODUCT')
+
+              # Select 2 full-price tickets if possible.
+              # Print selects/custom dropdowns first.
+              print('SELECTS',page.locator('select').count())
+              for i in range(page.locator('select').count()):
+                  s=page.locator('select').nth(i)
+                  try: print('SELECT',i,s.is_visible(),s.get_attribute('name'),s.locator('option').all_text_contents())
+                  except: pass
+
+              # Native select route.
+              done_qty=False
+              for i in range(page.locator('select').count()):
+                  s=page.locator('select').nth(i)
+                  try:
+                      if s.is_visible():
+                          opts=s.locator('option').all_text_contents()
+                          vals=s.locator('option').evaluate_all('(els)=>els.map(e=>e.value)')
+                          if any(str(x).strip()=='2' for x in opts):
+                              idx=[str(x).strip() for x in opts].index('2')
+                              s.select_option(vals[idx]); print('SET_QTY_SELECT',i); done_qty=True; break
+                  except: pass
+
+              # Custom dropdown fallback: click first visible dropdown-like control near "Biglietto Intero".
+              if not done_qty:
+                  textloc=page.get_by_text('Biglietto Intero', exact=False)
+                  if textloc.count():
+                      root=textloc.first.locator('xpath=..')
+                      for _ in range(4):
+                          try:
+                              cand=root.locator('button, [role="combobox"], input')
+                              for i in range(cand.count()):
+                                  x=cand.nth(i)
+                                  if x.is_visible() and x.is_enabled():
+                                      try:
+                                          x.click(); page.wait_for_timeout(300)
+                                          opt=page.get_by_text(re.compile(r'^\s*2\s*$'))
+                                          for j in range(opt.count()):
+                                              if opt.nth(j).is_visible(): opt.nth(j).click(); done_qty=True; print('SET_QTY_CUSTOM'); break
+                                      except: pass
+                                  if done_qty: break
+                          except: pass
+                          if done_qty: break
+                          root=root.locator('xpath=..')
+
+              print('QTY_SET',done_qty)
+              page.wait_for_timeout(500)
+
+              # Select 12:00 if present.
+              t12=page.get_by_text(re.compile(r'^\s*12:00\s*$'))
+              selected=False
+              for i in range(t12.count()):
+                  try:
+                      if t12.nth(i).is_visible():
+                          print('CLICK_1200',i,t12.nth(i).evaluate('(e)=>e.outerHTML'))
+                          t12.nth(i).click(); page.wait_for_timeout(600); selected=True; break
+                  except Exception as e: pass
+              print('TIME_SELECTED',selected)
+              body('AFTER_SELECTIONS')
+
+              # Try only the next/continue button; stop before personal data/payment.
+              for i in range(page.locator('button').count()):
+                  b=page.locator('button').nth(i)
+                  try:
+                      txt=' '.join(b.inner_text().split())
+                      if re.search(r'continua|avanti|prosegui|conferma|continue|next',txt,re.I) and b.is_visible() and b.is_enabled():
+                          print('NEXT_CANDIDATE',i,repr(txt))
+                  except: pass
+              browser.close()
+          PY
