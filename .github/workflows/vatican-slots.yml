@@ -5,56 +5,42 @@ on:
 jobs:
   check:
     runs-on: ubuntu-latest
-    timeout-minutes: 4
+    timeout-minutes: 2
     steps:
-      - run: python -m pip install --quiet playwright
       - run: |
-          cat > /tmp/trace.py <<'PY'
-          import re, os
-          from playwright.sync_api import sync_playwright
-          URL='https://tickets.museivaticani.va/home/fromtag/1/1787176800000/MV-Biglietti/1'
-          with sync_playwright() as p:
-            b=p.chromium.launch(headless=True, executable_path='/usr/bin/google-chrome')
-            page=b.new_page(locale='it-IT',timezone_id='Europe/Rome')
-            scripts=[]
-            def onresp(r):
-              if r.request.resource_type=='script':
-                try: scripts.append((r.url,r.text()))
-                except: pass
-            page.on('response',onresp)
-            page.goto(URL,wait_until='networkidle',timeout=90000)
-            page.wait_for_timeout(3000)
-            # Open first currently available individual guided tour by card text relation.
-            cards=page.locator('text=Musei Vaticani - Visite Guidate Singoli Musei')
-            print('GUIDED_TEXT_COUNT',cards.count())
-            # click the PRENOTA button closest to first heading/text
-            target=None
-            for i in range(cards.count()):
-              e=cards.nth(i)
-              try:
-                anc=e.locator('xpath=ancestor::*[.//button[contains(normalize-space(.),"PRENOTA")]][1]')
-                if anc.count():
-                  target=anc.locator('button').filter(has_text='PRENOTA').first
-                  if target.is_visible(): break
-              except: pass
-            if target:
-              print('CLICK_GUIDED'); target.click(); page.wait_for_timeout(2000)
-            print('SCRIPTS',len(scripts))
-            seen=set()
-            for u,t in scripts:
-              if u in seen: continue
-              seen.add(u)
-              hits=list(re.finditer(r'(?:/api/|api/)[A-Za-z0-9_?&=./${}:,+\-]*',t,re.I))
-              if hits:
-                print('\n=== SCRIPT',u,'LEN',len(t),'HITS',len(hits),'===')
-                for m in hits[:100]:
-                  a=max(0,m.start()-700); z=min(len(t),m.end()+1200)
-                  print('\n',t[a:z])
-              # Also contexts for likely slot/time words in every lazy chunk
-              for pat in ['visitTime','timeSlot','visitHour','availableHour','ticketTime','residual','lowAvailability']:
-                ms=list(re.finditer(pat,t,re.I))
-                for m in ms[:20]:
-                  print('\n===',pat,'IN',u,'===\n',t[max(0,m.start()-700):min(len(t),m.end()+1200)])
-            b.close()
+          python - <<'PY'
+          import requests, json, sys
+          base='https://tickets.museivaticani.va/api'
+          s=requests.Session()
+          params={'lang':'it','visitorNum':'1','visitDate':'20/08/2026','area':'1','who':'','page':'0','tag':'MV-Biglietti'}
+          r=s.get(base+'/search/resultPerTag',params=params,timeout=30)
+          print('SEARCH_URL',r.url,'STATUS',r.status_code)
+          data=r.json()
+          print('TOP_KEYS',data.keys() if isinstance(data,dict) else type(data))
+          # Recursively find dictionaries representing guided individual museum product.
+          found=[]
+          def walk(x):
+            if isinstance(x,dict):
+              text=' '.join(str(v) for v in x.values() if isinstance(v,(str,int,float)))
+              if 'Visite Guidate Singoli Musei' in text:
+                found.append(x)
+              for v in x.values(): walk(v)
+            elif isinstance(x,list):
+              for v in x: walk(v)
+          walk(data)
+          print('FOUND_COUNT',len(found))
+          for i,x in enumerate(found[:10]): print('FOUND',i,json.dumps(x,ensure_ascii=False)[:6000])
+          # Pick an id-like field from the most product-like dict.
+          vt=None
+          for x in found:
+            for key in ['id','visitTypeId','visitTypeID','visitId']:
+              if key in x and isinstance(x[key],(int,str)):
+                vt=x[key]; print('CHOSEN_FIELD',key,'VALUE',vt); break
+            if vt is not None: break
+          if vt is None:
+            print('NO_VISIT_TYPE_ID'); sys.exit(2)
+          p={'lang':'it','visitLang':'ITA','visitTypeId':str(vt),'visitorNum':'1','visitDate':'20/08/2026'}
+          t=s.get(base+'/visit/timeavail',params=p,timeout=30)
+          print('TIME_URL',t.url,'STATUS',t.status_code)
+          print('TIME_BODY',t.text)
           PY
-          python /tmp/trace.py
