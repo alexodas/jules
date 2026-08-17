@@ -1,0 +1,50 @@
+name: Check ICON2I 2026-08-17 12 UTC
+
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: write
+
+jobs:
+  fetch:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Fetch and validate run
+        shell: bash
+        run: |
+          set -euo pipefail
+          URL='https://single-runs-api.open-meteo.com/v1/forecast?latitude=40.6824&longitude=14.7681&hourly=temperature_2m,relative_humidity_2m&models=italia_meteo_arpae_icon_2i&timezone=Europe%2FRome&forecast_days=1&run=2026-08-17T12%3A00'
+          HTTP=$(curl --show-error --silent --location --write-out '%{http_code}' "$URL" -o /tmp/run.json)
+          [ "$HTTP" = '200' ] || exit 0
+          python - <<'PY'
+          import json, math, sys
+          with open('/tmp/run.json', encoding='utf-8') as f: d=json.load(f)
+          h=d.get('hourly') or {}
+          ts=h.get('time') or []
+          t=h.get('temperature_2m') or []
+          rh=h.get('relative_humidity_2m') or []
+          pairs=[]
+          for i in range(min(len(ts),len(t),len(rh))):
+              a,b=t[i],rh[i]
+              if isinstance(a,(int,float)) and not isinstance(a,bool) and a is not None and isinstance(b,(int,float)) and not isinstance(b,bool) and b is not None:
+                  pairs.append((ts[i],a,b))
+          if not pairs:
+              sys.exit(0)
+          with open('icon2i-20260817-12-result.json','w',encoding='utf-8') as f:
+              json.dump(d,f,ensure_ascii=False,indent=2); f.write('\n')
+          with open('icon2i-20260817-12-ready.txt','w',encoding='utf-8') as f:
+              f.write(f'valid_pairs={len(pairs)}\n')
+          PY
+      - name: Commit valid result
+        if: hashFiles('icon2i-20260817-12-ready.txt') != ''
+        shell: bash
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add icon2i-20260817-12-result.json icon2i-20260817-12-ready.txt
+          git commit -m 'Save ICON-2I 2026-08-17 12 UTC result [skip ci]'
+          git push origin HEAD:main
