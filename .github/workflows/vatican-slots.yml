@@ -5,55 +5,28 @@ on:
 jobs:
   check:
     runs-on: ubuntu-latest
-    timeout-minutes: 5
+    timeout-minutes: 3
     steps:
-      - run: python -m pip install --quiet playwright
-      - run: |
-          cat > /tmp/check.py <<'PY'
-          import re, os
-          from playwright.sync_api import sync_playwright
-          URL='https://tickets.museivaticani.va/home/fromtag/1/1787176800000/MV-Biglietti/1'
-          with sync_playwright() as p:
-            b=p.chromium.launch(headless=True, executable_path='/usr/bin/google-chrome')
-            page=b.new_page(locale='it-IT',timezone_id='Europe/Rome',viewport={'width':1440,'height':1400})
-            xhr=[]
-            def rr(r):
-              if r.request.resource_type in ('xhr','fetch'):
-                try:
-                  ct=r.headers.get('content-type',''); body=r.text()[:50000] if ('json' in ct or 'text' in ct) else ''
-                  xhr.append((r.status,r.url,body))
-                except: pass
-            page.on('response',rr)
-            page.goto(URL,wait_until='domcontentloaded',timeout=90000); page.wait_for_timeout(3500)
-            # open first guided visit
-            btns=page.locator('button')
-            for i in range(btns.count()):
-              e=btns.nth(i)
+      - name: Inspect frontend API routes
+        run: |
+          set -e
+          curl -fsSL 'https://tickets.museivaticani.va/home/' -o /tmp/index.html
+          echo '=== JS FILES ==='
+          grep -Eo 'src="[^"]+\.js[^"]*"' /tmp/index.html || true
+          python - <<'PY'
+          import re,requests
+          base='https://tickets.museivaticani.va/home/'
+          html=open('/tmp/index.html').read()
+          scripts=re.findall(r'src="([^"]+\.js[^"]*)"',html)
+          for s in scripts:
+              u=s if s.startswith('http') else base+s.lstrip('/')
               try:
-                if e.is_visible() and e.is_enabled() and e.inner_text().strip().upper()=='PRENOTA': e.click(); break
-              except: pass
-            page.wait_for_timeout(1200)
-            q=page.locator('input[data-cy="ticketQuantity"]').first
-            q.click(); page.wait_for_timeout(300)
-            print('Q_PARENT',q.evaluate('(e)=>e.parentElement.parentElement.outerHTML')[:8000])
-            res=page.evaluate('''() => { const all=[...document.querySelectorAll('*')].filter(e=>e.offsetParent!==null && e.children.length===0 && (e.innerText||'').trim()==='1'); return all.map((e,i)=>({i,tag:e.tagName,cls:e.className,html:e.outerHTML})); }''')
-            print('Q_LEAVES',res[:30])
-            clicked=page.evaluate('''() => { const q=document.querySelector('input[data-cy="ticketQuantity"]'); let root=q.parentElement; for(let k=0;k<4 && root;k++,root=root.parentElement){ const all=[...root.querySelectorAll('*')].filter(e=>e.offsetParent!==null && e.children.length===0 && (e.innerText||'').trim()==='1'); if(all.length){all[all.length-1].click(); return all[all.length-1].outerHTML;} } const all=[...document.querySelectorAll('*')].filter(e=>e.offsetParent!==null && e.children.length===0 && (e.innerText||'').trim()==='1'); if(all.length){all[all.length-1].click(); return all[all.length-1].outerHTML;} return null; }''')
-            print('Q_CLICKED',clicked); page.wait_for_timeout(600); print('Q_VALUE',q.input_value())
-            lang=page.locator('input[data-cy="visitLang"]'); lang.click(); page.wait_for_timeout(300)
-            print('LANG_PARENT',lang.evaluate('(e)=>e.parentElement.parentElement.outerHTML')[:10000])
-            clicked=page.evaluate('''() => { const all=[...document.querySelectorAll('*')].filter(e=>e.offsetParent!==null && e.children.length===0 && (e.innerText||'').trim()==='Italiano'); if(all.length){all[all.length-1].click(); return all[all.length-1].outerHTML;} return null;}''')
-            print('LANG_CLICKED',clicked); page.wait_for_timeout(1000); print('LANG_VALUE',lang.input_value())
-            # Proceed from ticket selection to time selection if needed.
-            try:
-              pbtn=page.locator('button[data-cy="bookVisit"]'); print('PROCEED',pbtn.is_enabled()); pbtn.click(); page.wait_for_timeout(3500)
-            except Exception as e: print('PROCEED_ERR',e)
-            txt=page.locator('body').inner_text()
-            print('\nFINAL_BODY\n'+txt[:50000])
-            print('\nTIMES',sorted(set(re.findall(r'(?<!\\d)(?:[01]?\\d|2[0-3])[:.]\\d{2}(?!\\d)',txt))))
-            print('\nRELEVANT_XHR')
-            for s,u,body in xhr:
-              if any(k in u.lower() for k in ['/api/visit','time','hour','avail','slot']): print('\n',s,u,'\n',body)
-            b.close()
+                  t=requests.get(u,timeout=30).text
+              except Exception as e:
+                  print('ERR',u,e); continue
+              print('\n===',u,len(t),'===')
+              for pat in [r'/api/visit[^"\'` ]*',r'visitTime',r'visit/time',r'availableTime',r'availableHour',r'timeSlot',r'hour']:
+                  for m in list(re.finditer(pat,t,re.I))[:30]:
+                      a=max(0,m.start()-500); b=min(len(t),m.end()+800)
+                      print(t[a:b])
           PY
-          python /tmp/check.py
