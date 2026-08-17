@@ -2,7 +2,7 @@ name: ICON2I Salerno run availability
 
 on:
   schedule:
-    - cron: '*/5 * * * *'
+    - cron: '55 * * * *'
   workflow_dispatch:
 
 permissions:
