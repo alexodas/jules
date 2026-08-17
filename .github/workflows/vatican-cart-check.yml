@@ -24,111 +24,108 @@ jobs:
               page.goto(URL, wait_until='domcontentloaded', timeout=90000)
               page.wait_for_timeout(3000)
 
-              # Day 22
-              for i in range(page.locator('button').count()):
-                  b=page.locator('button').nth(i)
-                  try:
-                      if ' '.join(b.inner_text().split())=='22' and b.is_visible() and b.is_enabled():
-                          b.click(); break
-                  except: pass
-              page.wait_for_timeout(500)
-
-              # Visitor field is readonly; use the native input setter + input/change events so Angular receives value 2.
-              inp=page.locator('input').first
-              print('VISITOR_INPUT_BEFORE', inp.evaluate('(e)=>e.outerHTML'))
-              inp.evaluate("""el => {
-                const setter=Object.getOwnPropertyDescriptor(HTMLInputElement.prototype,'value').set;
-                setter.call(el,'2');
-                el.dispatchEvent(new Event('input',{bubbles:true}));
-                el.dispatchEvent(new Event('change',{bubbles:true}));
-              }""")
+              # Select 22 August.
+              day=page.locator('button[aria-label="22 agosto 2026"]')
+              print('DAY_VISIBLE',day.is_visible(),'ENABLED',day.is_enabled())
+              day.click()
               page.wait_for_timeout(300)
-              print('VISITOR_VALUE', inp.input_value())
 
-              # Confirm search
-              clicked=False
-              for i in range(page.locator('button').count()):
-                  b=page.locator('button').nth(i)
-                  try:
-                      txt=' '.join(b.inner_text().split())
-                      if re.search(r'^CONFERMA$',txt,re.I) and b.is_visible() and b.is_enabled():
-                          print('CLICK_CONFIRM',i); b.click(); clicked=True; break
-                  except: pass
-              print('CONFIRM_CLICKED',clicked)
-              page.wait_for_timeout(5000)
+              # Actual form field for visitors.
+              visitors=page.locator('#numberInput')
+              print('VISITORS_VISIBLE',visitors.is_visible(),'ENABLED',visitors.is_enabled())
+              visitors.fill('2')
+              visitors.dispatch_event('input')
+              visitors.dispatch_event('change')
+              page.wait_for_timeout(300)
+              print('VISITORS_VALUE',visitors.input_value())
+
+              # Submit calendar form.
+              confirm=page.locator('button[data-cy="submitCalendar"]')
+              print('CONFIRM_ENABLED',confirm.is_enabled())
+              confirm.click()
+              try: page.wait_for_url(re.compile(r'/home/visit/'),timeout=30000)
+              except: pass
+              page.wait_for_timeout(4000)
               print('RESULT_URL',page.url)
               txt=page.locator('body').inner_text()
-              print('RESULT_BODY',txt[:12000])
+              print('RESULT_BODY',txt[:14000])
 
-              # Standard ticket card: click its PRENOTA if enabled.
+              # Locate standard admission card/product and its action.
               title=page.get_by_text("Musei Vaticani - Biglietti d'ingresso", exact=False)
               print('STANDARD_TITLE_COUNT',title.count())
-              book_clicked=False
+              booked=False
               if title.count():
-                  root=title.first.locator('xpath=..')
-                  for level in range(7):
+                  root=title.first
+                  for level in range(8):
                       try:
-                          buttons=root.locator('button')
+                          parent=root.locator('xpath=..') if level else root
+                          buttons=parent.locator('button,a')
                           for j in range(buttons.count()):
                               b=buttons.nth(j)
                               try:
                                   bt=' '.join(b.inner_text().split())
-                                  if re.search(r'PRENOTA|BOOK',bt,re.I) and b.is_visible():
-                                      print('BOOK_BUTTON',bt,'enabled',b.is_enabled())
-                                      if b.is_enabled(): b.click(); book_clicked=True
+                                  if b.is_visible() and re.search(r'PRENOTA|BOOK',bt,re.I):
+                                      print('STANDARD_ACTION',repr(bt),'enabled',b.is_enabled())
+                                      if b.is_enabled(): b.click(); booked=True
                                       break
                               except: pass
-                          if book_clicked: break
+                          if booked: break
+                          root=parent
                       except: pass
-                      root=root.locator('xpath=..')
-              print('BOOK_CLICKED',book_clicked)
-              page.wait_for_timeout(3500)
+              print('BOOK_CLICKED',booked)
+              page.wait_for_timeout(3000)
               print('PRODUCT_URL',page.url)
-              prodtxt=page.locator('body').inner_text()
-              print('PRODUCT_BODY',prodtxt[:16000])
+              prod=page.locator('body').inner_text()
+              print('PRODUCT_BODY',prod[:18000])
 
-              # Find visible text/controls for ticket quantities and 12:00.
-              print('INPUTS')
+              # Dump candidate controls.
               for i in range(page.locator('input').count()):
                   e=page.locator('input').nth(i)
                   try:
-                      print(i,e.is_visible(),e.is_enabled(),e.get_attribute('type'),e.get_attribute('readonly'),e.get_attribute('aria-label'),e.input_value(),e.evaluate('(x)=>x.outerHTML')[:700])
+                      if e.is_visible(): print('INPUT',i,e.get_attribute('id'),e.get_attribute('type'),e.get_attribute('readonly'),e.input_value(),e.evaluate('(x)=>x.outerHTML')[:900])
                   except: pass
-              print('BUTTONS')
               for i in range(page.locator('button').count()):
                   b=page.locator('button').nth(i)
                   try:
-                      if b.is_visible(): print(i,repr(' '.join(b.inner_text().split())),b.is_enabled(),b.evaluate('(x)=>x.outerHTML')[:700])
+                      if b.is_visible(): print('BUTTON',i,repr(' '.join(b.inner_text().split())),b.is_enabled(),b.evaluate('(x)=>x.outerHTML')[:900])
                   except: pass
 
-              # Try custom quantity selector near 'Biglietto Intero'.
+              # Select quantity 2 for full ticket using any control in its row.
               qty_ok=False
-              labels=page.get_by_text('Biglietto Intero',exact=False)
+              labels=page.get_by_text('Biglietto Intero', exact=False)
               if labels.count():
-                  root=labels.first.locator('xpath=..')
-                  for _ in range(6):
-                      ctrls=root.locator('button,[role=combobox],input,mat-select')
-                      for j in range(ctrls.count()):
-                          c=ctrls.nth(j)
-                          try:
-                              if c.is_visible() and c.is_enabled():
-                                  html=c.evaluate('(x)=>x.outerHTML')
-                                  if 'readonly' in html or 'select' in html.lower() or 'arrow' in html.lower() or 'increment' in html.lower() or 'add' in html.lower():
-                                      c.click(); page.wait_for_timeout(250)
-                                      opts=page.get_by_text(re.compile(r'^\\s*2\\s*$'))
+                  root=labels.first
+                  for level in range(7):
+                      parent=root.locator('xpath=..') if level else root
+                      # Try visible text inputs/selects in row first.
+                      for sel in ['input','select','mat-select','button','[role="combobox"]']:
+                          els=parent.locator(sel)
+                          for j in range(els.count()):
+                              e=els.nth(j)
+                              try:
+                                  if not (e.is_visible() and e.is_enabled()): continue
+                                  tag=e.evaluate('(x)=>x.tagName.toLowerCase()')
+                                  if tag=='input' and not e.get_attribute('readonly'):
+                                      e.fill('2'); e.dispatch_event('change'); qty_ok=True; print('QTY_INPUT_SET'); break
+                                  if tag=='select':
+                                      e.select_option(label='2'); qty_ok=True; print('QTY_SELECT_SET'); break
+                                  if tag in ('button','mat-select') or e.get_attribute('role')=='combobox':
+                                      e.click(); page.wait_for_timeout(200)
+                                      opts=page.get_by_text(re.compile(r'^\s*2\s*$'))
                                       for k in range(opts.count()):
-                                          try:
-                                              if opts.nth(k).is_visible(): opts.nth(k).click(); qty_ok=True; break
-                                          except: pass
+                                          if opts.nth(k).is_visible(): opts.nth(k).click(); qty_ok=True; print('QTY_CUSTOM_SET'); break
+                              except: pass
                               if qty_ok: break
-                          except: pass
+                          if qty_ok: break
                       if qty_ok: break
-                      root=root.locator('xpath=..')
+                      root=parent
               print('QTY_OK',qty_ok)
+              page.wait_for_timeout(500)
 
-              # Select 12:00 if visible/enabled.
+              # Select 12:00.
               time_ok=False
-              times=page.get_by_text(re.compile(r'^\\s*12:00\\s*$'))
+              times=page.get_by_text(re.compile(r'^\s*12:00\s*$'))
+              print('TIME_COUNT',times.count())
               for i in range(times.count()):
                   t=times.nth(i)
                   try:
@@ -138,9 +135,9 @@ jobs:
                   except: pass
               print('TIME_OK',time_ok)
               page.wait_for_timeout(500)
-              print('FINAL_BODY',page.locator('body').inner_text()[:16000])
+              print('AFTER_SELECTIONS',page.locator('body').inner_text()[:18000])
 
-              # Show enabled continuation buttons, but do not submit further.
+              # Report enabled next-step buttons; do not advance to personal data/payment.
               for i in range(page.locator('button').count()):
                   b=page.locator('button').nth(i)
                   try:
