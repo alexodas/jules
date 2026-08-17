@@ -7,160 +7,146 @@ on:
 jobs:
   check:
     runs-on: ubuntu-latest
-    timeout-minutes: 8
+    timeout-minutes: 5
     steps:
-      - name: Install Playwright
-        run: |
-          python -m pip install --quiet playwright
-          python -m playwright install --with-deps chromium
+      - name: Install Playwright Python
+        run: python -m pip install --quiet playwright
       - name: Verify 22 Aug 12:00 for two people
         run: |
           python - <<'PY'
-          import re, json
+          import re
           from playwright.sync_api import sync_playwright
 
           URL='https://tickets.museivaticani.va/home/calendar/visit/MV-Biglietti/1'
           with sync_playwright() as p:
-              browser=p.chromium.launch(headless=True)
-              ctx=browser.new_context(locale='it-IT',timezone_id='Europe/Rome',viewport={'width':1440,'height':1200})
-              page=ctx.new_page()
-              page.goto(URL,wait_until='domcontentloaded',timeout=90000)
-              page.wait_for_timeout(3500)
+              browser=p.chromium.launch(channel='chrome', headless=True)
+              page=browser.new_page(locale='it-IT', timezone_id='Europe/Rome', viewport={'width':1440,'height':1200})
+              page.goto(URL, wait_until='domcontentloaded', timeout=90000)
+              page.wait_for_timeout(3000)
 
-              def body(tag):
-                  print('\n====',tag,'URL',page.url,'====')
-                  try: print(page.locator('body').inner_text()[:18000])
-                  except Exception as e: print('BODYERR',e)
+              # Day 22
+              for i in range(page.locator('button').count()):
+                  b=page.locator('button').nth(i)
+                  try:
+                      if ' '.join(b.inner_text().split())=='22' and b.is_visible() and b.is_enabled():
+                          b.click(); break
+                  except: pass
+              page.wait_for_timeout(500)
 
-              body('START')
+              # Visitor field is readonly; use the native input setter + input/change events so Angular receives value 2.
+              inp=page.locator('input').first
+              print('VISITOR_INPUT_BEFORE', inp.evaluate('(e)=>e.outerHTML'))
+              inp.evaluate("""el => {
+                const setter=Object.getOwnPropertyDescriptor(HTMLInputElement.prototype,'value').set;
+                setter.call(el,'2');
+                el.dispatchEvent(new Event('input',{bubbles:true}));
+                el.dispatchEvent(new Event('change',{bubbles:true}));
+              }""")
+              page.wait_for_timeout(300)
+              print('VISITOR_VALUE', inp.input_value())
 
-              # Click day 22 directly among visible enabled buttons.
+              # Confirm search
               clicked=False
               for i in range(page.locator('button').count()):
                   b=page.locator('button').nth(i)
                   try:
                       txt=' '.join(b.inner_text().split())
-                      if txt=='22' and b.is_visible() and b.is_enabled():
-                          print('CLICK_DAY',i,b.evaluate('(e)=>e.outerHTML'))
-                          b.click(); page.wait_for_timeout(800); clicked=True; break
+                      if re.search(r'^CONFERMA$',txt,re.I) and b.is_visible() and b.is_enabled():
+                          print('CLICK_CONFIRM',i); b.click(); clicked=True; break
                   except: pass
-              print('DAY_CLICKED',clicked)
+              print('CONFIRM_CLICKED',clicked)
+              page.wait_for_timeout(5000)
+              print('RESULT_URL',page.url)
+              txt=page.locator('body').inner_text()
+              print('RESULT_BODY',txt[:12000])
 
-              # Find likely visitor count input and set 2.
-              best=None
+              # Standard ticket card: click its PRENOTA if enabled.
+              title=page.get_by_text("Musei Vaticani - Biglietti d'ingresso", exact=False)
+              print('STANDARD_TITLE_COUNT',title.count())
+              book_clicked=False
+              if title.count():
+                  root=title.first.locator('xpath=..')
+                  for level in range(7):
+                      try:
+                          buttons=root.locator('button')
+                          for j in range(buttons.count()):
+                              b=buttons.nth(j)
+                              try:
+                                  bt=' '.join(b.inner_text().split())
+                                  if re.search(r'PRENOTA|BOOK',bt,re.I) and b.is_visible():
+                                      print('BOOK_BUTTON',bt,'enabled',b.is_enabled())
+                                      if b.is_enabled(): b.click(); book_clicked=True
+                                      break
+                              except: pass
+                          if book_clicked: break
+                      except: pass
+                      root=root.locator('xpath=..')
+              print('BOOK_CLICKED',book_clicked)
+              page.wait_for_timeout(3500)
+              print('PRODUCT_URL',page.url)
+              prodtxt=page.locator('body').inner_text()
+              print('PRODUCT_BODY',prodtxt[:16000])
+
+              # Find visible text/controls for ticket quantities and 12:00.
+              print('INPUTS')
               for i in range(page.locator('input').count()):
                   e=page.locator('input').nth(i)
                   try:
-                      if not (e.is_visible() and e.is_enabled()): continue
-                      typ=(e.get_attribute('type') or '').lower()
-                      meta=' '.join([(e.get_attribute(x) or '') for x in ['name','placeholder','aria-label']]).lower()
-                      score=(10 if typ=='number' else 0)+(7 if any(k in meta for k in ['visit','persone','people','numero','number']) else 0)
-                      if best is None or score>best[0]: best=(score,i)
+                      print(i,e.is_visible(),e.is_enabled(),e.get_attribute('type'),e.get_attribute('readonly'),e.get_attribute('aria-label'),e.input_value(),e.evaluate('(x)=>x.outerHTML')[:700])
                   except: pass
-              print('BEST_INPUT',best)
-              if best:
-                  e=page.locator('input').nth(best[1]); e.fill('2'); page.wait_for_timeout(200)
-
-              # Confirm search.
+              print('BUTTONS')
               for i in range(page.locator('button').count()):
                   b=page.locator('button').nth(i)
                   try:
-                      txt=' '.join(b.inner_text().split())
-                      if re.search(r'conferma|confirm',txt,re.I) and b.is_visible() and b.is_enabled():
-                          print('CLICK_CONFIRM',i,repr(txt)); b.click(); break
+                      if b.is_visible(): print(i,repr(' '.join(b.inner_text().split())),b.is_enabled(),b.evaluate('(x)=>x.outerHTML')[:700])
                   except: pass
-              try: page.wait_for_load_state('domcontentloaded',timeout=20000)
-              except: pass
-              page.wait_for_timeout(3000)
-              body('RESULTS')
 
-              # Click PRENOTA associated with standard ticket card.
-              card=None
-              for sel in ['article','mat-card','div']:
-                  loc=page.locator(sel).filter(has_text=re.compile(r"Musei Vaticani\s*-\s*Biglietti d'ingresso",re.I))
-                  if loc.count():
-                      for j in range(loc.count()):
-                          c=loc.nth(j)
+              # Try custom quantity selector near 'Biglietto Intero'.
+              qty_ok=False
+              labels=page.get_by_text('Biglietto Intero',exact=False)
+              if labels.count():
+                  root=labels.first.locator('xpath=..')
+                  for _ in range(6):
+                      ctrls=root.locator('button,[role=combobox],input,mat-select')
+                      for j in range(ctrls.count()):
+                          c=ctrls.nth(j)
                           try:
-                              if c.is_visible() and len(c.inner_text())<5000:
-                                  card=c; print('CARD_SEL',sel,j); break
+                              if c.is_visible() and c.is_enabled():
+                                  html=c.evaluate('(x)=>x.outerHTML')
+                                  if 'readonly' in html or 'select' in html.lower() or 'arrow' in html.lower() or 'increment' in html.lower() or 'add' in html.lower():
+                                      c.click(); page.wait_for_timeout(250)
+                                      opts=page.get_by_text(re.compile(r'^\\s*2\\s*$'))
+                                      for k in range(opts.count()):
+                                          try:
+                                              if opts.nth(k).is_visible(): opts.nth(k).click(); qty_ok=True; break
+                                          except: pass
+                              if qty_ok: break
                           except: pass
-                  if card: break
-              if card:
-                  btn=card.locator('button').filter(has_text=re.compile(r'PRENOTA|BOOK',re.I))
-                  if btn.count() and btn.first.is_visible() and btn.first.is_enabled():
-                      print('CLICK_BOOK'); btn.first.click(); page.wait_for_timeout(2500)
-                  else:
-                      print('NO_BOOK_BUTTON_IN_CARD',card.inner_text()[:3000])
-              else:
-                  print('NO_STANDARD_CARD')
-              body('PRODUCT')
+                      if qty_ok: break
+                      root=root.locator('xpath=..')
+              print('QTY_OK',qty_ok)
 
-              # Select 2 full-price tickets if possible.
-              # Print selects/custom dropdowns first.
-              print('SELECTS',page.locator('select').count())
-              for i in range(page.locator('select').count()):
-                  s=page.locator('select').nth(i)
-                  try: print('SELECT',i,s.is_visible(),s.get_attribute('name'),s.locator('option').all_text_contents())
-                  except: pass
-
-              # Native select route.
-              done_qty=False
-              for i in range(page.locator('select').count()):
-                  s=page.locator('select').nth(i)
+              # Select 12:00 if visible/enabled.
+              time_ok=False
+              times=page.get_by_text(re.compile(r'^\\s*12:00\\s*$'))
+              for i in range(times.count()):
+                  t=times.nth(i)
                   try:
-                      if s.is_visible():
-                          opts=s.locator('option').all_text_contents()
-                          vals=s.locator('option').evaluate_all('(els)=>els.map(e=>e.value)')
-                          if any(str(x).strip()=='2' for x in opts):
-                              idx=[str(x).strip() for x in opts].index('2')
-                              s.select_option(vals[idx]); print('SET_QTY_SELECT',i); done_qty=True; break
+                      if t.is_visible():
+                          print('TIME_HTML',t.evaluate('(x)=>x.outerHTML'))
+                          t.click(); time_ok=True; break
                   except: pass
-
-              # Custom dropdown fallback: click first visible dropdown-like control near "Biglietto Intero".
-              if not done_qty:
-                  textloc=page.get_by_text('Biglietto Intero', exact=False)
-                  if textloc.count():
-                      root=textloc.first.locator('xpath=..')
-                      for _ in range(4):
-                          try:
-                              cand=root.locator('button, [role="combobox"], input')
-                              for i in range(cand.count()):
-                                  x=cand.nth(i)
-                                  if x.is_visible() and x.is_enabled():
-                                      try:
-                                          x.click(); page.wait_for_timeout(300)
-                                          opt=page.get_by_text(re.compile(r'^\s*2\s*$'))
-                                          for j in range(opt.count()):
-                                              if opt.nth(j).is_visible(): opt.nth(j).click(); done_qty=True; print('SET_QTY_CUSTOM'); break
-                                      except: pass
-                                  if done_qty: break
-                          except: pass
-                          if done_qty: break
-                          root=root.locator('xpath=..')
-
-              print('QTY_SET',done_qty)
+              print('TIME_OK',time_ok)
               page.wait_for_timeout(500)
+              print('FINAL_BODY',page.locator('body').inner_text()[:16000])
 
-              # Select 12:00 if present.
-              t12=page.get_by_text(re.compile(r'^\s*12:00\s*$'))
-              selected=False
-              for i in range(t12.count()):
-                  try:
-                      if t12.nth(i).is_visible():
-                          print('CLICK_1200',i,t12.nth(i).evaluate('(e)=>e.outerHTML'))
-                          t12.nth(i).click(); page.wait_for_timeout(600); selected=True; break
-                  except Exception as e: pass
-              print('TIME_SELECTED',selected)
-              body('AFTER_SELECTIONS')
-
-              # Try only the next/continue button; stop before personal data/payment.
+              # Show enabled continuation buttons, but do not submit further.
               for i in range(page.locator('button').count()):
                   b=page.locator('button').nth(i)
                   try:
-                      txt=' '.join(b.inner_text().split())
-                      if re.search(r'continua|avanti|prosegui|conferma|continue|next',txt,re.I) and b.is_visible() and b.is_enabled():
-                          print('NEXT_CANDIDATE',i,repr(txt))
+                      bt=' '.join(b.inner_text().split())
+                      if b.is_visible() and b.is_enabled() and re.search(r'continua|avanti|prosegui|conferma|aggiungi|continue|next',bt,re.I):
+                          print('NEXT_ENABLED',i,repr(bt))
                   except: pass
               browser.close()
           PY
