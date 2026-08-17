@@ -1,0 +1,31 @@
+name: Temporary ICON2I Salerno fetch
+
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: write
+
+jobs:
+  fetch:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Fetch Open-Meteo ICON-2I dew point
+        shell: bash
+        run: |
+          set -euo pipefail
+          URL='https://single-runs-api.open-meteo.com/v1/forecast?latitude=40.6824&longitude=14.7681&hourly=dew_point_2m&models=italia_meteo_arpae_icon_2i&timezone=Europe%2FRome&forecast_days=2&run=2026-08-18T00%3A00'
+          curl --fail --show-error --silent --location "$URL" -o icon2i-salerno-result.json
+          python -m json.tool icon2i-salerno-result.json > /tmp/pretty.json
+          mv /tmp/pretty.json icon2i-salerno-result.json
+      - name: Commit result
+        shell: bash
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add icon2i-salerno-result.json
+          git commit -m 'Save ICON-2I Salerno result [skip ci]' || exit 0
+          git push origin HEAD:main
