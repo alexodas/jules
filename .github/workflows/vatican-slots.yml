@@ -13,67 +13,70 @@ jobs:
         run: |
           python -m pip install --quiet playwright
           python -m playwright install --with-deps chromium
-      - name: Check Vatican slots
+      - name: Inspect guided tour
         run: |
           cat > /tmp/check.py <<'PY'
           import re
           from playwright.sync_api import sync_playwright
-          URL='https://tickets.museivaticani.va/home/calendar/visit/MV-Biglietti/1'
+          URL='https://tickets.museivaticani.va/home/fromtag/1/1787176800000/MV-Biglietti/1'
           with sync_playwright() as p:
               b=p.chromium.launch(headless=True)
-              page=b.new_page(locale='it-IT',timezone_id='Europe/Rome',viewport={'width':1440,'height':1200})
+              page=b.new_page(locale='it-IT', timezone_id='Europe/Rome', viewport={'width':1440,'height':1400})
               xhr=[]
-              def resp(r):
+              def onresp(r):
                   if r.request.resource_type in ('xhr','fetch'):
                       try:
                           ct=r.headers.get('content-type','')
-                          body=r.text()[:20000] if ('json' in ct or 'text' in ct) else ''
+                          body=r.text()[:30000] if ('json' in ct or 'text' in ct) else ''
                           xhr.append((r.status,r.url,body))
                       except: xhr.append((r.status,r.url,''))
-              page.on('response',resp)
+              page.on('response',onresp)
               page.goto(URL,wait_until='domcontentloaded',timeout=90000)
               page.wait_for_timeout(5000)
-              # From first successful inspection: index 22 is the enabled Aug 20 button.
-              day=page.locator('button').nth(22)
-              print('DAY_TEXT',repr(day.inner_text()),'ENABLED',day.is_enabled())
-              print('DAY_HTML',day.evaluate('(e)=>e.outerHTML'))
-              day.click(force=True)
-              page.wait_for_timeout(1200)
-              print('AFTER_DAY')
-              for i in range(page.locator('input').count()):
-                  e=page.locator('input').nth(i)
-                  try: print('INPUT',i,'VISIBLE',e.is_visible(),'VALUE',repr(e.input_value() if e.is_visible() else ''),'HTML',e.evaluate('(x)=>x.outerHTML'))
-                  except: pass
-              # Visitor control is input index 2 on this form (index 0 is calendar/date control).
-              visitor=page.locator('input').nth(2)
-              visitor.fill('1')
-              print('VISITOR',visitor.input_value())
-              # Confirm button index observed as 35 on calendar page.
-              buttons=page.locator('button')
-              for i in range(buttons.count()):
-                  e=buttons.nth(i)
-                  try:
-                      txt=' '.join(e.inner_text().split())
-                      if txt.upper()=='CONFERMA' and e.is_visible() and e.is_enabled():
-                          print('CLICK_CONFIRM',i); e.click(); break
-                  except: pass
-              try: page.wait_for_load_state('domcontentloaded',timeout=15000)
-              except: pass
-              page.wait_for_timeout(6000)
-              text=page.locator('body').inner_text()
-              print('\nFINAL_URL',page.url)
-              print('\nFINAL_BODY\n'+text[:35000])
-              times=sorted(set(re.findall(r'(?<!\\d)(?:[01]?\\d|2[0-3])[:.]\\d{2}(?!\\d)',text)))
-              print('\nTIMES_FOUND',times)
-              print('\nBUTTONS_FINAL')
+              print('START_URL',page.url)
+              print('START_BODY',page.locator('body').inner_text()[:12000])
+              # First PRENOTA corresponds to Visite Guidate Singoli Musei.
+              prenota=[]
               for i in range(page.locator('button').count()):
                   e=page.locator('button').nth(i)
                   try:
-                      if e.is_visible(): print(i,repr(' '.join(e.inner_text().split())),e.is_enabled())
+                      txt=' '.join(e.inner_text().split())
+                      if txt.upper()=='PRENOTA' and e.is_visible() and e.is_enabled():
+                          prenota.append(i)
+                  except: pass
+              print('PRENOTA_INDEXES',prenota)
+              idx=prenota[0]
+              btn=page.locator('button').nth(idx)
+              try:
+                  card=btn.locator('xpath=ancestor::*[contains(@class,"ticket") or contains(@class,"card")][1]')
+                  if card.count(): print('CARD_TEXT',card.inner_text()[:3000])
+              except: pass
+              print('CLICK_PRENOTA',idx)
+              btn.click()
+              page.wait_for_timeout(6000)
+              print('\nDETAIL_URL',page.url)
+              body=page.locator('body').inner_text()
+              print('\nDETAIL_BODY\n'+body[:40000])
+              print('\nTIMES',sorted(set(re.findall(r'(?<!\\d)(?:[01]?\\d|2[0-3])[:.]\\d{2}(?!\\d)',body))))
+              print('\nINPUTS')
+              for i in range(page.locator('input').count()):
+                  e=page.locator('input').nth(i)
+                  try: print(i,e.is_visible(),e.is_enabled(),repr(e.input_value() if e.is_visible() else ''),e.evaluate('(x)=>x.outerHTML')[:1500])
+                  except: pass
+              print('\nBUTTONS')
+              for i in range(page.locator('button').count()):
+                  e=page.locator('button').nth(i)
+                  try:
+                      if e.is_visible(): print(i,repr(' '.join(e.inner_text().split())),e.is_enabled(),e.evaluate('(x)=>x.outerHTML')[:1200])
+                  except: pass
+              print('\nSELECTS')
+              for i in range(page.locator('select').count()):
+                  e=page.locator('select').nth(i)
+                  try: print(i,e.is_visible(),e.inner_text()[:3000],e.evaluate('(x)=>x.outerHTML')[:2000])
                   except: pass
               print('\nXHR')
               for s,u,body in xhr:
-                  print('\n',s,u)
+                  print('\nXHR',s,u)
                   if body: print(body)
               b.close()
           PY
