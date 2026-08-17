@@ -7,26 +7,22 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 3
     steps:
-      - name: Inspect frontend API routes
-        run: |
-          set -e
-          curl -fsSL 'https://tickets.museivaticani.va/home/' -o /tmp/index.html
-          echo '=== JS FILES ==='
-          grep -Eo 'src="[^"]+\.js[^"]*"' /tmp/index.html || true
+      - run: |
           python - <<'PY'
-          import re,requests
-          base='https://tickets.museivaticani.va/home/'
-          html=open('/tmp/index.html').read()
+          import re, requests
+          html=requests.get('https://tickets.museivaticani.va/home/',timeout=30).text
           scripts=re.findall(r'src="([^"]+\.js[^"]*)"',html)
           for s in scripts:
-              u=s if s.startswith('http') else base+s.lstrip('/')
-              try:
-                  t=requests.get(u,timeout=30).text
-              except Exception as e:
-                  print('ERR',u,e); continue
-              print('\n===',u,len(t),'===')
-              for pat in [r'/api/visit[^"\'` ]*',r'visitTime',r'visit/time',r'availableTime',r'availableHour',r'timeSlot',r'hour']:
-                  for m in list(re.finditer(pat,t,re.I))[:30]:
-                      a=max(0,m.start()-500); b=min(len(t),m.end()+800)
-                      print(t[a:b])
+              u='https://tickets.museivaticani.va/'+s.lstrip('/')
+              t=requests.get(u,timeout=30).text
+              print('BUNDLE',u,'LEN',len(t))
+              pats=['/api/visit','visitTime','availableTime','availableHour','timeSlot','getTime','hours','orari','availability']
+              seen=set()
+              for pat in pats:
+                  for m in re.finditer(re.escape(pat),t,re.I):
+                      a=max(0,m.start()-700); b=min(len(t),m.end()+1200); sn=t[a:b]
+                      if sn not in seen:
+                          print('\n---',pat,'---\n',sn); seen.add(sn)
+                      if len(seen)>60: break
+                  if len(seen)>60: break
           PY
