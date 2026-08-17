@@ -1,0 +1,60 @@
+name: Temporary official Vatican availability check
+on:
+  push:
+    paths:
+      - '.github/workflows/vatican-official-check.yml'
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - name: Query official Vatican ticket API
+        run: |
+          python - <<'PY'
+          import requests, json, re
+          from collections import defaultdict
+
+          BASE='https://tickets.museivaticani.va/api'
+          DATE='20/08/2026'
+          s=requests.Session()
+          s.headers.update({'User-Agent':'Mozilla/5.0'})
+
+          def get(path, params):
+              r=s.get(BASE+path, params=params, timeout=30)
+              print('GET',r.url,'STATUS',r.status_code)
+              try:return r.json()
+              except Exception:
+                  print(r.text[:3000]); return None
+
+          for n in [1,2,3,4]:
+              print('\n================ PARTY',n,'================')
+              allv=[]
+              for page in range(0,5):
+                  p={'lang':'it','visitorNum':str(n),'visitDate':DATE,'area':'1','who':'','page':str(page),'tag':'MV-Biglietti'}
+                  d=get('/search/resultPerTag',p) or {}
+                  vs=d.get('visits',[]) or []
+                  if not vs: break
+                  allv.extend(vs)
+                  if len(allv)>=d.get('totalResults',len(allv)): break
+              print('TOTAL',len(allv))
+              for v in allv:
+                  name=v.get('name','')
+                  avail=v.get('availability')
+                  guided=bool(re.search(r'Guidat|Guida|Didatt|grupp',name,re.I))
+                  print('\nPRODUCT',json.dumps({'id':v.get('id'),'name':name,'availability':avail,'participants':v.get('numberParticipants'),'guided_guess':guided,'description':v.get('description')},ensure_ascii=False))
+                  # Drill into every non-guided product, especially if available or low availability.
+                  if guided: continue
+                  vid=v.get('id')
+                  detail=get('/visit',{'lang':'it','visitTypeId':str(vid),'visitDate':DATE,'visitorNum':str(n)}) or {}
+                  print('DETAIL',json.dumps(detail,ensure_ascii=False)[:12000])
+                  langs=detail.get('availableLanguage') or []
+                  langcodes=[x.get('id','') for x in langs] or ['']
+                  for lc in langcodes[:8]:
+                      q={'lang':'it','visitLang':lc,'visitTypeId':str(vid),'visitorNum':str(n),'visitDate':DATE}
+                      td=get('/visit/timeavail',q) or {}
+                      tt=td.get('timetable') or []
+                      if tt:
+                          print('TIMETABLE',lc,json.dumps(tt,ensure_ascii=False))
+                  # services isn't needed until a visit id/time is selected; skip.
+          PY
