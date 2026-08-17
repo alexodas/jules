@@ -13,19 +13,41 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Fetch Open-Meteo ICON-2I dew point
-        shell: bash
-        run: |
-          set -euo pipefail
-          URL='https://single-runs-api.open-meteo.com/v1/forecast?latitude=40.6824&longitude=14.7681&hourly=dew_point_2m&models=italia_meteo_arpae_icon_2i&timezone=Europe%2FRome&forecast_days=2&run=2026-08-18T00%3A00'
-          curl --fail --show-error --silent --location "$URL" -o icon2i-salerno-result.json
-          python -m json.tool icon2i-salerno-result.json > /tmp/pretty.json
-          mv /tmp/pretty.json icon2i-salerno-result.json
-      - name: Commit result
+
+      - name: Mark Action as started
         shell: bash
         run: |
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add icon2i-salerno-result.json
-          git commit -m 'Save ICON-2I Salerno result [skip ci]' || exit 0
+          printf 'started_utc=%s\nrun=2026-08-18T00:00Z\nvariable=dew_point_2m\n' "$(date -u +%Y-%m-%dT%H:%M:%SZ)" > icon2i-action-started.txt
+          git add icon2i-action-started.txt
+          git commit -m 'Mark ICON-2I fetch started [skip ci]'
+          git push origin HEAD:main
+
+      - name: Fetch Open-Meteo ICON-2I dew point
+        id: fetch
+        shell: bash
+        run: |
+          URL='https://single-runs-api.open-meteo.com/v1/forecast?latitude=40.6824&longitude=14.7681&hourly=dew_point_2m&models=italia_meteo_arpae_icon_2i&timezone=Europe%2FRome&forecast_days=2&run=2026-08-18T00%3A00'
+          set +e
+          HTTP_CODE=$(curl --show-error --silent --location --write-out '%{http_code}' "$URL" -o icon2i-salerno-result.json)
+          CURL_EXIT=$?
+          set -e
+          printf 'finished_utc=%s\ncurl_exit=%s\nhttp_code=%s\n' "$(date -u +%Y-%m-%dT%H:%M:%SZ)" "$CURL_EXIT" "$HTTP_CODE" > icon2i-fetch-status.txt
+          if [ "$CURL_EXIT" -ne 0 ]; then
+            rm -f icon2i-salerno-result.json
+            exit "$CURL_EXIT"
+          fi
+          python -m json.tool icon2i-salerno-result.json > /tmp/pretty.json
+          mv /tmp/pretty.json icon2i-salerno-result.json
+
+      - name: Commit fetch result or status
+        if: always()
+        shell: bash
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add icon2i-fetch-status.txt 2>/dev/null || true
+          git add icon2i-salerno-result.json 2>/dev/null || true
+          git commit -m 'Save ICON-2I Salerno fetch result [skip ci]' || exit 0
           git push origin HEAD:main
