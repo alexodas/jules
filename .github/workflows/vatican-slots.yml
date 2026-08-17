@@ -1,94 +1,59 @@
 name: Temporary Vatican slots check
 on:
   push:
-    paths:
-      - '.github/workflows/vatican-slots.yml'
+    paths: ['.github/workflows/vatican-slots.yml']
 jobs:
   check:
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
-      - name: Install Playwright Python
-        run: python -m pip install --quiet playwright
-      - name: Extract slots precisely
-        run: |
+      - run: python -m pip install --quiet playwright
+      - run: |
           cat > /tmp/check.py <<'PY'
           import re, os
           from playwright.sync_api import sync_playwright
           URL='https://tickets.museivaticani.va/home/fromtag/1/1787176800000/MV-Biglietti/1'
           with sync_playwright() as p:
-              exe=next((x for x in ['/usr/bin/google-chrome','/usr/bin/google-chrome-stable','/usr/bin/chromium'] if os.path.exists(x)),None)
-              print('CHROME',exe)
-              b=p.chromium.launch(headless=True, executable_path=exe)
-              page=b.new_page(locale='it-IT',timezone_id='Europe/Rome',viewport={'width':1440,'height':1400})
-              xhr=[]
-              def rr(r):
-                  if r.request.resource_type in ('xhr','fetch'):
-                      try:
-                          ct=r.headers.get('content-type','')
-                          body=r.text()[:50000] if ('json' in ct or 'text' in ct) else ''
-                          xhr.append((r.status,r.url,body))
-                      except: pass
-              page.on('response',rr)
-              page.goto(URL,wait_until='domcontentloaded',timeout=90000); page.wait_for_timeout(3500)
-              # Open individual guided visit
-              ps=[]
-              for i in range(page.locator('button').count()):
-                  e=page.locator('button').nth(i)
-                  try:
-                      if e.is_visible() and e.is_enabled() and e.inner_text().strip().upper()=='PRENOTA': ps.append(i)
-                  except: pass
-              page.locator('button').nth(ps[0]).click(); page.wait_for_timeout(1500)
-              q=page.locator('input[data-cy="ticketQuantity"]').first
-              q.click(); page.wait_for_timeout(300)
-              # print and click all exact text 1 candidates, smallest DOM elements first
-              cands=[]
-              for sel in ['span','p','a','li','div','button']:
-                  loc=page.locator(sel).filter(has_text=re.compile(r'^\\s*1\\s*$'))
-                  for j in range(loc.count()):
-                      e=loc.nth(j)
-                      try:
-                          if e.is_visible():
-                              html=e.evaluate('(x)=>x.outerHTML')
-                              cands.append((len(html),sel,j,html,e))
-                      except: pass
-              cands.sort(key=lambda x:x[0])
-              for c in cands[:20]: print('QTY_CAND',c[0],c[1],c[2],c[3][:1500])
-              clicked=False
-              for _,sel,j,html,e in cands:
-                  try:
-                      # prefer option-like/dropdown-item nodes rather than summary text
-                      cls=(e.get_attribute('class') or '').lower(); role=(e.get_attribute('role') or '').lower()
-                      if any(k in cls+role+html.lower() for k in ['option','dropdown','select','item']):
-                          print('CLICK_QTY',sel,j,html[:1000]); e.click(force=True); clicked=True; break
-                  except: pass
-              if not clicked and cands:
-                  print('CLICK_QTY_FALLBACK',cands[0][1],cands[0][2]); cands[0][4].click(force=True); clicked=True
-              page.wait_for_timeout(700)
-              print('QTY_VALUE',q.input_value())
-              # Language
-              lang=page.locator('input[data-cy="visitLang"]'); lang.click(); page.wait_for_timeout(300)
-              lcands=[]
-              for sel in ['span','p','a','li','div','button']:
-                  loc=page.locator(sel).filter(has_text=re.compile(r'^\\s*Italiano\\s*$',re.I))
-                  for j in range(loc.count()):
-                      e=loc.nth(j)
-                      try:
-                          if e.is_visible(): lcands.append((len(e.evaluate('(x)=>x.outerHTML')),sel,j,e.evaluate('(x)=>x.outerHTML'),e))
-                      except: pass
-              lcands.sort(key=lambda x:x[0])
-              for c in lcands[:20]: print('LANG_CAND',c[0],c[1],c[2],c[3][:1500])
-              if lcands:
-                  print('CLICK_LANG',lcands[0][1],lcands[0][2]); lcands[0][4].click(force=True)
-              page.wait_for_timeout(2500)
-              print('LANG_VALUE',lang.input_value())
-              txt=page.locator('body').inner_text()
-              print('\nFINAL BODY\n',txt[:40000])
-              print('\nTIMES',sorted(set(re.findall(r'(?<!\\d)(?:[01]?\\d|2[0-3])[:.]\\d{2}(?!\\d)',txt))))
-              print('\nRELEVANT XHR')
-              for s,u,body in xhr:
-                  lu=u.lower()
-                  if any(k in lu for k in ['/api/visit','time','hour','avail','slot']): print('\n',s,u,'\n',body)
-              b.close()
+            b=p.chromium.launch(headless=True, executable_path='/usr/bin/google-chrome')
+            page=b.new_page(locale='it-IT',timezone_id='Europe/Rome',viewport={'width':1440,'height':1400})
+            xhr=[]
+            def rr(r):
+              if r.request.resource_type in ('xhr','fetch'):
+                try:
+                  ct=r.headers.get('content-type',''); body=r.text()[:50000] if ('json' in ct or 'text' in ct) else ''
+                  xhr.append((r.status,r.url,body))
+                except: pass
+            page.on('response',rr)
+            page.goto(URL,wait_until='domcontentloaded',timeout=90000); page.wait_for_timeout(3500)
+            # open first guided visit
+            btns=page.locator('button')
+            for i in range(btns.count()):
+              e=btns.nth(i)
+              try:
+                if e.is_visible() and e.is_enabled() and e.inner_text().strip().upper()=='PRENOTA': e.click(); break
+              except: pass
+            page.wait_for_timeout(1200)
+            q=page.locator('input[data-cy="ticketQuantity"]').first
+            q.click(); page.wait_for_timeout(300)
+            print('Q_PARENT',q.evaluate('(e)=>e.parentElement.parentElement.outerHTML')[:8000])
+            res=page.evaluate('''() => { const all=[...document.querySelectorAll('*')].filter(e=>e.offsetParent!==null && e.children.length===0 && (e.innerText||'').trim()==='1'); return all.map((e,i)=>({i,tag:e.tagName,cls:e.className,html:e.outerHTML})); }''')
+            print('Q_LEAVES',res[:30])
+            clicked=page.evaluate('''() => { const q=document.querySelector('input[data-cy="ticketQuantity"]'); let root=q.parentElement; for(let k=0;k<4 && root;k++,root=root.parentElement){ const all=[...root.querySelectorAll('*')].filter(e=>e.offsetParent!==null && e.children.length===0 && (e.innerText||'').trim()==='1'); if(all.length){all[all.length-1].click(); return all[all.length-1].outerHTML;} } const all=[...document.querySelectorAll('*')].filter(e=>e.offsetParent!==null && e.children.length===0 && (e.innerText||'').trim()==='1'); if(all.length){all[all.length-1].click(); return all[all.length-1].outerHTML;} return null; }''')
+            print('Q_CLICKED',clicked); page.wait_for_timeout(600); print('Q_VALUE',q.input_value())
+            lang=page.locator('input[data-cy="visitLang"]'); lang.click(); page.wait_for_timeout(300)
+            print('LANG_PARENT',lang.evaluate('(e)=>e.parentElement.parentElement.outerHTML')[:10000])
+            clicked=page.evaluate('''() => { const all=[...document.querySelectorAll('*')].filter(e=>e.offsetParent!==null && e.children.length===0 && (e.innerText||'').trim()==='Italiano'); if(all.length){all[all.length-1].click(); return all[all.length-1].outerHTML;} return null;}''')
+            print('LANG_CLICKED',clicked); page.wait_for_timeout(1000); print('LANG_VALUE',lang.input_value())
+            # Proceed from ticket selection to time selection if needed.
+            try:
+              pbtn=page.locator('button[data-cy="bookVisit"]'); print('PROCEED',pbtn.is_enabled()); pbtn.click(); page.wait_for_timeout(3500)
+            except Exception as e: print('PROCEED_ERR',e)
+            txt=page.locator('body').inner_text()
+            print('\nFINAL_BODY\n'+txt[:50000])
+            print('\nTIMES',sorted(set(re.findall(r'(?<!\\d)(?:[01]?\\d|2[0-3])[:.]\\d{2}(?!\\d)',txt))))
+            print('\nRELEVANT_XHR')
+            for s,u,body in xhr:
+              if any(k in u.lower() for k in ['/api/visit','time','hour','avail','slot']): print('\n',s,u,'\n',body)
+            b.close()
           PY
           python /tmp/check.py
