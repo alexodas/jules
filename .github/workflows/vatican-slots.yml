@@ -9,38 +9,20 @@ jobs:
     steps:
       - run: |
           python - <<'PY'
-          import requests, json, sys
-          base='https://tickets.museivaticani.va/api'
-          s=requests.Session()
-          params={'lang':'it','visitorNum':'1','visitDate':'20/08/2026','area':'1','who':'','page':'0','tag':'MV-Biglietti'}
-          r=s.get(base+'/search/resultPerTag',params=params,timeout=30)
-          print('SEARCH_URL',r.url,'STATUS',r.status_code)
-          data=r.json()
-          print('TOP_KEYS',data.keys() if isinstance(data,dict) else type(data))
-          # Recursively find dictionaries representing guided individual museum product.
-          found=[]
-          def walk(x):
-            if isinstance(x,dict):
-              text=' '.join(str(v) for v in x.values() if isinstance(v,(str,int,float)))
-              if 'Visite Guidate Singoli Musei' in text:
-                found.append(x)
-              for v in x.values(): walk(v)
-            elif isinstance(x,list):
-              for v in x: walk(v)
-          walk(data)
-          print('FOUND_COUNT',len(found))
-          for i,x in enumerate(found[:10]): print('FOUND',i,json.dumps(x,ensure_ascii=False)[:6000])
-          # Pick an id-like field from the most product-like dict.
-          vt=None
-          for x in found:
-            for key in ['id','visitTypeId','visitTypeID','visitId']:
-              if key in x and isinstance(x[key],(int,str)):
-                vt=x[key]; print('CHOSEN_FIELD',key,'VALUE',vt); break
-            if vt is not None: break
-          if vt is None:
-            print('NO_VISIT_TYPE_ID'); sys.exit(2)
-          p={'lang':'it','visitLang':'ITA','visitTypeId':str(vt),'visitorNum':'1','visitDate':'20/08/2026'}
-          t=s.get(base+'/visit/timeavail',params=p,timeout=30)
-          print('TIME_URL',t.url,'STATUS',t.status_code)
-          print('TIME_BODY',t.text)
+          import requests, collections
+          base='https://tickets.museivaticani.va/api'; s=requests.Session()
+          for n in range(1,5):
+            p={'lang':'it','visitorNum':str(n),'visitDate':'20/08/2026','area':'1','who':'','page':'0','tag':'MV-Biglietti'}
+            d=s.get(base+'/search/resultPerTag',params=p,timeout=30).json()
+            prod=next((x for x in d.get('visits',[]) if x.get('name')=='Musei Vaticani - Visite Guidate Singoli Musei'),None)
+            if not prod:
+              print('PARTY',n,'NO_PRODUCT'); continue
+            q={'lang':'it','visitLang':'ITA','visitTypeId':str(prod['id']),'visitorNum':str(n),'visitDate':'20/08/2026'}
+            tt=s.get(base+'/visit/timeavail',params=q,timeout=30).json().get('timetable',[])
+            grouped=collections.defaultdict(list)
+            for x in tt: grouped[x['time']].append(x['availability'])
+            print('PARTY',n,'PRODUCT_AVAIL',prod.get('availability'),'ID',prod['id'])
+            for tm,sts in grouped.items():
+              # An hour is usable if at least one parallel group isn't SOLD_OUT.
+              print(' ',tm,'AVAILABLE' if any(x!='SOLD_OUT' for x in sts) else 'SOLD_OUT','DETAIL',','.join(sts))
           PY
