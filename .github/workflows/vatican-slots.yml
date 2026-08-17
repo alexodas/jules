@@ -6,84 +6,89 @@ on:
 jobs:
   check:
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 5
     steps:
-      - name: Install Playwright
-        run: |
-          python -m pip install --quiet playwright
-          python -m playwright install --with-deps chromium
-      - name: Extract slots
+      - name: Install Playwright Python
+        run: python -m pip install --quiet playwright
+      - name: Extract slots precisely
         run: |
           cat > /tmp/check.py <<'PY'
-          import re
+          import re, os
           from playwright.sync_api import sync_playwright
           URL='https://tickets.museivaticani.va/home/fromtag/1/1787176800000/MV-Biglietti/1'
-          def dump(page,label):
-              txt=page.locator('body').inner_text()
-              print('\n====',label,'====\n',txt[:30000])
-              print('TIMES',sorted(set(re.findall(r'(?<!\\d)(?:[01]?\\d|2[0-3])[:.]\\d{2}(?!\\d)',txt))))
-              print('VISIBLE BUTTONS')
-              for i in range(page.locator('button').count()):
-                  e=page.locator('button').nth(i)
-                  try:
-                      if e.is_visible(): print(i,repr(' '.join(e.inner_text().split())),e.is_enabled(),e.get_attribute('data-cy'))
-                  except: pass
           with sync_playwright() as p:
-              b=p.chromium.launch(headless=True)
+              exe=next((x for x in ['/usr/bin/google-chrome','/usr/bin/google-chrome-stable','/usr/bin/chromium'] if os.path.exists(x)),None)
+              print('CHROME',exe)
+              b=p.chromium.launch(headless=True, executable_path=exe)
               page=b.new_page(locale='it-IT',timezone_id='Europe/Rome',viewport={'width':1440,'height':1400})
               xhr=[]
               def rr(r):
                   if r.request.resource_type in ('xhr','fetch'):
                       try:
                           ct=r.headers.get('content-type','')
-                          body=r.text()[:30000] if ('json' in ct or 'text' in ct) else ''
+                          body=r.text()[:50000] if ('json' in ct or 'text' in ct) else ''
                           xhr.append((r.status,r.url,body))
                       except: pass
               page.on('response',rr)
-              page.goto(URL,wait_until='domcontentloaded',timeout=90000); page.wait_for_timeout(4000)
-              # Open first guided individual visit (first PRENOTA button in this page).
+              page.goto(URL,wait_until='domcontentloaded',timeout=90000); page.wait_for_timeout(3500)
+              # Open individual guided visit
               ps=[]
               for i in range(page.locator('button').count()):
                   e=page.locator('button').nth(i)
                   try:
-                      if e.is_visible() and e.is_enabled() and ' '.join(e.inner_text().split()).upper()=='PRENOTA': ps.append(i)
+                      if e.is_visible() and e.is_enabled() and e.inner_text().strip().upper()=='PRENOTA': ps.append(i)
                   except: pass
-              page.locator('button').nth(ps[0]).click(); page.wait_for_timeout(2500)
-              dump(page,'VISIT OPEN')
-              # Click full-ticket quantity selector and choose 1.
+              page.locator('button').nth(ps[0]).click(); page.wait_for_timeout(1500)
               q=page.locator('input[data-cy="ticketQuantity"]').first
-              print('CLICK QTY',q.input_value()); q.click(); page.wait_for_timeout(700); dump(page,'QTY MENU')
-              # click a visible option/button/text exactly 1, excluding calendar/nav; favor mat-option/li.
-              chosen=False
-              for sel in ['mat-option','[role="option"]','li','button','div']:
+              q.click(); page.wait_for_timeout(300)
+              # print and click all exact text 1 candidates, smallest DOM elements first
+              cands=[]
+              for sel in ['span','p','a','li','div','button']:
                   loc=page.locator(sel).filter(has_text=re.compile(r'^\\s*1\\s*$'))
                   for j in range(loc.count()):
                       e=loc.nth(j)
                       try:
-                          if e.is_visible() and e.is_enabled():
-                              print('CHOOSE QTY',sel,j,e.evaluate('(x)=>x.outerHTML')[:1000]); e.click(); chosen=True; break
+                          if e.is_visible():
+                              html=e.evaluate('(x)=>x.outerHTML')
+                              cands.append((len(html),sel,j,html,e))
                       except: pass
-                  if chosen: break
-              print('QTY_CHOSEN',chosen,'VALUE',q.input_value()); page.wait_for_timeout(1200)
-              # click language selector and choose Italiano
-              lang=page.locator('input[data-cy="visitLang"]')
-              print('CLICK LANG',lang.input_value()); lang.click(); page.wait_for_timeout(700); dump(page,'LANG MENU')
-              chosen=False
-              for sel in ['mat-option','[role="option"]','li','button','div','span']:
+              cands.sort(key=lambda x:x[0])
+              for c in cands[:20]: print('QTY_CAND',c[0],c[1],c[2],c[3][:1500])
+              clicked=False
+              for _,sel,j,html,e in cands:
+                  try:
+                      # prefer option-like/dropdown-item nodes rather than summary text
+                      cls=(e.get_attribute('class') or '').lower(); role=(e.get_attribute('role') or '').lower()
+                      if any(k in cls+role+html.lower() for k in ['option','dropdown','select','item']):
+                          print('CLICK_QTY',sel,j,html[:1000]); e.click(force=True); clicked=True; break
+                  except: pass
+              if not clicked and cands:
+                  print('CLICK_QTY_FALLBACK',cands[0][1],cands[0][2]); cands[0][4].click(force=True); clicked=True
+              page.wait_for_timeout(700)
+              print('QTY_VALUE',q.input_value())
+              # Language
+              lang=page.locator('input[data-cy="visitLang"]'); lang.click(); page.wait_for_timeout(300)
+              lcands=[]
+              for sel in ['span','p','a','li','div','button']:
                   loc=page.locator(sel).filter(has_text=re.compile(r'^\\s*Italiano\\s*$',re.I))
                   for j in range(loc.count()):
                       e=loc.nth(j)
                       try:
-                          if e.is_visible() and e.is_enabled(): print('CHOOSE LANG',sel,j); e.click(); chosen=True; break
+                          if e.is_visible(): lcands.append((len(e.evaluate('(x)=>x.outerHTML')),sel,j,e.evaluate('(x)=>x.outerHTML'),e))
                       except: pass
-                  if chosen: break
-              print('LANG_CHOSEN',chosen,'VALUE',lang.input_value()); page.wait_for_timeout(3500)
-              dump(page,'AFTER TICKET+LANG')
-              print('\n==== RELEVANT XHR ====')
+              lcands.sort(key=lambda x:x[0])
+              for c in lcands[:20]: print('LANG_CAND',c[0],c[1],c[2],c[3][:1500])
+              if lcands:
+                  print('CLICK_LANG',lcands[0][1],lcands[0][2]); lcands[0][4].click(force=True)
+              page.wait_for_timeout(2500)
+              print('LANG_VALUE',lang.input_value())
+              txt=page.locator('body').inner_text()
+              print('\nFINAL BODY\n',txt[:40000])
+              print('\nTIMES',sorted(set(re.findall(r'(?<!\\d)(?:[01]?\\d|2[0-3])[:.]\\d{2}(?!\\d)',txt))))
+              print('\nRELEVANT XHR')
               for s,u,body in xhr:
                   lu=u.lower()
-                  if any(k in lu for k in ['/api/visit','time','hour','avail','slot']):
-                      print('\n',s,u,'\n',body)
+                  if any(k in lu for k in ['/api/visit','time','hour','avail','slot']): print('\n',s,u,'\n',body)
               b.close()
           PY
           python /tmp/check.py
