@@ -1,12 +1,11 @@
 name: ICON2I Salerno run availability
 
 on:
-  schedule:
-    - cron: '25 * * * *'
   workflow_dispatch:
   push:
     branches: [main]
     paths:
+      - 'icon2i-trigger.txt'
       - '.github/workflows/icon2i-salerno-temp.yml'
 
 permissions:
@@ -25,6 +24,7 @@ jobs:
           set -u
           URL='https://single-runs-api.open-meteo.com/v1/forecast?latitude=40.6824&longitude=14.7681&hourly=dew_point_2m&models=italia_meteo_arpae_icon_2i&timezone=Europe%2FRome&forecast_days=2&run=2026-08-18T00%3A00'
           NOW=$(date -u +%Y-%m-%dT%H:%M:%SZ)
+          TRIGGER='${{ github.event_name }}'
 
           set +e
           HTTP_CODE=$(curl --show-error --silent --location --write-out '%{http_code}' "$URL" -o /tmp/icon2i.json)
@@ -61,8 +61,8 @@ jobs:
             fi
           fi
 
-          printf 'checked_utc=%s\nrun=2026-08-18T00:00Z\nhttp_code=%s\ncurl_exit=%s\nstatus=%s\n' \
-            "$NOW" "$HTTP_CODE" "$CURL_EXIT" "$STATUS" > icon2i-last-check.txt
+          printf 'checked_utc=%s\ntrigger_event=%s\nrun=2026-08-18T00:00Z\nhttp_code=%s\ncurl_exit=%s\nstatus=%s\n' \
+            "$NOW" "$TRIGGER" "$HTTP_CODE" "$CURL_EXIT" "$STATUS" > icon2i-last-check.txt
 
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
