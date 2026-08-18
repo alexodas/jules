@@ -22,7 +22,7 @@ jobs:
         shell: bash
         run: |
           set -u
-          URL='https://single-runs-api.open-meteo.com/v1/forecast?latitude=40.6824&longitude=14.7681&hourly=dew_point_2m&models=italia_meteo_arpae_icon_2i&timezone=Europe%2FRome&forecast_days=2&run=2026-08-18T00%3A00'
+          URL='https://single-runs-api.open-meteo.com/v1/forecast?latitude=40.6824&longitude=14.7681&hourly=dew_point_2m,temperature_2m,relative_humidity_2m&models=italia_meteo_arpae_icon_2i&timezone=Europe%2FRome&forecast_days=2&run=2026-08-18T00%3A00'
           NOW=$(date -u +%Y-%m-%dT%H:%M:%SZ)
           TRIGGER='${{ github.event_name }}'
 
@@ -42,29 +42,60 @@ jobs:
           else
             set +e
             python - <<'PY'
-          import json, sys
+          import json, math, sys
           with open('/tmp/icon2i.json', encoding='utf-8') as f:
               d = json.load(f)
-          vals = d.get('hourly', {}).get('dew_point_2m', [])
-          ok = any(isinstance(v, (int, float)) and not isinstance(v, bool) for v in vals)
-          sys.exit(0 if ok else 3)
+          h = d.setdefault('hourly', {})
+          direct = h.get('dew_point_2m') or []
+          temps = h.get('temperature_2m') or []
+          rhs = h.get('relative_humidity_2m') or []
+          n = max(len(direct), len(temps), len(rhs))
+          dew = []
+          used_fallback = False
+          for i in range(n):
+              v = direct[i] if i < len(direct) else None
+              if isinstance(v, (int, float)) and not isinstance(v, bool):
+                  dew.append(v)
+                  continue
+              t = temps[i] if i < len(temps) else None
+              rh = rhs[i] if i < len(rhs) else None
+              if isinstance(t, (int, float)) and isinstance(rh, (int, float)) and not isinstance(t, bool) and not isinstance(rh, bool) and rh > 0:
+                  a, b = 17.625, 243.04
+                  g = math.log(rh / 100.0) + a * t / (b + t)
+                  dew.append(round(b * g / (a - g), 2))
+                  used_fallback = True
+              else:
+                  dew.append(None)
+          h['dew_point_2m'] = dew
+          d.setdefault('hourly_units', {})['dew_point_2m'] = '°C'
+          d['dew_point_2m_source'] = 'direct_or_calculated_from_temperature_2m_and_relative_humidity_2m'
+          with open('/tmp/icon2i-normalized.json', 'w', encoding='utf-8') as f:
+              json.dump(d, f, ensure_ascii=False, indent=2)
+          ok = any(isinstance(v, (int, float)) and not isinstance(v, bool) for v in dew)
+          if ok:
+              sys.exit(4 if used_fallback else 0)
+          sys.exit(3)
           PY
             PARSE_EXIT=$?
             set -e
             if [ "$PARSE_EXIT" -eq 0 ]; then
               JSON_OK=1
               VALID=1
-              STATUS='ready_numeric_dew_point'
+              STATUS='ready_numeric_dew_point_direct'
+            elif [ "$PARSE_EXIT" -eq 4 ]; then
+              JSON_OK=1
+              VALID=1
+              STATUS='ready_numeric_dew_point_calculated'
             elif [ "$PARSE_EXIT" -eq 3 ]; then
               JSON_OK=1
-              STATUS='http_200_dew_point_all_null'
+              STATUS='http_200_no_numeric_dew_point_or_temp_rh'
             else
               STATUS="json_check_error_${PARSE_EXIT}"
             fi
           fi
 
           if [ "$JSON_OK" -eq 1 ]; then
-            python -m json.tool /tmp/icon2i.json > icon2i-salerno-result.json
+            cp /tmp/icon2i-normalized.json icon2i-salerno-result.json
           fi
 
           printf 'checked_utc=%s\ntrigger_event=%s\nrun=2026-08-18T00:00Z\nhttp_code=%s\ncurl_exit=%s\nstatus=%s\n' \
@@ -79,7 +110,7 @@ jobs:
           fi
 
           if [ "$VALID" -eq 1 ]; then
-            printf 'available_utc=%s\nrun=2026-08-18T00:00Z\nvariable=dew_point_2m\n' "$NOW" > icon2i-run-ready.txt
+            printf 'available_utc=%s\nrun=2026-08-18T00:00Z\nvariable=dew_point_2m\nsource=%s\n' "$NOW" "$STATUS" > icon2i-run-ready.txt
             git add icon2i-run-ready.txt
             git rm .github/workflows/icon2i-salerno-temp.yml
           fi
