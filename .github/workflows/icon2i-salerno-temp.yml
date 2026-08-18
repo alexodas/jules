@@ -14,41 +14,60 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Check Open-Meteo ICON-2I dew point
+      - name: Check ICON-2I and record heartbeat
         shell: bash
         run: |
-          set -euo pipefail
+          set -u
           URL='https://single-runs-api.open-meteo.com/v1/forecast?latitude=40.6824&longitude=14.7681&hourly=dew_point_2m&models=italia_meteo_arpae_icon_2i&timezone=Europe%2FRome&forecast_days=2&run=2026-08-18T00%3A00'
-          HTTP_CODE=$(curl --show-error --silent --location --write-out '%{http_code}' "$URL" -o /tmp/icon2i.json)
-          echo "HTTP $HTTP_CODE"
-          if [ "$HTTP_CODE" != '200' ]; then
-            echo 'Run non ancora disponibile.'
-            exit 0
-          fi
-          python - <<'PY'
-          import json, sys
-          p='/tmp/icon2i.json'
-          with open(p, encoding='utf-8') as f:
-              d=json.load(f)
-          vals=d.get('hourly',{}).get('dew_point_2m',[])
-          ok=any(isinstance(v,(int,float)) and not isinstance(v,bool) for v in vals)
-          if not ok:
-              print('HTTP 200 ma dew_point_2m non contiene valori numerici.')
-              sys.exit(2)
-          with open('icon2i-salerno-result.json','w',encoding='utf-8') as f:
-              json.dump(d,f,ensure_ascii=False,indent=2)
-              f.write('\n')
-          print('Run disponibile: JSON valido salvato.')
-          PY
+          NOW=$(date -u +%Y-%m-%dT%H:%M:%SZ)
 
-      - name: Save result and stop polling
-        if: success() && hashFiles('icon2i-salerno-result.json') != ''
-        shell: bash
-        run: |
+          set +e
+          HTTP_CODE=$(curl --show-error --silent --location --write-out '%{http_code}' "$URL" -o /tmp/icon2i.json)
+          CURL_EXIT=$?
+          set -e
+
+          VALID=0
+          STATUS='unknown'
+
+          if [ "$CURL_EXIT" -ne 0 ]; then
+            STATUS="curl_error_${CURL_EXIT}"
+          elif [ "$HTTP_CODE" != '200' ]; then
+            STATUS="http_${HTTP_CODE}"
+          else
+            set +e
+            python - <<'PY'
+          import json, sys
+          with open('/tmp/icon2i.json', encoding='utf-8') as f:
+              d = json.load(f)
+          vals = d.get('hourly', {}).get('dew_point_2m', [])
+          ok = any(isinstance(v, (int, float)) and not isinstance(v, bool) for v in vals)
+          sys.exit(0 if ok else 3)
+          PY
+            PARSE_EXIT=$?
+            set -e
+            if [ "$PARSE_EXIT" -eq 0 ]; then
+              VALID=1
+              STATUS='ready_numeric_dew_point'
+              python -m json.tool /tmp/icon2i.json > icon2i-salerno-result.json
+            elif [ "$PARSE_EXIT" -eq 3 ]; then
+              STATUS='http_200_dew_point_all_null'
+            else
+              STATUS="json_check_error_${PARSE_EXIT}"
+            fi
+          fi
+
+          printf 'checked_utc=%s\nrun=2026-08-18T00:00Z\nhttp_code=%s\ncurl_exit=%s\nstatus=%s\n' \
+            "$NOW" "$HTTP_CODE" "$CURL_EXIT" "$STATUS" > icon2i-last-check.txt
+
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          printf 'available_utc=%s\nrun=2026-08-18T00:00Z\nvariable=dew_point_2m\n' "$(date -u +%Y-%m-%dT%H:%M:%SZ)" > icon2i-run-ready.txt
-          git add icon2i-salerno-result.json icon2i-run-ready.txt
-          git rm .github/workflows/icon2i-salerno-temp.yml
-          git commit -m 'Save available ICON-2I Salerno run and stop polling [skip ci]'
+          git add icon2i-last-check.txt
+
+          if [ "$VALID" -eq 1 ]; then
+            printf 'available_utc=%s\nrun=2026-08-18T00:00Z\nvariable=dew_point_2m\n' "$NOW" > icon2i-run-ready.txt
+            git add icon2i-salerno-result.json icon2i-run-ready.txt
+            git rm .github/workflows/icon2i-salerno-temp.yml
+          fi
+
+          git commit -m "ICON-2I Salerno check: ${STATUS} [skip ci]" || exit 0
           git push origin HEAD:main
