@@ -32,6 +32,7 @@ jobs:
           set -e
 
           VALID=0
+          JSON_OK=0
           STATUS='unknown'
 
           if [ "$CURL_EXIT" -ne 0 ]; then
@@ -51,14 +52,19 @@ jobs:
             PARSE_EXIT=$?
             set -e
             if [ "$PARSE_EXIT" -eq 0 ]; then
+              JSON_OK=1
               VALID=1
               STATUS='ready_numeric_dew_point'
-              python -m json.tool /tmp/icon2i.json > icon2i-salerno-result.json
             elif [ "$PARSE_EXIT" -eq 3 ]; then
+              JSON_OK=1
               STATUS='http_200_dew_point_all_null'
             else
               STATUS="json_check_error_${PARSE_EXIT}"
             fi
+          fi
+
+          if [ "$JSON_OK" -eq 1 ]; then
+            python -m json.tool /tmp/icon2i.json > icon2i-salerno-result.json
           fi
 
           printf 'checked_utc=%s\ntrigger_event=%s\nrun=2026-08-18T00:00Z\nhttp_code=%s\ncurl_exit=%s\nstatus=%s\n' \
@@ -68,9 +74,13 @@ jobs:
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git add icon2i-last-check.txt
 
+          if [ "$JSON_OK" -eq 1 ]; then
+            git add icon2i-salerno-result.json
+          fi
+
           if [ "$VALID" -eq 1 ]; then
             printf 'available_utc=%s\nrun=2026-08-18T00:00Z\nvariable=dew_point_2m\n' "$NOW" > icon2i-run-ready.txt
-            git add icon2i-salerno-result.json icon2i-run-ready.txt
+            git add icon2i-run-ready.txt
             git rm .github/workflows/icon2i-salerno-temp.yml
           fi
 
