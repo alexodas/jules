@@ -1,0 +1,5 @@
+checked_utc=2026-08-18T06:59:59Z
+run=2026-08-18T00:00Z
+http_code=200
+curl_exit=0
+status=http_200_dew_point_all_null
