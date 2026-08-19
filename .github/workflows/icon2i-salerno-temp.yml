@@ -14,10 +14,20 @@ permissions:
 
 jobs:
   fetch-and-chart:
-    if: github.actor != 'github-actions[bot]'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+
+      - name: Write workflow diagnostic marker
+        shell: bash
+        run: |
+          set -e
+          printf 'started_utc=%s\nevent_name=%s\nactor=%s\nsha=%s\nref=%s\n' \
+            "$(date -u +%Y-%m-%dT%H:%M:%SZ)" \
+            "${{ github.event_name }}" \
+            "${{ github.actor }}" \
+            "${{ github.sha }}" \
+            "${{ github.ref }}" > icon2i-workflow-diagnostic.txt
 
       - name: Delete every PNG and corresponding ZIP from GitHub before workflow work
         shell: bash
@@ -26,30 +36,43 @@ jobs:
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
 
-          # Remove ALL PNG files and ZIP archives that correspond to PNG outputs.
-          # A ZIP is considered corresponding when it has the same basename as a PNG.
+          # Remove every PNG and any ZIP with the same basename.
           find . -type f -iname '*.png' -print0 | while IFS= read -r -d '' png; do
-            zip="${png%.*}.zip"
-            rm -f "$zip"
-            rm -f "$png"
+            rm -f "${png%.*}.zip" "$png"
           done
           find /tmp -maxdepth 3 -type f -iname '*.png' -print0 2>/dev/null | while IFS= read -r -d '' png; do
-            zip="${png%.*}.zip"
-            rm -f "$zip"
-            rm -f "$png"
+            rm -f "${png%.*}.zip" "$png"
           done
+
+          # Also remove orphan ZIP outputs left without their PNG counterpart.
+          find . -type f -iname '*.zip' -print0 | while IFS= read -r -d '' zipf; do
+            base="${zipf%.*}"
+            if [ "$(basename "$base")" = 'icon2i-vpd-salerno-milano' ]; then
+              rm -f "$zipf"
+            fi
+          done
+          find /tmp -maxdepth 3 -type f -iname '*.zip' -print0 2>/dev/null | while IFS= read -r -d '' zipf; do
+            base="${zipf%.*}"
+            if [ "$(basename "$base")" = 'icon2i-vpd-salerno-milano' ]; then
+              rm -f "$zipf"
+            fi
+          done
+
           git add -u -- '*.png' '*.zip' 2>/dev/null || true
+          git add icon2i-workflow-diagnostic.txt
 
           if ! git diff --cached --quiet; then
-            git commit -m 'Remove stale PNGs and matching ZIPs before ICON-2I generation [skip ci]'
+            git commit -m 'ICON-2I pre-run cleanup and diagnostic [skip ci]'
             git push origin HEAD:main
           fi
 
-          # Defensive verification: no PNG, nor a same-basename ZIP for a PNG output,
-          # may remain in the workflow workspace now.
           if find . -type f -iname '*.png' -print -quit | grep -q .; then
             echo 'ERROR: PNG still present after cleanup' >&2
             exit 20
+          fi
+          if [ -e icon2i-vpd-salerno-milano.zip ]; then
+            echo 'ERROR: stale ICON-2I ZIP still present after cleanup' >&2
+            exit 22
           fi
 
       - name: Install plotting dependency
@@ -89,15 +112,15 @@ jobs:
             )
           fi
 
-          for RUN_ISO in "${CANDIDATES[@]}"
-          do
+          for RUN_ISO in "${CANDIDATES[@]}"; do
             find /tmp -maxdepth 3 -type f -iname '*.png' -print0 2>/dev/null | while IFS= read -r -d '' png; do
               rm -f "${png%.*}.zip" "$png"
             done
             find . -type f -iname '*.png' -print0 2>/dev/null | while IFS= read -r -d '' png; do
               rm -f "${png%.*}.zip" "$png"
             done
-            rm -f /tmp/icon2i-vpd-summary.txt /tmp/icon2i-salerno-result.json /tmp/icon2i-milano-result.json /tmp/icon2i-vpd-salerno-milano.zip
+            rm -f icon2i-vpd-salerno-milano.zip /tmp/icon2i-vpd-salerno-milano.zip
+            rm -f /tmp/icon2i-vpd-summary.txt /tmp/icon2i-salerno-result.json /tmp/icon2i-milano-result.json
 
             RUN_ENCODED=$(printf '%s' "$RUN_ISO" | sed 's/:/%3A/g; s/Z$//')
             SALERNO_URL="https://single-runs-api.open-meteo.com/v1/forecast?latitude=40.6824&longitude=14.7681&hourly=${HOURLY}&models=italia_meteo_arpae_icon_2i&timezone=Europe%2FRome&forecast_days=2&run=${RUN_ENCODED}"
@@ -139,8 +162,6 @@ jobs:
               cp /tmp/icon2i-vpd-salerno-milano.png icon2i-vpd-salerno-milano.png
               cp /tmp/icon2i-vpd-summary.txt icon2i-vpd-summary.txt
 
-              # Post-process the freshly generated PNG into a ZIP archive so clients
-              # that cannot fetch repository PNG blobs directly can retrieve the ZIP.
               (cd /tmp && zip -j -q icon2i-vpd-salerno-milano.zip icon2i-vpd-salerno-milano.png)
               if [ ! -s /tmp/icon2i-vpd-salerno-milano.zip ]; then
                 echo 'ERROR: ZIP post-processing failed' >&2
@@ -155,13 +176,13 @@ jobs:
             "$NOW" "$TRIGGER" "$SELECTED_RUN" "$TODAY_LOCAL" "$STATUS" > icon2i-last-check.txt
 
           if [ "$READY" -eq 1 ]; then
-            printf 'available_utc=%s\nrun=%s\nforecast_date=%s\ncities=Salerno,Milano\ngraph=icon2i-vpd-salerno-milano.png\narchive=icon2i-vpd-salerno-milano.zip\n' \
+            printf 'ready=true\navailable_utc=%s\nrun=%s\nforecast_date=%s\ncities=Salerno,Milano\ngraph=icon2i-vpd-salerno-milano.png\narchive=icon2i-vpd-salerno-milano.zip\n' \
               "$NOW" "$SELECTED_RUN" "$TODAY_LOCAL" > icon2i-run-ready.txt
           fi
 
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add icon2i-last-check.txt
+          git add icon2i-last-check.txt icon2i-workflow-diagnostic.txt
           [ -f icon2i-salerno-result.json ] && git add icon2i-salerno-result.json
           [ -f icon2i-milano-result.json ] && git add icon2i-milano-result.json
           [ -f icon2i-vpd-summary.txt ] && git add icon2i-vpd-summary.txt
@@ -172,8 +193,7 @@ jobs:
           else
             git add -u icon2i-run-ready.txt 2>/dev/null || true
           fi
-          git add -u icon2i-vpd-summary.txt 2>/dev/null || true
-          git add -u icon2i-vpd-salerno-milano.zip 2>/dev/null || true
+          git add -u icon2i-vpd-summary.txt icon2i-vpd-salerno-milano.zip 2>/dev/null || true
 
           git commit -m "ICON-2I Salerno Milano today: ${STATUS} [skip ci]" || exit 0
           git push origin HEAD:main
