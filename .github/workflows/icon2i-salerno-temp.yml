@@ -120,7 +120,7 @@ jobs:
 
           printf 'checked_utc=%s\ntrigger_event=%s\nrun=%s\nforecast_date=%s\nstatus=%s\n' "$NOW" "$TRIGGER" "$SELECTED_RUN" "$TODAY_LOCAL" "$STATUS" > icon2i-last-check.txt
           if [ "$READY" -eq 1 ]; then
-            printf 'ready=true\navailable_utc=%s\nrun=%s\nforecast_date=%s\ncities=Salerno,Milano\ngraph=icon2i-vpd-salerno-milano.png\narchive=icon2i-vpd-salerno-milano.zip\n' "$NOW" "$SELECTED_RUN" "$TODAY_LOCAL" > icon2i-run-ready.txt
+            printf 'ready=true\navailable_utc=%s\nrun=%s\nforecast_date=%s\ncities=Salerno,Milano\ngraph=icon2i-vpd-salerno-milano.png\narchive=icon2i-vpd-salerno-milano.zip\nartifact=icon2i-vpd-salerno-milano-%s\n' "$NOW" "$SELECTED_RUN" "$TODAY_LOCAL" "${{ github.run_id }}" > icon2i-run-ready.txt
           fi
           git config user.name 'github-actions[bot]'; git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git add icon2i-last-check.txt icon2i-workflow-diagnostic.txt icon2i-candidate-diagnostic.txt
@@ -134,3 +134,12 @@ jobs:
           git add -u icon2i-vpd-summary.txt 2>/dev/null || true
           git commit -m "ICON-2I Salerno Milano today: ${STATUS} [skip ci]" || exit 0
           git push origin HEAD:main
+
+      - name: Upload freshly generated PNG artifact
+        if: ${{ hashFiles('icon2i-vpd-salerno-milano.png') != '' }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: icon2i-vpd-salerno-milano-${{ github.run_id }}
+          path: icon2i-vpd-salerno-milano.png
+          if-no-files-found: error
+          retention-days: 2
