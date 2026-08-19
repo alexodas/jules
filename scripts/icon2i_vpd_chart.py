@@ -109,7 +109,11 @@ def main():
     s_times, s_vpd = series_for_date(salerno, target_date)
     m_times, m_vpd = series_for_date(milano, target_date)
 
-    if len(s_times) < 24 or len(m_times) < 24:
+    # Un run del giorno corrente non copre necessariamente tutte le 24 ore locali:
+    # per esempio il run 00 UTC in estate parte dalle 02:00 Europe/Rome.
+    # È sufficiente che entrambe le città abbiano almeno un dato numerico per oggi;
+    # in questo modo viene preferito davvero il run più recente disponibile.
+    if not s_times or not m_times:
         Path(args.summary).write_text(
             "ready=false\n"
             f"run={args.run_iso}\n"
@@ -172,6 +176,12 @@ def main():
         "ready=true\n"
         f"run={args.run_iso}\n"
         f"forecast_date={target_date.isoformat()}\n"
+        f"salerno_valid_hours={len(s_times)}\n"
+        f"milano_valid_hours={len(m_times)}\n"
+        f"salerno_first_local_hour={s_times[0].strftime('%H:%M')}\n"
+        f"salerno_last_local_hour={s_times[-1].strftime('%H:%M')}\n"
+        f"milano_first_local_hour={m_times[0].strftime('%H:%M')}\n"
+        f"milano_last_local_hour={m_times[-1].strftime('%H:%M')}\n"
         f"salerno_dew_point_source={'fallback' if s_fallback else 'direct'}\n"
         f"milano_dew_point_source={'fallback' if m_fallback else 'direct'}\n"
         + extrema("salerno", s_vpd)
