@@ -19,26 +19,34 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Delete every PNG from GitHub before workflow work
+      - name: Delete every PNG and corresponding ZIP from GitHub before workflow work
         shell: bash
         run: |
           set -e
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
 
-          # Remove ALL PNG files from the checked-out repository, regardless of name/path.
-          # Commit and push this deletion immediately so the files are truly absent from
-          # the GitHub main branch before any new graph is generated.
-          find . -type f -iname '*.png' -print -delete
-          find /tmp -maxdepth 3 -type f -iname '*.png' -print -delete 2>/dev/null || true
-          git add -u -- '*.png' 2>/dev/null || true
+          # Remove ALL PNG files and ZIP archives that correspond to PNG outputs.
+          # A ZIP is considered corresponding when it has the same basename as a PNG.
+          find . -type f -iname '*.png' -print0 | while IFS= read -r -d '' png; do
+            zip="${png%.*}.zip"
+            rm -f "$zip"
+            rm -f "$png"
+          done
+          find /tmp -maxdepth 3 -type f -iname '*.png' -print0 2>/dev/null | while IFS= read -r -d '' png; do
+            zip="${png%.*}.zip"
+            rm -f "$zip"
+            rm -f "$png"
+          done
+          git add -u -- '*.png' '*.zip' 2>/dev/null || true
 
           if ! git diff --cached --quiet; then
-            git commit -m 'Remove stale PNGs before ICON-2I generation [skip ci]'
+            git commit -m 'Remove stale PNGs and matching ZIPs before ICON-2I generation [skip ci]'
             git push origin HEAD:main
           fi
 
-          # Defensive verification: no PNG may remain in the workflow workspace now.
+          # Defensive verification: no PNG, nor a same-basename ZIP for a PNG output,
+          # may remain in the workflow workspace now.
           if find . -type f -iname '*.png' -print -quit | grep -q .; then
             echo 'ERROR: PNG still present after cleanup' >&2
             exit 20
@@ -83,8 +91,12 @@ jobs:
 
           for RUN_ISO in "${CANDIDATES[@]}"
           do
-            find /tmp -maxdepth 3 -type f -iname '*.png' -delete 2>/dev/null || true
-            find . -type f -iname '*.png' -delete 2>/dev/null || true
+            find /tmp -maxdepth 3 -type f -iname '*.png' -print0 2>/dev/null | while IFS= read -r -d '' png; do
+              rm -f "${png%.*}.zip" "$png"
+            done
+            find . -type f -iname '*.png' -print0 2>/dev/null | while IFS= read -r -d '' png; do
+              rm -f "${png%.*}.zip" "$png"
+            done
             rm -f /tmp/icon2i-vpd-summary.txt /tmp/icon2i-salerno-result.json /tmp/icon2i-milano-result.json /tmp/icon2i-vpd-salerno-milano.zip
 
             RUN_ENCODED=$(printf '%s' "$RUN_ISO" | sed 's/:/%3A/g; s/Z$//')
