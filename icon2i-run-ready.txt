@@ -1,4 +1,4 @@
-available_utc=2026-08-19T07:39:41Z
+available_utc=2026-08-19T07:41:44Z
 run=2026-08-19T00:00Z
 forecast_date=2026-08-19
 cities=Salerno,Milano
