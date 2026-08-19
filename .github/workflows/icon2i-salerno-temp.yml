@@ -29,36 +29,18 @@ jobs:
             "${{ github.sha }}" \
             "${{ github.ref }}" > icon2i-workflow-diagnostic.txt
 
-      - name: Delete every PNG and corresponding ZIP from GitHub before workflow work
+      - name: Delete every icon PNG and ZIP before workflow work
         shell: bash
         run: |
           set -e
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
 
-          # Remove every PNG and any ZIP with the same basename.
-          find . -type f -iname '*.png' -print0 | while IFS= read -r -d '' png; do
-            rm -f "${png%.*}.zip" "$png"
-          done
-          find /tmp -maxdepth 3 -type f -iname '*.png' -print0 2>/dev/null | while IFS= read -r -d '' png; do
-            rm -f "${png%.*}.zip" "$png"
-          done
+          # Remove every file whose basename starts with "icon" and ends in .png or .zip.
+          find . -type f \( -iname 'icon*.png' -o -iname 'icon*.zip' \) -print -delete
+          find /tmp -maxdepth 3 -type f \( -iname 'icon*.png' -o -iname 'icon*.zip' \) -print -delete 2>/dev/null || true
 
-          # Also remove orphan ZIP outputs left without their PNG counterpart.
-          find . -type f -iname '*.zip' -print0 | while IFS= read -r -d '' zipf; do
-            base="${zipf%.*}"
-            if [ "$(basename "$base")" = 'icon2i-vpd-salerno-milano' ]; then
-              rm -f "$zipf"
-            fi
-          done
-          find /tmp -maxdepth 3 -type f -iname '*.zip' -print0 2>/dev/null | while IFS= read -r -d '' zipf; do
-            base="${zipf%.*}"
-            if [ "$(basename "$base")" = 'icon2i-vpd-salerno-milano' ]; then
-              rm -f "$zipf"
-            fi
-          done
-
-          git add -u -- '*.png' '*.zip' 2>/dev/null || true
+          git add -u -- 'icon*.png' 'icon*.zip' 2>/dev/null || true
           git add icon2i-workflow-diagnostic.txt
 
           if ! git diff --cached --quiet; then
@@ -66,13 +48,9 @@ jobs:
             git push origin HEAD:main
           fi
 
-          if find . -type f -iname '*.png' -print -quit | grep -q .; then
-            echo 'ERROR: PNG still present after cleanup' >&2
+          if find . -type f \( -iname 'icon*.png' -o -iname 'icon*.zip' \) -print -quit | grep -q .; then
+            echo 'ERROR: stale icon PNG/ZIP still present after cleanup' >&2
             exit 20
-          fi
-          if [ -e icon2i-vpd-salerno-milano.zip ]; then
-            echo 'ERROR: stale ICON-2I ZIP still present after cleanup' >&2
-            exit 22
           fi
 
       - name: Install plotting dependency
@@ -94,8 +72,10 @@ jobs:
           READY=0
           SELECTED_RUN='none'
 
-          rm -f icon2i-run-ready.txt icon2i-vpd-summary.txt icon2i-vpd-salerno-milano.zip
-          rm -f /tmp/icon2i-vpd-summary.txt /tmp/icon2i-salerno-result.json /tmp/icon2i-milano-result.json /tmp/icon2i-vpd-salerno-milano.zip
+          rm -f icon2i-run-ready.txt icon2i-vpd-summary.txt
+          find . -type f \( -iname 'icon*.png' -o -iname 'icon*.zip' \) -delete 2>/dev/null || true
+          find /tmp -maxdepth 3 -type f \( -iname 'icon*.png' -o -iname 'icon*.zip' \) -delete 2>/dev/null || true
+          rm -f /tmp/icon2i-vpd-summary.txt /tmp/icon2i-salerno-result.json /tmp/icon2i-milano-result.json
 
           if [ "$UTC_HOUR" -ge 12 ]; then
             CANDIDATES=(
@@ -113,13 +93,8 @@ jobs:
           fi
 
           for RUN_ISO in "${CANDIDATES[@]}"; do
-            find /tmp -maxdepth 3 -type f -iname '*.png' -print0 2>/dev/null | while IFS= read -r -d '' png; do
-              rm -f "${png%.*}.zip" "$png"
-            done
-            find . -type f -iname '*.png' -print0 2>/dev/null | while IFS= read -r -d '' png; do
-              rm -f "${png%.*}.zip" "$png"
-            done
-            rm -f icon2i-vpd-salerno-milano.zip /tmp/icon2i-vpd-salerno-milano.zip
+            find . -type f \( -iname 'icon*.png' -o -iname 'icon*.zip' \) -delete 2>/dev/null || true
+            find /tmp -maxdepth 3 -type f \( -iname 'icon*.png' -o -iname 'icon*.zip' \) -delete 2>/dev/null || true
             rm -f /tmp/icon2i-vpd-summary.txt /tmp/icon2i-salerno-result.json /tmp/icon2i-milano-result.json
 
             RUN_ENCODED=$(printf '%s' "$RUN_ISO" | sed 's/:/%3A/g; s/Z$//')
@@ -193,7 +168,8 @@ jobs:
           else
             git add -u icon2i-run-ready.txt 2>/dev/null || true
           fi
-          git add -u icon2i-vpd-summary.txt icon2i-vpd-salerno-milano.zip 2>/dev/null || true
+          git add -u -- 'icon*.png' 'icon*.zip' 2>/dev/null || true
+          git add -u icon2i-vpd-summary.txt 2>/dev/null || true
 
           git commit -m "ICON-2I Salerno Milano today: ${STATUS} [skip ci]" || exit 0
           git push origin HEAD:main
