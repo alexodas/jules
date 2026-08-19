@@ -63,8 +63,8 @@ jobs:
           READY=0
           SELECTED_RUN='none'
 
-          rm -f icon2i-run-ready.txt icon2i-vpd-summary.txt
-          rm -f /tmp/icon2i-vpd-summary.txt /tmp/icon2i-salerno-result.json /tmp/icon2i-milano-result.json
+          rm -f icon2i-run-ready.txt icon2i-vpd-summary.txt icon2i-vpd-salerno-milano.zip
+          rm -f /tmp/icon2i-vpd-summary.txt /tmp/icon2i-salerno-result.json /tmp/icon2i-milano-result.json /tmp/icon2i-vpd-salerno-milano.zip
 
           if [ "$UTC_HOUR" -ge 12 ]; then
             CANDIDATES=(
@@ -85,7 +85,7 @@ jobs:
           do
             find /tmp -maxdepth 3 -type f -iname '*.png' -delete 2>/dev/null || true
             find . -type f -iname '*.png' -delete 2>/dev/null || true
-            rm -f /tmp/icon2i-vpd-summary.txt /tmp/icon2i-salerno-result.json /tmp/icon2i-milano-result.json
+            rm -f /tmp/icon2i-vpd-summary.txt /tmp/icon2i-salerno-result.json /tmp/icon2i-milano-result.json /tmp/icon2i-vpd-salerno-milano.zip
 
             RUN_ENCODED=$(printf '%s' "$RUN_ISO" | sed 's/:/%3A/g; s/Z$//')
             SALERNO_URL="https://single-runs-api.open-meteo.com/v1/forecast?latitude=40.6824&longitude=14.7681&hourly=${HOURLY}&models=italia_meteo_arpae_icon_2i&timezone=Europe%2FRome&forecast_days=2&run=${RUN_ENCODED}"
@@ -126,6 +126,15 @@ jobs:
               cp /tmp/icon2i-milano-result.json icon2i-milano-result.json
               cp /tmp/icon2i-vpd-salerno-milano.png icon2i-vpd-salerno-milano.png
               cp /tmp/icon2i-vpd-summary.txt icon2i-vpd-summary.txt
+
+              # Post-process the freshly generated PNG into a ZIP archive so clients
+              # that cannot fetch repository PNG blobs directly can retrieve the ZIP.
+              (cd /tmp && zip -j -q icon2i-vpd-salerno-milano.zip icon2i-vpd-salerno-milano.png)
+              if [ ! -s /tmp/icon2i-vpd-salerno-milano.zip ]; then
+                echo 'ERROR: ZIP post-processing failed' >&2
+                exit 21
+              fi
+              cp /tmp/icon2i-vpd-salerno-milano.zip icon2i-vpd-salerno-milano.zip
               break
             fi
           done
@@ -134,7 +143,7 @@ jobs:
             "$NOW" "$TRIGGER" "$SELECTED_RUN" "$TODAY_LOCAL" "$STATUS" > icon2i-last-check.txt
 
           if [ "$READY" -eq 1 ]; then
-            printf 'available_utc=%s\nrun=%s\nforecast_date=%s\ncities=Salerno,Milano\ngraph=icon2i-vpd-salerno-milano.png\n' \
+            printf 'available_utc=%s\nrun=%s\nforecast_date=%s\ncities=Salerno,Milano\ngraph=icon2i-vpd-salerno-milano.png\narchive=icon2i-vpd-salerno-milano.zip\n' \
               "$NOW" "$SELECTED_RUN" "$TODAY_LOCAL" > icon2i-run-ready.txt
           fi
 
@@ -145,12 +154,14 @@ jobs:
           [ -f icon2i-milano-result.json ] && git add icon2i-milano-result.json
           [ -f icon2i-vpd-summary.txt ] && git add icon2i-vpd-summary.txt
           [ -f icon2i-vpd-salerno-milano.png ] && git add icon2i-vpd-salerno-milano.png
+          [ -f icon2i-vpd-salerno-milano.zip ] && git add icon2i-vpd-salerno-milano.zip
           if [ -f icon2i-run-ready.txt ]; then
             git add icon2i-run-ready.txt
           else
             git add -u icon2i-run-ready.txt 2>/dev/null || true
           fi
           git add -u icon2i-vpd-summary.txt 2>/dev/null || true
+          git add -u icon2i-vpd-salerno-milano.zip 2>/dev/null || true
 
           git commit -m "ICON-2I Salerno Milano today: ${STATUS} [skip ci]" || exit 0
           git push origin HEAD:main
