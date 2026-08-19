@@ -35,19 +35,14 @@ jobs:
           set -e
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-
-          # Remove every file whose basename starts with "icon" and ends in .png or .zip.
           find . -type f \( -iname 'icon*.png' -o -iname 'icon*.zip' \) -print -delete
           find /tmp -maxdepth 3 -type f \( -iname 'icon*.png' -o -iname 'icon*.zip' \) -print -delete 2>/dev/null || true
-
           git add -u -- 'icon*.png' 'icon*.zip' 2>/dev/null || true
           git add icon2i-workflow-diagnostic.txt
-
           if ! git diff --cached --quiet; then
             git commit -m 'ICON-2I pre-run cleanup and diagnostic [skip ci]'
             git push origin HEAD:main
           fi
-
           if find . -type f \( -iname 'icon*.png' -o -iname 'icon*.zip' \) -print -quit | grep -q .; then
             echo 'ERROR: stale icon PNG/ZIP still present after cleanup' >&2
             exit 20
@@ -67,109 +62,75 @@ jobs:
           YESTERDAY_UTC=$(date -u -d 'yesterday' +%Y-%m-%d)
           UTC_HOUR=$(date -u +%H)
           HOURLY='dew_point_2m,temperature_2m,relative_humidity_2m'
-
           STATUS='no_available_run'
           READY=0
           SELECTED_RUN='none'
-
+          : > icon2i-candidate-diagnostic.txt
           rm -f icon2i-run-ready.txt icon2i-vpd-summary.txt
           find . -type f \( -iname 'icon*.png' -o -iname 'icon*.zip' \) -delete 2>/dev/null || true
           find /tmp -maxdepth 3 -type f \( -iname 'icon*.png' -o -iname 'icon*.zip' \) -delete 2>/dev/null || true
           rm -f /tmp/icon2i-vpd-summary.txt /tmp/icon2i-salerno-result.json /tmp/icon2i-milano-result.json
 
           if [ "$UTC_HOUR" -ge 12 ]; then
-            CANDIDATES=(
-              "${TODAY_UTC}T12:00Z"
-              "${TODAY_UTC}T00:00Z"
-              "${YESTERDAY_UTC}T12:00Z"
-              "${YESTERDAY_UTC}T00:00Z"
-            )
+            CANDIDATES=("${TODAY_UTC}T12:00Z" "${TODAY_UTC}T00:00Z" "${YESTERDAY_UTC}T12:00Z" "${YESTERDAY_UTC}T00:00Z")
           else
-            CANDIDATES=(
-              "${TODAY_UTC}T00:00Z"
-              "${YESTERDAY_UTC}T12:00Z"
-              "${YESTERDAY_UTC}T00:00Z"
-            )
+            CANDIDATES=("${TODAY_UTC}T00:00Z" "${YESTERDAY_UTC}T12:00Z" "${YESTERDAY_UTC}T00:00Z")
           fi
 
           for RUN_ISO in "${CANDIDATES[@]}"; do
             find . -type f \( -iname 'icon*.png' -o -iname 'icon*.zip' \) -delete 2>/dev/null || true
             find /tmp -maxdepth 3 -type f \( -iname 'icon*.png' -o -iname 'icon*.zip' \) -delete 2>/dev/null || true
             rm -f /tmp/icon2i-vpd-summary.txt /tmp/icon2i-salerno-result.json /tmp/icon2i-milano-result.json
-
             RUN_ENCODED=$(printf '%s' "$RUN_ISO" | sed 's/:/%3A/g; s/Z$//')
             SALERNO_URL="https://single-runs-api.open-meteo.com/v1/forecast?latitude=40.6824&longitude=14.7681&hourly=${HOURLY}&models=italia_meteo_arpae_icon_2i&timezone=Europe%2FRome&forecast_days=2&run=${RUN_ENCODED}"
             MILANO_URL="https://single-runs-api.open-meteo.com/v1/forecast?latitude=45.4642&longitude=9.1900&hourly=${HOURLY}&models=italia_meteo_arpae_icon_2i&timezone=Europe%2FRome&forecast_days=2&run=${RUN_ENCODED}"
-
             set +e
-            SALERNO_HTTP=$(curl --show-error --silent --location --write-out '%{http_code}' "$SALERNO_URL" -o /tmp/icon2i-salerno-raw.json)
-            SALERNO_CURL=$?
-            MILANO_HTTP=$(curl --show-error --silent --location --write-out '%{http_code}' "$MILANO_URL" -o /tmp/icon2i-milano-raw.json)
-            MILANO_CURL=$?
+            SALERNO_HTTP=$(curl --show-error --silent --location --write-out '%{http_code}' "$SALERNO_URL" -o /tmp/icon2i-salerno-raw.json); SALERNO_CURL=$?
+            MILANO_HTTP=$(curl --show-error --silent --location --write-out '%{http_code}' "$MILANO_URL" -o /tmp/icon2i-milano-raw.json); MILANO_CURL=$?
             set -e
-
+            printf 'candidate=%s\nsalerno_curl=%s\nsalerno_http=%s\nmilano_curl=%s\nmilano_http=%s\n' "$RUN_ISO" "$SALERNO_CURL" "$SALERNO_HTTP" "$MILANO_CURL" "$MILANO_HTTP" >> icon2i-candidate-diagnostic.txt
             if [ "$SALERNO_CURL" -ne 0 ] || [ "$MILANO_CURL" -ne 0 ]; then
+              printf 'result=rejected\nreason=curl_failure\n---\n' >> icon2i-candidate-diagnostic.txt
               continue
             fi
             if [ "$SALERNO_HTTP" != '200' ] || [ "$MILANO_HTTP" != '200' ]; then
+              printf 'result=rejected\nreason=http_not_200\n---\n' >> icon2i-candidate-diagnostic.txt
               continue
             fi
-
             set +e
-            python scripts/icon2i_vpd_chart.py \
-              --salerno-raw /tmp/icon2i-salerno-raw.json \
-              --milano-raw /tmp/icon2i-milano-raw.json \
-              --salerno-json /tmp/icon2i-salerno-result.json \
-              --milano-json /tmp/icon2i-milano-result.json \
-              --run-iso "$RUN_ISO" \
-              --forecast-date "$TODAY_LOCAL" \
-              --output /tmp/icon2i-vpd-salerno-milano.png \
-              --summary /tmp/icon2i-vpd-summary.txt
+            python scripts/icon2i_vpd_chart.py --salerno-raw /tmp/icon2i-salerno-raw.json --milano-raw /tmp/icon2i-milano-raw.json --salerno-json /tmp/icon2i-salerno-result.json --milano-json /tmp/icon2i-milano-result.json --run-iso "$RUN_ISO" --forecast-date "$TODAY_LOCAL" --output /tmp/icon2i-vpd-salerno-milano.png --summary /tmp/icon2i-vpd-summary.txt
             CHART_EXIT=$?
             set -e
-
+            printf 'chart_exit=%s\n' "$CHART_EXIT" >> icon2i-candidate-diagnostic.txt
             if [ "$CHART_EXIT" -eq 0 ] && [ -s /tmp/icon2i-vpd-salerno-milano.png ]; then
-              SELECTED_RUN="$RUN_ISO"
-              READY=1
-              STATUS='ready_chart_salerno_milano_today'
+              printf 'result=accepted\nreason=chart_ready\n---\n' >> icon2i-candidate-diagnostic.txt
+              SELECTED_RUN="$RUN_ISO"; READY=1; STATUS='ready_chart_salerno_milano_today'
               cp /tmp/icon2i-salerno-result.json icon2i-salerno-result.json
               cp /tmp/icon2i-milano-result.json icon2i-milano-result.json
               cp /tmp/icon2i-vpd-salerno-milano.png icon2i-vpd-salerno-milano.png
               cp /tmp/icon2i-vpd-summary.txt icon2i-vpd-summary.txt
-
               (cd /tmp && zip -j -q icon2i-vpd-salerno-milano.zip icon2i-vpd-salerno-milano.png)
-              if [ ! -s /tmp/icon2i-vpd-salerno-milano.zip ]; then
-                echo 'ERROR: ZIP post-processing failed' >&2
-                exit 21
-              fi
+              [ -s /tmp/icon2i-vpd-salerno-milano.zip ] || exit 21
               cp /tmp/icon2i-vpd-salerno-milano.zip icon2i-vpd-salerno-milano.zip
               break
+            else
+              printf 'result=rejected\nreason=chart_not_ready\n---\n' >> icon2i-candidate-diagnostic.txt
             fi
           done
 
-          printf 'checked_utc=%s\ntrigger_event=%s\nrun=%s\nforecast_date=%s\nstatus=%s\n' \
-            "$NOW" "$TRIGGER" "$SELECTED_RUN" "$TODAY_LOCAL" "$STATUS" > icon2i-last-check.txt
-
+          printf 'checked_utc=%s\ntrigger_event=%s\nrun=%s\nforecast_date=%s\nstatus=%s\n' "$NOW" "$TRIGGER" "$SELECTED_RUN" "$TODAY_LOCAL" "$STATUS" > icon2i-last-check.txt
           if [ "$READY" -eq 1 ]; then
-            printf 'ready=true\navailable_utc=%s\nrun=%s\nforecast_date=%s\ncities=Salerno,Milano\ngraph=icon2i-vpd-salerno-milano.png\narchive=icon2i-vpd-salerno-milano.zip\n' \
-              "$NOW" "$SELECTED_RUN" "$TODAY_LOCAL" > icon2i-run-ready.txt
+            printf 'ready=true\navailable_utc=%s\nrun=%s\nforecast_date=%s\ncities=Salerno,Milano\ngraph=icon2i-vpd-salerno-milano.png\narchive=icon2i-vpd-salerno-milano.zip\n' "$NOW" "$SELECTED_RUN" "$TODAY_LOCAL" > icon2i-run-ready.txt
           fi
-
-          git config user.name 'github-actions[bot]'
-          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add icon2i-last-check.txt icon2i-workflow-diagnostic.txt
+          git config user.name 'github-actions[bot]'; git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add icon2i-last-check.txt icon2i-workflow-diagnostic.txt icon2i-candidate-diagnostic.txt
           [ -f icon2i-salerno-result.json ] && git add icon2i-salerno-result.json
           [ -f icon2i-milano-result.json ] && git add icon2i-milano-result.json
           [ -f icon2i-vpd-summary.txt ] && git add icon2i-vpd-summary.txt
           [ -f icon2i-vpd-salerno-milano.png ] && git add icon2i-vpd-salerno-milano.png
           [ -f icon2i-vpd-salerno-milano.zip ] && git add icon2i-vpd-salerno-milano.zip
-          if [ -f icon2i-run-ready.txt ]; then
-            git add icon2i-run-ready.txt
-          else
-            git add -u icon2i-run-ready.txt 2>/dev/null || true
-          fi
+          if [ -f icon2i-run-ready.txt ]; then git add icon2i-run-ready.txt; else git add -u icon2i-run-ready.txt 2>/dev/null || true; fi
           git add -u -- 'icon*.png' 'icon*.zip' 2>/dev/null || true
           git add -u icon2i-vpd-summary.txt 2>/dev/null || true
-
           git commit -m "ICON-2I Salerno Milano today: ${STATUS} [skip ci]" || exit 0
           git push origin HEAD:main
