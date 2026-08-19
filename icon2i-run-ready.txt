@@ -1,4 +1,0 @@
-available_utc=2026-08-19T07:05:44Z
-run=2026-08-19T00:00Z
-cities=Salerno,Milano
-graph=icon2i-vpd-salerno-milano.png
