@@ -37,11 +37,14 @@ jobs:
           STATUS='no_available_run'
           READY=0
           SELECTED_RUN='none'
-          rm -f icon2i-run-ready.txt icon2i-vpd-summary.txt icon2i-vpd-salerno-milano.png
 
-          # Considera solo run il cui orario nominale non sia nel futuro.
-          # Prima delle 12 UTC il run più recente candidabile è quello delle 00 UTC di oggi.
-          # Dalle 12 UTC in poi si prova prima quello delle 12 UTC di oggi.
+          # IMPORTANT: remove every previous ICON-2I graph before doing anything else.
+          # This guarantees that a failed or partial run can never expose a stale PNG.
+          rm -f icon2i*.png /tmp/icon2i*.png
+          rm -f icon2i-run-ready.txt icon2i-vpd-summary.txt
+          rm -f /tmp/icon2i-vpd-summary.txt /tmp/icon2i-salerno-result.json /tmp/icon2i-milano-result.json
+
+          # Consider only nominal runs that are not in the future.
           if [ "$UTC_HOUR" -ge 12 ]; then
             CANDIDATES=(
               "${TODAY_UTC}T12:00Z"
@@ -59,6 +62,9 @@ jobs:
 
           for RUN_ISO in "${CANDIDATES[@]}"
           do
+            # Also remove temporary graph and derived files before every candidate run.
+            rm -f /tmp/icon2i*.png /tmp/icon2i-vpd-summary.txt /tmp/icon2i-salerno-result.json /tmp/icon2i-milano-result.json
+
             RUN_ENCODED=$(printf '%s' "$RUN_ISO" | sed 's/:/%3A/g; s/Z$//')
             SALERNO_URL="https://single-runs-api.open-meteo.com/v1/forecast?latitude=40.6824&longitude=14.7681&hourly=${HOURLY}&models=italia_meteo_arpae_icon_2i&timezone=Europe%2FRome&forecast_days=2&run=${RUN_ENCODED}"
             MILANO_URL="https://single-runs-api.open-meteo.com/v1/forecast?latitude=45.4642&longitude=9.1900&hourly=${HOURLY}&models=italia_meteo_arpae_icon_2i&timezone=Europe%2FRome&forecast_days=2&run=${RUN_ENCODED}"
@@ -90,7 +96,7 @@ jobs:
             CHART_EXIT=$?
             set -e
 
-            if [ "$CHART_EXIT" -eq 0 ]; then
+            if [ "$CHART_EXIT" -eq 0 ] && [ -s /tmp/icon2i-vpd-salerno-milano.png ]; then
               SELECTED_RUN="$RUN_ISO"
               READY=1
               STATUS='ready_chart_salerno_milano_today'
@@ -122,6 +128,8 @@ jobs:
           else
             git add -u icon2i-run-ready.txt 2>/dev/null || true
           fi
+          # Stage deletion of stale PNG/summary if no new ready graph was produced.
+          git add -u '*.png' icon2i-vpd-summary.txt 2>/dev/null || true
 
           git commit -m "ICON-2I Salerno Milano today: ${STATUS} [skip ci]" || exit 0
           git push origin HEAD:main
