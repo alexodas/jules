@@ -1,0 +1,9 @@
+candidate=2026-08-19T12:00Z
+salerno_curl=0
+salerno_http=200
+milano_curl=0
+milano_http=200
+chart_exit=0
+result=accepted
+reason=chart_ready
+---
