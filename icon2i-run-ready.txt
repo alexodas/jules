@@ -1,0 +1,4 @@
+available_utc=2026-08-19T06:43:20Z
+run=2026-08-19T00:00Z
+variable=dew_point_2m
+source=ready_numeric_dew_point_direct

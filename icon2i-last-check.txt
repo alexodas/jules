@@ -1,6 +1,6 @@
-checked_utc=2026-08-19T05:51:57Z
+checked_utc=2026-08-19T06:43:20Z
 trigger_event=push
-run=2026-08-18T00:00Z
+run=2026-08-19T00:00Z
 http_code=200
 curl_exit=0
-status=http_200_no_numeric_dew_point_or_temp_rh
+status=ready_numeric_dew_point_direct
