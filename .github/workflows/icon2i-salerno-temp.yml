@@ -1,4 +1,4 @@
-name: ICON2I Salerno run availability
+name: ICON2I Salerno Milano VPD
 
 on:
   workflow_dispatch:
@@ -7,115 +7,92 @@ on:
     paths:
       - 'icon2i-trigger.txt'
       - '.github/workflows/icon2i-salerno-temp.yml'
+      - 'scripts/icon2i_vpd_chart.py'
 
 permissions:
   contents: write
 
 jobs:
-  fetch:
+  fetch-and-chart:
     if: github.actor != 'github-actions[bot]'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
 
-      - name: Check ICON-2I and record heartbeat
+      - name: Install plotting dependency
+        run: python -m pip install --disable-pip-version-check matplotlib
+
+      - name: Fetch ICON-2I, normalize data and generate deterministic chart
         shell: bash
         run: |
           set -u
           RUN_DATE=$(date -u +%Y-%m-%d)
           RUN_ISO="${RUN_DATE}T00:00Z"
           RUN_ENCODED="${RUN_DATE}T00%3A00"
-          URL="https://single-runs-api.open-meteo.com/v1/forecast?latitude=40.6824&longitude=14.7681&hourly=dew_point_2m,temperature_2m,relative_humidity_2m&models=italia_meteo_arpae_icon_2i&timezone=Europe%2FRome&forecast_days=2&run=${RUN_ENCODED}"
           NOW=$(date -u +%Y-%m-%dT%H:%M:%SZ)
           TRIGGER='${{ github.event_name }}'
 
+          HOURLY='dew_point_2m,temperature_2m,relative_humidity_2m'
+          SALERNO_URL="https://single-runs-api.open-meteo.com/v1/forecast?latitude=40.6824&longitude=14.7681&hourly=${HOURLY}&models=italia_meteo_arpae_icon_2i&timezone=Europe%2FRome&forecast_days=2&run=${RUN_ENCODED}"
+          MILANO_URL="https://single-runs-api.open-meteo.com/v1/forecast?latitude=45.4642&longitude=9.1900&hourly=${HOURLY}&models=italia_meteo_arpae_icon_2i&timezone=Europe%2FRome&forecast_days=2&run=${RUN_ENCODED}"
+
           set +e
-          HTTP_CODE=$(curl --show-error --silent --location --write-out '%{http_code}' "$URL" -o /tmp/icon2i.json)
-          CURL_EXIT=$?
+          SALERNO_HTTP=$(curl --show-error --silent --location --write-out '%{http_code}' "$SALERNO_URL" -o /tmp/icon2i-salerno-raw.json)
+          SALERNO_CURL=$?
+          MILANO_HTTP=$(curl --show-error --silent --location --write-out '%{http_code}' "$MILANO_URL" -o /tmp/icon2i-milano-raw.json)
+          MILANO_CURL=$?
           set -e
 
-          VALID=0
-          JSON_OK=0
           STATUS='unknown'
+          READY=0
+          rm -f icon2i-run-ready.txt
 
-          if [ "$CURL_EXIT" -ne 0 ]; then
-            STATUS="curl_error_${CURL_EXIT}"
-          elif [ "$HTTP_CODE" != '200' ]; then
-            STATUS="http_${HTTP_CODE}"
+          if [ "$SALERNO_CURL" -ne 0 ] || [ "$MILANO_CURL" -ne 0 ]; then
+            STATUS="curl_error_salerno_${SALERNO_CURL}_milano_${MILANO_CURL}"
+          elif [ "$SALERNO_HTTP" != '200' ] || [ "$MILANO_HTTP" != '200' ]; then
+            STATUS="http_salerno_${SALERNO_HTTP}_milano_${MILANO_HTTP}"
           else
             set +e
-            python - <<'PY'
-          import json, math, sys
-          with open('/tmp/icon2i.json', encoding='utf-8') as f:
-              d = json.load(f)
-          h = d.setdefault('hourly', {})
-          direct = h.get('dew_point_2m') or []
-          temps = h.get('temperature_2m') or []
-          rhs = h.get('relative_humidity_2m') or []
-          n = max(len(direct), len(temps), len(rhs))
-          dew = []
-          used_fallback = False
-          for i in range(n):
-              v = direct[i] if i < len(direct) else None
-              if isinstance(v, (int, float)) and not isinstance(v, bool):
-                  dew.append(v)
-                  continue
-              t = temps[i] if i < len(temps) else None
-              rh = rhs[i] if i < len(rhs) else None
-              if isinstance(t, (int, float)) and isinstance(rh, (int, float)) and not isinstance(t, bool) and not isinstance(rh, bool) and rh > 0:
-                  a, b = 17.625, 243.04
-                  g = math.log(rh / 100.0) + a * t / (b + t)
-                  dew.append(round(b * g / (a - g), 2))
-                  used_fallback = True
-              else:
-                  dew.append(None)
-          h['dew_point_2m'] = dew
-          d.setdefault('hourly_units', {})['dew_point_2m'] = '°C'
-          d['dew_point_2m_source'] = 'direct_or_calculated_from_temperature_2m_and_relative_humidity_2m'
-          with open('/tmp/icon2i-normalized.json', 'w', encoding='utf-8') as f:
-              json.dump(d, f, ensure_ascii=False, indent=2)
-          ok = any(isinstance(v, (int, float)) and not isinstance(v, bool) for v in dew)
-          if ok:
-              sys.exit(4 if used_fallback else 0)
-          sys.exit(3)
-          PY
-            PARSE_EXIT=$?
+            python scripts/icon2i_vpd_chart.py \
+              --salerno-raw /tmp/icon2i-salerno-raw.json \
+              --milano-raw /tmp/icon2i-milano-raw.json \
+              --salerno-json icon2i-salerno-result.json \
+              --milano-json icon2i-milano-result.json \
+              --run-iso "$RUN_ISO" \
+              --output icon2i-vpd-salerno-milano.png \
+              --summary icon2i-vpd-summary.txt
+            CHART_EXIT=$?
             set -e
-            if [ "$PARSE_EXIT" -eq 0 ]; then
-              JSON_OK=1
-              VALID=1
-              STATUS='ready_numeric_dew_point_direct'
-            elif [ "$PARSE_EXIT" -eq 4 ]; then
-              JSON_OK=1
-              VALID=1
-              STATUS='ready_numeric_dew_point_calculated'
-            elif [ "$PARSE_EXIT" -eq 3 ]; then
-              JSON_OK=1
-              STATUS='http_200_no_numeric_dew_point_or_temp_rh'
+
+            if [ "$CHART_EXIT" -eq 0 ]; then
+              STATUS='ready_chart_salerno_milano'
+              READY=1
+            elif [ "$CHART_EXIT" -eq 3 ]; then
+              STATUS='http_200_insufficient_numeric_data_for_tomorrow'
             else
-              STATUS="json_check_error_${PARSE_EXIT}"
+              STATUS="chart_error_${CHART_EXIT}"
             fi
           fi
 
-          if [ "$JSON_OK" -eq 1 ]; then
-            cp /tmp/icon2i-normalized.json icon2i-salerno-result.json
-          fi
+          printf 'checked_utc=%s\ntrigger_event=%s\nrun=%s\nsalerno_http_code=%s\nsalerno_curl_exit=%s\nmilano_http_code=%s\nmilano_curl_exit=%s\nstatus=%s\n' \
+            "$NOW" "$TRIGGER" "$RUN_ISO" "$SALERNO_HTTP" "$SALERNO_CURL" "$MILANO_HTTP" "$MILANO_CURL" "$STATUS" > icon2i-last-check.txt
 
-          printf 'checked_utc=%s\ntrigger_event=%s\nrun=%s\nhttp_code=%s\ncurl_exit=%s\nstatus=%s\n' \
-            "$NOW" "$TRIGGER" "$RUN_ISO" "$HTTP_CODE" "$CURL_EXIT" "$STATUS" > icon2i-last-check.txt
+          if [ "$READY" -eq 1 ]; then
+            printf 'available_utc=%s\nrun=%s\ncities=Salerno,Milano\ngraph=icon2i-vpd-salerno-milano.png\n' "$NOW" "$RUN_ISO" > icon2i-run-ready.txt
+          fi
 
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git add icon2i-last-check.txt
-
-          if [ "$JSON_OK" -eq 1 ]; then
-            git add icon2i-salerno-result.json
-          fi
-
-          if [ "$VALID" -eq 1 ]; then
-            printf 'available_utc=%s\nrun=%s\nvariable=dew_point_2m\nsource=%s\n' "$NOW" "$RUN_ISO" "$STATUS" > icon2i-run-ready.txt
+          [ -f icon2i-salerno-result.json ] && git add icon2i-salerno-result.json
+          [ -f icon2i-milano-result.json ] && git add icon2i-milano-result.json
+          [ -f icon2i-vpd-summary.txt ] && git add icon2i-vpd-summary.txt
+          [ -f icon2i-vpd-salerno-milano.png ] && git add icon2i-vpd-salerno-milano.png
+          if [ -f icon2i-run-ready.txt ]; then
             git add icon2i-run-ready.txt
+          else
+            git add -u icon2i-run-ready.txt 2>/dev/null || true
           fi
 
-          git commit -m "ICON-2I Salerno check: ${STATUS} [skip ci]" || exit 0
+          git commit -m "ICON-2I Salerno Milano: ${STATUS} [skip ci]" || exit 0
           git push origin HEAD:main
