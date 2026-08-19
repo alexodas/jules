@@ -58,9 +58,7 @@ def normalize_json(src_path, out_path, city):
     hourly["dew_point_2m"] = dew
     data.setdefault("hourly_units", {})["dew_point_2m"] = "°C"
     data["city"] = city
-    data["dew_point_2m_source"] = (
-        "direct_or_calculated_from_temperature_2m_and_relative_humidity_2m"
-    )
+    data["dew_point_2m_source"] = "direct_or_calculated_from_temperature_2m_and_relative_humidity_2m"
 
     with open(out_path, "w", encoding="utf-8") as f:
         json.dump(data, f, ensure_ascii=False, indent=2)
@@ -80,10 +78,14 @@ def series_for_date(data, target_date):
         dt = datetime.fromisoformat(t_str)
         if dt.date() != target_date:
             continue
-        vpd = skin_es - saturation_vapor_pressure(float(td))
         result_times.append(dt)
-        result_vpd.append(vpd)
+        result_vpd.append(skin_es - saturation_vapor_pressure(float(td)))
     return result_times, result_vpd
+
+
+def italian_date_label(d):
+    months = ["gennaio", "febbraio", "marzo", "aprile", "maggio", "giugno", "luglio", "agosto", "settembre", "ottobre", "novembre", "dicembre"]
+    return f"{d.day} {months[d.month - 1]} {d.year}"
 
 
 def main():
@@ -93,6 +95,7 @@ def main():
     p.add_argument("--salerno-json", required=True)
     p.add_argument("--milano-json", required=True)
     p.add_argument("--run-iso", required=True, help="Example: 2026-08-19T00:00Z")
+    p.add_argument("--forecast-date", required=True, help="Local Europe/Rome date, YYYY-MM-DD")
     p.add_argument("--output", required=True)
     p.add_argument("--summary", required=True)
     args = p.parse_args()
@@ -101,7 +104,7 @@ def main():
     milano, m_fallback = normalize_json(args.milano_raw, args.milano_json, "Milano")
 
     run_dt = datetime.fromisoformat(args.run_iso.replace("Z", "+00:00"))
-    target_date = run_dt.date() + timedelta(days=1)
+    target_date = datetime.strptime(args.forecast_date, "%Y-%m-%d").date()
 
     s_times, s_vpd = series_for_date(salerno, target_date)
     m_times, m_vpd = series_for_date(milano, target_date)
@@ -119,7 +122,6 @@ def main():
 
     fig, ax = plt.subplots(figsize=(16, 9))
 
-    # Bande VPD: colori e limiti fissi per mantenere sempre lo stesso layout.
     ax.axhspan(0.0, 1.5, facecolor="#e9c2c2", alpha=0.85, label="Afa pesante (0–1.5)")
     ax.axhspan(1.5, 2.0, facecolor="#efd2a8", alpha=0.85, label="Afoso (1.5–2.0)")
     ax.axhspan(2.0, 2.5, facecolor="#f4e5a8", alpha=0.85, label="Leggermente afoso (2.0–2.5)")
@@ -128,33 +130,23 @@ def main():
     ax.plot(s_times, s_vpd, color="#1f77b4", marker="o", linewidth=2.2, markersize=6, label="Salerno")
     ax.plot(m_times, m_vpd, color="#ff7f0e", marker="o", linewidth=2.2, markersize=6, label="Milano")
 
-    run_label = run_dt.strftime("%d/%m/%Y 00 UTC")
-    forecast_label = target_date.strftime("%d %B %Y")
-    months_it = {
-        "January":"gennaio","February":"febbraio","March":"marzo","April":"aprile",
-        "May":"maggio","June":"giugno","July":"luglio","August":"agosto",
-        "September":"settembre","October":"ottobre","November":"novembre","December":"dicembre"
-    }
-    for en, it in months_it.items():
-        forecast_label = forecast_label.replace(en, it)
-
+    run_label = run_dt.strftime("%d/%m/%Y %H UTC")
+    forecast_label = italian_date_label(target_date)
     ax.set_title(
-        f"Disagio da afa — confronto città, previsione per domani {forecast_label}\n"
-        f"Run ICON-2I precedente: {run_label} | Pelle umida assunta: 33 °C",
+        f"Disagio da afa — confronto città, previsione per oggi {forecast_label}\n"
+        f"Ultimo run ICON-2I disponibile: {run_label} | Pelle umida assunta: 33 °C",
         fontsize=20,
         fontweight="bold",
     )
     ax.set_ylabel("VPD pelle–aria (kPa)", fontsize=13)
     ax.set_xlabel("Ora locale (Europe/Rome)", fontsize=13)
     ax.set_ylim(0, 4.0)
-    ax.set_xlim(datetime.combine(target_date, datetime.min.time()),
-                datetime.combine(target_date, datetime.min.time()) + timedelta(hours=23))
+    ax.set_xlim(datetime.combine(target_date, datetime.min.time()), datetime.combine(target_date, datetime.min.time()) + timedelta(hours=23))
     ax.xaxis.set_major_locator(mdates.HourLocator(interval=2))
     ax.xaxis.set_major_formatter(mdates.DateFormatter("%H:%M"))
     plt.setp(ax.get_xticklabels(), rotation=45, ha="right")
     ax.grid(True, alpha=0.18)
 
-    # Legenda: prima le città, poi le bande.
     handles, labels = ax.get_legend_handles_labels()
     city_idx = [labels.index("Salerno"), labels.index("Milano")]
     band_names = ["Afa pesante (0–1.5)", "Afoso (1.5–2.0)", "Leggermente afoso (2.0–2.5)", "Niente afa (>2.5)"]
@@ -162,20 +154,19 @@ def main():
     order = city_idx + band_idx
     ax.legend([handles[i] for i in order], [labels[i] for i in order], loc="upper right", ncol=2, framealpha=0.95, fontsize=11)
 
-    source_note = (
+    fig.text(
+        0.025,
+        0.035,
         "Fonte dati: Open-Meteo Single Runs API | Modello: ItaliaMeteo ARPAE ICON-2I | "
-        f"Run usato: {run_label} | Variabile usata: dew_point_2m"
+        f"Run usato: {run_label} | Variabile usata: dew_point_2m",
+        fontsize=10,
     )
-    fig.text(0.025, 0.035, source_note, fontsize=10)
     fig.tight_layout(rect=[0.02, 0.07, 0.99, 0.98])
     fig.savefig(args.output, dpi=170, bbox_inches="tight")
     plt.close(fig)
 
     def extrema(name, vals):
-        return (
-            f"{name}_min_kpa={min(vals):.2f}\n"
-            f"{name}_max_kpa={max(vals):.2f}\n"
-        )
+        return f"{name}_min_kpa={min(vals):.2f}\n{name}_max_kpa={max(vals):.2f}\n"
 
     Path(args.summary).write_text(
         "ready=true\n"
