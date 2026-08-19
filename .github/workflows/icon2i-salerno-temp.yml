@@ -31,6 +31,7 @@ jobs:
           TODAY_LOCAL=$(TZ=Europe/Rome date +%Y-%m-%d)
           TODAY_UTC=$(date -u +%Y-%m-%d)
           YESTERDAY_UTC=$(date -u -d 'yesterday' +%Y-%m-%d)
+          UTC_HOUR=$(date -u +%H)
           HOURLY='dew_point_2m,temperature_2m,relative_humidity_2m'
 
           STATUS='no_available_run'
@@ -38,11 +39,25 @@ jobs:
           SELECTED_RUN='none'
           rm -f icon2i-run-ready.txt icon2i-vpd-summary.txt icon2i-vpd-salerno-milano.png
 
-          for RUN_ISO in \
-            "${TODAY_UTC}T12:00Z" \
-            "${TODAY_UTC}T00:00Z" \
-            "${YESTERDAY_UTC}T12:00Z" \
-            "${YESTERDAY_UTC}T00:00Z"
+          # Considera solo run il cui orario nominale non sia nel futuro.
+          # Prima delle 12 UTC il run più recente candidabile è quello delle 00 UTC di oggi.
+          # Dalle 12 UTC in poi si prova prima quello delle 12 UTC di oggi.
+          if [ "$UTC_HOUR" -ge 12 ]; then
+            CANDIDATES=(
+              "${TODAY_UTC}T12:00Z"
+              "${TODAY_UTC}T00:00Z"
+              "${YESTERDAY_UTC}T12:00Z"
+              "${YESTERDAY_UTC}T00:00Z"
+            )
+          else
+            CANDIDATES=(
+              "${TODAY_UTC}T00:00Z"
+              "${YESTERDAY_UTC}T12:00Z"
+              "${YESTERDAY_UTC}T00:00Z"
+            )
+          fi
+
+          for RUN_ISO in "${CANDIDATES[@]}"
           do
             RUN_ENCODED=$(printf '%s' "$RUN_ISO" | sed 's/:/%3A/g; s/Z$//')
             SALERNO_URL="https://single-runs-api.open-meteo.com/v1/forecast?latitude=40.6824&longitude=14.7681&hourly=${HOURLY}&models=italia_meteo_arpae_icon_2i&timezone=Europe%2FRome&forecast_days=2&run=${RUN_ENCODED}"
