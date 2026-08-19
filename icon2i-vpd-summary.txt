@@ -1,0 +1,9 @@
+ready=true
+run=2026-08-19T00:00Z
+forecast_date=2026-08-20
+salerno_dew_point_source=direct
+milano_dew_point_source=direct
+salerno_min_kpa=2.06
+salerno_max_kpa=2.45
+milano_min_kpa=2.53
+milano_max_kpa=3.04

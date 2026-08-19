@@ -1,4 +1,4 @@
-available_utc=2026-08-19T06:45:13Z
+available_utc=2026-08-19T07:02:50Z
 run=2026-08-19T00:00Z
-variable=dew_point_2m
-source=ready_numeric_dew_point_direct
+cities=Salerno,Milano
+graph=icon2i-vpd-salerno-milano.png

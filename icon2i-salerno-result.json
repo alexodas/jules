@@ -1,7 +1,7 @@
 {
   "latitude": 40.68,
   "longitude": 14.775001,
-  "generationtime_ms": 4.480600357055664,
+  "generationtime_ms": 2.971768379211426,
   "utc_offset_seconds": 7200,
   "timezone": "Europe/Rome",
   "timezone_abbreviation": "GMT+2",
@@ -214,5 +214,6 @@
       85
     ]
   },
+  "city": "Salerno",
   "dew_point_2m_source": "direct_or_calculated_from_temperature_2m_and_relative_humidity_2m"
 }
