@@ -1,8 +1,5 @@
-checked_utc=2026-08-19T07:15:22Z
+checked_utc=2026-08-19T07:16:14Z
 trigger_event=push
-run=2026-08-19T00:00Z
-salerno_http_code=200
-salerno_curl_exit=0
-milano_http_code=200
-milano_curl_exit=0
-status=chart_error_2
+run=2026-08-18T12:00Z
+forecast_date=2026-08-19
+status=ready_chart_salerno_milano_today
