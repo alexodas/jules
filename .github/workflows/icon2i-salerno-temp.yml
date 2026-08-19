@@ -22,7 +22,10 @@ jobs:
         shell: bash
         run: |
           set -u
-          URL='https://single-runs-api.open-meteo.com/v1/forecast?latitude=40.6824&longitude=14.7681&hourly=dew_point_2m,temperature_2m,relative_humidity_2m&models=italia_meteo_arpae_icon_2i&timezone=Europe%2FRome&forecast_days=2&run=2026-08-18T00%3A00'
+          RUN_DATE=$(date -u +%Y-%m-%d)
+          RUN_ISO="${RUN_DATE}T00:00Z"
+          RUN_ENCODED="${RUN_DATE}T00%3A00"
+          URL="https://single-runs-api.open-meteo.com/v1/forecast?latitude=40.6824&longitude=14.7681&hourly=dew_point_2m,temperature_2m,relative_humidity_2m&models=italia_meteo_arpae_icon_2i&timezone=Europe%2FRome&forecast_days=2&run=${RUN_ENCODED}"
           NOW=$(date -u +%Y-%m-%dT%H:%M:%SZ)
           TRIGGER='${{ github.event_name }}'
 
@@ -98,8 +101,8 @@ jobs:
             cp /tmp/icon2i-normalized.json icon2i-salerno-result.json
           fi
 
-          printf 'checked_utc=%s\ntrigger_event=%s\nrun=2026-08-18T00:00Z\nhttp_code=%s\ncurl_exit=%s\nstatus=%s\n' \
-            "$NOW" "$TRIGGER" "$HTTP_CODE" "$CURL_EXIT" "$STATUS" > icon2i-last-check.txt
+          printf 'checked_utc=%s\ntrigger_event=%s\nrun=%s\nhttp_code=%s\ncurl_exit=%s\nstatus=%s\n' \
+            "$NOW" "$TRIGGER" "$RUN_ISO" "$HTTP_CODE" "$CURL_EXIT" "$STATUS" > icon2i-last-check.txt
 
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
@@ -110,9 +113,8 @@ jobs:
           fi
 
           if [ "$VALID" -eq 1 ]; then
-            printf 'available_utc=%s\nrun=2026-08-18T00:00Z\nvariable=dew_point_2m\nsource=%s\n' "$NOW" "$STATUS" > icon2i-run-ready.txt
+            printf 'available_utc=%s\nrun=%s\nvariable=dew_point_2m\nsource=%s\n' "$NOW" "$RUN_ISO" "$STATUS" > icon2i-run-ready.txt
             git add icon2i-run-ready.txt
-            git rm .github/workflows/icon2i-salerno-temp.yml
           fi
 
           git commit -m "ICON-2I Salerno check: ${STATUS} [skip ci]" || exit 0
