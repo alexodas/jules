@@ -1,13 +1,5 @@
 candidate=2026-08-20T00:00Z
 salerno_curl=0
-salerno_http=400
-milano_curl=0
-milano_http=400
-result=rejected
-reason=http_not_200
----
-candidate=2026-08-19T12:00Z
-salerno_curl=0
 salerno_http=200
 milano_curl=0
 milano_http=200
