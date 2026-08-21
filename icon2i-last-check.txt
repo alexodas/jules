@@ -1,5 +1,5 @@
-checked_utc=2026-08-21T21:28:56Z
+checked_utc=2026-08-21T22:27:57Z
 trigger_event=push
 run=2026-08-21T12:00Z
-forecast_date=2026-08-21
+forecast_date=2026-08-22
 status=ready_chart_salerno_milano_today
