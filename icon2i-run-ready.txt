@@ -1,8 +1,8 @@
 ready=true
-available_utc=2026-08-21T18:25:56Z
+available_utc=2026-08-21T19:28:16Z
 run=2026-08-21T12:00Z
 forecast_date=2026-08-21
 cities=Salerno,Milano
 graph=icon2i-vpd-salerno-milano.png
 archive=icon2i-vpd-salerno-milano.zip
-artifact=icon2i-vpd-salerno-milano-32513288776
+artifact=icon2i-vpd-salerno-milano-32518606734
