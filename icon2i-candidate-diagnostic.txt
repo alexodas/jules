@@ -1,4 +1,4 @@
-candidate=2026-08-21T12:00Z
+candidate=2026-08-22T00:00Z
 salerno_curl=0
 salerno_http=200
 milano_curl=0
