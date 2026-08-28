@@ -7,6 +7,7 @@ on:
       - "PythagoreanIsotropyFull.lean"
       - "lakefile.toml"
       - "lean-toolchain"
+      - "lake-manifest.json"
       - ".github/workflows/lean-pythagorean-isotropy.yml"
   workflow_dispatch:
 
@@ -17,9 +18,23 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Install elan
+      - name: Restore Lean and Mathlib cache
+        id: lean-cache
+        uses: actions/cache/restore@v4
+        with:
+          path: |
+            ~/.elan
+            .lake/packages
+            .lake/build
+          key: lean-${{ runner.os }}-${{ hashFiles('lean-toolchain', 'lakefile.toml', 'lake-manifest.json') }}
+          restore-keys: |
+            lean-${{ runner.os }}-
+
+      - name: Install elan if needed
         run: |
-          curl https://raw.githubusercontent.com/leanprover/elan/master/elan-init.sh -sSf | sh -s -- -y --default-toolchain none
+          if [ ! -x "$HOME/.elan/bin/elan" ]; then
+            curl https://raw.githubusercontent.com/leanprover/elan/master/elan-init.sh -sSf | sh -s -- -y --default-toolchain none
+          fi
           echo "$HOME/.elan/bin" >> "$GITHUB_PATH"
 
       - name: Resolve Mathlib dependency
@@ -33,3 +48,13 @@ jobs:
       - name: Compile PythagoreanIsotropyFull.lean
         run: |
           lake env lean PythagoreanIsotropyFull.lean
+
+      - name: Save Lean and Mathlib cache
+        if: always() && steps.lean-cache.outputs.cache-hit != 'true'
+        uses: actions/cache/save@v4
+        with:
+          path: |
+            ~/.elan
+            .lake/packages
+            .lake/build
+          key: ${{ steps.lean-cache.outputs.cache-primary-key }}
