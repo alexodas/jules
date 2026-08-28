@@ -47,6 +47,10 @@ below rather than smuggled in through a distance formula.
 
 namespace PythagoreanIsotropy
 
+/-! ============================================================
+    1. Coordinate vectors, with no metric structure
+    ============================================================ -/
+
 structure Vec2 where
   x : ℝ
   y : ℝ
@@ -78,7 +82,15 @@ def negE1 : Vec2 := ⟨-1, 0⟩
 def axisX (r : ℝ) : Vec2 := ⟨r, 0⟩
 def axisY (r : ℝ) : Vec2 := ⟨0, r⟩
 
+/--
+This is merely a coordinate polynomial.
+It is NOT the definition of primitive geometric length.
+-/
 def stdQ (v : Vec2) : ℝ := v.x^2 + v.y^2
+
+/-! ============================================================
+    2. Explicit 2 x 2 matrices
+    ============================================================ -/
 
 structure Mat2 where
   a11 : ℝ
@@ -117,6 +129,7 @@ def mulVec (A : Mat2) (v : Vec2) : Vec2 :=
   ⟨A.a11 * v.x + A.a12 * v.y,
    A.a21 * v.x + A.a22 * v.y⟩
 
+/-- General symmetric matrix [[alpha,beta],[beta,gamma]]. -/
 def symm (α β γ : ℝ) : Mat2 :=
   ⟨α, β, β, γ⟩
 
@@ -144,6 +157,12 @@ theorem ext_of_basis
   simp [mulVec, e1, e2] at h11 h21 h12 h22
   exact Mat2.ext' h11 h12 h21 h22
 
+/--
+If an infinitesimal generator sends e1 to omega e2 and
+e2 to -omega e1, then its matrix is exactly omega J.
+
+This statement uses NO metric formula.
+-/
 theorem generator_eq_omega_J
     (A : Mat2) (ω : ℝ)
     (h1 : mulVec A e1 = Vec2.smul ω e2)
@@ -157,9 +176,12 @@ theorem generator_eq_omega_J
   · rw [h2]
     apply Vec2.ext'
     · simp [mulVec, smul, J, e1, e2, Vec2.smul]
-      ring
     · simp [mulVec, smul, J, e1, e2, Vec2.smul]
 
+/--
+After choosing the rotation parameter so that angular speed is one,
+the generator is J.
+-/
 theorem normalized_generator_eq_J
     (A : Mat2)
     (h1 : mulVec A e1 = e2)
@@ -183,6 +205,9 @@ theorem normalized_generator_eq_J
     · simp [smul, J]
     · simp [smul, J])
 
+/--
+J is skew-symmetric, as a derived coordinate fact.
+-/
 theorem transpose_J :
     transpose J = smul (-1) J := by
   apply Mat2.ext'
@@ -191,6 +216,10 @@ theorem transpose_J :
   · simp [transpose, smul, J]
   · simp [transpose, smul, J]
 
+/--
+Algebraic heart:
+a symmetric matrix commuting with J must be scalar.
+-/
 theorem symmetric_commuting_with_J
     (α β γ : ℝ)
     (h : mmul (symm α β γ) J = mmul J (symm α β γ)) :
@@ -210,9 +239,17 @@ theorem scalar_identity_commutes_with_J (c : ℝ) :
 
 end Mat2
 
+/-! ============================================================
+    3. Symmetric quadratic forms
+    ============================================================ -/
+
 def quadSym (α β γ : ℝ) (v : Vec2) : ℝ :=
   α * v.x^2 + 2 * β * v.x * v.y + γ * v.y^2
 
+/--
+The commutation relation with J forces the quadratic form to be
+a scalar multiple of x^2+y^2.
+-/
 theorem quadratic_form_forced_by_J
     (α β γ : ℝ)
     (hcomm :
@@ -225,6 +262,16 @@ theorem quadratic_form_forced_by_J
   simp [quadSym, stdQ]
   ring
 
+/-! ============================================================
+    4. Primitive congruence by superposition
+    ============================================================ -/
+
+/--
+The truly primitive object is congruence, not a coordinate distance.
+
+`congruent u v` means that the origin-based segment represented by u
+can be rigidly superposed on the one represented by v.
+-/
 structure SuperpositionGeometry where
   congruent : Vec2 → Vec2 → Prop
   refl : ∀ v, congruent v v
@@ -255,6 +302,10 @@ theorem axis_coordinate_unique
   exact S.axis_unique hr hs hrs
 
 end SuperpositionGeometry
+
+/-! ============================================================
+    5. Numerical length derived from congruence + axis calibration
+    ============================================================ -/
 
 structure CalibratedLength (S : SuperpositionGeometry) where
   length : Vec2 → ℝ
@@ -299,6 +350,10 @@ theorem axis_calibration
 
 end CalibratedLength
 
+/-! ============================================================
+    6. Primitive rigid motions
+    ============================================================ -/
+
 structure RigidMotion (S : SuperpositionGeometry) where
   map : Vec2 → Vec2
   rigid : ∀ v, S.congruent v (map v)
@@ -310,10 +365,18 @@ structure AxisSuperposition (S : SuperpositionGeometry)
   r_nonneg : 0 ≤ r
   hits_axis : motion.map (Vec2.mk a b) = axisX r
 
+/-! ============================================================
+    7. The algebraic/dynamical channel
+    ============================================================ -/
+
 structure JInvariantMotion (S : SuperpositionGeometry) where
   rigidMotion : RigidMotion S
   preserves_stdQ :
     ∀ v, stdQ (rigidMotion.map v) = stdQ v
+
+/-! ============================================================
+    8. Dual-channel Pythagoras
+    ============================================================ -/
 
 theorem pythagoras_from_superposition
     (S : SuperpositionGeometry)
@@ -351,6 +414,10 @@ theorem coordinate_pythagorean
   rw [hc] at h
   exact h
 
+/-! ============================================================
+    9. Where J comes from
+    ============================================================ -/
+
 structure PrimitiveInfinitesimalRotation where
   generator : Mat2
   omega : ℝ
@@ -376,5 +443,37 @@ theorem normalized_generator_of_primitive_rotation
   · simp [Mat2.smul, Mat2.J]
   · simp [Mat2.smul, Mat2.J]
   · simp [Mat2.smul, Mat2.J]
+
+/-! ============================================================
+    10. Exact logical dependency summary
+    ============================================================
+
+The file proves:
+
+(A) Superposition/congruence + calibrated axis
+      => unique numerical primitive length.
+
+(B) Primitive infinitesimal rotational basis action
+      => generator = omega J.
+
+(C) Parameter normalization omega = 1
+      => generator = J.
+
+(D) J + symmetric quadratic invariance
+      => Q = lambda (x^2+y^2).
+
+(E) Conservation of x^2+y^2 under the rigid rotation +
+    superposition of the diagonal onto the calibrated axis
+      => a^2+b^2 = c^2.
+
+No theorem in this file defines diagonal length by
+sqrt(x^2+y^2).
+
+The genuinely deeper next theorem would replace the fields
+`e1_velocity` and `e2_velocity` of `PrimitiveInfinitesimalRotation`
+by a more synthetic geometric axiom system and derive those velocities.
+That requires formalizing primitive perpendicularity, orientation,
+a differentiable one-parameter linear action, and its normalization.
+============================================================ -/
 
 end PythagoreanIsotropy
