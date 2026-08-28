@@ -50,7 +50,12 @@ namespace PythagoreanIsotropy
 structure Vec2 where
   x : ℝ
   y : ℝ
-deriving Repr, DecidableEq
+
+@[ext] theorem Vec2.ext' {u v : Vec2}
+    (hx : u.x = v.x) (hy : u.y = v.y) : u = v := by
+  cases u
+  cases v
+  simp_all
 
 namespace Vec2
 
@@ -80,7 +85,15 @@ structure Mat2 where
   a12 : ℝ
   a21 : ℝ
   a22 : ℝ
-deriving Repr, DecidableEq
+
+@[ext] theorem Mat2.ext' {A B : Mat2}
+    (h11 : A.a11 = B.a11)
+    (h12 : A.a12 = B.a12)
+    (h21 : A.a21 = B.a21)
+    (h22 : A.a22 = B.a22) : A = B := by
+  cases A
+  cases B
+  simp_all
 
 namespace Mat2
 
@@ -109,11 +122,15 @@ def symm (α β γ : ℝ) : Mat2 :=
 
 @[simp] theorem mulVec_e1 (A : Mat2) :
     mulVec A e1 = ⟨A.a11, A.a21⟩ := by
-  ext <;> simp [mulVec, e1]
+  apply Vec2.ext'
+  · simp [mulVec, e1]
+  · simp [mulVec, e1]
 
 @[simp] theorem mulVec_e2 (A : Mat2) :
     mulVec A e2 = ⟨A.a12, A.a22⟩ := by
-  ext <;> simp [mulVec, e2]
+  apply Vec2.ext'
+  · simp [mulVec, e2]
+  · simp [mulVec, e2]
 
 theorem ext_of_basis
     (A B : Mat2)
@@ -125,9 +142,7 @@ theorem ext_of_basis
   have h12 := congrArg Vec2.x h2
   have h22 := congrArg Vec2.y h2
   simp [mulVec, e1, e2] at h11 h21 h12 h22
-  cases A
-  cases B
-  simp_all
+  exact Mat2.ext' h11 h12 h21 h22
 
 theorem generator_eq_omega_J
     (A : Mat2) (ω : ℝ)
@@ -136,24 +151,45 @@ theorem generator_eq_omega_J
     A = smul ω J := by
   apply ext_of_basis A (smul ω J)
   · rw [h1]
-    ext <;> simp [mulVec, smul, J, e1, e2, Vec2.smul]
+    apply Vec2.ext'
+    · simp [mulVec, smul, J, e1, e2, Vec2.smul]
+    · simp [mulVec, smul, J, e1, e2, Vec2.smul]
   · rw [h2]
-    ext <;> simp [mulVec, smul, J, e1, e2, Vec2.smul]
-    ring
+    apply Vec2.ext'
+    · simp [mulVec, smul, J, e1, e2, Vec2.smul]
+      ring
+    · simp [mulVec, smul, J, e1, e2, Vec2.smul]
 
 theorem normalized_generator_eq_J
     (A : Mat2)
     (h1 : mulVec A e1 = e2)
     (h2 : mulVec A e2 = negE1) :
     A = J := by
+  have hs1 : Vec2.smul 1 e2 = e2 := by
+    apply Vec2.ext'
+    · simp [Vec2.smul, e2]
+    · simp [Vec2.smul, e2]
+  have hs2 : Vec2.smul (-1) e1 = negE1 := by
+    apply Vec2.ext'
+    · simp [Vec2.smul, e1, negE1]
+    · simp [Vec2.smul, e1, negE1]
   have h := generator_eq_omega_J A 1
-    (by simpa [Vec2.smul] using h1)
-    (by simpa [Vec2.smul, negE1] using h2)
-  simpa [smul, J] using h
+    (h1.trans hs1.symm)
+    (h2.trans hs2.symm)
+  exact h.trans (by
+    apply Mat2.ext'
+    · simp [smul, J]
+    · simp [smul, J]
+    · simp [smul, J]
+    · simp [smul, J])
 
 theorem transpose_J :
     transpose J = smul (-1) J := by
-  ext <;> simp [transpose, smul, J]
+  apply Mat2.ext'
+  · simp [transpose, smul, J]
+  · simp [transpose, smul, J]
+  · simp [transpose, smul, J]
+  · simp [transpose, smul, J]
 
 theorem symmetric_commuting_with_J
     (α β γ : ℝ)
@@ -164,9 +200,13 @@ theorem symmetric_commuting_with_J
   simp [mmul, symm, J] at h11 h12
   constructor <;> linarith
 
-theorem scalar_identity_commutes_with_J (λ : ℝ) :
-    mmul (symm λ 0 λ) J = mmul J (symm λ 0 λ) := by
-  ext <;> simp [mmul, symm, J]
+theorem scalar_identity_commutes_with_J (c : ℝ) :
+    mmul (symm c 0 c) J = mmul J (symm c 0 c) := by
+  apply Mat2.ext'
+  · simp [mmul, symm, J]
+  · simp [mmul, symm, J]
+  · simp [mmul, symm, J]
+  · simp [mmul, symm, J]
 
 end Mat2
 
@@ -246,7 +286,7 @@ theorem congruent_preserves_length
     L.represents v
   have hu_axis : S.congruent u (axisX (L.length v)) :=
     S.trans huv hv
-  exact L.unique u (L.nonneg v) hu_axis
+  exact CalibratedLength.unique S L u (L.nonneg v) hu_axis
 
 theorem axis_calibration
     (S : SuperpositionGeometry)
@@ -255,7 +295,7 @@ theorem axis_calibration
     (hr : 0 ≤ r)
     (haxis : S.congruent (axisX r) (axisX r) := S.refl (axisX r)) :
     L.length (axisX r) = r := by
-  exact L.unique (axisX r) hr haxis
+  exact CalibratedLength.unique S L (axisX r) hr haxis
 
 end CalibratedLength
 
@@ -268,7 +308,7 @@ structure AxisSuperposition (S : SuperpositionGeometry)
   motion : RigidMotion S
   r : ℝ
   r_nonneg : 0 ≤ r
-  hits_axis : motion.map ⟨a, b⟩ = axisX r
+  hits_axis : motion.map (Vec2.mk a b) = axisX r
 
 structure JInvariantMotion (S : SuperpositionGeometry) where
   rigidMotion : RigidMotion S
@@ -281,19 +321,19 @@ theorem pythagoras_from_superposition
     (R : JInvariantMotion S)
     (a b r : ℝ)
     (hr : 0 ≤ r)
-    (haxis : R.rigidMotion.map ⟨a, b⟩ = axisX r) :
-    a^2 + b^2 = (L.length ⟨a, b⟩)^2 := by
-  have hQ := R.preserves_stdQ ⟨a, b⟩
+    (haxis : R.rigidMotion.map (Vec2.mk a b) = axisX r) :
+    a^2 + b^2 = (L.length (Vec2.mk a b))^2 := by
+  have hQ := R.preserves_stdQ (Vec2.mk a b)
   rw [haxis] at hQ
   have h_dyn : a^2 + b^2 = r^2 := by
     simpa [stdQ, axisX] using hQ.symm
   have hrigid :
-      S.congruent ⟨a, b⟩ (axisX r) := by
-    have h := R.rigidMotion.rigid ⟨a, b⟩
+      S.congruent (Vec2.mk a b) (axisX r) := by
+    have h := R.rigidMotion.rigid (Vec2.mk a b)
     rw [haxis] at h
     exact h
-  have hlength : L.length ⟨a, b⟩ = r := by
-    exact L.unique ⟨a, b⟩ hr hrigid
+  have hlength : L.length (Vec2.mk a b) = r := by
+    exact CalibratedLength.unique S L (Vec2.mk a b) hr hrigid
   rw [hlength]
   exact h_dyn
 
@@ -303,8 +343,8 @@ theorem coordinate_pythagorean
     (R : JInvariantMotion S)
     (a b c r : ℝ)
     (hr : 0 ≤ r)
-    (haxis : R.rigidMotion.map ⟨a, b⟩ = axisX r)
-    (hc : L.length ⟨a, b⟩ = c) :
+    (haxis : R.rigidMotion.map (Vec2.mk a b) = axisX r)
+    (hc : L.length (Vec2.mk a b) = c) :
     a^2 + b^2 = c^2 := by
   have h :=
     pythagoras_from_superposition S L R a b r hr haxis
@@ -331,6 +371,10 @@ theorem normalized_generator_of_primitive_rotation
     (hω : R.omega = 1) :
     R.generator = Mat2.J := by
   rw [generator_of_primitive_rotation R, hω]
-  ext <;> simp [Mat2.smul, Mat2.J]
+  apply Mat2.ext'
+  · simp [Mat2.smul, Mat2.J]
+  · simp [Mat2.smul, Mat2.J]
+  · simp [Mat2.smul, Mat2.J]
+  · simp [Mat2.smul, Mat2.J]
 
 end PythagoreanIsotropy
