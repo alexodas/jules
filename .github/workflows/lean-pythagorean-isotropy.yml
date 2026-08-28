@@ -1,0 +1,35 @@
+name: Lean Pythagorean Isotropy
+
+on:
+  push:
+    branches: ["main"]
+    paths:
+      - "PythagoreanIsotropyFull.lean"
+      - "lakefile.toml"
+      - "lean-toolchain"
+      - ".github/workflows/lean-pythagorean-isotropy.yml"
+  workflow_dispatch:
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install elan
+        run: |
+          curl https://raw.githubusercontent.com/leanprover/elan/master/elan-init.sh -sSf | sh -s -- -y --default-toolchain none
+          echo "$HOME/.elan/bin" >> "$GITHUB_PATH"
+
+      - name: Resolve Mathlib dependency
+        run: |
+          lake update
+
+      - name: Download Mathlib cache
+        run: |
+          lake exe cache get
+
+      - name: Compile PythagoreanIsotropyFull.lean
+        run: |
+          lake env lean PythagoreanIsotropyFull.lean
