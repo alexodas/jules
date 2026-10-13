@@ -1,3 +1,0 @@
-run=2026-08-19T00:00Z
-delivered_utc=2026-08-19T06:45:00Z
-file=salerno_vpd_icon2i_2026-08-19.png
