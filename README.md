@@ -7,6 +7,116 @@ Alessandro Odasso is **not a mathematician**. He is interested in experimenting
 with large language models (LLMs) to understand how powerful they are, including
 whether they can help develop and formally check mathematical arguments.
 
+## Verified results at a glance (Lean 4 / Mathlib)
+
+**Verification baseline:** the source `InfiniteTilings.lean` at the merged
+PR #10 head commit `1f9e583` passed the GitHub Actions
+`Lean 4 / Mathlib proof check` workflow (including `lake build`) on
+2026-10-16. The results below are claims about the precise statements
+and definitions formalized in that file, **not** about the Riemann zeta
+function. They are organized by *what has actually been proved* rather
+than by the chronological order in which experiments were added.
+
+### A. Analytic canonical products (proved)
+
+Given a positive sequence `q(n)`, a complex center `c`, and a
+nonzero complex direction `d`, define a paired canonical factor
+
+```text
+1 - ((s - c) / (d * q(n)))^2
+```
+
+and its infinite product. A summable majorant on compact subsets
+implies compact-uniform convergence. Under the verified admissibility
+assumptions, every zero lies on the *preselected* line `c + d * R`.
+The source also proves that `c + d * q(n)` is a zero of the full
+product for each `n` (with `q(n) != 0` and `d != 0`). The factor
+symmetry gives the corresponding negative levels. Choosing
+`c = 1/2` and `d = i` makes this line the Riemann critical line,
+but that choice is built into the definition, **not deduced from
+geometry or spectral theory**.
+
+### B. Actual tilings and geometric growth (proved, in stated cases)
+
+The Lean file formalizes full-plane coverage and nonoverlap of tile
+interiors for the standard square grid, its invertible affine images,
+independently shifted rows, and one explicit rectangular tiling with
+a local defect. The last example has no nonzero translational symmetry
+as a *particular tiling*, but it is a finite defect of a periodic grid,
+not an intrinsically aperiodic prototile system.
+
+The file derives inverse-square summability for several concrete
+positive energies, including Euclidean square-centroid energies,
+invertibly affine-deformed centroid energies, and the stated
+row-shift/finite-defect cases. It also gives a general coercive
+comparison criterion and a bounded-displacement corollary for
+indexed *point configurations*. The latter does **not** by itself
+certify a nonoverlapping tiling or distinct points.
+
+### C. Geometry-sensitive finite operators (proved for the model)
+
+For finite tile-index sets, symmetric real adjacency weights give a
+self-adjointness identity. In the explicit two-rectangle example,
+the weighted operator `H(u,v) = (w*v, w*u)` has eigenvalues `+w`
+and `-w`. A user-chosen binary orientation *mark* changes the
+coupling: matched marks give `w = 3/4`, opposed marks `w = 3/2`.
+The complete real eigenvalue set and the difference between these
+two cases are established. These marks are **not an intrinsic
+chirality** of rectangles, and the edge-weight law is a modeling
+choice, not a geometry-forced law.
+
+### D. Spectral-to-product bridge (proved, with a limitation)
+
+For any baseline `q0(n) > 0` whose inverse-square sum converges,
+and any real sequence `lambda(n)`, define
+
+```text
+Q(n) = q0(n) * (1 + lambda(n)^2).
+```
+
+Lean proves `Q(n) >= q0(n) > 0`, inverse-square summability of `Q`,
+admissibility of the paired product, localization of every zero on the
+chosen line, and explicit zeros at `c + d * Q(n)`. A concrete
+instance uses the square-centroid baseline and **actual eigenvalues
+of independently specified local two-tile operators**. The local
+marks thereby change some zero levels without changing the selected
+line.
+
+**What is not proved:** There is no single infinite self-adjoint
+operator on an aperiodic tiling whose complete spectrum supplies the
+`Q(n)`; no regularized spectral determinant or trace formula derived
+from that operator; no zeta-zero identification, multiplicity or
+spacing law; and no Riemann-hypothesis proof. In particular, the
+geometric growth envelope `q0(n)` remains an *externally specified*
+ingredient. Passing Lean checks validates the formal implication,
+not physical uniqueness, novelty or a link to zeta statistics.
+
+## Current research objective (not yet proved)
+
+**Keep** the paired-factor construction that locates zeros on an
+arbitrarily chosen complex line. **Replace** the explicit
+centroid/shell prescription for zero levels with quantities determined
+by a well-defined operator that senses tile shape, size, intrinsic
+orientation or chirality when present, and weighted interactions
+(especially adjacency). Study what structural and statistical
+constraints its eigenvalues impose on the resulting zeros, and
+eventually compare appropriately unfolded spectral statistics with
+those of nontrivial Riemann-zeta zeros.
+
+A natural intermediate program is: define finite-patch operators and
+prove symmetry, spectral stability and interaction sensitivity;
+construct a coherent infinite operator with a specified domain;
+establish which discrete spectral data and growth/counting estimates
+it actually supplies; only then investigate legitimate spectral
+products, multiplicities and spacing distributions.
+
+**Farey terminology caution:** the classical *Farey tessellation*
+consists of ideal triangles in the hyperbolic plane and carries
+`PSL(2,Z)` symmetries. It should not automatically be identified
+with a Euclidean intrinsically aperiodic tiling. Any proposed
+"Farey tiles" model must state its tiles, ambient geometry,
+adjacency and intended notion of aperiodicity.
+
 ## What the theorem means, in simple English
 
 Imagine an infinite tiling. Each tile is assigned a **positive geometric
@@ -39,22 +149,20 @@ For `center = 1/2` and `direction = i`, this line is the critical line
 **Important:** The function constructed here is **not** the Riemann zeta
 function. The theorem therefore **does not prove the Riemann hypothesis**.
 
-## Scope and limitations
+## Historical scope of the initial formalization
 
-- This first formalization concerns a *sequence of positive geometric
-  energies*, not a full formal model of tiling adjacency or coverings.
-- The proof formalizes the paired regularized product above. It does
-  **not** yet formalize the exponential genus-two product
-  `(1 − u²/Q) exp(u²/Q)` considered in the original conversation.
-- The admissibility condition is a *summable compact majorant*, not
-  a restatement of product convergence; deriving it from the more
-  elementary condition `∑ 1/qₙ² < ∞` is a future lemma.
-- The central zero-localization theorem proves the absence of zeros off
-  the line. Showing explicitly that every prescribed factor zero remains a
-  zero of the total product is a separate follow-up.
-- The mathematical ideas of canonical products and self-adjoint spectra
-  are classical. This repository does not claim to have discovered a new
-  theorem about the Riemann zeta function.
+This section originally described open tasks for the first version of
+Theorem C. Several have **since been completed**: explicit square and
+rectangle tilings, inverse-square summability from concrete geometric
+energies, finite adjacency operators, and zeros of the full product at
+prescribed spectral-envelope levels. The current status and remaining
+limitations are stated under **Verified results at a glance** above.
+
+The product is still the paired genus-zero-in-the-squared-variable
+construction, **not** the distinct exponential genus-two construction
+`(1 - u^2/Q) exp(u^2/Q)` discussed in the original exploration.
+Canonical products and self-adjoint finite operators are classical;
+the repository does not claim a new theorem about Riemann's zeta.
 
 ## Checking the proof
 
