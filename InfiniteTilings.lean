@@ -1639,5 +1639,259 @@ theorem orientation_changes_energy (base : ℝ) (hb : 0 < base) :
   intro h
   nlinarith
 
+
+/-! ## A directly spectral zero-level: onsite geometry plus interaction
+
+This deliberately modest next step replaces a *multiplicative correction*
+to an external Q by the eigenvalue of one geometry-and-adjacency operator
+on a two-tile patch. For each n, the operator is [[V_n,w_n],[w_n,V_n]]
+and its symmetric mode has actual eigenvalue V_n+w_n. Its diagonal
+V_n is still externally chosen from the centroid geometry, and different
+indices still denote independent local operators. This does not
+construct the spectrum of a single infinite tiling operator.
+
+The summable growth of V_n is still essential; bounded local couplings
+alone are not a source of unbounded levels or zeta statistics.
+-/
+
+/-- A symmetric two-site Hamiltonian combining an onsite geometric
+potential V and a weighted nearest-neighbor interaction w. -/
+def interactingPairOperator (V w : ℝ) (u : ℝ × ℝ) : ℝ × ℝ :=
+  (V * u.1 + w * u.2, w * u.1 + V * u.2)
+
+/-- The operator is symmetric for all real onsite potentials and couplings. -/
+theorem interactingPairOperator_symmetric (V w : ℝ) (u v : ℝ × ℝ) :
+    u.1 * (interactingPairOperator V w v).1 +
+      u.2 * (interactingPairOperator V w v).2 =
+    (interactingPairOperator V w u).1 * v.1 +
+      (interactingPairOperator V w u).2 * v.2 := by
+  dsimp [interactingPairOperator]
+  ring
+
+/-- The positive/symmetric mode has eigenvalue V+w, determined by
+both onsite geometry and the edge interaction. -/
+theorem interactingPair_positive_mode (V w : ℝ) :
+    PairHasEigenvalue (interactingPairOperator V w) (V + w) := by
+  refine ⟨(1, 1), by norm_num, ?_⟩
+  dsimp [interactingPairOperator]
+  congr 1 <;> ring
+
+/-- The antisymmetric mode has eigenvalue V-w. -/
+theorem interactingPair_negative_mode (V w : ℝ) :
+    PairHasEigenvalue (interactingPairOperator V w) (V - w) := by
+  refine ⟨(1, -1), by norm_num, ?_⟩
+  dsimp [interactingPairOperator]
+  congr 1 <;> ring
+
+/-- Unlike the multiplicative spectral envelope above, this level
+is an eigenvalue of the entire two-site Hamiltonian, not merely
+a post-processed eigenvalue of an independent adjacency matrix. -/
+def pairOperatorEigenlevel (onsite coupling : ℕ → ℝ) (n : ℕ) : ℝ :=
+  onsite n + coupling n
+
+theorem pairOperatorEigenlevel_is_eigenvalue
+    (onsite coupling : ℕ → ℝ) (n : ℕ) :
+    PairHasEigenvalue
+      (interactingPairOperator (onsite n) (coupling n))
+      (pairOperatorEigenlevel onsite coupling n) := by
+  simpa [pairOperatorEigenlevel] using
+    interactingPair_positive_mode (onsite n) (coupling n)
+
+theorem pairOperatorEigenlevel_ge
+    (onsite coupling : ℕ → ℝ)
+    (hw : ∀ n, 0 ≤ coupling n) (n : ℕ) :
+    onsite n ≤ pairOperatorEigenlevel onsite coupling n := by
+  dsimp [pairOperatorEigenlevel]
+  linarith [hw n]
+
+theorem pairOperatorEigenlevel_pos
+    (onsite coupling : ℕ → ℝ)
+    (hpos : ∀ n, 0 < onsite n)
+    (hw : ∀ n, 0 ≤ coupling n) (n : ℕ) :
+    0 < pairOperatorEigenlevel onsite coupling n := by
+  dsimp [pairOperatorEigenlevel]
+  exact add_pos_of_pos_of_nonneg (hpos n) (hw n)
+
+/-- Inverse-square summability follows if the onsite potential
+grows rapidly enough and the interaction is nonnegative. -/
+theorem pairOperatorEigenlevel_inv_sq_summable
+    (onsite coupling : ℕ → ℝ)
+    (hpos : ∀ n, 0 < onsite n)
+    (hw : ∀ n, 0 ≤ coupling n)
+    (hsum : Summable (fun n : ℕ => 1 / (onsite n) ^ 2)) :
+    Summable (fun n : ℕ =>
+      1 / (pairOperatorEigenlevel onsite coupling n) ^ 2) := by
+  apply Summable.of_nonneg_of_le (fun _ => by positivity) (fun n => ?_) hsum
+  show 1 / (pairOperatorEigenlevel onsite coupling n) ^ 2 ≤
+    1 / (onsite n) ^ 2
+  have hcomp := pairOperatorEigenlevel_ge onsite coupling hw n
+  have hq : 0 ≤ pairOperatorEigenlevel onsite coupling n :=
+    (pairOperatorEigenlevel_pos onsite coupling hpos hw n).le
+  have hsquare :
+      (onsite n) ^ 2 ≤ (pairOperatorEigenlevel onsite coupling n) ^ 2 := by
+    nlinarith only [mul_nonneg (sub_nonneg.mpr hcomp)
+      (add_nonneg (hpos n).le hq)]
+  exact one_div_le_one_div_of_le (pow_pos (hpos n) 2) hsquare
+
+theorem pairOperatorEigenlevel_admissible
+    (onsite coupling : ℕ → ℝ)
+    (hpos : ∀ n, 0 < onsite n)
+    (hw : ∀ n, 0 ≤ coupling n)
+    (hsum : Summable (fun n : ℕ => 1 / (onsite n) ^ 2))
+    (center direction : ℂ) :
+    Admissible (pairOperatorEigenlevel onsite coupling)
+      center direction :=
+  admissible_of_inv_sq_summable
+    (pairOperatorEigenlevel_pos onsite coupling hpos hw)
+    (pairOperatorEigenlevel_inv_sq_summable onsite coupling hpos hw hsum)
+    center direction
+
+/-- The zero line is still fixed by the paired canonical construction.
+The zero LEVEL, however, now is an eigenvalue of the two-site operator. -/
+theorem pairOperatorEigenlevel_zero_at_level
+    (onsite coupling : ℕ → ℝ)
+    (hpos : ∀ n, 0 < onsite n)
+    (hw : ∀ n, 0 ≤ coupling n)
+    (center direction : ℂ) (hd : direction ≠ 0) (n : ℕ) :
+    canonicalProduct (pairOperatorEigenlevel onsite coupling)
+      center direction
+      (center + direction * (pairOperatorEigenlevel onsite coupling n : ℂ)) = 0 :=
+  canonicalProduct_zero_at_positive_level
+    (pairOperatorEigenlevel onsite coupling) n
+    (ne_of_gt (pairOperatorEigenlevel_pos onsite coupling hpos hw n))
+    center direction hd
+
+theorem pairOperatorEigenlevel_theoremC
+    (onsite coupling : ℕ → ℝ)
+    (hpos : ∀ n, 0 < onsite n)
+    (hw : ∀ n, 0 ≤ coupling n)
+    (hsum : Summable (fun n : ℕ => 1 / (onsite n) ^ 2))
+    (center direction s : ℂ) (hd : direction ≠ 0)
+    (hz : canonicalProduct (pairOperatorEigenlevel onsite coupling)
+      center direction s = 0) :
+    ∃ t : ℝ, s = center + direction * (t : ℂ) :=
+  theoremC_zero_localization
+    (pairOperatorEigenlevel_admissible onsite coupling hpos hw hsum
+      center direction) hd hz
+
+/-- The chosen marked rectangle coupling is always strictly positive. -/
+theorem markedDefectCoupling_pos (leftMark rightMark : Bool) :
+    0 < markedDefectCoupling leftMark rightMark := by
+  cases leftMark <;> cases rightMark <;>
+    norm_num [markedDefectCoupling, orientationInteraction,
+      defectPairWidthWeight_value]
+
+/-- Spectral levels obtained *directly* as eigenvalues of a
+geometry-plus-interaction two-tile operator at each lattice index. -/
+def markedPairEigenlevel (marks : ℕ → Bool × Bool) (n : ℕ) : ℝ :=
+  pairOperatorEigenlevel geometricCentroidEnergy
+    (fun k => markedDefectCoupling (marks k).1 (marks k).2) n
+
+theorem markedPairEigenlevel_is_eigenvalue
+    (marks : ℕ → Bool × Bool) (n : ℕ) :
+    PairHasEigenvalue
+      (interactingPairOperator
+        (geometricCentroidEnergy n)
+        (markedDefectCoupling (marks n).1 (marks n).2))
+      (markedPairEigenlevel marks n) := by
+  simpa [markedPairEigenlevel] using
+    (pairOperatorEigenlevel_is_eigenvalue
+      geometricCentroidEnergy
+      (fun k => markedDefectCoupling (marks k).1 (marks k).2) n)
+
+theorem markedPairEigenlevel_admissible
+    (marks : ℕ → Bool × Bool) (center direction : ℂ) :
+    Admissible (markedPairEigenlevel marks) center direction := by
+  exact pairOperatorEigenlevel_admissible
+    geometricCentroidEnergy
+    (fun n => markedDefectCoupling (marks n).1 (marks n).2)
+    (fun n => centroidEnergy_pos (gridPoint n))
+    (fun n => (markedDefectCoupling_pos _ _).le)
+    geometricCentroidEnergy_inv_sq_summable center direction
+
+theorem markedPairEigenlevel_zero_at_level
+    (marks : ℕ → Bool × Bool)
+    (center direction : ℂ) (hd : direction ≠ 0) (n : ℕ) :
+    canonicalProduct (markedPairEigenlevel marks) center direction
+      (center + direction * (markedPairEigenlevel marks n : ℂ)) = 0 := by
+  exact pairOperatorEigenlevel_zero_at_level
+    geometricCentroidEnergy
+    (fun k => markedDefectCoupling (marks k).1 (marks k).2)
+    (fun k => centroidEnergy_pos (gridPoint k))
+    (fun k => (markedDefectCoupling_pos _ _).le)
+    center direction hd n
+
+theorem markedPairEigenlevel_theoremC
+    (marks : ℕ → Bool × Bool)
+    (center direction s : ℂ) (hd : direction ≠ 0)
+    (hz : canonicalProduct (markedPairEigenlevel marks)
+      center direction s = 0) :
+    ∃ t : ℝ, s = center + direction * (t : ℂ) :=
+  theoremC_zero_localization
+    (markedPairEigenlevel_admissible marks center direction) hd hz
+
+/-- With the same onsite geometry, changing the mark interaction
+genuinely changes the positive eigenvalue of the two-site Hamiltonian. -/
+theorem markedPair_orientation_changes_eigenvalue (base : ℝ) :
+    base + markedDefectCoupling true true ≠
+      base + markedDefectCoupling true false := by
+  rw [aligned_marked_coupling, opposed_marked_coupling]
+  norm_num
+
+
+/-! ## A quantitative constraint on eigenvalue counting
+
+A bounded nonnegative neighbor interaction cannot move any selected
+positive eigenvalue by more than its coupling bound C. This is a
+pointwise set-inclusion statement, independent of any unproved
+Weyl law or zeta-zero hypothesis. For the two-tile marked model,
+C = 3/2. Thus its level-counting function is squeezed between
+those of the externally chosen onsite centroid potential at
+thresholds T-3/2 and T. Any finer statistics require additional work.
+-/
+
+/-- Bounded local couplings sandwich all spectral thresholds
+between two nearby thresholds for the original onsite energies. -/
+theorem pairOperatorEigenlevel_threshold_sandwich
+    (onsite coupling : ℕ → ℝ) (C T : ℝ)
+    (hw0 : ∀ n, 0 ≤ coupling n)
+    (hwC : ∀ n, coupling n ≤ C) :
+    {n : ℕ | onsite n ≤ T - C} ⊆
+      {n : ℕ | pairOperatorEigenlevel onsite coupling n ≤ T} ∧
+    {n : ℕ | pairOperatorEigenlevel onsite coupling n ≤ T} ⊆
+      {n : ℕ | onsite n ≤ T} := by
+  constructor
+  · intro n hn
+    change onsite n ≤ T - C at hn
+    change pairOperatorEigenlevel onsite coupling n ≤ T
+    dsimp [pairOperatorEigenlevel]
+    linarith [hwC n]
+  · intro n hn
+    change pairOperatorEigenlevel onsite coupling n ≤ T at hn
+    change onsite n ≤ T
+    have h := pairOperatorEigenlevel_ge onsite coupling hw0 n
+    linarith
+
+theorem markedDefectCoupling_le_three_halves (leftMark rightMark : Bool) :
+    markedDefectCoupling leftMark rightMark ≤ 3 / 2 := by
+  cases leftMark <;> cases rightMark <;>
+    norm_num [markedDefectCoupling, orientationInteraction,
+      defectPairWidthWeight_value]
+
+/-- A certified bounded-displacement result for the concrete
+geometry-plus-interaction operator eigenvalues. -/
+theorem markedPairEigenlevel_threshold_sandwich
+    (marks : ℕ → Bool × Bool) (T : ℝ) :
+    {n : ℕ | geometricCentroidEnergy n ≤ T - 3 / 2} ⊆
+      {n : ℕ | markedPairEigenlevel marks n ≤ T} ∧
+    {n : ℕ | markedPairEigenlevel marks n ≤ T} ⊆
+      {n : ℕ | geometricCentroidEnergy n ≤ T} := by
+  exact pairOperatorEigenlevel_threshold_sandwich
+    geometricCentroidEnergy
+    (fun n => markedDefectCoupling (marks n).1 (marks n).2)
+    (3 / 2) T
+    (fun n => (markedDefectCoupling_pos _ _).le)
+    (fun n => markedDefectCoupling_le_three_halves _ _)
+
 end
 end InfiniteTilings
