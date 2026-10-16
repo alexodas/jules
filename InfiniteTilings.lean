@@ -803,7 +803,6 @@ theorem rowShiftCentroid_separated (offset : ℤ → ℝ)
         (rowShiftCentroid offset q).1 =
         (p.1 : ℝ) - (q.1 : ℝ) := by
       simp [rowShiftCentroid, squareCentroid, hy]
-      ring
     rw [hdiff]
     nlinarith [sq_nonneg
       ((rowShiftCentroid offset p).2 - (rowShiftCentroid offset q).2)]
@@ -812,7 +811,6 @@ theorem rowShiftCentroid_separated (offset : ℤ → ℝ)
         (rowShiftCentroid offset q).2 =
         (p.2 : ℝ) - (q.2 : ℝ) := by
       simp [rowShiftCentroid, squareCentroid]
-      ring
     rw [hdiff]
     nlinarith [sq_nonneg
       ((rowShiftCentroid offset p).1 - (rowShiftCentroid offset q).1)]
