@@ -1487,6 +1487,7 @@ theorem spectralEnvelopeEnergy_inv_sq_summable
   apply Summable.of_nonneg_of_le (fun _ => by positivity) (fun n => ?_) hsum
   show 1 / (spectralEnvelopeEnergy baseline eigenlevel n) ^ 2 ≤
     1 / (baseline n) ^ 2
+  apply one_div_le_one_div_of_le (pow_pos (hpos n) 2)
   gcongr
   exact spectralEnvelopeEnergy_ge baseline eigenlevel hpos n
 
@@ -1527,7 +1528,7 @@ theorem factor_zero_at_positive_level
     factor q center direction n
       (center + direction * (q n : ℂ)) = 0 := by
   have hqc : (q n : ℂ) ≠ 0 := by exact_mod_cast hq
-  simp only [factor, perturb, add_neg_eq_sub, add_sub_cancel_left]
+  simp only [factor, perturb, add_sub_cancel_left]
   field_simp [hd, hqc] <;> ring
 
 /-- If one factor is zero, its infinite canonical product is zero,
