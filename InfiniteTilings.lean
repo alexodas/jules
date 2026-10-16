@@ -395,6 +395,87 @@ theorem geometricCentroid_theoremC
 
 /-! ## All invertible linear images: rectangles and parallelograms -/
 
+/-- Apply the real 2×2 matrix to a point in the plane. -/
+def linearGridMap (a b c d : ℝ) (z : ℝ × ℝ) : ℝ × ℝ :=
+  (a * z.1 + b * z.2, c * z.1 + d * z.2)
+
+/-- Every real 2×2 matrix with nonzero determinant acts injectively
+on the plane; this is independent of the analytic-product arguments. -/
+theorem linearGridMap_injective (a b c d : ℝ)
+    (hdet : a * d - b * c ≠ 0) :
+    Function.Injective (linearGridMap a b c d) := by
+  intro x y h
+  have h₁ : a * (x.1 - y.1) + b * (x.2 - y.2) = 0 := by
+    have hf := congrArg Prod.fst h
+    dsimp [linearGridMap] at hf
+    linarith
+  have h₂ : c * (x.1 - y.1) + d * (x.2 - y.2) = 0 := by
+    have hs := congrArg Prod.snd h
+    dsimp [linearGridMap] at hs
+    linarith
+  have hxmul : (a * d - b * c) * (x.1 - y.1) = 0 := by
+    calc
+      _ = d * (a * (x.1 - y.1) + b * (x.2 - y.2)) -
+          b * (c * (x.1 - y.1) + d * (x.2 - y.2)) := by ring
+      _ = 0 := by rw [h₁, h₂]; ring
+  have hymul : (a * d - b * c) * (x.2 - y.2) = 0 := by
+    calc
+      _ = a * (c * (x.1 - y.1) + d * (x.2 - y.2)) -
+          c * (a * (x.1 - y.1) + b * (x.2 - y.2)) := by ring
+      _ = 0 := by rw [h₁, h₂]; ring
+  apply Prod.ext
+  · exact sub_eq_zero.mp ((mul_eq_zero.mp hxmul).resolve_left hdet)
+  · exact sub_eq_zero.mp ((mul_eq_zero.mp hymul).resolve_left hdet)
+
+/-- The explicit inverse formula makes the linear transformation
+surjective whenever its determinant is nonzero. -/
+theorem linearGridMap_surjective (a b c d : ℝ)
+    (hdet : a * d - b * c ≠ 0) :
+    Function.Surjective (linearGridMap a b c d) := by
+  intro z
+  refine ⟨((d * z.1 - b * z.2) / (a * d - b * c),
+           (a * z.2 - c * z.1) / (a * d - b * c)), ?_⟩
+  apply Prod.ext
+  · dsimp [linearGridMap]
+    field_simp
+    · ring
+    · exact hdet
+  · dsimp [linearGridMap]
+    field_simp
+    · ring
+    · exact hdet
+
+/-- A deformed unit square is a parallelogram cell. -/
+def linearSquareCell (a b c d : ℝ) (p : ℤ × ℤ) : Set (ℝ × ℝ) :=
+  linearGridMap a b c d '' squareCell p
+
+/-- The image of the open interior of a unit square. -/
+def linearSquareInterior (a b c d : ℝ) (p : ℤ × ℤ) : Set (ℝ × ℝ) :=
+  linearGridMap a b c d '' squareInterior p
+
+/-- Images of all integer unit squares under an invertible matrix
+still cover the whole plane. -/
+theorem linearSquareCell_covers_plane (a b c d : ℝ)
+    (hdet : a * d - b * c ≠ 0) (z : ℝ × ℝ) :
+    ∃ p : ℤ × ℤ, z ∈ linearSquareCell a b c d p := by
+  obtain ⟨w, hw⟩ := linearGridMap_surjective a b c d hdet z
+  obtain ⟨p, hp⟩ := squareCell_covers_plane w
+  exact ⟨p, ⟨w, hp, hw⟩⟩
+
+/-- The interiors of distinct transformed cells do not overlap. -/
+theorem linearSquareInterior_unique (a b c d : ℝ)
+    (hdet : a * d - b * c ≠ 0)
+    {p q : ℤ × ℤ} {z : ℝ × ℝ}
+    (hp : z ∈ linearSquareInterior a b c d p)
+    (hq : z ∈ linearSquareInterior a b c d q) : p = q := by
+  obtain ⟨x, hx, hxz⟩ := hp
+  obtain ⟨y, hy, hyz⟩ := hq
+  have hxy : x = y :=
+    (linearGridMap_injective a b c d hdet) (hxz.trans hyz.symm)
+  subst y
+  exact squareInterior_unique hx hy
+
+
 /-- The physical squared-centroid energy after applying a real 2×2
 linear transformation. Its determinant must be nonzero to preserve
 the two-dimensional nature of the tiling. -/
