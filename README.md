@@ -14,18 +14,27 @@ function, or claim a new result about zeta zeros.**
 
 This README reconstructs the *chronological mathematical progression* by
 checking the historical versions of `README.md` and `InfiniteTilings.lean`.
-It distinguishes (1) results already merged into `main` and checked by CI,
-(2) an additional CI-checked proposal in [PR #11](https://github.com/alexodas/jules/pull/11) that has
-**not** been merged, and (3) research goals that have not been proved.
+All twelve stages are now merged into `main`, including the theorems from
+[PR #11](https://github.com/alexodas/jules/pull/11). Each step below separates
+its motivation, its precisely verified result and its remaining limitations.
 
 ## The central idea, in one minute
 
 We deliberately **keep** an analytic construction that forces all zeros onto
 an arbitrarily chosen line, such as the critical line
-$\operatorname{Re}(s)=\tfrac12$. We want to **stop choosing their heights
+$\Re(s)=\frac{1}{2}$. We want to **stop choosing their heights
 by hand**. Instead, we want the positive zero levels to emerge as eigenvalues
 of operators sensitive to tile position, shape, orientation, genuine chirality
 (where applicable), and interactions with adjacent tiles.
+
+The program deliberately separates two problems: **placing all zeros on
+a chosen line**, which the paired product handles by construction, and
+**deriving the heights of those zeros from geometry and interactions**,
+which motivates the spectral operators. The proposed chain is
+**tiling → adjacency graph → weighted operator → real spectral levels →
+canonical product → level statistics**. A symmetric operator has real
+finite-dimensional eigenvalues, but this alone does not prove their
+positivity, growth, discreteness or zeta-like distribution.
 
 The existing results establish increasingly rich geometric examples, then
 finite interacting operators, and finally a bridge between local operator
@@ -47,14 +56,15 @@ $$
 L_{c,d}=\{c+dt:t\in\mathbb R\}.
 $$
 
-In particular, $c=\tfrac12$ and $d=i$ give
-$L_{1/2,i}=\{s\in\mathbb C:\operatorname{Re}(s)=\tfrac12\}$.
+In particular, $c=\frac{1}{2}$ and $d=i$ give
+$L_{1/2,i}=\{s\in\mathbb C:\Re(s)=\frac{1}{2}\}$.
 The choice of this line is an **input**, not a discovery of the proof.
 
-Below, **proved** means that the stated result is present in a Lean file at
-a commit with a passing Lean/Mathlib CI run, under the exact hypotheses
-given. A geometrically suggestive definition is not automatically a
-mathematically unique or physically canonical model.
+Here **proved** means the exact statement and hypotheses occur in Lean
+at a commit with a successful Lean/Mathlib build. Each **mathematical
+objective** is an explanation of *why* that section is needed, not an
+additional theorem certified by Lean. A geometrically suggestive model
+is not necessarily unique or physically canonical.
 
 ---
 
@@ -95,12 +105,13 @@ Thus localization is not merely a vacuous implication.
 
 A reusable sufficient condition proved in the square-grid extension is
 
-$$
-q_n>0\quad\text{for all }n,\qquad
-\sum_{n=0}^{\infty}\frac1{q_n^2}<\infty
-\quad\Longrightarrow\quad
-\text{the compact-majorant hypothesis}.
-$$
+For positive levels $q_n$, the reusable sufficient condition is
+
+$
+\sum_{n=0}^{\infty}\frac{1}{q_n^2}<\infty.
+$
+
+Lean proves that this ensures the compact-majorant condition of `Admissible`.
 
 **Lean anchors:** `Admissible`, `product_uniform_on_compact`,
 `theoremC_zero_localization`, `admissible_of_inv_sq_summable`,
@@ -120,12 +131,11 @@ $$
 
 The Lean source proves that these cells **cover $\mathbb R^2$** and
 that two cells cannot have intersecting **open interiors** unless their
-integer indices agree. It also constructs an explicit bijective
-enumeration $\mathrm{gridPoint}:\mathbb N\to\mathbb Z^2$; hence the
-number-indexed family really covers every square.
+integer indices agree. It also constructs an explicit bijective enumeration $g:\mathbb N\to\mathbb Z^2$,
+called `gridPoint` in Lean, so no square is omitted or counted twice.
 
 At first, the energies were associated with the *enumeration*, not
-physical distance. If $(a_n,b_n)=\mathrm{Nat.unpair}(n)$, the
+physical distance. If $(a_n,b_n)$ is the pair returned by `Nat.unpair n`, the
 **encoded square-shell energy** was
 
 $$
@@ -155,14 +165,14 @@ The next result removed that first artificial growth prescription.
 The genuine centroid of $S_{m,n}$ is
 
 $$
-P_{m,n}=\left(m+\tfrac12,\ n+\tfrac12\right),
+P_{m,n}=\left(m+\frac{1}{2},\ n+\frac{1}{2}\right),
 $$
 
 and the new positive energy is
 
 $$
-q(m,n)=1+\left(m+\tfrac12\right)^2+
-          \left(n+\tfrac12\right)^2.
+q(m,n)=1+\left(m+\frac{1}{2}\right)^2+
+          \left(n+\frac{1}{2}\right)^2.
 $$
 
 The key mathematical proof is an inverse-square summability estimate
@@ -172,7 +182,7 @@ $$
 \sum_{(m,n)\in\mathbb Z^2}\frac1{q(m,n)^2}<\infty.
 $$
 
-Writing $x=m+\tfrac12$, $y=n+\tfrac12$, the bound is
+Writing $x=m+\frac{1}{2}$, $y=n+\frac{1}{2}$, the bound is
 
 $$
 \frac1{(1+x^2+y^2)^2}
@@ -257,10 +267,10 @@ The centroid energy is
 
 $$
 q_\delta(m,n)=1+
-   (m+\tfrac12+\delta_n)^2+(n+\tfrac12)^2.
+   (m+\frac{1}{2}+\delta_n)^2+(n+\frac{1}{2})^2.
 $$
 
-If $|\delta_n|\le\tfrac12$ uniformly, Lean additionally proves
+If $|\delta_n|\le\frac{1}{2}$ uniformly, Lean additionally proves
 
 $$
 q(m,n)\le2\,q_\delta(m,n)
@@ -286,7 +296,7 @@ $q:\mathbb Z^2\to\mathbb R_{>0}$, suppose one constant $C>0$
 satisfies, for every lattice index $p=(m,n)$,
 
 $$
-1+(m+\tfrac12)^2+(n+\tfrac12)^2\le C\,q(p).
+1+(m+\frac{1}{2})^2+(n+\frac{1}{2})^2\le C\,q(p).
 $$
 
 Lean proves the general consequence
@@ -301,8 +311,8 @@ A concrete corollary permits a separately chosen point $P_{m,n}$
 at *every* lattice index, with bounded coordinate displacements
 
 $$
-|P_{m,n}^{(1)}-(m+\tfrac12)|\le\tfrac12,\qquad
-|P_{m,n}^{(2)}-(n+\tfrac12)|\le\tfrac12.
+|P_{m,n}^{(1)}-(m+\frac{1}{2})|\le\frac{1}{2},\qquad
+|P_{m,n}^{(2)}-(n+\frac{1}{2})|\le\frac{1}{2}.
 $$
 
 For $q_P(m,n)=1+\|P_{m,n}\|^2$, Lean verifies the comparison with
@@ -315,18 +325,18 @@ $C=2$ and therefore summability and line-localized product zeros.
 **Crucial boundary:** these are results about *indexed point
 configurations*, not a theorem that arbitrary displaced points are
 centroids of actual nonoverlapping tiles. At the endpoint displacement
-$\tfrac12$, distinct indices need not even have distinct points.
+$\frac{1}{2}$, distinct indices need not even have distinct points.
 
 ## 7. A complete tiling with no nonzero translation period (**proved on main**)
 
 The next step restored actual tile geometry while breaking every
 nonzero translational symmetry of the *particular tiling*.
 Start from the unit-square grid. In one location, replace two adjacent
-unit squares by two rectangles of width $\tfrac12$ and $\tfrac32$,
+unit squares by two rectangles of width $\frac{1}{2}$ and $\frac{3}{2}$,
 both of height $1$. Elsewhere, leave the unit squares unchanged.
 
 Lean proves that the rectangles still cover the whole plane, their
-open interiors are pairwise disjoint, and the width-$\tfrac32$
+open interiors are pairwise disjoint, and the width-$\frac{3}{2}$
 rectangle is unique. A translation preserving the collection of
 rectangles (including shape and position) must fix that unique tile.
 Hence
@@ -337,7 +347,7 @@ $$
 
 for the tile-preserving translation notion specified in the source.
 
-The actual rectangular centroids differ by at most $\tfrac12$
+The actual rectangular centroids differ by at most $\frac{1}{2}$
 in each coordinate from their corresponding square centroids.
 The preceding bounded-displacement theorem therefore proves
 inverse-square energy summability and Theorem C for this example.
@@ -383,7 +393,7 @@ unbounded operator acting on $\ell^2$ of an infinite tiling.
 ## 9. A concrete two-tile interaction with distinct spectra (**proved on main**)
 
 The two special rectangles really share a vertical boundary.
-Their widths have product $\tfrac12\cdot\tfrac32=\tfrac34$.
+Their widths have product $\frac{1}{2}\cdot\frac{3}{2}=\frac{3}{4}$.
 We assign each tile an *external binary mark* and choose the
 interaction law
 
@@ -394,21 +404,21 @@ $$
 2,&\mu\ne\nu,
 \end{cases}
 \qquad
-w(\mu,\nu)=\tfrac34\,\eta(\mu,\nu).
+w(\mu,\nu)=\frac{3}{4}\,\eta(\mu,\nu).
 $$
 
 The two-tile adjacency operator is
 
-$$
-H_w=\begin{pmatrix}0&w\\w&0\end{pmatrix},
-\qquad
-\operatorname{spec}(H_w)=\{-w,+w\}.
-$$
+$
+H_w=\begin{pmatrix}0&w\\w&0\end{pmatrix}.
+$
+
+The set of real eigenvalues of this matrix is $\{-w,+w\}$.
 
 Lean proves both eigenvalues with explicit nonzero eigenvectors
 $(1,1)$ and $(1,-1)$, and proves there are **no other real
-eigenvalues** in this model. Equal marks give $w=\tfrac34$;
-opposite marks give $w=\tfrac32$. In particular, $\tfrac32$
+eigenvalues** in this model. Equal marks give $w=\frac{3}{4}$;
+opposite marks give $w=\frac{3}{2}$. In particular, $\frac{3}{2}$
 is an eigenvalue in the opposed-mark model and not in the
 equal-mark model.
 
@@ -466,9 +476,9 @@ It is **not itself proved to be an eigenvalue** of the local adjacency
 operator, much less the spectrum of a single infinite operator.
 The choice of zero line remains completely independent of this bridge.
 
-## 11. A level that is an eigenvalue of the *combined* local operator (**CI-checked proposal, PR #11; not on main**)
+## 11. A level that is an eigenvalue of the *combined* local operator (**proved on main; PR #11**)
 
-A subsequent experiment improves the previous distinction by moving
+The next merged development improves the previous bridge by moving
 the geometric baseline **inside** a two-site Hamiltonian:
 
 $$
@@ -493,12 +503,12 @@ is an **actual eigenvalue of the full two-site operator $H_n$**,
 and it satisfies positivity, inverse-square summability,
 admissibility, zero localization and $D_Q(c+dQ_n)=0$.
 
-For the example proposed in PR #11, $V_n$ remains the square-centroid
+For the example introduced in PR #11, $V_n$ remains the square-centroid
 energy and $w_n$ is the marked coupling of the special rectangles.
 This is a step forward from multiplying a separately chosen baseline
 by a function of an eigenvalue.
 
-**Lean anchors in PR #11 only:** `interactingPairOperator`,
+**Lean anchors on `main` (introduced in PR #11):** `interactingPairOperator`,
 `interactingPair_positive_mode`, `interactingPair_negative_mode`,
 `pairOperatorEigenlevel_inv_sq_summable`,
 `markedPairEigenlevel_is_eigenvalue`,
@@ -506,14 +516,14 @@ by a function of an eigenvalue.
 **Verification:** [PR #11](https://github.com/alexodas/jules/pull/11), commit
 [`864051f`](https://github.com/alexodas/jules/commit/864051f156eca95c249e6400c1e3d82b9c53b377),
 [successful Lean/Mathlib CI](https://github.com/alexodas/jules/actions/runs/38966538546).
-**Status:** this branch is **not merged into `main`**.
+**Status:** merged into `main` in [commit `37eb338`](https://github.com/alexodas/jules/commit/37eb338cfe7f4db4efe0041eec17935dfbd67e94).
 **Boundary:** each $H_n$ is still a separate two-site operator;
 the onsite potential $V_n$ is still chosen from centroid geometry.
 This is not a single infinite operator or a proof of zeta statistics.
 
-## 12. A first constraint on level counting (**CI-checked proposal, PR #11; not on main**)
+## 12. A first constraint on level counting (**proved on main; PR #11**)
 
-That same pending branch proves a useful limitation of the simple
+That same merged development proves a useful limitation of the simple
 local model. Suppose $0\le w_n\le C$ and
 $Q_n=V_n+w_n$. Then, for every real threshold $T$,
 
@@ -525,7 +535,7 @@ $$
 \{n:V_n\le T\}.
 $$
 
-The concrete two-rectangle model proves that $C=\tfrac32$
+The concrete two-rectangle model proves that $C=\frac{3}{2}$
 works for any sequence of binary marks.
 These are precise **set inclusions**, formally proved by Lean.
 Whenever the sets are finite, their cardinalities obey the
@@ -545,7 +555,7 @@ The **set-inclusion theorem** is in Lean; the comparison of these
 two asymptotic counting laws is mathematical analysis discussed here,
 **not** a Lean-certified theorem in this repository.
 
-**Lean anchors in PR #11 only:**
+**Lean anchors on `main` (introduced in PR #11):**
 `pairOperatorEigenlevel_threshold_sandwich`,
 `markedDefectCoupling_le_three_halves`,
 `markedPairEigenlevel_threshold_sandwich`.
@@ -567,11 +577,10 @@ defined; a marked two-tile model has exactly computable
 geometry-dependent eigenvalues; and these eigenvalues can influence
 the product's chosen zero levels.
 
-**Checked by CI but not merged:** PR #11 directly realizes its
-selected positive zero levels as eigenvalues of the *combined* local
-two-site Hamiltonians and bounds their threshold sets by those of
-the onsite potential. Review status and merge status are separate
-from proof compilation status.
+**Also proved on `main`, via merged PR #11:** selected positive levels
+are eigenvalues of combined two-site operators, and the sets of levels
+below a threshold satisfy bounds relative to the onsite potential.
+These remain **local** operators, not one infinite tiling operator.
 
 **Not established:** an operator on an actual **infinite**
 aperiodic tiling with a rigorously specified self-adjoint domain;
