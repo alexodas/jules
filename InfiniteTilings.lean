@@ -436,10 +436,22 @@ theorem linearGridMap_surjective (a b c d : ℝ)
   refine ⟨((d * z.1 - b * z.2) / (a * d - b * c),
            (a * z.2 - c * z.1) / (a * d - b * c)), ?_⟩
   apply Prod.ext
-  · dsimp [linearGridMap]
-    field_simp [hdet] <;> ring
-  · dsimp [linearGridMap]
-    field_simp [hdet] <;> ring
+  · change a * ((d * z.1 - b * z.2) / (a * d - b * c)) +
+        b * ((a * z.2 - c * z.1) / (a * d - b * c)) = z.1
+    calc
+      _ = (a * (d * z.1 - b * z.2) +
+            b * (a * z.2 - c * z.1)) / (a * d - b * c) := by ring
+      _ = z.1 := by
+        apply (div_eq_iff hdet).2
+        ring
+  · change c * ((d * z.1 - b * z.2) / (a * d - b * c)) +
+        d * ((a * z.2 - c * z.1) / (a * d - b * c)) = z.2
+    calc
+      _ = (c * (d * z.1 - b * z.2) +
+            d * (a * z.2 - c * z.1)) / (a * d - b * c) := by ring
+      _ = z.2 := by
+        apply (div_eq_iff hdet).2
+        ring
 
 /-- A deformed unit square is a parallelogram cell. -/
 def linearSquareCell (a b c d : ℝ) (p : ℤ × ℤ) : Set (ℝ × ℝ) :=
