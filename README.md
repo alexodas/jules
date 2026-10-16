@@ -52,9 +52,9 @@ integers, real numbers, and complex numbers. Let $c\in\mathbb C$ be a
 *center*, let $d\in\mathbb C\setminus\{0\}$ be a *direction*, and let
 $q_n>0$ be positive levels. The prescribed line is
 
-$$
+```math
 L_{c,d}=\{c+dt:t\in\mathbb R\}.
-$$
+```
 
 In particular, $c=\frac{1}{2}$ and $d=i$ give
 $L_{1/2,i}=\{s\in\mathbb C:\Re(s)=\frac{1}{2}\}$.
@@ -75,11 +75,26 @@ is not necessarily unique or physically canonical.
 The first step had no real tiling attached to it. For positive levels
 $q_n$, the file defines *paired* factors and their infinite product:
 
-$$
-F_n(s)=1-\left(\frac{s-c}{d\,q_n}\right)^2,
-\qquad
-D_q(s)=\prod_{n=0}^{\infty}F_n(s).
-$$
+```math
+F_n(s) = 1 - \frac{(s-c)^2}{d^2 q_n^2}.
+```
+
+The denominator is **the product** of $d^2$ and $q_n^2$; the entire
+difference $s-c$ is squared. In plain text, the same formula is
+`F_n(s) = 1 - ((s-c)/(d*q_n))^2`.
+
+The infinite canonical product is a separate definition:
+
+```math
+D_q(s) = \prod_{n=0}^{\infty} F_n(s).
+```
+
+For each index $n$, the two corresponding zeros follow by solving:
+
+```math
+F_n(s)=0 \quad\Longleftrightarrow\quad (s-c)^2=d^2q_n^2
+\quad\Longleftrightarrow\quad s=c\pm d q_n.
+```
 
 The pairing is crucial: the zeros of each factor are at
 $c+dq_n$ and $c-dq_n$, while the factor's deviation from $1$
@@ -89,29 +104,28 @@ The `Admissible` structure formalizes positivity plus a summable
 majorant on **every compact subset** $K\subset\mathbb C$:
 there is a summable real sequence $b_n$ such that
 
-$$
+```math
 \forall s\in K,\quad |F_n(s)-1|\le b_n.
-$$
+```
 
 Lean proves compact-uniform convergence of the partial products.
 It also proves the central implication
 
-$$
+```math
 D_q(s)=0\quad\Longrightarrow\quad s\in L_{c,d}.
-$$
+```
 
 This is the **zero-localization theorem**. In a later step, the file
 also proves that the full product really vanishes at each prescribed
 positive level $c+dq_n$ (under $q_n\neq0$, $d\neq0$).
 Thus localization is not merely a vacuous implication.
 
-A reusable sufficient condition proved in the square-grid extension is
+For positive levels $q_n$, a reusable sufficient condition proved
+in the square-grid extension is
 
-For positive levels $q_n$, the reusable sufficient condition is
-
-$$
+```math
 \sum_{n=0}^{\infty}\frac{1}{q_n^2}<\infty.
-$$
+```
 
 Lean proves that this ensures the compact-majorant condition of `Admissible`.
 
@@ -131,9 +145,9 @@ in the exploratory discussion.
 
 For $(m,n)\in\mathbb Z^2$, define the closed unit cell
 
-$$
+```math
 S_{m,n}=[m,m+1]\times[n,n+1].
-$$
+```
 
 The Lean source proves that these cells **cover $\mathbb R^2$** and
 that two cells cannot have intersecting **open interiors** unless their
@@ -144,16 +158,16 @@ At first, the energies were associated with the *enumeration*, not
 physical distance. If $(a_n,b_n)$ is the pair returned by `Nat.unpair n`, the
 **encoded square-shell energy** was
 
-$$
+```math
 q_n=\bigl(\max(a_n,b_n)+1\bigr)^2.
-$$
+```
 
 Lean proves $q_n\ge n+1>0$, giving
 
-$$
+```math
 \sum_n\frac1{q_n^2}\le
 \sum_n\frac1{(n+1)^2}<\infty.
-$$
+```
 
 By Theorem C, its associated product converges as required and has
 no zeros off the chosen complex line.
@@ -174,30 +188,30 @@ it is **not** Euclidean distance between centroids.
 The next result removed that first artificial growth prescription.
 The genuine centroid of $S_{m,n}$ is
 
-$$
+```math
 P_{m,n}=\left(m+\frac{1}{2},\ n+\frac{1}{2}\right),
-$$
+```
 
 and the new positive energy is
 
-$$
+```math
 q(m,n)=1+\left(m+\frac{1}{2}\right)^2+
           \left(n+\frac{1}{2}\right)^2.
-$$
+```
 
 The key mathematical proof is an inverse-square summability estimate
 over **all** of $\mathbb Z^2$:
 
-$$
+```math
 \sum_{(m,n)\in\mathbb Z^2}\frac1{q(m,n)^2}<\infty.
-$$
+```
 
 Writing $x=m+\frac{1}{2}$, $y=n+\frac{1}{2}$, the bound is
 
-$$
+```math
 \frac1{(1+x^2+y^2)^2}
 \le\frac1{(1+x^2)(1+y^2)}.
-$$
+```
 
 The right side separates into the product of two summable
 one-dimensional sequences. Because `gridPoint` is injective, the
@@ -223,10 +237,10 @@ eigenvalues.
 We then tested whether the geometric proof survives changing the
 shape of tiles. Let
 
-$$
+```math
 A=\begin{pmatrix}a&b\\c&d\end{pmatrix},
 \qquad \det A=ad-bc\ne0.
-$$
+```
 
 Applying $A$ to every unit square gives a full-plane tiling by
 parallelograms, including rectangular grids and sheared grids.
@@ -237,18 +251,18 @@ inverse of $A$.
 If $P=(x,y)$ is the original square centroid, the transformed
 energy is
 
-$$
+```math
 q_A(P)=1+\|AP\|^2
 =1+(ax+by)^2+(cx+dy)^2.
-$$
+```
 
 Invertibility gives a **uniform coercive comparison**:
 
-$$
+```math
 1+x^2+y^2\le C_A\,q_A(P),
 \qquad
 C_A=1+\frac{a^2+b^2+c^2+d^2}{(ad-bc)^2}>0.
-$$
+```
 
 Consequently $\sum_{\mathbb Z^2}q_A(P)^{-2}<\infty$, so the same
 Theorem C applies for every nondegenerate linear deformation.
@@ -272,10 +286,10 @@ To escape globally affine grids, assign an independent horizontal
 offset $\delta_n\in\mathbb R$ to each integer row $n$.
 The tiles become
 
-$$
+```math
 S^\delta_{m,n}
 =[m+\delta_n,m+\delta_n+1]\times[n,n+1].
-$$
+```
 
 For **any offsets**, even unbounded ones, Lean proves plane coverage,
 disjointness of different tile interiors, and separation of distinct
@@ -283,18 +297,18 @@ centroids by Euclidean distance at least one.
 
 The centroid energy is
 
-$$
+```math
 q_\delta(m,n)=1+
    (m+\frac{1}{2}+\delta_n)^2+(n+\frac{1}{2})^2.
-$$
+```
 
 If $|\delta_n|\le\frac{1}{2}$ uniformly, Lean additionally proves
 
-$$
+```math
 q(m,n)\le2\,q_\delta(m,n)
 \quad\Longrightarrow\quad
 \sum_{m,n}q_\delta(m,n)^{-2}<\infty,
-$$
+```
 
 and hence Theorem C applies. **The boundedness restriction is needed
 for this energy comparison**, not for coverage or nonoverlap.
@@ -317,25 +331,25 @@ The common thread of the previous proofs is not periodicity but
 $q:\mathbb Z^2\to\mathbb R_{>0}$, suppose one constant $C>0$
 satisfies, for every lattice index $p=(m,n)$,
 
-$$
+```math
 1+(m+\frac{1}{2})^2+(n+\frac{1}{2})^2\le C\,q(p).
-$$
+```
 
 Lean proves the general consequence
 
-$$
+```math
 \sum_{p\in\mathbb Z^2}\frac1{q(p)^2}<\infty,
-$$
+```
 
 as well as admissibility and Theorem C for its enumeration.
 
 A concrete corollary permits a separately chosen point $P_{m,n}$
 at *every* lattice index, with bounded coordinate displacements
 
-$$
+```math
 |P_{m,n}^{(1)}-(m+\frac{1}{2})|\le\frac{1}{2},\qquad
 |P_{m,n}^{(2)}-(n+\frac{1}{2})|\le\frac{1}{2}.
-$$
+```
 
 For $q_P(m,n)=1+\|P_{m,n}\|^2$, Lean verifies the comparison with
 $C=2$ and therefore summability and line-localized product zeros.
@@ -367,9 +381,9 @@ rectangle is unique. A translation preserving the collection of
 rectangles (including shape and position) must fix that unique tile.
 Hence
 
-$$
+```math
 T+\tau=T\quad\Longrightarrow\quad\tau=(0,0)
-$$
+```
 
 for the tile-preserving translation notion specified in the source.
 
@@ -396,16 +410,16 @@ So far the product levels depended mostly on centroid energies.
 To make neighboring tiles matter, the source defines a weighted
 operator on a finite tile patch with $N$ vertices:
 
-$$
+```math
 (H_Wu)_i=\sum_{j=1}^{N}W_{ij}u_j.
-$$
+```
 
 If the weights are real and symmetric, $W_{ij}=W_{ji}$, Lean proves
 the real inner-product symmetry
 
-$$
+```math
 \langle u,H_Wv\rangle=\langle H_Wu,v\rangle.
-$$
+```
 
 A separate construction sets non-neighbor weights to zero and
 proves that symmetric undirected adjacency plus symmetric edge
@@ -431,7 +445,7 @@ Their widths have product $\frac{1}{2}\cdot\frac{3}{2}=\frac{3}{4}$.
 We assign each tile an *external binary mark* and choose the
 interaction law
 
-$$
+```math
 \eta(\mu,\nu)=
 \begin{cases}
 1,&\mu=\nu,\\
@@ -439,13 +453,13 @@ $$
 \end{cases}
 \qquad
 w(\mu,\nu)=\frac{3}{4}\,\eta(\mu,\nu).
-$$
+```
 
 The two-tile adjacency operator is
 
-$$
+```math
 H_w=\begin{pmatrix}0&w\\w&0\end{pmatrix}.
-$$
+```
 
 The set of real eigenvalues of this matrix is $\{-w,+w\}$.
 
@@ -477,23 +491,23 @@ operator, not the entire infinite tiling.
 The next bridge uses a positive geometric *growth envelope*
 $q_0(n)$, together with any real spectral levels $\lambda_n$:
 
-$$
+```math
 Q_n=q_0(n)(1+\lambda_n^2).
-$$
+```
 
 If $q_0(n)>0$ and $\sum_n q_0(n)^{-2}<\infty$, then
 $Q_n\ge q_0(n)>0$, so
 
-$$
+```math
 \sum_n Q_n^{-2}<\infty.
-$$
+```
 
 Lean proves admissibility and Theorem C for $D_Q$; it also
 proves explicitly, for every index $n$,
 
-$$
+```math
 D_Q(c+dQ_n)=0.
-$$
+```
 
 The concrete version uses the actual Euclidean square-centroid
 energy for $q_0$ and a **proved positive eigenvalue** of each
@@ -523,7 +537,7 @@ The choice of zero line remains completely independent of this bridge.
 The next merged development improves the previous bridge by moving
 the geometric baseline **inside** a two-site Hamiltonian:
 
-$$
+```math
 H_n=
 \begin{pmatrix}
 V_n&w_n\\
@@ -531,15 +545,15 @@ w_n&V_n
 \end{pmatrix},
 \qquad
 \lambda_n^\pm=V_n\pm w_n.
-$$
+```
 
 Lean proves symmetry and both eigenvalue identities with explicit
 nonzero eigenvectors. If $V_n>0$, $w_n\ge0$, and
 $\sum_n V_n^{-2}<\infty$, the positive mode
 
-$$
+```math
 Q_n=\lambda_n^+=V_n+w_n
-$$
+```
 
 is an **actual eigenvalue of the full two-site operator $H_n$**,
 and it satisfies positivity, inverse-square summability,
@@ -573,41 +587,41 @@ That same merged development proves a useful limitation of the simple
 local model. Suppose $0\le w_n\le C$ and
 $Q_n=V_n+w_n$. Then, for every real threshold $T$,
 
-$$
+```math
 \{n:V_n\le T-C\}
 \;\subseteq\;
 \{n:Q_n\le T\}
 \;\subseteq\;
 \{n:V_n\le T\}.
-$$
+```
 
 The concrete two-rectangle model proves that $C=\frac{3}{2}$
 works for any sequence of binary marks.
 These are precise **set inclusions**, formally proved by Lean.
 When the threshold sets are finite, define the indexed counting functions
 
-$$
+```math
 N_V(T)=\#\{n:V_n\le T\},
 \qquad
 N_Q(T)=\#\{n:Q_n\le T\}.
-$$
+```
 
 The indices count **with multiplicity**: if two different indices
 produce the same eigenvalue, both are counted. The inclusions imply
 
-$$
+```math
 N_V(T-C)\le N_Q(T)\le N_V(T).
-$$
+```
 
 For the current two-dimensional quadratic centroid baseline, elementary
 lattice-point counting gives $N_V(T)$ of order $T$. By contrast, the
 classical Riemann--von Mangoldt formula for the nontrivial zeta zeros
 with positive ordinate at most $T$ is
 
-$$
+```math
 N_{\zeta}(T)=\frac{T}{2\pi}\log\frac{T}{2\pi}
 -\frac{T}{2\pi}+O(\log T).
-$$
+```
 
 Its leading growth is of order $T\log T$. Consequently, bounded local
 pair couplings applied to this particular quadratic baseline **cannot
