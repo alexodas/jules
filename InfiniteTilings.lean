@@ -1834,5 +1834,60 @@ theorem markedPair_orientation_changes_eigenvalue (base : ℝ) :
   rw [aligned_marked_coupling, opposed_marked_coupling]
   norm_num
 
+
+/-! ## A quantitative constraint on eigenvalue counting
+
+A bounded nonnegative neighbor interaction cannot move any selected
+positive eigenvalue by more than its coupling bound C. This is a
+pointwise set-inclusion statement, independent of any unproved
+Weyl law or zeta-zero hypothesis. For the two-tile marked model,
+C = 3/2. Thus its level-counting function is squeezed between
+those of the externally chosen onsite centroid potential at
+thresholds T-3/2 and T. Any finer statistics require additional work.
+-/
+
+/-- Bounded local couplings sandwich all spectral thresholds
+between two nearby thresholds for the original onsite energies. -/
+theorem pairOperatorEigenlevel_threshold_sandwich
+    (onsite coupling : ℕ → ℝ) (C T : ℝ)
+    (hw0 : ∀ n, 0 ≤ coupling n)
+    (hwC : ∀ n, coupling n ≤ C) :
+    {n : ℕ | onsite n ≤ T - C} ⊆
+      {n : ℕ | pairOperatorEigenlevel onsite coupling n ≤ T} ∧
+    {n : ℕ | pairOperatorEigenlevel onsite coupling n ≤ T} ⊆
+      {n : ℕ | onsite n ≤ T} := by
+  constructor
+  · intro n hn
+    change onsite n ≤ T - C at hn
+    change pairOperatorEigenlevel onsite coupling n ≤ T
+    dsimp [pairOperatorEigenlevel]
+    linarith [hwC n]
+  · intro n hn
+    change pairOperatorEigenlevel onsite coupling n ≤ T at hn
+    change onsite n ≤ T
+    have h := pairOperatorEigenlevel_ge onsite coupling hw0 n
+    linarith
+
+theorem markedDefectCoupling_le_three_halves (leftMark rightMark : Bool) :
+    markedDefectCoupling leftMark rightMark ≤ 3 / 2 := by
+  cases leftMark <;> cases rightMark <;>
+    norm_num [markedDefectCoupling, orientationInteraction,
+      defectPairWidthWeight_value]
+
+/-- A certified bounded-displacement result for the concrete
+geometry-plus-interaction operator eigenvalues. -/
+theorem markedPairEigenlevel_threshold_sandwich
+    (marks : ℕ → Bool × Bool) (T : ℝ) :
+    {n : ℕ | geometricCentroidEnergy n ≤ T - 3 / 2} ⊆
+      {n : ℕ | markedPairEigenlevel marks n ≤ T} ∧
+    {n : ℕ | markedPairEigenlevel marks n ≤ T} ⊆
+      {n : ℕ | geometricCentroidEnergy n ≤ T} := by
+  exact pairOperatorEigenlevel_threshold_sandwich
+    geometricCentroidEnergy
+    (fun n => markedDefectCoupling (marks n).1 (marks n).2)
+    (3 / 2) T
+    (fun n => (markedDefectCoupling_pos _ _).le)
+    (fun n => markedDefectCoupling_le_three_halves _ _)
+
 end
 end InfiniteTilings
