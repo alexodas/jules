@@ -842,5 +842,163 @@ theorem rowShiftGrid_theoremC (offset : ℤ → ℝ)
   theoremC_zero_localization
     (rowShiftGridEnergy_admissible offset hbound center direction) hd hz
 
+
+
+/-! ## General centroid sets with controlled geometric displacement
+
+This is a theorem about the distribution of centroid-like points, not about
+the existence of a tiling with those centroids. In particular, arbitrary
+displacements do not automatically preserve cell covering or disjointness.
+
+The geometric input is deliberately much broader than affine grids or
+row-wise shifts: a *different* bounded displacement may be assigned to
+every pair of integer coordinates. No translation symmetry is required.
+-/
+
+/-- A positive geometric energy is **coercive relative to the square
+lattice** if it dominates the lattice squared-distance energy up to
+one uniform constant. This hypothesis is sufficient for summability;
+it does not itself assert uniform point separation. -/
+theorem coerciveEnergy_inv_sq_summable
+    (q : ℤ × ℤ → ℝ) (C : ℝ) (hC : 0 < C)
+    (hq : ∀ p, 0 < q p)
+    (hcontrol : ∀ p, centroidEnergy p ≤ C * q p) :
+    Summable (fun p : ℤ × ℤ => 1 / (q p) ^ 2) := by
+  have hsum : Summable (fun p : ℤ × ℤ =>
+      C ^ 2 * (1 / (centroidEnergy p) ^ 2)) :=
+    centroidEnergy_inv_sq_summable.mul_left (C ^ 2)
+  apply Summable.of_nonneg_of_le (fun _ => by positivity) (fun p => ?_) hsum
+  have hp : 0 < centroidEnergy p := centroidEnergy_pos p
+  have hsquare : (centroidEnergy p) ^ 2 ≤ C ^ 2 * (q p) ^ 2 := by
+    calc
+      _ ≤ (C * q p) ^ 2 := by
+        gcongr
+        exact hcontrol p
+      _ = _ := by ring
+  calc
+    1 / (q p) ^ 2 ≤ C ^ 2 / (centroidEnergy p) ^ 2 := by
+      apply (div_le_div_iff₀ (sq_pos_of_pos (hq p)) (sq_pos_of_pos hp)).2
+      simpa only [one_mul] using hsquare
+    _ = C ^ 2 * (1 / (centroidEnergy p) ^ 2) := by ring
+
+/-- An arbitrary countable collection of positive geometric energies,
+indexed bijectively by the integer lattice, can be fed into Theorem C
+provided it satisfies the same coercive comparison. -/
+def enumeratedEnergy (q : ℤ × ℤ → ℝ) (n : ℕ) : ℝ :=
+  q (gridPoint n)
+
+/-- This is an *analytic* criterion for arbitrary lattice-indexed
+centroid energies; actual geometric tilings are separate. -/
+theorem coerciveEnergy_admissible
+    (q : ℤ × ℤ → ℝ) (C : ℝ) (hC : 0 < C)
+    (hq : ∀ p, 0 < q p)
+    (hcontrol : ∀ p, centroidEnergy p ≤ C * q p)
+    (center direction : ℂ) :
+    Admissible (enumeratedEnergy q) center direction := by
+  apply admissible_of_inv_sq_summable
+  · intro n
+    exact hq (gridPoint n)
+  · simpa only [enumeratedEnergy, Function.comp_def] using
+      (coerciveEnergy_inv_sq_summable q C hC hq hcontrol).comp_injective
+        gridPoint_injective
+
+/-- General geometric localization theorem for any such coercive
+lattice-indexed sequence: no regularized-product zero can lie away
+from the chosen complex affine line. -/
+theorem coerciveEnergy_theoremC
+    (q : ℤ × ℤ → ℝ) (C : ℝ) (hC : 0 < C)
+    (hq : ∀ p, 0 < q p)
+    (hcontrol : ∀ p, centroidEnergy p ≤ C * q p)
+    (center direction s : ℂ) (hd : direction ≠ 0)
+    (hz : canonicalProduct (enumeratedEnergy q) center direction s = 0) :
+    ∃ t : ℝ, s = center + direction * (t : ℂ) :=
+  theoremC_zero_localization
+    (coerciveEnergy_admissible q C hC hq hcontrol center direction) hd hz
+
+/-- Squared Euclidean centroid energy of an **arbitrary** point
+configuration indexed by the integer lattice. -/
+def pointSetEnergy (point : ℤ × ℤ → ℝ × ℝ) (p : ℤ × ℤ) : ℝ :=
+  1 + (point p).1 ^ 2 + (point p).2 ^ 2
+
+theorem pointSetEnergy_pos (point : ℤ × ℤ → ℝ × ℝ) (p : ℤ × ℤ) :
+    0 < pointSetEnergy point p := by
+  unfold pointSetEnergy
+  positivity
+
+/-- A real inequality: moving both coordinates by at most 1/2
+preserves the original squared-distance energy up to a factor two. -/
+private theorem bounded_displacement_energy_control
+    (x y u v : ℝ)
+    (hx : |u - x| ≤ 1 / 2)
+    (hy : |v - y| ≤ 1 / 2) :
+    1 + x ^ 2 + y ^ 2 ≤ 2 * (1 + u ^ 2 + v ^ 2) := by
+  have hxlo : -(1 / 2 : ℝ) ≤ u - x := (abs_le.mp hx).1
+  have hxhi : u - x ≤ (1 / 2 : ℝ) := (abs_le.mp hx).2
+  have hylo : -(1 / 2 : ℝ) ≤ v - y := (abs_le.mp hy).1
+  have hyhi : v - y ≤ (1 / 2 : ℝ) := (abs_le.mp hy).2
+  have hxsq : (u - x) ^ 2 ≤ (1 / 4 : ℝ) := by
+    have h : 0 ≤ (1 / 2 - (u - x)) * (1 / 2 + (u - x)) :=
+      mul_nonneg (by linarith) (by linarith)
+    nlinarith
+  have hysq : (v - y) ^ 2 ≤ (1 / 4 : ℝ) := by
+    have h : 0 ≤ (1 / 2 - (v - y)) * (1 / 2 + (v - y)) :=
+      mul_nonneg (by linarith) (by linarith)
+    nlinarith
+  nlinarith [sq_nonneg (x - 2 * u), sq_nonneg (y - 2 * v)]
+
+/-- Any bounded displacement field, with no spatial periodicity
+assumption, gives a geometric coercive energy inequality. -/
+theorem boundedPointSet_energy_control
+    (point : ℤ × ℤ → ℝ × ℝ)
+    (hbound : ∀ p,
+      |(point p).1 - (squareCentroid p).1| ≤ 1 / 2 ∧
+      |(point p).2 - (squareCentroid p).2| ≤ 1 / 2)
+    (p : ℤ × ℤ) :
+    centroidEnergy p ≤ 2 * pointSetEnergy point p := by
+  simpa only [centroidEnergy, pointSetEnergy] using
+    bounded_displacement_energy_control
+      (squareCentroid p).1 (squareCentroid p).2
+      (point p).1 (point p).2 (hbound p).1 (hbound p).2
+
+/-- Bounded, potentially fully nonperiodic perturbations of all
+integer-grid centroids always have a summable inverse-square energy.
+The point function need not be periodic or induced by a tile map. -/
+theorem boundedPointSet_inv_sq_summable
+    (point : ℤ × ℤ → ℝ × ℝ)
+    (hbound : ∀ p,
+      |(point p).1 - (squareCentroid p).1| ≤ 1 / 2 ∧
+      |(point p).2 - (squareCentroid p).2| ≤ 1 / 2) :
+    Summable (fun p : ℤ × ℤ => 1 / (pointSetEnergy point p) ^ 2) :=
+  coerciveEnergy_inv_sq_summable (pointSetEnergy point) 2 (by norm_num)
+    (pointSetEnergy_pos point) (boundedPointSet_energy_control point hbound)
+
+/-- All such irregular centroid sets meet the compact-uniform
+product-convergence hypothesis, regardless of point-set periodicity. -/
+theorem boundedPointSet_admissible
+    (point : ℤ × ℤ → ℝ × ℝ)
+    (hbound : ∀ p,
+      |(point p).1 - (squareCentroid p).1| ≤ 1 / 2 ∧
+      |(point p).2 - (squareCentroid p).2| ≤ 1 / 2)
+    (center direction : ℂ) :
+    Admissible (enumeratedEnergy (pointSetEnergy point)) center direction :=
+  coerciveEnergy_admissible (pointSetEnergy point) 2 (by norm_num)
+    (pointSetEnergy_pos point) (boundedPointSet_energy_control point hbound)
+    center direction
+
+/-- **Theorem C for arbitrarily perturbed centroid sets.**
+There is no symmetry or periodicity premise. All zeros of the
+associated infinite canonical product lie on the prescribed line. -/
+theorem boundedPointSet_theoremC
+    (point : ℤ × ℤ → ℝ × ℝ)
+    (hbound : ∀ p,
+      |(point p).1 - (squareCentroid p).1| ≤ 1 / 2 ∧
+      |(point p).2 - (squareCentroid p).2| ≤ 1 / 2)
+    (center direction s : ℂ) (hd : direction ≠ 0)
+    (hz : canonicalProduct (enumeratedEnergy (pointSetEnergy point))
+      center direction s = 0) :
+    ∃ t : ℝ, s = center + direction * (t : ℂ) :=
+  theoremC_zero_localization
+    (boundedPointSet_admissible point hbound center direction) hd hz
+
 end
 end InfiniteTilings
