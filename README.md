@@ -296,3 +296,49 @@ experiment with the capabilities and limitations of LLMs.
 This classical geometric-spectral construction has **no proved
 identification with Riemann's zeta function** and does not
 establish the Riemann hypothesis.
+
+
+## New direction: operators that sense geometry and orientation
+
+Earlier canonical products put their zeros on a chosen complex line by
+construction. They use chiefly centroid-derived positive energies, not
+fine tile structure. The new single-file Lean section **does not** use
+those products to derive its eigenvalues.
+
+For an arbitrary **finite** set of tile vertices, it defines a
+weighted adjacency operator and proves a finite self-adjointness
+identity whenever neighbor relations and real edge weights are
+symmetric. This is a mathematical framework for geometry-dependent
+spectral analysis; no periodicity of the underlying tile patch is
+needed.
+
+A **concrete two-tile example** is taken from the previously verified
+infinite rectangle tiling. The adjacent special rectangles have widths
+\`1/2\` and \`3/2\` and share a vertical edge. A binary *orientation mark*
+is added to each tile. With the explicitly chosen interaction law
+\`1\` for matching marks and \`2\` for opposing marks, multiplied by the
+two widths' product \`3/4\`, the symmetric adjacency operator is
+
+\`\`\`text
+H(u,v) = (w v, w u).
+\`\`\`
+
+Its **entire real eigenvalue set** is exactly \`{w, -w}\`.
+Matching marks yield eigenvalues \`±3/4\`, opposite marks \`±3/2\`.
+Lean proves in particular that \`3/2\` is an eigenvalue in the
+opposed-mark case but **not** in the aligned-mark case.
+
+This demonstrates an explicit dependency of eigenvalues on the
+local geometry and orientation **marking**, not merely on centroids.
+However the interaction law itself is chosen as a model, not deduced
+uniquely from geometry. Rectangles are intrinsically achiral, so
+the binary marks must not be confused with actual tile chirality.
+This is still a finite example, not yet an infinite Penrose/Farey
+spectral operator. Self-adjointness and real eigenvalues are expected
+linear-algebra facts, not evidence for the Riemann hypothesis.
+No identification with Riemann zeta zeros is claimed.
+
+As before, source and proofs are **AI-generated** in response to
+Alessandro Odasso (not a mathematician) experimenting with LLM
+capabilities and limitations. Claims of Lean verification apply only
+to commits that pass the CI build.
