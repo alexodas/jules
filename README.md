@@ -730,6 +730,85 @@ $\ell^2(\mathbb Z^2)$, discreteness of the global spectrum,
 inverse-square summability of its eigenlevels, or any link to
 zeta-zero statistics.
 
+## 14. Exact quadratic form and a uniform eigenvalue lower bound
+
+**Mathematical objective.** Turn the symmetry of the arbitrary finite
+geometric Hamiltonians from Section 13 into a **quantitative spectral
+constraint**. The energy of an interacting operator is not simply the
+sum of all directed edge differences: each undirected edge occurs
+twice. We must first establish the exact quadratic-form identity,
+then use it to bound every possible eigenvalue uniformly over patch
+size.
+
+For any finite patch of $N$ actual square tiles, the Hamiltonian
+is defined by a geometric onsite potential $V_i$ and symmetric
+nonnegative neighbor weights $W_{ij}$:
+
+```math
+(H_Nu)_i=V_i u_i+\sum_{j=0}^{N-1}W_{ij}(u_i-u_j).
+```
+
+The new fundamental algebraic theorem is
+
+```math
+2\sum_{i=0}^{N-1}u_i(H_Nu)_i
+=2\sum_{i=0}^{N-1}V_i u_i^2
++\sum_{i,j=0}^{N-1}W_{ij}(u_i-u_j)^2.
+```
+
+In other words, **the operator's quadratic form equals the onsite
+energy plus half the directed-edge energy**. The factor $1/2$
+is essential: every undirected edge appears twice in the
+double sum. It is proved using finite-sum identities and
+the symmetry $W_{ij}=W_{ji}$.
+
+Our actual square-grid model satisfies $V_i\ge1$ for all
+indices and $W_{ij}\ge0$. Consequently,
+
+```math
+\sum_{i=0}^{N-1}u_i(H_Nu)_i
+\ge\sum_{i=0}^{N-1}u_i^2.
+```
+
+The constant $1$ is **independent of $N$**. If a nonzero real vector
+$u$ is an eigenvector of the finite Hamiltonian, so that
+$H_Nu=\lambda u$, then
+
+```math
+\lambda\sum_i u_i^2
+=\sum_i u_i(H_Nu)_i
+\ge\sum_i u_i^2,
+\qquad\Longrightarrow\qquad
+\lambda\ge1.
+```
+
+Thus none of these finite operators has a real eigenvalue
+below $1$, regardless of the number of included tiles.
+The theorem applies to **any genuine eigenpair**, without
+requiring us to choose or numerically approximate its eigenvalue.
+
+**Why this matters for the next step.** A positive lower spectral
+bound is a first uniform estimate toward controlling the entire
+spectrum of a single infinite lattice operator. The next questions
+are upper estimates, eigenvalue counting, and the passage from
+finite matrices to a self-adjoint operator on an infinite
+Hilbert space.
+
+**Lean anchors:** `finitePatch_edge_swapped`,
+`finitePatch_edge_energy_identity`,
+`finitePatchHamiltonian_quadratic_expansion`,
+`finitePatchHamiltonian_quadratic_identity`,
+`squarePatchOnsite_ge_one`,
+`squarePatchHamiltonian_quadratic_lower_bound`,
+`squarePatchHamiltonian_eigenvalue_ge_one`.
+
+**Boundary:** these theorems establish an **exact quadratic form
+and an eigenvalue lower bound for finite patches of arbitrary size**.
+They do not establish a single infinite-dimensional self-adjoint
+operator, compact resolvent, a complete eigenvalue counting law,
+inverse-square summability of an infinite eigenvalue sequence,
+or any relation to the Riemann zeta zeros.
+
 ## Reproducing the Lean verification
 
 The primary source is [`InfiniteTilings.lean`](InfiniteTilings.lean).

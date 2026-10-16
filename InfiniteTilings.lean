@@ -2031,5 +2031,201 @@ theorem squarePatchDirichletEnergy_nonneg {N : ℕ}
     exact squarePatchWeight_nonneg i j
 
 
+
+/-! ## Exact quadratic form and a finite-volume spectral lower bound
+
+For every finite patch of the square grid, we now prove the identity
+relating the onsite-plus-graph-Laplacian operator to the nonnegative
+edge-difference energy. The earlier Dirichlet energy counted both
+orientations of each undirected edge. Hence its edge term must be
+halved when expressed as the quadratic form of the Hamiltonian.
+
+The resulting lower bound is uniform in the number of tiles. It also
+imposes a rigorous lower bound on *any* real eigenvalue of the finite
+Hamiltonian, without claiming the spectrum of an infinite operator.
+-/
+
+/-- Symmetry of the weights makes the two orientations of every
+weighted edge contribute equally after exchanging the indices. -/
+private theorem finitePatch_edge_swapped {N : ℕ}
+    (W : Fin N → Fin N → ℝ)
+    (hW : ∀ i j, W i j = W j i)
+    (u : Fin N → ℝ) :
+    (∑ i : Fin N, ∑ j : Fin N,
+      W i j * u j * (u j - u i)) =
+    ∑ i : Fin N, ∑ j : Fin N,
+      W i j * u i * (u i - u j) := by
+  calc
+    _ = ∑ j : Fin N, ∑ i : Fin N,
+        W i j * u j * (u j - u i) := Finset.sum_comm
+    _ = ∑ j : Fin N, ∑ i : Fin N,
+        W j i * u j * (u j - u i) := by
+      apply Finset.sum_congr rfl
+      intro j _
+      apply Finset.sum_congr rfl
+      intro i _
+      rw [hW i j]
+    _ = _ := rfl
+
+/-- The double edge-difference sum equals twice the graph-Laplacian
+quadratic term. This identity is purely finite-dimensional. -/
+theorem finitePatch_edge_energy_identity {N : ℕ}
+    (W : Fin N → Fin N → ℝ)
+    (hW : ∀ i j, W i j = W j i)
+    (u : Fin N → ℝ) :
+    (∑ i : Fin N, ∑ j : Fin N,
+      W i j * (u i - u j) ^ 2) =
+    2 * (∑ i : Fin N, ∑ j : Fin N,
+      W i j * u i * (u i - u j)) := by
+  calc
+    _ = ∑ i : Fin N, ∑ j : Fin N,
+          (W i j * u i * (u i - u j) +
+            W i j * u j * (u j - u i)) := by
+        apply Finset.sum_congr rfl
+        intro i _
+        apply Finset.sum_congr rfl
+        intro j _
+        ring
+    _ = (∑ i : Fin N, ∑ j : Fin N,
+          W i j * u i * (u i - u j)) +
+        (∑ i : Fin N, ∑ j : Fin N,
+          W i j * u j * (u j - u i)) := by
+        simp only [Finset.sum_add_distrib]
+    _ = 2 * (∑ i : Fin N, ∑ j : Fin N,
+          W i j * u i * (u i - u j)) := by
+        rw [finitePatch_edge_swapped W hW u]
+        ring
+
+/-- Expand the quadratic form of the actual finite Hamiltonian
+into its diagonal energy and its weighted directed-edge contribution. -/
+theorem finitePatchHamiltonian_quadratic_expansion {N : ℕ}
+    (V : Fin N → ℝ) (W : Fin N → Fin N → ℝ)
+    (u : Fin N → ℝ) :
+    (∑ i : Fin N,
+      u i * finitePatchDirichletHamiltonian V W u i) =
+    (∑ i : Fin N, V i * (u i) ^ 2) +
+    (∑ i : Fin N, ∑ j : Fin N,
+      W i j * u i * (u i - u j)) := by
+  calc
+    _ = ∑ i : Fin N,
+        (V i * (u i) ^ 2 +
+          ∑ j : Fin N, W i j * u i * (u i - u j)) := by
+        apply Finset.sum_congr rfl
+        intro i _
+        simp only [finitePatchDirichletHamiltonian, finitePatchOperator,
+          mul_sub, add_mul, Finset.mul_sum, Finset.sum_mul,
+          Finset.sum_sub_distrib]
+        -- The two finite sums contain the same monomials in a
+        -- different multiplication order. Identify them explicitly.
+        have hsumA :
+            u i * (∑ j : Fin N, W i j * u i) =
+              ∑ j : Fin N, W i j * u i * u i := by
+          rw [Finset.mul_sum]
+          apply Finset.sum_congr rfl
+          intro j _
+          ring
+        have hsumB :
+            (∑ j : Fin N, u i * (W i j * u j)) =
+              ∑ j : Fin N, W i j * u i * u j := by
+          apply Finset.sum_congr rfl
+          intro j _
+          ring
+        rw [mul_add, hsumA, hsumB]
+        ring
+    _ = (∑ i : Fin N, V i * (u i) ^ 2) +
+        (∑ i : Fin N, ∑ j : Fin N,
+          W i j * u i * (u i - u j)) := by
+        simp only [Finset.sum_add_distrib]
+
+/-- Exact energy identity. The graph edge contribution contains a
+factor 1/2 because the double sum counts undirected edges twice. -/
+theorem finitePatchHamiltonian_quadratic_identity {N : ℕ}
+    (V : Fin N → ℝ) (W : Fin N → Fin N → ℝ)
+    (hW : ∀ i j, W i j = W j i)
+    (u : Fin N → ℝ) :
+    2 * (∑ i : Fin N,
+      u i * finitePatchDirichletHamiltonian V W u i) =
+    2 * (∑ i : Fin N, V i * (u i) ^ 2) +
+      (∑ i : Fin N, ∑ j : Fin N,
+        W i j * (u i - u j) ^ 2) := by
+  rw [finitePatchHamiltonian_quadratic_expansion V W u,
+    finitePatch_edge_energy_identity W hW u]
+  ring
+
+/-- The geometric onsite energy is at least one, uniformly over all
+square tiles and independent of finite patch size. -/
+theorem squarePatchOnsite_ge_one {N : ℕ} (i : Fin N) :
+    1 ≤ squarePatchOnsite i := by
+  change 1 ≤ centroidEnergy (gridPoint i.val)
+  unfold centroidEnergy
+  nlinarith [sq_nonneg (squareCentroid (gridPoint i.val)).1,
+    sq_nonneg (squareCentroid (gridPoint i.val)).2]
+
+/-- Uniform coercivity of the finite Hamiltonian quadratic form.
+No constant depends on the patch size N. -/
+theorem squarePatchHamiltonian_quadratic_lower_bound {N : ℕ}
+    (u : Fin N → ℝ) :
+    (∑ i : Fin N, (u i) ^ 2) ≤
+    ∑ i : Fin N,
+      u i * finitePatchDirichletHamiltonian
+        squarePatchOnsite squarePatchWeight u i := by
+  have honsite :
+      (∑ i : Fin N, (u i) ^ 2) ≤
+      ∑ i : Fin N, squarePatchOnsite i * (u i) ^ 2 := by
+    apply Finset.sum_le_sum
+    intro i _
+    have h := squarePatchOnsite_ge_one i
+    nlinarith [mul_nonneg (sub_nonneg.mpr h) (sq_nonneg (u i))]
+  have hedge :
+      0 ≤ ∑ i : Fin N, ∑ j : Fin N,
+        squarePatchWeight i j * (u i - u j) ^ 2 := by
+    apply Finset.sum_nonneg
+    intro i _
+    apply Finset.sum_nonneg
+    intro j _
+    exact mul_nonneg (squarePatchWeight_nonneg i j) (sq_nonneg _)
+  have hidentity := finitePatchHamiltonian_quadratic_identity
+    squarePatchOnsite squarePatchWeight
+    (fun i j => squarePatchWeight_symmetric i j) u
+  linarith
+
+/-- Any genuine real eigenmode on any finite grid patch has
+eigenvalue at least one, uniformly over all patch sizes. -/
+theorem squarePatchHamiltonian_eigenvalue_ge_one {N : ℕ}
+    (u : Fin N → ℝ) (lambda : ℝ)
+    (hne : ∃ i : Fin N, u i ≠ 0)
+    (heigen : ∀ i : Fin N,
+      finitePatchDirichletHamiltonian
+        squarePatchOnsite squarePatchWeight u i = lambda * u i) :
+    1 ≤ lambda := by
+  have hnorm : 0 < ∑ i : Fin N, (u i) ^ 2 := by
+    apply Finset.sum_pos'
+    · intro i _
+      exact sq_nonneg _
+    · obtain ⟨i, hi⟩ := hne
+      exact ⟨i, Finset.mem_univ _, sq_pos_of_ne_zero hi⟩
+  have heq :
+      (∑ i : Fin N,
+        u i * finitePatchDirichletHamiltonian
+          squarePatchOnsite squarePatchWeight u i) =
+      lambda * (∑ i : Fin N, (u i) ^ 2) := by
+    calc
+      _ = ∑ i : Fin N, u i * (lambda * u i) := by
+        apply Finset.sum_congr rfl
+        intro i _
+        rw [heigen i]
+      _ = lambda * (∑ i : Fin N, (u i) ^ 2) := by
+        rw [Finset.mul_sum]
+        apply Finset.sum_congr rfl
+        intro i _
+        ring
+  have hbound := squarePatchHamiltonian_quadratic_lower_bound u
+  rw [heq] at hbound
+  by_contra hh
+  have hlt : lambda < 1 := lt_of_not_ge hh
+  have hmul := mul_lt_mul_of_pos_right hlt hnorm
+  linarith
+
+
 end
 end InfiniteTilings
