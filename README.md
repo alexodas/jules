@@ -109,9 +109,9 @@ A reusable sufficient condition proved in the square-grid extension is
 
 For positive levels $q_n$, the reusable sufficient condition is
 
-$
+$$
 \sum_{n=0}^{\infty}\frac{1}{q_n^2}<\infty.
-$
+$$
 
 Lean proves that this ensures the compact-majorant condition of `Admissible`.
 
@@ -443,9 +443,9 @@ $$
 
 The two-tile adjacency operator is
 
-$
+$$
 H_w=\begin{pmatrix}0&w\\w&0\end{pmatrix}.
-$
+$$
 
 The set of real eigenvalues of this matrix is $\{-w,+w\}$.
 
@@ -584,22 +584,40 @@ $$
 The concrete two-rectangle model proves that $C=\frac{3}{2}$
 works for any sequence of binary marks.
 These are precise **set inclusions**, formally proved by Lean.
-Whenever the sets are finite, their cardinalities obey the
-corresponding inequalities.
+When the threshold sets are finite, define the indexed counting functions
 
-This matters to the research program: bounded positive local
-couplings can shift these selected levels only by a bounded amount.
-For the present two-dimensional quadratic centroid baseline, the
-elementary lattice-point count is of order $T$, whereas the
-positive-ordinate nontrivial Riemann-zeta zero count has leading
-order $T\log T$. So simply adding uniformly bounded pair
-couplings to that baseline cannot by itself reproduce the
-Riemann-zeta level-counting law **when counting the indexed levels
-with multiplicity**.
+$$
+N_V(T)=\#\{n:V_n\le T\},
+\qquad
+N_Q(T)=\#\{n:Q_n\le T\}.
+$$
 
-The **set-inclusion theorem** is in Lean; the comparison of these
-two asymptotic counting laws is mathematical analysis discussed here,
-**not** a Lean-certified theorem in this repository.
+The indices count **with multiplicity**: if two different indices
+produce the same eigenvalue, both are counted. The inclusions imply
+
+$$
+N_V(T-C)\le N_Q(T)\le N_V(T).
+$$
+
+For the current two-dimensional quadratic centroid baseline, elementary
+lattice-point counting gives $N_V(T)$ of order $T$. By contrast, the
+classical Riemann--von Mangoldt formula for the nontrivial zeta zeros
+with positive ordinate at most $T$ is
+
+$$
+N_{\zeta}(T)=\frac{T}{2\pi}\log\frac{T}{2\pi}
+-\frac{T}{2\pi}+O(\log T).
+$$
+
+Its leading growth is of order $T\log T$. Consequently, bounded local
+pair couplings applied to this particular quadratic baseline **cannot
+produce the same asymptotic level count**. They might still change
+small-scale patterns, but matching the overall density already fails.
+
+**Precisely what Lean proves here** is the threshold-set inclusion.
+The counting-function translation, lattice-point estimate, and
+Riemann--von Mangoldt comparison are mathematical consequences or
+external analytic facts **not independently formalized in this file**.
 
 **Why this matters for the next step.** This constrains spectral density. In particular, bounded corrections to a two-dimensional quadratic baseline cannot change its order-$T$ counting law into the order-$T\log T$ zeta-zero law when counting indexed levels with multiplicity. The asymptotic comparison itself is not a Lean theorem here.
 
