@@ -506,7 +506,9 @@ private theorem linear_sq_control (a b c d x y : ℝ) :
   calc
     _ ≤ (a * d - b * c) ^ 2 * (x ^ 2 + y ^ 2) +
           (b * u + d * v) ^ 2 + (a * u + c * v) ^ 2 := by
-            positivity
+            have h₁ : 0 ≤ (b * u + d * v) ^ 2 := sq_nonneg _
+            have h₂ : 0 ≤ (a * u + c * v) ^ 2 := sq_nonneg _
+            linarith
     _ = (a ^ 2 + b ^ 2 + c ^ 2 + d ^ 2) * (u ^ 2 + v ^ 2) := hidentity
     _ = _ := rfl
 
