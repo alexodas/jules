@@ -215,22 +215,22 @@ theorem squareGridEnergy_grows (n : ℕ) :
       (Nat.pair_lt_max_add_one_sq (Nat.unpair n).1 (Nat.unpair n).2)
   have hn' : n + 1 ≤ (max (Nat.unpair n).1 (Nat.unpair n).2 + 1) ^ 2 :=
     Nat.succ_le_iff.mpr hn
-  exact_mod_cast hn'
+  have hnreal : (((n + 1 : ℕ) : ℝ) ≤ squareGridEnergy n) := by
+    exact_mod_cast hn'
+  simpa only [Nat.cast_add, Nat.cast_one] using hnreal
 
 /-- Geometry implies the summability needed by the canonical product. -/
 theorem squareGridEnergy_inv_sq_summable :
-    Summable (fun n : ℕ => (squareGridEnergy n)⁻²) := by
+    Summable (fun n : ℕ => 1 / (squareGridEnergy n) ^ 2) := by
   have hseries : Summable (fun n : ℕ => 1 / (n : ℝ) ^ 2) :=
     Real.summable_one_div_nat_pow.mpr (by norm_num)
   have hshift : Summable (fun n : ℕ => 1 / ((n : ℝ) + 1) ^ 2) := by
     simpa [Nat.cast_add] using
       (summable_nat_add_iff (f := fun n : ℕ => 1 / (n : ℝ) ^ 2) 1).2 hseries
   apply Summable.of_nonneg_of_le (fun n => by positivity) (fun n => ?_) hshift
-  calc
-    (squareGridEnergy n)⁻² ≤ ((n : ℝ) + 1)⁻² := by
-      gcongr
-      exact squareGridEnergy_grows n
-    _ = 1 / ((n : ℝ) + 1) ^ 2 := by ring
+  show 1 / (squareGridEnergy n) ^ 2 ≤ 1 / ((n : ℝ) + 1) ^ 2
+  gcongr
+  exact squareGridEnergy_grows n
 
 /--
 Convert a summable sequence of inverse squared energies into the
@@ -238,7 +238,7 @@ compact-majorant hypothesis of Theorem C.
 -/
 theorem admissible_of_inv_sq_summable
     {q : ℕ → ℝ} (hq : ∀ n, 0 < q n)
-    (hsum : Summable (fun n => (q n)⁻²))
+    (hsum : Summable (fun n => 1 / (q n) ^ 2))
     (center direction : ℂ) : Admissible q center direction := by
   refine ⟨hq, ?_⟩
   intro K hK
@@ -246,15 +246,15 @@ theorem admissible_of_inv_sq_summable
     fun_prop
   obtain ⟨C, hC⟩ :=
     (hK.image hcont).isBounded.exists_norm_le
-  refine ⟨fun n => C * (q n)⁻², hsum.mul_left C, ?_⟩
+  refine ⟨fun n => C * (1 / (q n) ^ 2), hsum.mul_left C, ?_⟩
   intro n s hs
   have hden : ‖((q n : ℂ) ^ 2)‖ = (q n) ^ 2 := by
     rw [norm_pow, Complex.norm_real, Real.norm_eq_abs, abs_of_pos (hq n)]
   have hnorm :
       ‖perturb q center direction n s‖ =
-        ‖((s - center) / direction) ^ 2‖ * (q n)⁻² := by
-    rw [perturb, norm_neg, norm_div, hden, div_eq_mul_inv]
-    rfl
+        ‖((s - center) / direction) ^ 2‖ * (1 / (q n) ^ 2) := by
+    rw [perturb, norm_neg, norm_div, hden]
+    ring
   rw [hnorm]
   exact mul_le_mul_of_nonneg_right (hC _ ⟨s, hs, rfl⟩) (by positivity)
 
