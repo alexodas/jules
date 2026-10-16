@@ -301,9 +301,7 @@ private theorem summable_centroid_axis :
     (Real.summable_one_div_int_add_rpow (1 / 2) 2).2 (by norm_num)
   have hpowers : Summable
       (fun m : ℤ => 1 / (((m : ℝ) + 1 / 2) ^ 2)) := by
-    convert hbase using 1 with m
-    rw [Real.rpow_natCast]
-    simp only [Nat.cast_ofNat, ← sq_abs, pow_two]
+    simpa only [Real.rpow_natCast, sq_abs] using hbase
   apply Summable.of_nonneg_of_le (fun _ => by positivity) (fun m => ?_) hpowers
   have hnonzero : (m : ℝ) + 1 / 2 ≠ 0 := by
     intro hz
@@ -323,6 +321,8 @@ theorem centroidEnergy_inv_sq_summable :
       (1 / (1 + ((p.1 : ℝ) + 1 / 2) ^ 2)) *
       (1 / (1 + ((p.2 : ℝ) + 1 / 2) ^ 2))) := by
     apply summable_mul_of_summable_norm
+      (f := fun m : ℤ => (1 : ℝ) / (1 + ((m : ℝ) + 1 / 2) ^ 2))
+      (g := fun m : ℤ => (1 : ℝ) / (1 + ((m : ℝ) + 1 / 2) ^ 2))
     · simpa only [Real.norm_eq_abs, abs_of_nonneg (by positivity)] using haxis
     · simpa only [Real.norm_eq_abs, abs_of_nonneg (by positivity)] using haxis
   apply Summable.of_nonneg_of_le (fun _ => by positivity) (fun p => ?_) hprod
@@ -339,7 +339,8 @@ theorem centroidEnergy_inv_sq_summable :
         1 / ((1 + x ^ 2) * (1 + y ^ 2)) := by
       apply one_div_le_one_div_of_le (by positivity)
       exact hxy
-    _ = (1 / (1 + x ^ 2)) * (1 / (1 + y ^ 2)) := by ring
+    _ = (1 / (1 + x ^ 2)) * (1 / (1 + y ^ 2)) := by
+      simp only [one_div, mul_inv_rev]
 
 /-- The enumeration used for the square tiling has no repeated lattice points. -/
 theorem gridPoint_injective : Function.Injective gridPoint := by
