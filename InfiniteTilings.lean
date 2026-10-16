@@ -1352,8 +1352,8 @@ theorem markedDefectOperator_symmetric (leftMark rightMark : Bool)
 /-- A real eigenvalue is characterized by a **nonzero** eigenvector.
 This elementary finite-dimensional definition avoids making unproved
 claims about infinite-dimensional operator spectra. -/
-def PairHasEigenvalue (H : (ℝ × ℝ) → (ℝ × ℝ)) (λ : ℝ) : Prop :=
-  ∃ u : ℝ × ℝ, u ≠ (0, 0) ∧ H u = (λ * u.1, λ * u.2)
+def PairHasEigenvalue (H : (ℝ × ℝ) → (ℝ × ℝ)) (eig : ℝ) : Prop :=
+  ∃ u : ℝ × ℝ, u ≠ (0, 0) ∧ H u = (eig * u.1, eig * u.2)
 
 /-- The symmetric mode, with both tile amplitudes equal. -/
 theorem markedDefect_positive_mode (leftMark rightMark : Bool) :
@@ -1373,31 +1373,31 @@ theorem markedDefect_negative_mode (leftMark rightMark : Bool) :
 /-- There are **no other** eigenvalues of the actual two-tile operator.
 Thus both eigenvalues are derived from the geometric interaction. -/
 theorem markedDefect_eigenvalues_exact (leftMark rightMark : Bool)
-    (λ : ℝ)
-    (hλ : PairHasEigenvalue (markedDefectOperator leftMark rightMark) λ) :
-    λ = markedDefectCoupling leftMark rightMark ∨
-      λ = -markedDefectCoupling leftMark rightMark := by
-  obtain ⟨⟨x, y⟩, hnonzero, heq⟩ := hλ
+    (eig : ℝ)
+    (heig : PairHasEigenvalue (markedDefectOperator leftMark rightMark) eig) :
+    eig = markedDefectCoupling leftMark rightMark ∨
+      eig = -markedDefectCoupling leftMark rightMark := by
+  obtain ⟨⟨x, y⟩, hnonzero, heq⟩ := heig
   let w : ℝ := markedDefectCoupling leftMark rightMark
-  have hx : w * y = λ * x := by
+  have hx : w * y = eig * x := by
     have hh := congrArg Prod.fst heq
     exact hh
-  have hy : w * x = λ * y := by
+  have hy : w * x = eig * y := by
     have hh := congrArg Prod.snd heq
     exact hh
-  by_cases hplus : λ = w
+  by_cases hplus : eig = w
   · exact Or.inl hplus
   · right
     by_contra hminus
-    have hsum : (w - λ) * (x + y) = 0 := by
+    have hsum : (w - eig) * (x + y) = 0 := by
       nlinarith [hx, hy]
-    have hdiff : (w + λ) * (x - y) = 0 := by
+    have hdiff : (w + eig) * (x - y) = 0 := by
       nlinarith [hx, hy]
-    have hne₁ : w - λ ≠ 0 := by
+    have hne₁ : w - eig ≠ 0 := by
       intro h
       apply hplus
       linarith
-    have hne₂ : w + λ ≠ 0 := by
+    have hne₂ : w + eig ≠ 0 := by
       intro h
       apply hminus
       linarith
