@@ -9,12 +9,16 @@ on:
 jobs:
   proof:
     runs-on: ubuntu-latest
-    timeout-minutes: 35
+    timeout-minutes: 45
     steps:
       - uses: actions/checkout@v4
-      - name: Install Lean and Mathlib, then check proofs
-        uses: leanprover/lean-action@v1
-        with:
-          use-mathlib-cache: true
-          build: true
-          test: false
+      - name: Install elan and Lean 4
+        run: |
+          curl -sSf https://raw.githubusercontent.com/leanprover/elan/master/elan-init.sh | sh -s -- -y
+          echo "$HOME/.elan/bin" >> "$GITHUB_PATH"
+      - name: Generate manifest and download Mathlib
+        run: |
+          lake update
+          lake exe cache get
+      - name: Compile and kernel-check Lean proof
+        run: lake build
