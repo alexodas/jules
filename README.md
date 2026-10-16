@@ -183,3 +183,36 @@ question, and is called certified only when Lean/Mathlib GitHub Actions
 passes on the precise commit.
 
 The affine-grid extension also proves that transformed parallelogram cells **cover the entire plane** and that distinct cells have **disjoint open interiors**, using an explicit inverse for the nonsingular matrix. Thus both the tiling geometry and the associated spectral-product summability are checked in one Lean source file.
+
+
+## Beyond globally affine grids: independently shifted rows
+
+The same \`InfiniteTilings.lean\` file now formalizes a larger family
+of planar square tilings. Each row indexed by integer \`n\` is shifted
+horizontally by an independently chosen real number \`offset(n)\`. The
+function need **not** repeat, and the positions are **not** required
+to be a common linear image of the original grid.
+
+The geometric claims are formal:
+
+- The shifted square cells still cover all of the real plane.
+- Different cells have disjoint open interiors.
+- The centroids of distinct cells are separated by Euclidean
+  distance at least one, for **arbitrary** row offsets.
+- When all offsets satisfy \`|offset(n)| ≤ 1/2\`, their Euclidean
+  squared-distance energy is comparable with the original square
+  centroid energy. This proves summability without assuming it.
+- Consequently the canonical product converges compact-uniformly
+  and its zeros stay on an arbitrarily prescribed affine complex line.
+
+**Precise limitation:** Such stripwise-shifted tilings always retain
+horizontal translation symmetry by one unit. They may have *no
+periodicity across rows*, but they are **not fully aperiodic tilings**
+in the strict sense of having no nonzero translational period.
+A general theorem for all uniformly separated, density-controlled
+point sets, and genuinely aperiodic tilings, remains future work.
+
+This is a classical type of geometric/spectral argument formalized
+by AI in response to a research question from Alessandro Odasso,
+who is not a mathematician and is exploring LLM capabilities.
+It does **not** prove the Riemann hypothesis.
