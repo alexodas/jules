@@ -1000,5 +1000,218 @@ theorem boundedPointSet_theoremC
   theoremC_zero_localization
     (boundedPointSet_admissible point hbound center direction) hd hz
 
+
+/-! ## A genuinely translation-aperiodic planar rectangle tiling
+
+This is a finite, geometrically explicit defect of the square grid:
+replace the unit squares at (0,0) and (1,0) with rectangles of widths
+1/2 and 3/2. Everywhere else the tiling consists of unit squares.
+The unique 3/2-wide rectangle rules out every nonzero translation
+period preserving the family of tiles. This is aperiodic in the
+translation-symmetry sense, not an aperiodic *tile set*: unit squares
+and two other rectangles can also tile periodically.
+-/
+
+/-- Left horizontal edge of each rectangle. -/
+def defectLeft (p : ℤ × ℤ) : ℝ :=
+  if p = (1, 0) then 1 / 2 else (p.1 : ℝ)
+
+/-- Right horizontal edge of each rectangle. -/
+def defectRight (p : ℤ × ℤ) : ℝ :=
+  if p = (0, 0) then 1 / 2 else (p.1 : ℝ) + 1
+
+/-- Full closed rectangle with vertical boundaries at integer heights. -/
+def defectCell (p : ℤ × ℤ) : Set (ℝ × ℝ) :=
+  {z | defectLeft p ≤ z.1 ∧ z.1 ≤ defectRight p ∧
+       (p.2 : ℝ) ≤ z.2 ∧ z.2 ≤ (p.2 : ℝ) + 1}
+
+/-- Open geometric interior of the rectangle. -/
+def defectInterior (p : ℤ × ℤ) : Set (ℝ × ℝ) :=
+  {z | defectLeft p < z.1 ∧ z.1 < defectRight p ∧
+       (p.2 : ℝ) < z.2 ∧ z.2 < (p.2 : ℝ) + 1}
+
+/-- The rectangle cells cover every point of the plane. -/
+theorem defectCell_covers_plane (z : ℝ × ℝ) :
+    ∃ p : ℤ × ℤ, z ∈ defectCell p := by
+  obtain ⟨p, hp⟩ := squareCell_covers_plane z
+  change (p.1 : ℝ) ≤ z.1 ∧ z.1 ≤ (p.1 : ℝ) + 1 ∧
+    (p.2 : ℝ) ≤ z.2 ∧ z.2 ≤ (p.2 : ℝ) + 1 at hp
+  by_cases h0 : p = (0, 0)
+  · subst p
+    rcases hp with ⟨hxlo, hxhi, hylo, hyhi⟩
+    rcases le_total z.1 (1 / 2 : ℝ) with hx | hx
+    · refine ⟨(0, 0), ?_⟩
+      change defectLeft (0, 0) ≤ z.1 ∧
+        z.1 ≤ defectRight (0, 0) ∧
+        (0 : ℝ) ≤ z.2 ∧ z.2 ≤ 0 + 1
+      norm_num [defectLeft, defectRight] at *
+      exact ⟨hxlo, hx, hylo, hyhi⟩
+    · refine ⟨(1, 0), ?_⟩
+      change defectLeft (1, 0) ≤ z.1 ∧
+        z.1 ≤ defectRight (1, 0) ∧
+        (0 : ℝ) ≤ z.2 ∧ z.2 ≤ 0 + 1
+      norm_num [defectLeft, defectRight] at *
+      exact ⟨hx, by linarith, hylo, hyhi⟩
+  · by_cases h1 : p = (1, 0)
+    · subst p
+      refine ⟨(1, 0), ?_⟩
+      change defectLeft (1, 0) ≤ z.1 ∧
+        z.1 ≤ defectRight (1, 0) ∧
+        (0 : ℝ) ≤ z.2 ∧ z.2 ≤ 0 + 1
+      norm_num [defectLeft, defectRight] at *
+      rcases hp with ⟨hxlo, hxhi, hylo, hyhi⟩
+      exact ⟨by linarith, hxhi, hylo, hyhi⟩
+    · refine ⟨p, ?_⟩
+      change defectLeft p ≤ z.1 ∧ z.1 ≤ defectRight p ∧
+        (p.2 : ℝ) ≤ z.2 ∧ z.2 ≤ (p.2 : ℝ) + 1
+      simpa only [defectLeft, defectRight, if_neg h0, if_neg h1] using hp
+
+/-- Two different intervals in one horizontal row cannot have
+overlapping interiors: the earlier tile ends before the later begins. -/
+private theorem defectRight_le_left_of_lt (p q : ℤ × ℤ)
+    (h : p.1 < q.1) (hy : p.2 = q.2) :
+    defectRight p ≤ defectLeft q := by
+  by_cases hq : q = (1, 0)
+  · have hpne : p ≠ (1, 0) := by
+      intro h1
+      rw [h1, hq] at h
+      omega
+    by_cases hp0 : p = (0, 0)
+    · subst p
+      simp [defectRight, defectLeft, hq]
+    · have hi : p.1 + 1 ≤ 0 := by
+        have hq1 : q.1 = 1 := congrArg Prod.fst hq
+        omega
+      have hr : (p.1 : ℝ) + 1 ≤ 0 := by
+        exact_mod_cast hi
+      simp only [defectRight, if_neg hp0, defectLeft, if_pos hq]
+      linarith
+  · by_cases hp0 : p = (0, 0)
+    · have hi : 1 ≤ q.1 := by
+        have hp1 : p.1 = 0 := congrArg Prod.fst hp0
+        omega
+      have hr : (1 : ℝ) ≤ (q.1 : ℝ) := by
+        exact_mod_cast hi
+      simp only [defectRight, if_pos hp0, defectLeft, if_neg hq]
+      linarith
+    · have hi : p.1 + 1 ≤ q.1 := by omega
+      have hr : (p.1 : ℝ) + 1 ≤ (q.1 : ℝ) := by
+        exact_mod_cast hi
+      simpa only [defectRight, if_neg hp0, defectLeft, if_neg hq] using hr
+
+/-- The open interiors of distinct rectangles are disjoint. -/
+theorem defectInterior_unique
+    {p q : ℤ × ℤ} {z : ℝ × ℝ}
+    (hp : z ∈ defectInterior p)
+    (hq : z ∈ defectInterior q) : p = q := by
+  change defectLeft p < z.1 ∧ z.1 < defectRight p ∧
+    (p.2 : ℝ) < z.2 ∧ z.2 < (p.2 : ℝ) + 1 at hp
+  change defectLeft q < z.1 ∧ z.1 < defectRight q ∧
+    (q.2 : ℝ) < z.2 ∧ z.2 < (q.2 : ℝ) + 1 at hq
+  have hy₁ : p.2 < q.2 + 1 := by
+    exact_mod_cast (lt_trans hp.2.2.1 hq.2.2.2)
+  have hy₂ : q.2 < p.2 + 1 := by
+    exact_mod_cast (lt_trans hq.2.2.1 hp.2.2.2)
+  have hy : p.2 = q.2 := by omega
+  by_cases hx : p.1 < q.1
+  · have hinterval := defectRight_le_left_of_lt p q hx hy
+    exfalso
+    linarith [hp.2.1, hq.1]
+  · by_cases hx' : q.1 < p.1
+    · have hinterval := defectRight_le_left_of_lt q p hx' hy.symm
+      exfalso
+      linarith [hq.2.1, hp.1]
+    · have hxeq : p.1 = q.1 := by omega
+      exact Prod.ext hxeq hy
+
+/-- Horizontal width of each actual rectangle. -/
+def defectWidth (p : ℤ × ℤ) : ℝ :=
+  defectRight p - defectLeft p
+
+/-- The 3/2-wide rectangle is geometrically unique. -/
+theorem defectWidth_unique (p : ℤ × ℤ)
+    (hw : defectWidth p = 3 / 2) : p = (1, 0) := by
+  by_cases h1 : p = (1, 0)
+  · exact h1
+  · by_cases h0 : p = (0, 0)
+    · subst p
+      norm_num [defectWidth, defectRight, defectLeft] at hw
+    · have heq : defectWidth p = 1 := by
+        simp only [defectWidth, defectRight, defectLeft,
+          if_neg h0, if_neg h1]
+        ring
+      rw [heq] at hw
+      norm_num at hw
+
+/-- A translation period in the geometric, tile-preserving sense:
+translation of each rectangle must produce another rectangle of the
+same width with the correspondingly translated lower-left corner.
+This is exactly the coordinate formulation for axis-aligned rectangles
+of common height one. -/
+def HasDefectTilePeriod (t : ℝ × ℝ) : Prop :=
+  ∀ p : ℤ × ℤ, ∃ q : ℤ × ℤ,
+    defectWidth p = defectWidth q ∧
+    defectLeft p + t.1 = defectLeft q ∧
+    (p.2 : ℝ) + t.2 = (q.2 : ℝ)
+
+/-- The infinite rectangle tessellation has NO nontrivial
+translation period. The unique wide rectangle is forced to stay fixed. -/
+theorem defectTiling_translation_aperiodic
+    (t : ℝ × ℝ) (ht : HasDefectTilePeriod t) :
+    t = (0, 0) := by
+  obtain ⟨q, hw, hx, hy⟩ := ht (1, 0)
+  have hwidth : defectWidth (1, 0) = (3 / 2 : ℝ) := by
+    norm_num [defectWidth, defectLeft, defectRight]
+  have hq : q = (1, 0) :=
+    defectWidth_unique q (by rw [← hw, hwidth])
+  subst q
+  have htx : t.1 = 0 := by
+    simpa using hx
+  have hty : t.2 = 0 := by
+    simpa using hy
+  exact Prod.ext htx hty
+
+/-- The true centroid of a special or ordinary rectangular tile. -/
+def defectCentroid (p : ℤ × ℤ) : ℝ × ℝ :=
+  ((defectLeft p + defectRight p) / 2, (p.2 : ℝ) + 1 / 2)
+
+/-- All actual rectangle centroids are within one half unit (in each
+coordinate) of the corresponding ordinary square centroid. -/
+theorem defectCentroid_bounded (p : ℤ × ℤ) :
+    |(defectCentroid p).1 - (squareCentroid p).1| ≤ 1 / 2 ∧
+    |(defectCentroid p).2 - (squareCentroid p).2| ≤ 1 / 2 := by
+  constructor
+  · by_cases h0 : p = (0, 0)
+    · subst p
+      norm_num [defectCentroid, defectLeft, defectRight, squareCentroid]
+    · by_cases h1 : p = (1, 0)
+      · subst p
+        norm_num [defectCentroid, defectLeft, defectRight, squareCentroid]
+      · have heq :
+            (defectCentroid p).1 - (squareCentroid p).1 = 0 := by
+          simp only [defectCentroid, defectLeft, defectRight,
+            squareCentroid, if_neg h0, if_neg h1]
+          ring
+        rw [heq]
+        norm_num
+  · simp [defectCentroid, squareCentroid]
+
+/-- The actual rectangle centroids' inverse-square Euclidean energy is
+summable, directly by the earlier bounded-displacement theorem. -/
+theorem defectTiling_inv_sq_summable :
+    Summable (fun p : ℤ × ℤ => 1 / (pointSetEnergy defectCentroid p) ^ 2) :=
+  boundedPointSet_inv_sq_summable defectCentroid defectCentroid_bounded
+
+/-- Final geometric theorem C for this genuinely aperiodic infinite
+planar rectangle tiling. Its canonical product has zeros only
+on the prescribed complex affine line. -/
+theorem defectTiling_theoremC
+    (center direction s : ℂ) (hd : direction ≠ 0)
+    (hz : canonicalProduct (enumeratedEnergy (pointSetEnergy defectCentroid))
+      center direction s = 0) :
+    ∃ t : ℝ, s = center + direction * (t : ℂ) :=
+  boundedPointSet_theoremC defectCentroid defectCentroid_bounded
+    center direction s hd hz
+
 end
 end InfiniteTilings
