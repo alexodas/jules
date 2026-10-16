@@ -342,3 +342,56 @@ As before, source and proofs are **AI-generated** in response to
 Alessandro Odasso (not a mathematician) experimenting with LLM
 capabilities and limitations. Claims of Lean verification apply only
 to commits that pass the CI build.
+
+
+## Bridging operator eigenvalues to the canonical energies Q
+
+This section formalizes the **precise bridge** requested between the
+earlier line-zero products and the later geometry-sensitive operators.
+Let \`q₀(n) > 0\` be a geometrically justified growth envelope with
+
+\`\`\`text
+sum_n 1/q₀(n)^2 < infinity.
+\`\`\`
+
+For any real spectral levels \`eig(n)\`, define
+
+\`\`\`text
+Q(n) = q₀(n) * (1 + eig(n)^2).
+\`\`\`
+
+Then \`Q(n) >= q₀(n)\` and the inverse-square summability condition
+continues to hold. Thus the paired canonical product
+
+\`\`\`text
+D(s) = product_n [1 - ((s-center)/(direction*Q(n)))^2]
+\`\`\`
+
+is locally uniformly convergent and has **no zeros outside** the
+chosen complex affine line \`center + direction*real\`. The new Lean
+theorems also prove that \`center + direction*Q(n)\` is actually a zero
+of the entire infinite product for **each** index \`n\`. This is a
+stronger bridge than a mere zero-localization implication.
+
+For a concrete application, \`q₀(n)\` is the previously formalized
+physical square-centroid energy, and \`eig(n)\` is a verified positive
+eigenvalue of the two-rectangle local adjacency operator, with an
+independently chosen pair of binary orientation marks at each index.
+Aligned markings give \`eig = 3/4\` and multiplicative correction
+\`25/16\`; opposite markings give \`eig = 3/2\` and correction \`13/4\`.
+Thus geometric and orientation choices change the levels Q and their
+corresponding zeros **along the line**.
+
+**Precise limitations:** The multiplication by \`q₀\` is deliberate and
+essential to the proven convergence; spectral eigenvalues alone do
+not establish the required growth. The operators in the concrete
+application are independent local two-tile motifs, **not** one
+self-adjoint operator on the infinite tiling. The paired factors still
+force their zero line **by construction**; the spectral input changes
+zero positions, not the selection of that line. Coincident eigenlevels,
+multiplicities and their statistical laws have not been identified with
+Riemann zeta zeros, nor has the Riemann hypothesis been proved.
+
+This is AI-generated formal exploration prompted by Alessandro Odasso,
+who is not a mathematician and is studying what LLMs can and cannot do.
+Verification claims apply only after successful Lean/Mathlib CI.
