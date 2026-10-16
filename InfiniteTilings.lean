@@ -301,7 +301,7 @@ private theorem summable_centroid_axis :
     (Real.summable_one_div_int_add_rpow (1 / 2) 2).2 (by norm_num)
   have hpowers : Summable
       (fun m : ℤ => 1 / (((m : ℝ) + 1 / 2) ^ 2)) := by
-    simpa only [Real.rpow_natCast, sq_abs] using hbase
+    simpa only [Real.rpow_two, sq_abs] using hbase
   apply Summable.of_nonneg_of_le (fun _ => by positivity) (fun m => ?_) hpowers
   have hnonzero : (m : ℝ) + 1 / 2 ≠ 0 := by
     intro hz
@@ -320,11 +320,20 @@ theorem centroidEnergy_inv_sq_summable :
   have hprod : Summable (fun p : ℤ × ℤ =>
       (1 / (1 + ((p.1 : ℝ) + 1 / 2) ^ 2)) *
       (1 / (1 + ((p.2 : ℝ) + 1 / 2) ^ 2))) := by
-    apply summable_mul_of_summable_norm
+    have hnorm : Summable (fun m : ℤ =>
+        ‖((1 : ℝ) / (1 + ((m : ℝ) + 1 / 2) ^ 2))‖) := by
+      have heq : (fun m : ℤ =>
+          ‖((1 : ℝ) / (1 + ((m : ℝ) + 1 / 2) ^ 2))‖) =
+          (fun m : ℤ =>
+          (1 : ℝ) / (1 + ((m : ℝ) + 1 / 2) ^ 2)) := by
+        funext m
+        rw [Real.norm_eq_abs, abs_of_nonneg (by positivity)]
+      rw [heq]
+      exact haxis
+    exact summable_mul_of_summable_norm
       (f := fun m : ℤ => (1 : ℝ) / (1 + ((m : ℝ) + 1 / 2) ^ 2))
       (g := fun m : ℤ => (1 : ℝ) / (1 + ((m : ℝ) + 1 / 2) ^ 2))
-    · simpa only [Real.norm_eq_abs, abs_of_nonneg (by positivity)] using haxis
-    · simpa only [Real.norm_eq_abs, abs_of_nonneg (by positivity)] using haxis
+      hnorm hnorm
   apply Summable.of_nonneg_of_le (fun _ => by positivity) (fun p => ?_) hprod
   let x : ℝ := (p.1 : ℝ) + 1 / 2
   let y : ℝ := (p.2 : ℝ) + 1 / 2
@@ -341,6 +350,7 @@ theorem centroidEnergy_inv_sq_summable :
       exact hxy
     _ = (1 / (1 + x ^ 2)) * (1 / (1 + y ^ 2)) := by
       simp only [one_div, mul_inv_rev]
+      ac_rfl
 
 /-- The enumeration used for the square tiling has no repeated lattice points. -/
 theorem gridPoint_injective : Function.Injective gridPoint := by
