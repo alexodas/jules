@@ -256,3 +256,43 @@ work prompted by Alessandro Odasso, a non-mathematician exploring the
 capabilities and limitations of large language models. None of these
 constructions identifies the product's zeros with those of Riemann's
 zeta function or proves the Riemann hypothesis.
+
+
+## First geometrically translation-aperiodic infinite tiling
+
+The latest single-file Lean experiment defines an **actual infinite tiling**
+by axis-aligned rectangles. Start with all unit squares of the standard
+integer grid. Replace the two adjacent squares at indices \`(0,0)\`
+and \`(1,0)\` by two rectangles filling precisely their old union:
+one with width \`1/2\` and one with width \`3/2\`. Every other unit
+square remains unchanged.
+
+The source file formalizes and proves:
+
+- The new rectangular cells **cover the whole real plane**.
+- Distinct rectangles have **disjoint open interiors**.
+- Exactly one rectangle has width \`3/2\`.
+- A translation that maps every rectangle to a member of the same
+  tiling (preserving its size and lower-left corner geometry) must
+  be the **zero** translation.
+- Every rectangle's centroid is within \`1/2\` in each coordinate
+  of its original square centroid. Therefore the inverse-squared
+  Euclidean centroid energy is summable, and Theorem C applies:
+  the associated canonical product has all its zeros on a
+  prescribed affine complex line.
+
+**Important distinction:** This is a specific **nonperiodic
+configuration of tiles**, but it is a *finite defect of a periodic
+tiling*. It is NOT a Penrose-type, repetitive, intrinsically
+aperiodic tile set: the same shapes can be arranged in other ways,
+and the single defect is not a proof of nonperiodicity under other
+mathematical conventions (such as strong aperiodicity of tile sets).
+It is a genuine example with no nonzero translational symmetry
+of the given infinite geometric tiling.
+
+The source is **AI-generated** following Alessandro Odasso's
+question; he is not a mathematician, and his purpose is to
+experiment with the capabilities and limitations of LLMs.
+This classical geometric-spectral construction has **no proved
+identification with Riemann's zeta function** and does not
+establish the Riemann hypothesis.
