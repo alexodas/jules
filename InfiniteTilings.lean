@@ -1041,23 +1041,17 @@ theorem defectCell_covers_plane (z : ℝ × ℝ) :
     rcases hp with ⟨hxlo, hxhi, hylo, hyhi⟩
     rcases le_total z.1 (1 / 2 : ℝ) with hx | hx
     · refine ⟨(0, 0), ?_⟩
-      change defectLeft (0, 0) ≤ z.1 ∧
-        z.1 ≤ defectRight (0, 0) ∧
-        (0 : ℝ) ≤ z.2 ∧ z.2 ≤ 0 + 1
+      simp only [defectCell, Set.mem_setOf_eq]
       norm_num [defectLeft, defectRight] at *
       exact ⟨hxlo, hx, hylo, hyhi⟩
     · refine ⟨(1, 0), ?_⟩
-      change defectLeft (1, 0) ≤ z.1 ∧
-        z.1 ≤ defectRight (1, 0) ∧
-        (0 : ℝ) ≤ z.2 ∧ z.2 ≤ 0 + 1
+      simp only [defectCell, Set.mem_setOf_eq]
       norm_num [defectLeft, defectRight] at *
       exact ⟨hx, by linarith, hylo, hyhi⟩
   · by_cases h1 : p = (1, 0)
     · subst p
       refine ⟨(1, 0), ?_⟩
-      change defectLeft (1, 0) ≤ z.1 ∧
-        z.1 ≤ defectRight (1, 0) ∧
-        (0 : ℝ) ≤ z.2 ∧ z.2 ≤ 0 + 1
+      simp only [defectCell, Set.mem_setOf_eq]
       norm_num [defectLeft, defectRight] at *
       rcases hp with ⟨hxlo, hxhi, hylo, hyhi⟩
       exact ⟨by linarith, hxhi, hylo, hyhi⟩
@@ -1081,6 +1075,12 @@ private theorem defectRight_le_left_of_lt (p q : ℤ × ℤ)
       simp [defectRight, defectLeft, hq]
     · have hi : p.1 + 1 ≤ 0 := by
         have hq1 : q.1 = 1 := congrArg Prod.fst hq
+        have hq2 : q.2 = 0 := congrArg Prod.snd hq
+        have hp2 : p.2 = 0 := by omega
+        have hp1 : p.1 ≠ 0 := by
+          intro h
+          apply hp0
+          exact Prod.ext h hp2
         omega
       have hr : (p.1 : ℝ) + 1 ≤ 0 := by
         exact_mod_cast hi
