@@ -1893,5 +1893,143 @@ theorem markedPairEigenlevel_threshold_sandwich
     (fun n => (markedDefectCoupling_pos _ _).le)
     (fun n => markedDefectCoupling_le_three_halves _ _)
 
+
+/-! ## A finite but arbitrarily large geometric Hamiltonian
+
+The first step toward a single infinite-lattice operator is a coherent
+Hamiltonian on a finite patch containing the first N *actual square tiles*
+of the certified integer grid. The graph connects tiles at unit lattice
+distance, not independently chosen two-site motifs.
+
+The operator has a confining geometric onsite potential and a positive
+weighted graph Laplacian. All statements quantify over an arbitrary N:
+they are not calculations for one fixed matrix dimension. This remains a
+finite-patch theorem, not a construction of an infinite self-adjoint
+operator or a spectral theorem for the full lattice.
+-/
+
+/-- Two enumerated square tiles are adjacent if their integer lattice
+indices are separated by Euclidean distance exactly one. -/
+def squarePatchNeighbor {N : ℕ} (i j : Fin N) : Prop :=
+  ((gridPoint i.val).1 - (gridPoint j.val).1) ^ 2 +
+    ((gridPoint i.val).2 - (gridPoint j.val).2) ^ 2 = 1
+
+theorem squarePatchNeighbor_symmetric {N : ℕ} (i j : Fin N) :
+    squarePatchNeighbor i j ↔ squarePatchNeighbor j i := by
+  unfold squarePatchNeighbor
+  constructor <;> intro h <;> nlinarith [h]
+
+/-- An undirected interaction of strength 1/4 along actual grid edges. -/
+noncomputable def squarePatchWeight {N : ℕ} (i j : Fin N) : ℝ :=
+  geometricEdgeMatrix squarePatchNeighbor (fun _ _ => 1 / 4) i j
+
+theorem squarePatchWeight_symmetric {N : ℕ} (i j : Fin N) :
+    squarePatchWeight i j = squarePatchWeight j i := by
+  exact geometricEdgeMatrix_symmetric squarePatchNeighbor
+    (fun _ _ => (1 / 4 : ℝ))
+    (fun a b => squarePatchNeighbor_symmetric a b)
+    (fun _ _ => rfl) i j
+
+theorem squarePatchWeight_nonneg {N : ℕ} (i j : Fin N) :
+    0 ≤ squarePatchWeight i j := by
+  classical
+  by_cases h : squarePatchNeighbor i j
+  · simp [squarePatchWeight, geometricEdgeMatrix, h]
+  · simp [squarePatchWeight, geometricEdgeMatrix, h]
+
+/-- Onsite geometry plus the weighted graph Laplacian. The degree
+term ensures that a constant state has zero interaction energy. -/
+def finitePatchDirichletHamiltonian {N : ℕ}
+    (V : Fin N → ℝ) (W : Fin N → Fin N → ℝ)
+    (u : Fin N → ℝ) (i : Fin N) : ℝ :=
+  (V i + ∑ j : Fin N, W i j) * u i - finitePatchOperator W u i
+
+/-- All finite-patch Hamiltonians with symmetric graph weights are
+symmetric for the real dot product, in arbitrary finite dimension. -/
+theorem finitePatchDirichletHamiltonian_symmetric {N : ℕ}
+    (V : Fin N → ℝ) (W : Fin N → Fin N → ℝ)
+    (hW : ∀ i j, W i j = W j i)
+    (u v : Fin N → ℝ) :
+    (∑ i : Fin N, u i * finitePatchDirichletHamiltonian V W v i) =
+      ∑ i : Fin N, finitePatchDirichletHamiltonian V W u i * v i := by
+  unfold finitePatchDirichletHamiltonian
+  calc
+    (∑ i : Fin N,
+      u i * ((V i + ∑ j : Fin N, W i j) * v i - finitePatchOperator W v i)) =
+      (∑ i : Fin N, ((V i + ∑ j : Fin N, W i j) * u i) * v i) -
+        (∑ i : Fin N, u i * finitePatchOperator W v i) := by
+        rw [← Finset.sum_sub_distrib]
+        apply Finset.sum_congr rfl
+        intro i _
+        ring
+    _ = (∑ i : Fin N, ((V i + ∑ j : Fin N, W i j) * u i) * v i) -
+          (∑ i : Fin N, finitePatchOperator W u i * v i) := by
+        rw [finitePatchOperator_symmetric W hW u v]
+    _ = ∑ i : Fin N,
+          ((V i + ∑ j : Fin N, W i j) * u i - finitePatchOperator W u i) *
+            v i := by
+        rw [← Finset.sum_sub_distrib]
+        apply Finset.sum_congr rfl
+        intro i _
+        ring
+
+/-- This Hamiltonian uses the centroid energy of actual indexed squares. -/
+def squarePatchOnsite {N : ℕ} (i : Fin N) : ℝ :=
+  geometricCentroidEnergy i.val
+
+/-- The resulting single Hamiltonian on each N-tile patch is symmetric. -/
+theorem squarePatchHamiltonian_symmetric {N : ℕ}
+    (u v : Fin N → ℝ) :
+    (∑ i : Fin N,
+      u i * finitePatchDirichletHamiltonian
+        squarePatchOnsite squarePatchWeight v i) =
+      ∑ i : Fin N,
+        finitePatchDirichletHamiltonian
+          squarePatchOnsite squarePatchWeight u i * v i := by
+  exact finitePatchDirichletHamiltonian_symmetric
+    squarePatchOnsite squarePatchWeight
+    (fun i j => squarePatchWeight_symmetric i j) u v
+
+/-- Each onsite geometric energy is strictly positive. -/
+theorem squarePatchOnsite_pos {N : ℕ} (i : Fin N) :
+    0 < squarePatchOnsite i := by
+  exact centroidEnergy_pos (gridPoint i.val)
+
+/-- A manifestly nonnegative energy functional associated with onsite
+potential and weighted differences across every directed graph edge. -/
+def finitePatchDirichletEnergy {N : ℕ}
+    (V : Fin N → ℝ) (W : Fin N → Fin N → ℝ)
+    (u : Fin N → ℝ) : ℝ :=
+  (∑ i : Fin N, V i * (u i) ^ 2) +
+    ∑ i : Fin N, ∑ j : Fin N, W i j * (u i - u j) ^ 2
+
+theorem finitePatchDirichletEnergy_nonneg {N : ℕ}
+    (V : Fin N → ℝ) (W : Fin N → Fin N → ℝ)
+    (hV : ∀ i, 0 ≤ V i)
+    (hW : ∀ i j, 0 ≤ W i j)
+    (u : Fin N → ℝ) :
+    0 ≤ finitePatchDirichletEnergy V W u := by
+  unfold finitePatchDirichletEnergy
+  apply add_nonneg
+  · apply Finset.sum_nonneg
+    intro i _
+    exact mul_nonneg (hV i) (sq_nonneg _)
+  · apply Finset.sum_nonneg
+    intro i _
+    apply Finset.sum_nonneg
+    intro j _
+    exact mul_nonneg (hW i j) (sq_nonneg _)
+
+theorem squarePatchDirichletEnergy_nonneg {N : ℕ}
+    (u : Fin N → ℝ) :
+    0 ≤ finitePatchDirichletEnergy
+      squarePatchOnsite squarePatchWeight u := by
+  apply finitePatchDirichletEnergy_nonneg
+  · intro i
+    exact (squarePatchOnsite_pos i).le
+  · intro i j
+    exact squarePatchWeight_nonneg i j
+
+
 end
 end InfiniteTilings
