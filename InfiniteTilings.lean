@@ -216,6 +216,8 @@ theorem squareGridEnergy_grows (n : ℕ) :
   have hn' : n + 1 ≤ (max (Nat.unpair n).1 (Nat.unpair n).2 + 1) ^ 2 :=
     Nat.succ_le_iff.mpr hn
   have hnreal : (((n + 1 : ℕ) : ℝ) ≤ squareGridEnergy n) := by
+    change ((n + 1 : ℕ) : ℝ) ≤
+      (((max (Nat.unpair n).1 (Nat.unpair n).2 + 1) ^ 2 : ℕ) : ℝ)
     exact_mod_cast hn'
   simpa only [Nat.cast_add, Nat.cast_one] using hnreal
 
