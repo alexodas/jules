@@ -216,3 +216,43 @@ This is a classical type of geometric/spectral argument formalized
 by AI in response to a research question from Alessandro Odasso,
 who is not a mathematician and is exploring LLM capabilities.
 It does **not** prove the Riemann hypothesis.
+
+
+## General criterion: irregular centroid configurations
+
+The extension in the **same** \`InfiniteTilings.lean\` file treats
+an arbitrary family of positive energies \`q(m,n)\`, indexed by all
+integer pairs. The theorem applies whenever there is one constant
+\`C > 0\` such that, for every \`(m,n)\`,
+
+\`\`\`text
+1 + (m + 1/2)² + (n + 1/2)² <= C * q(m,n).
+\`\`\`
+
+This *coercive growth* inequality forces convergence of
+\`sum 1/q(m,n)^2\` and hence the canonical-product hypotheses of
+Theorem C.
+
+A concrete corollary allows every point \`P(m,n)\` to move independently
+from its original lattice-square centroid by at most \`1/2\` along
+**each** coordinate. Its Euclidean energy is
+\`q(m,n) = 1 + P(m,n).x² + P(m,n).y²\`.
+A proved estimate shows that the coercive criterion holds with
+\`C = 2\`. No periodicity, fixed pattern or common affine transformation
+is required for the convergence and zero-localization conclusion.
+
+**Important scope distinction:** These are *point configurations*
+(or possible centroid arrangements). Arbitrary displacements alone
+do not prove that actual polygonal tiles with those centroids cover
+the plane or have nonoverlapping interiors. Nor is this a theorem
+for every uniformly separated point set: such a generalization would
+require a separate counting/packing argument. Also the current
+bounded-displacement criterion itself does not guarantee distinct
+points at the endpoint \`1/2\`; a strict smaller displacement could
+be used for separation.
+
+As in earlier steps, the AI-generated mathematics is exploratory
+work prompted by Alessandro Odasso, a non-mathematician exploring the
+capabilities and limitations of large language models. None of these
+constructions identifies the product's zeros with those of Riemann's
+zeta function or proves the Riemann hypothesis.
