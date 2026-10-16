@@ -640,6 +640,96 @@ nearest-neighbor spacing statistics.
 
 ---
 
+## 13. One geometry-dependent Hamiltonian on arbitrary finite grid patches
+
+**Mathematical objective.** Replace the independent two-tile matrices of
+Section 11 with **one interacting operator on an entire finite patch**,
+for every patch size $N$. The patch must consist of actual squares
+from the certified tiling; its edges must come from their positions,
+and the matrix must remain symmetric even when more tiles are included.
+
+Let $g:\mathbb N\to\mathbb Z^2$ be the previously certified enumeration.
+For a chosen natural number $N$, the patch contains the squares with
+indices $i=0,\ldots,N-1$. Put $g(i)=(m_i,n_i)$ and let
+
+```math
+V_i=1+\left(m_i+\frac{1}{2}\right)^2+
+          \left(n_i+\frac{1}{2}\right)^2.
+```
+
+Two distinct indexed squares share an edge precisely when their
+integer coordinates satisfy
+
+```math
+(m_i-m_j)^2+(n_i-n_j)^2=1.
+```
+
+The geometric coupling matrix is
+
+```math
+W_{ij}=
+\begin{cases}
+\frac{1}{4}, & (m_i-m_j)^2+(n_i-n_j)^2=1,\\
+0, & (m_i-m_j)^2+(n_i-n_j)^2\ne1.
+\end{cases}
+```
+
+In Lean this is expressed through `squarePatchNeighbor`,
+`squarePatchWeight` and the existing `geometricEdgeMatrix`.
+The Hamiltonian combines the centroid potential with a weighted
+graph Laplacian:
+
+```math
+(H_Nu)_i
+=\left(V_i+\sum_{j=0}^{N-1}W_{ij}\right)u_i
+-\sum_{j=0}^{N-1}W_{ij}u_j
+=V_i u_i+\sum_{j=0}^{N-1}W_{ij}(u_i-u_j).
+```
+
+Lean proves that **for every finite $N$** the weights are symmetric
+and nonnegative and that this Hamiltonian is symmetric in the
+real dot product:
+
+```math
+\sum_{i=0}^{N-1}u_i(H_Nv)_i
+=\sum_{i=0}^{N-1}(H_Nu)_i v_i.
+```
+
+It also proves positivity of every onsite energy and nonnegativity
+of the finite weighted Dirichlet energy defined by
+
+```math
+\mathcal E_N(u)
+=\sum_{i=0}^{N-1}V_i u_i^2+
+  \sum_{i,j=0}^{N-1}W_{ij}(u_i-u_j)^2
+\ge0.
+```
+
+The edge term is summed over both orientations of each edge. This
+nonnegative functional is associated with the same geometric data,
+but the theorems here do **not** yet prove an identity between it
+and the Hamiltonian's quadratic form or a uniform spectral bound.
+
+**Why this matters for the next step.** Unlike a sequence of separate
+two-tile operators, each $H_N$ couples all actual neighbor pairs
+within a single finite patch. We can now investigate bounds on its
+eigenvalues that hold **uniformly as $N$ grows**, then look for a
+genuine infinite-dimensional realization.
+
+**Lean anchors:** `squarePatchNeighbor_symmetric`,
+`squarePatchWeight_symmetric`, `squarePatchWeight_nonneg`,
+`finitePatchDirichletHamiltonian`,
+`finitePatchDirichletHamiltonian_symmetric`,
+`squarePatchHamiltonian_symmetric`, `squarePatchOnsite_pos`,
+`finitePatchDirichletEnergy_nonneg`,
+`squarePatchDirichletEnergy_nonneg`.
+
+**Boundary:** $N$ is always finite. The results do not yet prove
+strong convergence as $N\to\infty$, self-adjointness on
+$\ell^2(\mathbb Z^2)$, discreteness of the global spectrum,
+inverse-square summability of its eigenlevels, or any link to
+zeta-zero statistics.
+
 ## Reproducing the Lean verification
 
 The primary source is [`InfiniteTilings.lean`](InfiniteTilings.lean).
