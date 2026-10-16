@@ -60,6 +60,7 @@ theorem product_uniform_on_compact
     (Filter.Eventually.of_forall (fun n s hs => hbound n s hs))
     (fun n => by
       apply Continuous.continuousOn
+      unfold perturb
       fun_prop)
 
 /-- Each factor can vanish only on the given affine complex line. -/
@@ -122,7 +123,9 @@ theorem theoremC_zero_localization
   obtain ⟨b, hb, hbound⟩ :=
     h.compactMajorant ({s} : Set ℂ) isCompact_singleton
   have hsum : Summable (fun n : ℕ => ‖perturb q center direction n s‖) :=
-    Summable.of_norm_bounded hb (fun n => hbound n s (by simp))
+    Summable.of_norm_bounded hb (fun n => by
+      simpa only [Real.norm_eq_abs, abs_of_nonneg (norm_nonneg _)] using
+        hbound n s (by simp))
   exact (tprod_one_add_ne_zero_of_summable hnonzero hsum)
     (by simpa [canonicalProduct, factor] using hz)
 
