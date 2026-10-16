@@ -778,8 +778,8 @@ $H_Nu=\lambda u$, then
 \lambda\sum_i u_i^2
 =\sum_i u_i(H_Nu)_i
 \ge\sum_i u_i^2,
-\qquad\text{hence}\qquad
-\boxed{\lambda\ge1}.
+\qquad\Longrightarrow\qquad
+\lambda\ge1.
 ```
 
 Thus none of these finite operators has a real eigenvalue
