@@ -1213,5 +1213,227 @@ theorem defectTiling_theoremC
   boundedPointSet_theoremC defectCentroid defectCentroid_bounded
     center direction s hd hz
 
+
+/-! ## A geometry-dependent finite-patch operator
+
+Previous canonical products place roots on an affine line *by definition*.
+This section deliberately changes approach: a finite graph of adjacent,
+marked tiles determines a real symmetric adjacency operator. The exact
+two-tile eigenvalues are derived from that operator rather than prescribed
+as roots of the earlier canonical product.
+
+This is not yet a Penrose/Farey operator and has no established relation
+to the Riemann zeta function. The mark is a binary orientation label on
+the tile; it is not an intrinsic chirality of a square or rectangle.
+-/
+
+/-- A weighted finite-patch adjacency operator. Vertex indices are
+tiles; geometric edges and their weights are supplied independently. -/
+def finitePatchOperator {n : ℕ}
+    (W : Fin n → Fin n → ℝ) (u : Fin n → ℝ) (i : Fin n) : ℝ :=
+  ∑ j : Fin n, W i j * u j
+
+/-- Symmetry of the weights implies self-adjointness with respect to
+the ordinary real dot product on functions on a finite tile patch. -/
+theorem finitePatchOperator_symmetric {n : ℕ}
+    (W : Fin n → Fin n → ℝ)
+    (hW : ∀ i j, W i j = W j i)
+    (u v : Fin n → ℝ) :
+    (∑ i : Fin n, u i * finitePatchOperator W v i) =
+      ∑ j : Fin n, finitePatchOperator W u j * v j := by
+  calc
+    _ = ∑ i : Fin n, ∑ j : Fin n, u i * (W i j * v j) := by
+      simp [finitePatchOperator, Finset.mul_sum]
+    _ = ∑ j : Fin n, ∑ i : Fin n, u i * (W i j * v j) := Finset.sum_comm
+    _ = ∑ j : Fin n, ∑ i : Fin n, (W j i * u i) * v j := by
+      apply Finset.sum_congr rfl
+      intro j _
+      apply Finset.sum_congr rfl
+      intro i _
+      rw [hW i j]
+      ring
+    _ = ∑ j : Fin n, finitePatchOperator W u j * v j := by
+      simp [finitePatchOperator, Finset.sum_mul]
+
+/-- Retain only geometric neighbor edges. The construction uses no
+periodicity, and is applicable to arbitrary finite adjacency graphs. -/
+noncomputable def geometricEdgeMatrix {n : ℕ}
+    (neighbor : Fin n → Fin n → Prop)
+    (weight : Fin n → Fin n → ℝ)
+    (i j : Fin n) : ℝ := by
+  classical
+  exact if neighbor i j then weight i j else 0
+
+/-- Undirected geometric adjacency with symmetric edge weights gives
+a symmetric matrix. -/
+theorem geometricEdgeMatrix_symmetric {n : ℕ}
+    (neighbor : Fin n → Fin n → Prop)
+    (weight : Fin n → Fin n → ℝ)
+    (hn : ∀ i j, neighbor i j ↔ neighbor j i)
+    (hw : ∀ i j, weight i j = weight j i)
+    (i j : Fin n) :
+    geometricEdgeMatrix neighbor weight i j =
+      geometricEdgeMatrix neighbor weight j i := by
+  classical
+  by_cases h : neighbor i j
+  · have h' : neighbor j i := (hn i j).mp h
+    simp [geometricEdgeMatrix, h, h', hw i j]
+  · have h' : ¬ neighbor j i := by
+      intro h'
+      exact h ((hn i j).mpr h')
+    simp [geometricEdgeMatrix, h, h']
+
+/-- Consequently, every undirected weighted finite tile patch defines
+an operator symmetric in the real dot product. -/
+theorem geometricFinitePatch_symmetric {n : ℕ}
+    (neighbor : Fin n → Fin n → Prop)
+    (weight : Fin n → Fin n → ℝ)
+    (hn : ∀ i j, neighbor i j ↔ neighbor j i)
+    (hw : ∀ i j, weight i j = weight j i)
+    (u v : Fin n → ℝ) :
+    (∑ i : Fin n,
+       u i * finitePatchOperator (geometricEdgeMatrix neighbor weight) v i) =
+    ∑ j : Fin n,
+       finitePatchOperator (geometricEdgeMatrix neighbor weight) u j * v j :=
+  finitePatchOperator_symmetric _ (geometricEdgeMatrix_symmetric neighbor weight hn hw) u v
+
+/-- The two adjacent unequal rectangles in our certified finite-defect
+tiling really share their vertical boundary. -/
+theorem defectPair_shares_vertical_edge :
+    defectRight (0, 0) = defectLeft (1, 0) := by
+  norm_num [defectRight, defectLeft]
+
+/-- The geometric, positive width-product of the adjacent rectangles. -/
+def defectPairWidthWeight : ℝ :=
+  defectWidth (0, 0) * defectWidth (1, 0)
+
+theorem defectPairWidthWeight_value :
+    defectPairWidthWeight = 3 / 4 := by
+  norm_num [defectPairWidthWeight, defectWidth, defectLeft, defectRight]
+
+/-- An orientation mark is an external binary label (e.g. arrow up/down).
+Equal marks yield one interaction strength; opposite marks yield twice
+that strength. This is a modeling choice, not a canonical law of tilings. -/
+def orientationInteraction (leftMark rightMark : Bool) : ℝ :=
+  if leftMark = rightMark then 1 else 2
+
+/-- Geometry- and marking-dependent weight of the shared tile edge. -/
+def markedDefectCoupling (leftMark rightMark : Bool) : ℝ :=
+  defectPairWidthWeight * orientationInteraction leftMark rightMark
+
+theorem aligned_marked_coupling :
+    markedDefectCoupling true true = 3 / 4 := by
+  norm_num [markedDefectCoupling, orientationInteraction,
+    defectPairWidthWeight_value]
+
+theorem opposed_marked_coupling :
+    markedDefectCoupling true false = 3 / 2 := by
+  norm_num [markedDefectCoupling, orientationInteraction,
+    defectPairWidthWeight_value]
+
+/-- The two-tile adjacency operator interchanges the two amplitudes,
+weighted by actual tile widths and their orientation marks. -/
+def markedDefectOperator (leftMark rightMark : Bool)
+    (u : ℝ × ℝ) : ℝ × ℝ :=
+  (markedDefectCoupling leftMark rightMark * u.2,
+   markedDefectCoupling leftMark rightMark * u.1)
+
+/-- The concrete two-tile operator is symmetric: its spectral reality
+comes from self-adjointness, not from prescribing an affine zero-line. -/
+theorem markedDefectOperator_symmetric (leftMark rightMark : Bool)
+    (u v : ℝ × ℝ) :
+    u.1 * (markedDefectOperator leftMark rightMark v).1 +
+      u.2 * (markedDefectOperator leftMark rightMark v).2 =
+    (markedDefectOperator leftMark rightMark u).1 * v.1 +
+      (markedDefectOperator leftMark rightMark u).2 * v.2 := by
+  dsimp [markedDefectOperator]
+  ring
+
+/-- A real eigenvalue is characterized by a **nonzero** eigenvector.
+This elementary finite-dimensional definition avoids making unproved
+claims about infinite-dimensional operator spectra. -/
+def PairHasEigenvalue (H : (ℝ × ℝ) → (ℝ × ℝ)) (eig : ℝ) : Prop :=
+  ∃ u : ℝ × ℝ, u ≠ (0, 0) ∧ H u = (eig * u.1, eig * u.2)
+
+/-- The symmetric mode, with both tile amplitudes equal. -/
+theorem markedDefect_positive_mode (leftMark rightMark : Bool) :
+    PairHasEigenvalue (markedDefectOperator leftMark rightMark)
+      (markedDefectCoupling leftMark rightMark) := by
+  refine ⟨(1, 1), by norm_num, ?_⟩
+  simp [markedDefectOperator]
+
+/-- The antisymmetric mode, with opposite tile amplitudes. -/
+theorem markedDefect_negative_mode (leftMark rightMark : Bool) :
+    PairHasEigenvalue (markedDefectOperator leftMark rightMark)
+      (-markedDefectCoupling leftMark rightMark) := by
+  refine ⟨(1, -1), by norm_num, ?_⟩
+  dsimp [markedDefectOperator]
+  congr 1 <;> ring
+
+/-- There are **no other** eigenvalues of the actual two-tile operator.
+Thus both eigenvalues are derived from the geometric interaction. -/
+theorem markedDefect_eigenvalues_exact (leftMark rightMark : Bool)
+    (eig : ℝ)
+    (heig : PairHasEigenvalue (markedDefectOperator leftMark rightMark) eig) :
+    eig = markedDefectCoupling leftMark rightMark ∨
+      eig = -markedDefectCoupling leftMark rightMark := by
+  obtain ⟨⟨x, y⟩, hnonzero, heq⟩ := heig
+  let w : ℝ := markedDefectCoupling leftMark rightMark
+  have hx : w * y = eig * x := by
+    have hh := congrArg Prod.fst heq
+    exact hh
+  have hy : w * x = eig * y := by
+    have hh := congrArg Prod.snd heq
+    exact hh
+  by_cases hplus : eig = w
+  · exact Or.inl hplus
+  · right
+    by_contra hminus
+    have hsum : (w - eig) * (x + y) = 0 := by
+      nlinarith [hx, hy]
+    have hdiff : (w + eig) * (x - y) = 0 := by
+      nlinarith [hx, hy]
+    have hne₁ : w - eig ≠ 0 := by
+      intro h
+      apply hplus
+      linarith
+    have hne₂ : w + eig ≠ 0 := by
+      intro h
+      apply hminus
+      linarith
+    have hxy₁ : x + y = 0 :=
+      (mul_eq_zero.mp hsum).resolve_left hne₁
+    have hxy₂ : x - y = 0 :=
+      (mul_eq_zero.mp hdiff).resolve_left hne₂
+    have hx0 : x = 0 := by linarith
+    have hy0 : y = 0 := by linarith
+    apply hnonzero
+    exact Prod.ext hx0 hy0
+
+/-- Marking a pair with equal orientations produces the real
+eigenvalue 3/4, computed from the actual two-tile geometry. -/
+theorem aligned_tiles_eigenvalue :
+    PairHasEigenvalue (markedDefectOperator true true) (3 / 4) := by
+  rw [← aligned_marked_coupling]
+  exact markedDefect_positive_mode true true
+
+/-- Opposite orientation markings produce a *different* eigenvalue:
+3/2 instead of 3/4. -/
+theorem opposed_tiles_eigenvalue :
+    PairHasEigenvalue (markedDefectOperator true false) (3 / 2) := by
+  rw [← opposed_marked_coupling]
+  exact markedDefect_positive_mode true false
+
+/-- This shows concretely that the local spectrum can detect
+orientation mismatch: 3/2 is absent for aligned marks. -/
+theorem opposed_eigenvalue_not_aligned :
+    ¬ PairHasEigenvalue (markedDefectOperator true true) (3 / 2) := by
+  intro h
+  rcases markedDefect_eigenvalues_exact true true (3 / 2) h with h1 | h2
+  · rw [aligned_marked_coupling] at h1
+    norm_num at h1
+  · rw [aligned_marked_coupling] at h2
+    norm_num at h2
+
 end
 end InfiniteTilings
