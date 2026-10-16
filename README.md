@@ -70,6 +70,8 @@ is not necessarily unique or physically canonical.
 
 ## 1. The starting analytic result: Theorem C (**proved on main**)
 
+**Mathematical objective.** Establish a self-contained analytic tool: a normally convergent infinite product whose zero set is confined to an affine complex line, *independently* of any particular geometry. This proves the line-localization mechanism once; later stages only need to construct admissible positive levels.
+
 The first step had no real tiling attached to it. For positive levels
 $q_n$, the file defines *paired* factors and their infinite product:
 
@@ -113,6 +115,8 @@ $
 
 Lean proves that this ensures the compact-majorant condition of `Admissible`.
 
+**Why this matters for the next step.** The line is imposed through the paired factors. No geometrical choice, however sophisticated, can turn this line-localization theorem alone into the Riemann hypothesis.
+
 **Lean anchors:** `Admissible`, `product_uniform_on_compact`,
 `theoremC_zero_localization`, `admissible_of_inv_sq_summable`,
 `canonicalProduct_zero_at_positive_level`.
@@ -122,6 +126,8 @@ product is not the different exponential genus-two product considered
 in the exploratory discussion.
 
 ## 2. The first *actual* tiling: integer unit squares (**proved on main**)
+
+**Mathematical objective.** Verify that the index set of the infinite product can represent *real tiles of a plane-covering tessellation*, not merely a list of abstract points. Prove coverage, disjoint open interiors and a bijective enumeration, then supply one simple summable test energy.
 
 For $(m,n)\in\mathbb Z^2$, define the closed unit cell
 
@@ -152,6 +158,8 @@ $$
 By Theorem C, its associated product converges as required and has
 no zeros off the chosen complex line.
 
+**Why this matters for the next step.** The initial shell energy depends on how natural numbers encode the grid. It demonstrates mathematical consistency, but it does not yet explain heights in terms of intrinsic tile geometry.
+
 **Lean anchors:** `squareCell_covers_plane`,
 `squareInterior_unique`, `gridPoint_surjective`,
 `gridPoint_injective`, `squareGridEnergy_grows`,
@@ -160,6 +168,8 @@ no zeros off the chosen complex line.
 it is **not** Euclidean distance between centroids.
 
 ## 3. Replacing encoded energies by Euclidean centroids (**proved on main**)
+
+**Mathematical objective.** Replace the artificial encoding-based energies with the true squared Euclidean distances of tile centroids from the origin. Establish the necessary inverse-square summability across the whole two-dimensional grid without inserting a rapidly growing factor by hand.
 
 The next result removed that first artificial growth prescription.
 The genuine centroid of $S_{m,n}$ is
@@ -194,6 +204,8 @@ one-dimensional sequences. Because `gridPoint` is injective, the
 estimate transfers to the natural-number enumeration used in the
 canonical product.
 
+**Why this matters for the next step.** Once this estimate is proved, every energy value is determined by a tile's position. The enumeration chooses an order only; it no longer determines the numerical heights.
+
 **Lean anchors:** `squareCentroid`, `centroidEnergy`,
 `centroidEnergy_inv_sq_summable`,
 `geometricCentroidEnergy_inv_sq_summable`,
@@ -205,6 +217,8 @@ sequence. **Boundary:** even this physically motivated choice still
 eigenvalues.
 
 ## 4. Rectangles, shears and invertible affine grids (**proved on main**)
+
+**Mathematical objective.** Show that the analytic construction is stable when tiles are stretched, scaled or sheared into rectangles and parallelograms. Prove one theorem for every invertible real two-dimensional linear transformation rather than handling shapes individually.
 
 We then tested whether the geometric proof survives changing the
 shape of tiles. Let
@@ -239,6 +253,8 @@ $$
 Consequently $\sum_{\mathbb Z^2}q_A(P)^{-2}<\infty$, so the same
 Theorem C applies for every nondegenerate linear deformation.
 
+**Why this matters for the next step.** The nonzero determinant supplies a coercive comparison with the square grid. Therefore tile shape can vary without destroying convergence or the selected zero line.
+
 **Lean anchors:** `linearGridMap_injective`,
 `linearGridMap_surjective`, `linearSquareCell_covers_plane`,
 `linearSquareInterior_unique`,
@@ -249,6 +265,8 @@ Theorem C applies for every nondegenerate linear deformation.
 periodic lattice, not intrinsically aperiodic prototile systems.
 
 ## 5. Arbitrarily shifted horizontal rows (**proved on main**)
+
+**Mathematical objective.** Relax global affine regularity by giving each horizontal row its own displacement. Distinguish *whether an actual tiling exists* from *whether the associated energy sequence is summable*: the two questions have different hypotheses.
 
 To escape globally affine grids, assign an independent horizontal
 offset $\delta_n\in\mathbb R$ to each integer row $n$.
@@ -281,6 +299,8 @@ $$
 and hence Theorem C applies. **The boundedness restriction is needed
 for this energy comparison**, not for coverage or nonoverlap.
 
+**Why this matters for the next step.** Coverage and non-overlap hold for completely arbitrary offsets, but this proof of summability requires a uniform bound. The construction still has a horizontal translation period.
+
 **Lean anchors:** `rowShiftCell_covers_plane`,
 `rowShiftInterior_unique`, `rowShiftCentroid_separated`,
 `rowShiftEnergy_inv_sq_summable`, `rowShiftGrid_theoremC`.
@@ -289,6 +309,8 @@ such tiling retains the translation period $(1,0)$. It is not
 translation-aperiodic in both directions.
 
 ## 6. A general coercive criterion for irregular point configurations (**proved on main**)
+
+**Mathematical objective.** Identify a reusable sufficient growth condition that works for arbitrary lattice-indexed energies and irregular collections of points. The criterion should capture the analytic core of earlier examples without repeatedly proving geometry-specific convergence estimates.
 
 The common thread of the previous proofs is not periodicity but
 **sufficient growth away from the origin**. For any positive family
@@ -318,6 +340,8 @@ $$
 For $q_P(m,n)=1+\|P_{m,n}\|^2$, Lean verifies the comparison with
 $C=2$ and therefore summability and line-localized product zeros.
 
+**Why this matters for the next step.** A set of points with controlled displacement is not necessarily a tiling. The theorem removes periodicity assumptions from energy summability, not the obligation to prove that geometric tiles cover the plane.
+
 **Lean anchors:** `coerciveEnergy_inv_sq_summable`,
 `coerciveEnergy_theoremC`, `boundedPointSet_energy_control`,
 `boundedPointSet_inv_sq_summable`,
@@ -328,6 +352,8 @@ centroids of actual nonoverlapping tiles. At the endpoint displacement
 $\frac{1}{2}$, distinct indices need not even have distinct points.
 
 ## 7. A complete tiling with no nonzero translation period (**proved on main**)
+
+**Mathematical objective.** Find an explicit infinite tiling with *no nonzero translation symmetry* as a particular arrangement, while retaining enough control of true centroids to apply Theorem C. This addresses the persistent period of the row-shift examples.
 
 The next step restored actual tile geometry while breaking every
 nonzero translational symmetry of the *particular tiling*.
@@ -352,6 +378,8 @@ in each coordinate from their corresponding square centroids.
 The preceding bounded-displacement theorem therefore proves
 inverse-square energy summability and Theorem C for this example.
 
+**Why this matters for the next step.** The local defect supplies a simple fully checked example; it is not a strong aperiodicity theorem for the collection of prototiles, since a finite defect does not prohibit other periodic arrangements.
+
 **Lean anchors:** `defectCell_covers_plane`,
 `defectInterior_unique`, `defectWidth_unique`,
 `defectTiling_translation_aperiodic`,
@@ -361,6 +389,8 @@ It is not a proof of Penrose-style strong aperiodicity of a tile set:
 the same prototiles may admit periodic tilings.
 
 ## 8. Finite operators detecting tile adjacency (**proved on main**)
+
+**Mathematical objective.** Pass from independent tile energies to an operator encoding **interactions**. For a finite patch, an amplitude at one tile is coupled to amplitudes at neighboring tiles. Prove the key symmetry identity needed for a real finite-dimensional spectrum.
 
 So far the product levels depended mostly on centroid energies.
 To make neighboring tiles matter, the source defines a weighted
@@ -382,6 +412,8 @@ proves that symmetric undirected adjacency plus symmetric edge
 weights yields a symmetric finite matrix. No periodicity is assumed
 for the finite graph.
 
+**Why this matters for the next step.** This changes the nature of the data determining candidate zero heights: graph connectivity and edge weights matter, not just coordinates. The next obstacle is an operator acting on an infinite tiling.
+
 **Lean anchors:** `finitePatchOperator`,
 `finitePatchOperator_symmetric`,
 `geometricEdgeMatrix_symmetric`,
@@ -391,6 +423,8 @@ not yet the definition, domain analysis or spectral theorem for an
 unbounded operator acting on $\ell^2$ of an infinite tiling.
 
 ## 9. A concrete two-tile interaction with distinct spectra (**proved on main**)
+
+**Mathematical objective.** Verify in a completely explicit two-tile model that changing the coupling induced by widths and binary markings changes the **whole set of eigenvalues**. Prove both eigenmodes and exclude any extra real eigenvalues.
 
 The two special rectangles really share a vertical boundary.
 Their widths have product $\frac{1}{2}\cdot\frac{3}{2}=\frac{3}{4}$.
@@ -422,6 +456,8 @@ opposite marks give $w=\frac{3}{2}$. In particular, $\frac{3}{2}$
 is an eigenvalue in the opposed-mark model and not in the
 equal-mark model.
 
+**Why this matters for the next step.** The example demonstrates genuine local spectral sensitivity. The interaction rule and markings are deliberate modeling choices; a rectangle has no intrinsic chirality, and no statistical assertion follows from a two-dimensional matrix.
+
 **Lean anchors:** `defectPair_shares_vertical_edge`,
 `defectPairWidthWeight_value`,
 `markedDefectOperator_symmetric`,
@@ -435,6 +471,8 @@ The exact spectrum proved here belongs to a two-dimensional local
 operator, not the entire infinite tiling.
 
 ## 10. Feeding real local eigenvalues into the product (**proved on main, PR #10**)
+
+**Mathematical objective.** Insert proven real eigenvalues of local operators into a positive, summable sequence usable by the infinite product. The analytic requirements are essential: arbitrary real eigenvalues might be negative, zero or too small to make the product converge.
 
 The next bridge uses a positive geometric *growth envelope*
 $q_0(n)$, together with any real spectral levels $\lambda_n$:
@@ -464,6 +502,8 @@ Matching marks multiply $q_0$ by $25/16$; opposing marks
 multiply it by $13/4$. Hence local interaction data can change
 the level of a product zero along the same chosen line.
 
+**Why this matters for the next step.** This creates the first certified spectral influence on actual zero heights, but each level is a **constructed function** of an eigenvalue and a chosen geometric growth envelope; it is not itself an eigenvalue of the displayed adjacency operator.
+
 **Lean anchors:** `spectralEnvelopeEnergy_inv_sq_summable`,
 `spectralEnvelope_theoremC`,
 `canonicalProduct_zero_at_positive_level`,
@@ -477,6 +517,8 @@ operator, much less the spectrum of a single infinite operator.
 The choice of zero line remains completely independent of this bridge.
 
 ## 11. A level that is an eigenvalue of the *combined* local operator (**proved on main; PR #11**)
+
+**Mathematical objective.** Eliminate that last algebraic mismatch: construct a combined onsite-plus-interaction Hamiltonian such that the product's selected positive level **is a true eigenvalue of that Hamiltonian**. Reuse the centroid growth estimates to preserve product convergence.
 
 The next merged development improves the previous bridge by moving
 the geometric baseline **inside** a two-site Hamiltonian:
@@ -508,6 +550,8 @@ energy and $w_n$ is the marked coupling of the special rectangles.
 This is a step forward from multiplying a separately chosen baseline
 by a function of an eigenvalue.
 
+**Why this matters for the next step.** This makes a more direct operator-to-zero link. Nevertheless the separate matrices indexed by $n$ do not constitute a single infinite Hamiltonian, and their diagonal potentials are still prescribed geometric energies.
+
 **Lean anchors on `main` (introduced in PR #11):** `interactingPairOperator`,
 `interactingPair_positive_mode`, `interactingPair_negative_mode`,
 `pairOperatorEigenlevel_inv_sq_summable`,
@@ -522,6 +566,8 @@ the onsite potential $V_n$ is still chosen from centroid geometry.
 This is not a single infinite operator or a proof of zeta statistics.
 
 ## 12. A first constraint on level counting (**proved on main; PR #11**)
+
+**Mathematical objective.** Move beyond the location of individual zeros to a necessary statistical test: **count the selected levels below a large threshold**. Prove that a uniformly bounded nonnegative coupling cannot shift those levels beyond a fixed amount.
 
 That same merged development proves a useful limitation of the simple
 local model. Suppose $0\le w_n\le C$ and
@@ -554,6 +600,8 @@ with multiplicity**.
 The **set-inclusion theorem** is in Lean; the comparison of these
 two asymptotic counting laws is mathematical analysis discussed here,
 **not** a Lean-certified theorem in this repository.
+
+**Why this matters for the next step.** This constrains spectral density. In particular, bounded corrections to a two-dimensional quadratic baseline cannot change its order-$T$ counting law into the order-$T\log T$ zeta-zero law when counting indexed levels with multiplicity. The asymptotic comparison itself is not a Lean theorem here.
 
 **Lean anchors on `main` (introduced in PR #11):**
 `pairOperatorEigenlevel_threshold_sandwich`,
