@@ -1487,9 +1487,14 @@ theorem spectralEnvelopeEnergy_inv_sq_summable
   apply Summable.of_nonneg_of_le (fun _ => by positivity) (fun n => ?_) hsum
   show 1 / (spectralEnvelopeEnergy baseline eigenlevel n) ^ 2 ≤
     1 / (baseline n) ^ 2
-  apply one_div_le_one_div_of_le (pow_pos (hpos n) 2)
-  gcongr
-  exact spectralEnvelopeEnergy_ge baseline eigenlevel hpos n
+  have hcomp := spectralEnvelopeEnergy_ge baseline eigenlevel hpos n
+  have hq : 0 ≤ spectralEnvelopeEnergy baseline eigenlevel n :=
+    (spectralEnvelopeEnergy_pos baseline eigenlevel hpos n).le
+  have hsquare :
+      (baseline n) ^ 2 ≤ (spectralEnvelopeEnergy baseline eigenlevel n) ^ 2 := by
+    nlinarith only [mul_nonneg (sub_nonneg.mpr hcomp)
+      (add_nonneg (hpos n).le hq)]
+  exact one_div_le_one_div_of_le (pow_pos (hpos n) 2) hsquare
 
 /-- Theorem C's compact majorant follows for any real spectral
 eigenvalue sequence added to an already-summable growth envelope. -/
