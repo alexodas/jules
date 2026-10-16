@@ -640,5 +640,207 @@ theorem parallelogramGrid_theoremC (width height shear : ℝ)
   · exact hd
   · exact hz
 
+
+/-! ## Infinite row-shifted tilings beyond affine grids
+
+Each horizontal strip is tiled by unit squares, with an independent
+horizontal offset chosen for that row. These tilings need not be globally
+linear images of the square lattice. They always have horizontal period
+one, so we do **not** claim they are fully aperiodic tilings.
+-/
+
+/-- The closed square cell in row \`p.2\`, horizontally offset by
+\`offset p.2\`. Adjacent rows may have different offsets. -/
+def rowShiftCell (offset : ℤ → ℝ) (p : ℤ × ℤ) : Set (ℝ × ℝ) :=
+  {z | (p.1 : ℝ) + offset p.2 ≤ z.1 ∧
+       z.1 ≤ (p.1 : ℝ) + offset p.2 + 1 ∧
+       (p.2 : ℝ) ≤ z.2 ∧ z.2 ≤ (p.2 : ℝ) + 1}
+
+/-- The open interior of a row-shifted square. -/
+def rowShiftInterior (offset : ℤ → ℝ) (p : ℤ × ℤ) : Set (ℝ × ℝ) :=
+  {z | (p.1 : ℝ) + offset p.2 < z.1 ∧
+       z.1 < (p.1 : ℝ) + offset p.2 + 1 ∧
+       (p.2 : ℝ) < z.2 ∧ z.2 < (p.2 : ℝ) + 1}
+
+/-- For *any* row offsets, even unbounded ones, row-shifted cells cover
+all of \`ℝ × ℝ\` without gaps. -/
+theorem rowShiftCell_covers_plane (offset : ℤ → ℝ) (z : ℝ × ℝ) :
+    ∃ p : ℤ × ℤ, z ∈ rowShiftCell offset p := by
+  let n : ℤ := ⌊z.2⌋
+  let m : ℤ := ⌊z.1 - offset n⌋
+  refine ⟨(m,n), ?_⟩
+  change (m : ℝ) + offset n ≤ z.1 ∧
+    z.1 ≤ (m : ℝ) + offset n + 1 ∧
+    (n : ℝ) ≤ z.2 ∧ z.2 ≤ (n : ℝ) + 1
+  have hmx : (m : ℝ) ≤ z.1 - offset n := Int.floor_le _
+  have hmx' : z.1 - offset n < (m : ℝ) + 1 := Int.lt_floor_add_one _
+  have hny : (n : ℝ) ≤ z.2 := Int.floor_le _
+  have hny' : z.2 < (n : ℝ) + 1 := Int.lt_floor_add_one _
+  constructor
+  · linarith
+  constructor
+  · linarith
+  constructor
+  · exact hny
+  · exact hny'.le
+
+/-- Different shifted unit squares cannot share an interior point,
+regardless of how the rows are offset. -/
+theorem rowShiftInterior_unique (offset : ℤ → ℝ)
+    {p q : ℤ × ℤ} {z : ℝ × ℝ}
+    (hp : z ∈ rowShiftInterior offset p)
+    (hq : z ∈ rowShiftInterior offset q) : p = q := by
+  change (p.1 : ℝ) + offset p.2 < z.1 ∧
+    z.1 < (p.1 : ℝ) + offset p.2 + 1 ∧
+    (p.2 : ℝ) < z.2 ∧ z.2 < (p.2 : ℝ) + 1 at hp
+  change (q.1 : ℝ) + offset q.2 < z.1 ∧
+    z.1 < (q.1 : ℝ) + offset q.2 + 1 ∧
+    (q.2 : ℝ) < z.2 ∧ z.2 < (q.2 : ℝ) + 1 at hq
+  have hy₁ : p.2 < q.2 + 1 := by
+    exact_mod_cast (lt_trans hp.2.2.1 hq.2.2.2)
+  have hy₂ : q.2 < p.2 + 1 := by
+    exact_mod_cast (lt_trans hq.2.2.1 hp.2.2.2)
+  have hy : p.2 = q.2 := by omega
+  have hx₁ : (p.1 : ℝ) < (q.1 : ℝ) + 1 := by
+    have hlow := hp.1
+    have hhigh := hq.2.1
+    rw [hy] at hlow
+    linarith
+  have hx₂ : (q.1 : ℝ) < (p.1 : ℝ) + 1 := by
+    have hlow := hq.1
+    have hhigh := hp.2.1
+    rw [hy] at hhigh
+    linarith
+  have hxi₁ : p.1 < q.1 + 1 := by exact_mod_cast hx₁
+  have hxi₂ : q.1 < p.1 + 1 := by exact_mod_cast hx₂
+  have hx : p.1 = q.1 := by omega
+  exact Prod.ext hx hy
+
+/-- Euclidean centroid of the row-shifted square. -/
+def rowShiftCentroid (offset : ℤ → ℝ) (p : ℤ × ℤ) : ℝ × ℝ :=
+  ((squareCentroid p).1 + offset p.2, (squareCentroid p).2)
+
+/-- Natural positive squared-distance energy for the shifted centroid. -/
+def rowShiftEnergy (offset : ℤ → ℝ) (p : ℤ × ℤ) : ℝ :=
+  1 + (rowShiftCentroid offset p).1 ^ 2 +
+      (rowShiftCentroid offset p).2 ^ 2
+
+theorem rowShiftEnergy_pos (offset : ℤ → ℝ) (p : ℤ × ℤ) :
+    0 < rowShiftEnergy offset p := by
+  unfold rowShiftEnergy
+  positivity
+
+/-- A uniform bound of one half per row controls the original centroid
+energy by twice the row-shifted one. No periodicity is assumed. -/
+private theorem rowShift_energy_control (offset : ℤ → ℝ)
+    (hbound : ∀ n, |offset n| ≤ 1 / 2) (p : ℤ × ℤ) :
+    centroidEnergy p ≤ 2 * rowShiftEnergy offset p := by
+  let x : ℝ := (squareCentroid p).1
+  let y : ℝ := (squareCentroid p).2
+  let δ : ℝ := offset p.2
+  have hδ := hbound p.2
+  have hlo : -(1 / 2 : ℝ) ≤ δ := (abs_le.mp hδ).1
+  have hhi : δ ≤ (1 / 2 : ℝ) := (abs_le.mp hδ).2
+  have hδsq : δ ^ 2 ≤ 1 / 4 := by
+    have hmul : 0 ≤ (1 / 2 - δ) * (1 / 2 + δ) :=
+      mul_nonneg (by linarith) (by linarith)
+    nlinarith
+  have hsquare : 0 ≤ (x + 2 * δ) ^ 2 := sq_nonneg _
+  have hy : 0 ≤ y ^ 2 := sq_nonneg _
+  change 1 + x ^ 2 + y ^ 2 ≤ 2 * (1 + (x + δ) ^ 2 + y ^ 2)
+  nlinarith
+
+/-- Squared inverse energies are summable for every bounded row offset,
+including irregular and nonconstant arrangements of the rows. -/
+theorem rowShiftEnergy_inv_sq_summable (offset : ℤ → ℝ)
+    (hbound : ∀ n, |offset n| ≤ 1 / 2) :
+    Summable (fun p : ℤ × ℤ => 1 / (rowShiftEnergy offset p) ^ 2) := by
+  have hsum : Summable (fun p : ℤ × ℤ =>
+      (4 : ℝ) * (1 / (centroidEnergy p) ^ 2)) :=
+    centroidEnergy_inv_sq_summable.mul_left 4
+  apply Summable.of_nonneg_of_le (fun p => by positivity) (fun p => ?_) hsum
+  have hp : 0 < centroidEnergy p := centroidEnergy_pos p
+  have hq : 0 < rowShiftEnergy offset p := rowShiftEnergy_pos offset p
+  have hsquare : (centroidEnergy p) ^ 2 ≤
+      4 * (rowShiftEnergy offset p) ^ 2 := by
+    calc
+      _ ≤ (2 * rowShiftEnergy offset p) ^ 2 := by
+        gcongr
+        exact rowShift_energy_control offset hbound p
+      _ = _ := by ring
+  calc
+    1 / (rowShiftEnergy offset p) ^ 2 ≤
+        4 / (centroidEnergy p) ^ 2 := by
+      apply (div_le_div_iff₀ (sq_pos_of_pos hq) (sq_pos_of_pos hp)).2
+      simpa only [one_mul] using hsquare
+    _ = 4 * (1 / (centroidEnergy p) ^ 2) := by ring
+
+/-- A basic integer separation bound. -/
+private theorem integer_centroid_gap {m n : ℤ} (h : m ≠ n) :
+    1 ≤ ((m : ℝ) - (n : ℝ)) ^ 2 := by
+  rcases lt_or_gt_of_ne h with hlt | hgt
+  · have hint : m + 1 ≤ n := by omega
+    have hr : (m : ℝ) + 1 ≤ (n : ℝ) := by exact_mod_cast hint
+    nlinarith
+  · have hint : n + 1 ≤ m := by omega
+    have hr : (n : ℝ) + 1 ≤ (m : ℝ) := by exact_mod_cast hint
+    nlinarith
+
+/-- The row-shifted centroids are *uniformly separated*, even if the
+offsets are unbounded. Their mutual Euclidean distance is at least 1. -/
+theorem rowShiftCentroid_separated (offset : ℤ → ℝ)
+    {p q : ℤ × ℤ} (hpq : p ≠ q) :
+    1 ≤ ((rowShiftCentroid offset p).1 -
+        (rowShiftCentroid offset q).1) ^ 2 +
+        ((rowShiftCentroid offset p).2 -
+        (rowShiftCentroid offset q).2) ^ 2 := by
+  by_cases hy : p.2 = q.2
+  · have hx : p.1 ≠ q.1 := by
+      intro h
+      exact hpq (Prod.ext h hy)
+    have hgap := integer_centroid_gap hx
+    have hdiff : (rowShiftCentroid offset p).1 -
+        (rowShiftCentroid offset q).1 =
+        (p.1 : ℝ) - (q.1 : ℝ) := by
+      simp [rowShiftCentroid, squareCentroid, hy]
+    rw [hdiff]
+    nlinarith [sq_nonneg
+      ((rowShiftCentroid offset p).2 - (rowShiftCentroid offset q).2)]
+  · have hgap := integer_centroid_gap hy
+    have hdiff : (rowShiftCentroid offset p).2 -
+        (rowShiftCentroid offset q).2 =
+        (p.2 : ℝ) - (q.2 : ℝ) := by
+      simp [rowShiftCentroid, squareCentroid]
+    rw [hdiff]
+    nlinarith [sq_nonneg
+      ((rowShiftCentroid offset p).1 - (rowShiftCentroid offset q).1)]
+
+/-- Enumerate all shifted-centroid energies without duplicates. -/
+def rowShiftGridEnergy (offset : ℤ → ℝ) (n : ℕ) : ℝ :=
+  rowShiftEnergy offset (gridPoint n)
+
+/-- Bounded row-shift tilings satisfy the compact-normal convergence
+hypothesis of the infinite canonical product theorem. -/
+theorem rowShiftGridEnergy_admissible (offset : ℤ → ℝ)
+    (hbound : ∀ n, |offset n| ≤ 1 / 2)
+    (center direction : ℂ) :
+    Admissible (rowShiftGridEnergy offset) center direction := by
+  apply admissible_of_inv_sq_summable
+  · intro n
+    exact rowShiftEnergy_pos offset (gridPoint n)
+  · simpa only [rowShiftGridEnergy, Function.comp_def] using
+      (rowShiftEnergy_inv_sq_summable offset hbound).comp_injective
+        gridPoint_injective
+
+/-- **Geometric Theorem C for arbitrarily row-shifted infinite square
+tilings**. All zeros are on the prescribed complex line. -/
+theorem rowShiftGrid_theoremC (offset : ℤ → ℝ)
+    (hbound : ∀ n, |offset n| ≤ 1 / 2)
+    (center direction s : ℂ) (hd : direction ≠ 0)
+    (hz : canonicalProduct (rowShiftGridEnergy offset) center direction s = 0) :
+    ∃ t : ℝ, s = center + direction * (t : ℂ) :=
+  theoremC_zero_localization
+    (rowShiftGridEnergy_admissible offset hbound center direction) hd hz
+
 end
 end InfiniteTilings
