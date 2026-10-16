@@ -1,0 +1,20 @@
+name: Lean 4 / Mathlib proof check
+
+on:
+  push:
+    branches: [main, theorem-c-infinite-tilings]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  proof:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install Lean and Mathlib, then check proofs
+        uses: leanprover/lean-action@v1
+        with:
+          use-mathlib-cache: true
+          build: true
+          test: false
