@@ -437,13 +437,9 @@ theorem linearGridMap_surjective (a b c d : ℝ)
            (a * z.2 - c * z.1) / (a * d - b * c)), ?_⟩
   apply Prod.ext
   · dsimp [linearGridMap]
-    field_simp
-    · ring
-    · exact hdet
+    field_simp [hdet] <;> ring
   · dsimp [linearGridMap]
-    field_simp
-    · ring
-    · exact hdet
+    field_simp [hdet] <;> ring
 
 /-- A deformed unit square is a parallelogram cell. -/
 def linearSquareCell (a b c d : ℝ) (p : ℤ × ℤ) : Set (ℝ × ℝ) :=
