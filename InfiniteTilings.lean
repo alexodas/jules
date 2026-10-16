@@ -2115,8 +2115,16 @@ theorem finitePatchHamiltonian_quadratic_expansion {N : ℕ}
         simp only [finitePatchDirichletHamiltonian, finitePatchOperator,
           mul_sub, add_mul, Finset.mul_sum, Finset.sum_mul,
           Finset.sum_sub_distrib]
-        -- After distributing each finite sum, all remaining
-        -- transformations are polynomial identities.
+        -- A nested finite sum remains under a scalar multiplication.
+        -- Make this distribution explicit before collecting monomials.
+        have hdistrib :
+            u i * (∑ j : Fin N, u i * W i j) =
+              ∑ j : Fin N, (u i) ^ 2 * W i j := by
+          rw [Finset.mul_sum]
+          apply Finset.sum_congr rfl
+          intro j _
+          ring
+        rw [hdistrib]
         ring
     _ = (∑ i : Fin N, V i * (u i) ^ 2) +
         (∑ i : Fin N, ∑ j : Fin N,
