@@ -277,5 +277,120 @@ theorem squareGrid_theoremC
     ∃ t : ℝ, s = center + direction * (t : ℂ) :=
   theoremC_zero_localization (squareGridEnergy_admissible center direction) hd hz
 
+
+/-! ## Physical centroid energy of the square tiling -/
+
+/-- The centre (centroid) of the unit cell indexed by an integer pair. -/
+def squareCentroid (p : ℤ × ℤ) : ℝ × ℝ :=
+  ((p.1 : ℝ) + 1 / 2, (p.2 : ℝ) + 1 / 2)
+
+/-- Squared Euclidean distance of a square's centroid from the origin,
+plus 1 to keep every energy strictly positive. -/
+def centroidEnergy (p : ℤ × ℤ) : ℝ :=
+  1 + (squareCentroid p).1 ^ 2 + (squareCentroid p).2 ^ 2
+
+theorem centroidEnergy_pos (p : ℤ × ℤ) : 0 < centroidEnergy p := by
+  unfold centroidEnergy
+  positivity
+
+/-- The one-dimensional summability estimate for half-integer centroids. -/
+private theorem summable_centroid_axis :
+    Summable (fun m : ℤ => 1 / (1 + ((m : ℝ) + 1 / 2) ^ 2)) := by
+  have hbase : Summable
+      (fun m : ℤ => 1 / |(m : ℝ) + (1 / 2 : ℝ)| ^ (2 : ℝ)) :=
+    (Real.summable_one_div_int_add_rpow (1 / 2) 2).2 (by norm_num)
+  have hpowers : Summable
+      (fun m : ℤ => 1 / (((m : ℝ) + 1 / 2) ^ 2)) := by
+    simpa only [Real.rpow_two, sq_abs] using hbase
+  apply Summable.of_nonneg_of_le (fun _ => by positivity) (fun m => ?_) hpowers
+  have hnonzero : (m : ℝ) + 1 / 2 ≠ 0 := by
+    intro hz
+    have hh : (2 : ℝ) * (m : ℝ) = -1 := by linarith
+    have hhi : (2 : ℤ) * m = -1 := by exact_mod_cast hh
+    omega
+  have hpos : 0 < ((m : ℝ) + 1 / 2) ^ 2 := sq_pos_of_ne_zero hnonzero
+  apply one_div_le_one_div_of_le hpos
+  linarith
+
+/-- The inverse square of the Euclidean centroid energy is summable
+over all of the two-dimensional integer lattice. -/
+theorem centroidEnergy_inv_sq_summable :
+    Summable (fun p : ℤ × ℤ => 1 / (centroidEnergy p) ^ 2) := by
+  have haxis := summable_centroid_axis
+  have hprod : Summable (fun p : ℤ × ℤ =>
+      (1 / (1 + ((p.1 : ℝ) + 1 / 2) ^ 2)) *
+      (1 / (1 + ((p.2 : ℝ) + 1 / 2) ^ 2))) := by
+    have hnorm : Summable (fun m : ℤ =>
+        ‖((1 : ℝ) / (1 + ((m : ℝ) + 1 / 2) ^ 2))‖) := by
+      have heq : (fun m : ℤ =>
+          ‖((1 : ℝ) / (1 + ((m : ℝ) + 1 / 2) ^ 2))‖) =
+          (fun m : ℤ =>
+          (1 : ℝ) / (1 + ((m : ℝ) + 1 / 2) ^ 2)) := by
+        funext m
+        rw [Real.norm_eq_abs, abs_of_nonneg (by positivity)]
+      rw [heq]
+      exact haxis
+    exact summable_mul_of_summable_norm
+      (f := fun m : ℤ => (1 : ℝ) / (1 + ((m : ℝ) + 1 / 2) ^ 2))
+      (g := fun m : ℤ => (1 : ℝ) / (1 + ((m : ℝ) + 1 / 2) ^ 2))
+      hnorm hnorm
+  apply Summable.of_nonneg_of_le (fun _ => by positivity) (fun p => ?_) hprod
+  let x : ℝ := (p.1 : ℝ) + 1 / 2
+  let y : ℝ := (p.2 : ℝ) + 1 / 2
+  have hx : 0 ≤ x ^ 2 := sq_nonneg x
+  have hy : 0 ≤ y ^ 2 := sq_nonneg y
+  have hxy : (1 + x ^ 2) * (1 + y ^ 2) ≤ (1 + x ^ 2 + y ^ 2) ^ 2 := by
+    nlinarith [mul_nonneg hx hy, sq_nonneg (x ^ 2 + y ^ 2)]
+  change 1 / (1 + x ^ 2 + y ^ 2) ^ 2 ≤
+    (1 / (1 + x ^ 2)) * (1 / (1 + y ^ 2))
+  calc
+    1 / (1 + x ^ 2 + y ^ 2) ^ 2 ≤
+        1 / ((1 + x ^ 2) * (1 + y ^ 2)) := by
+      apply one_div_le_one_div_of_le (by positivity)
+      exact hxy
+    _ = (1 / (1 + x ^ 2)) * (1 / (1 + y ^ 2)) := by
+      simp only [one_div, mul_inv_rev]
+      ac_rfl
+
+/-- The enumeration used for the square tiling has no repeated lattice points. -/
+theorem gridPoint_injective : Function.Injective gridPoint := by
+  intro i j hij
+  have ha : (Nat.unpair i).1 = (Nat.unpair j).1 := by
+    apply (Equiv.intEquivNat.symm).injective
+    exact congrArg Prod.fst hij
+  have hb : (Nat.unpair i).2 = (Nat.unpair j).2 := by
+    apply (Equiv.intEquivNat.symm).injective
+    exact congrArg Prod.snd hij
+  have hp : Nat.unpair i = Nat.unpair j := Prod.ext ha hb
+  calc
+    i = Nat.pair (Nat.unpair i).1 (Nat.unpair i).2 := (Nat.pair_unpair i).symm
+    _ = Nat.pair (Nat.unpair j).1 (Nat.unpair j).2 := by rw [hp]
+    _ = j := Nat.pair_unpair j
+
+/-- The genuine Euclidean centroid energy, indexed by the natural enumeration. -/
+def geometricCentroidEnergy (n : ℕ) : ℝ :=
+  centroidEnergy (gridPoint n)
+
+/-- A pure geometric convergence theorem, with no artificial shell factor. -/
+theorem geometricCentroidEnergy_inv_sq_summable :
+    Summable (fun n : ℕ => 1 / (geometricCentroidEnergy n) ^ 2) := by
+  simpa only [geometricCentroidEnergy, Function.comp_def] using
+    centroidEnergy_inv_sq_summable.comp_injective gridPoint_injective
+
+/-- The physical centroid energy satisfies Theorem C's analytic hypotheses. -/
+theorem geometricCentroidEnergy_admissible (center direction : ℂ) :
+    Admissible geometricCentroidEnergy center direction := by
+  apply admissible_of_inv_sq_summable
+  · intro n
+    exact centroidEnergy_pos (gridPoint n)
+  · exact geometricCentroidEnergy_inv_sq_summable
+
+/-- **Theorem C for squared Euclidean centroid energies of all plane squares.** -/
+theorem geometricCentroid_theoremC
+    (center direction s : ℂ) (hd : direction ≠ 0)
+    (hz : canonicalProduct geometricCentroidEnergy center direction s = 0) :
+    ∃ t : ℝ, s = center + direction * (t : ℂ) :=
+  theoremC_zero_localization (geometricCentroidEnergy_admissible center direction) hd hz
+
 end
 end InfiniteTilings

@@ -112,3 +112,38 @@ not establish any identification with Riemann zeros.
 
 A green GitHub Actions build confirms these statements for
 the precise Lean declarations shown in the source file.
+
+
+## New experiment: physical Euclidean centroid energy
+
+This extension, still in the **same** \`InfiniteTilings.lean\` source file,
+replaces the encoded shell energy in a separate construction with a
+genuinely Euclidean quantity. For a unit square indexed by integers
+\`(m,n)\`, its centroid is \`(m + 1/2, n + 1/2)\`. The energy is
+
+\`\`\`text
+q(m,n) = 1 + (m + 1/2)^2 + (n + 1/2)^2 .
+\`\`\`
+
+The intended theorem proves the convergence of the sum of \`1/q(m,n)^2\`
+over the full integer plane, then transfers that summability to the
+canonical product and the affine-line localization theorem.
+
+The mathematical estimate is
+
+\`\`\`text
+1 / (1 + x^2 + y^2)^2 ≤ 1 / ((1 + x^2)(1 + y^2)).
+\`\`\`
+
+The right side separates into two one-dimensional, summable factors.
+This is a genuine geometric justification of the analytic hypotheses,
+rather than a recurrence adjusted to reproduce particular zeta zeros.
+
+The same approach should subsequently transfer to rectangles and
+invertible affine images of square grids, and then—after substantially
+more work—to suitably separated aperiodic tilings.
+
+**Verification rule:** a theorem added by an AI is called
+"machine-checked" here only after the GitHub Actions Lean/Mathlib
+build passes on the corresponding commit. Nothing in these results
+identifies the constructed function with the Riemann zeta function.
