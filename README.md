@@ -181,3 +181,5 @@ claim that their spectra equal the Riemann zeta spectrum.
 The result is AI-generated from Alessandro Odasso's experimental
 question, and is called certified only when Lean/Mathlib GitHub Actions
 passes on the precise commit.
+
+The affine-grid extension also proves that transformed parallelogram cells **cover the entire plane** and that distinct cells have **disjoint open interiors**, using an explicit inverse for the nonsingular matrix. Thus both the tiling geometry and the associated spectral-product summability are checked in one Lean source file.
