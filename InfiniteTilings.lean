@@ -1673,7 +1673,8 @@ both onsite geometry and the edge interaction. -/
 theorem interactingPair_positive_mode (V w : ℝ) :
     PairHasEigenvalue (interactingPairOperator V w) (V + w) := by
   refine ⟨(1, 1), by norm_num, ?_⟩
-  simp [interactingPairOperator]
+  dsimp [interactingPairOperator]
+  congr 1 <;> ring
 
 /-- The antisymmetric mode has eigenvalue V-w. -/
 theorem interactingPair_negative_mode (V w : ℝ) :
@@ -1793,7 +1794,10 @@ theorem markedPairEigenlevel_is_eigenvalue
         (geometricCentroidEnergy n)
         (markedDefectCoupling (marks n).1 (marks n).2))
       (markedPairEigenlevel marks n) := by
-  exact pairOperatorEigenlevel_is_eigenvalue _ _ n
+  simpa [markedPairEigenlevel] using
+    (pairOperatorEigenlevel_is_eigenvalue
+      geometricCentroidEnergy
+      (fun k => markedDefectCoupling (marks k).1 (marks k).2) n)
 
 theorem markedPairEigenlevel_admissible
     (marks : ℕ → Bool × Bool) (center direction : ℂ) :
