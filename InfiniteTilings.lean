@@ -392,5 +392,162 @@ theorem geometricCentroid_theoremC
     ∃ t : ℝ, s = center + direction * (t : ℂ) :=
   theoremC_zero_localization (geometricCentroidEnergy_admissible center direction) hd hz
 
+
+/-! ## All invertible linear images: rectangles and parallelograms -/
+
+/-- The physical squared-centroid energy after applying a real 2×2
+linear transformation. Its determinant must be nonzero to preserve
+the two-dimensional nature of the tiling. -/
+def linearCentroidEnergy (a b c d : ℝ) (p : ℤ × ℤ) : ℝ :=
+  1 + (a * (squareCentroid p).1 + b * (squareCentroid p).2) ^ 2 +
+      (c * (squareCentroid p).1 + d * (squareCentroid p).2) ^ 2
+
+theorem linearCentroidEnergy_pos (a b c d : ℝ) (p : ℤ × ℤ) :
+    0 < linearCentroidEnergy a b c d p := by
+  unfold linearCentroidEnergy
+  positivity
+
+/-- The adjugate identity supplies a coercive quadratic lower bound for
+every invertible real 2×2 matrix. The two extra terms on the left are
+squares, so the inequality follows without analytic assumptions. -/
+private theorem linear_sq_control (a b c d x y : ℝ) :
+    (a * d - b * c) ^ 2 * (x ^ 2 + y ^ 2) ≤
+      (a ^ 2 + b ^ 2 + c ^ 2 + d ^ 2) *
+        ((a * x + b * y) ^ 2 + (c * x + d * y) ^ 2) := by
+  let u : ℝ := a * x + b * y
+  let v : ℝ := c * x + d * y
+  have hidentity :
+      (a * d - b * c) ^ 2 * (x ^ 2 + y ^ 2) +
+        (b * u + d * v) ^ 2 + (a * u + c * v) ^ 2 =
+        (a ^ 2 + b ^ 2 + c ^ 2 + d ^ 2) * (u ^ 2 + v ^ 2) := by
+    dsimp [u, v]
+    ring
+  calc
+    _ ≤ (a * d - b * c) ^ 2 * (x ^ 2 + y ^ 2) +
+          (b * u + d * v) ^ 2 + (a * u + c * v) ^ 2 := by
+            positivity
+    _ = (a ^ 2 + b ^ 2 + c ^ 2 + d ^ 2) * (u ^ 2 + v ^ 2) := hidentity
+    _ = _ := rfl
+
+/-- Quantitative Euclidean-energy comparison for any invertible
+2×2 real matrix; the constant is independent of lattice points. -/
+private theorem linear_energy_control (a b c d x y : ℝ)
+    (hdet : a * d - b * c ≠ 0) :
+    1 + x ^ 2 + y ^ 2 ≤
+      (((a * d - b * c) ^ 2 +
+            (a ^ 2 + b ^ 2 + c ^ 2 + d ^ 2)) /
+        (a * d - b * c) ^ 2) *
+      (1 + (a * x + b * y) ^ 2 + (c * x + d * y) ^ 2) := by
+  let δ : ℝ := a * d - b * c
+  let S : ℝ := a ^ 2 + b ^ 2 + c ^ 2 + d ^ 2
+  let u : ℝ := a * x + b * y
+  let v : ℝ := c * x + d * y
+  have hδ : 0 < δ ^ 2 := sq_pos_of_ne_zero hdet
+  have hS : 0 ≤ S := by dsimp [S]; positivity
+  have hUV : 0 ≤ u ^ 2 + v ^ 2 := by positivity
+  have hc : δ ^ 2 * (x ^ 2 + y ^ 2) ≤ S * (u ^ 2 + v ^ 2) := by
+    simpa [δ, S, u, v] using linear_sq_control a b c d x y
+  have hmain : δ ^ 2 * (1 + x ^ 2 + y ^ 2) ≤
+      (δ ^ 2 + S) * (1 + u ^ 2 + v ^ 2) := by
+    nlinarith only [hc, hδ.le, hS, hUV,
+      mul_nonneg hδ.le hUV, mul_nonneg hS hUV]
+  have hdiv : 1 + x ^ 2 + y ^ 2 ≤
+      ((δ ^ 2 + S) * (1 + u ^ 2 + v ^ 2)) / δ ^ 2 := by
+    apply (le_div_iff₀ hδ).2
+    nlinarith only [hmain]
+  calc
+    1 + x ^ 2 + y ^ 2 ≤
+        ((δ ^ 2 + S) * (1 + u ^ 2 + v ^ 2)) / δ ^ 2 := hdiv
+    _ = ((δ ^ 2 + S) / δ ^ 2) * (1 + u ^ 2 + v ^ 2) := by ring
+    _ = _ := rfl
+
+/-- Squared inverse Euclidean centroid energies remain summable under
+*every* nonsingular real linear deformation of the square grid. -/
+theorem linearCentroidEnergy_inv_sq_summable
+    (a b c d : ℝ) (hdet : a * d - b * c ≠ 0) :
+    Summable (fun p : ℤ × ℤ => 1 / (linearCentroidEnergy a b c d p) ^ 2) := by
+  let δ : ℝ := a * d - b * c
+  let S : ℝ := a ^ 2 + b ^ 2 + c ^ 2 + d ^ 2
+  let C : ℝ := (δ ^ 2 + S) / δ ^ 2
+  have hδ : 0 < δ ^ 2 := sq_pos_of_ne_zero hdet
+  have hS : 0 ≤ S := by dsimp [S]; positivity
+  have hC : 0 < C := div_pos (add_pos_of_pos_of_nonneg hδ hS) hδ
+  have hcomp (p : ℤ × ℤ) :
+      centroidEnergy p ≤ C * linearCentroidEnergy a b c d p := by
+    simpa only [centroidEnergy, linearCentroidEnergy, C, δ, S] using
+      linear_energy_control a b c d
+        (squareCentroid p).1 (squareCentroid p).2 hdet
+  have hsum : Summable (fun p : ℤ × ℤ =>
+      C ^ 2 * (1 / (centroidEnergy p) ^ 2)) :=
+    centroidEnergy_inv_sq_summable.mul_left (C ^ 2)
+  apply Summable.of_nonneg_of_le (fun _ => by positivity) (fun p => ?_) hsum
+  have hp : 0 < centroidEnergy p := centroidEnergy_pos p
+  have hlin : 0 < linearCentroidEnergy a b c d p :=
+    linearCentroidEnergy_pos a b c d p
+  have hsquare :
+      (centroidEnergy p) ^ 2 ≤ C ^ 2 * (linearCentroidEnergy a b c d p) ^ 2 := by
+    calc
+      _ ≤ (C * linearCentroidEnergy a b c d p) ^ 2 := by
+        gcongr
+        exact hcomp p
+      _ = _ := by ring
+  calc
+    1 / (linearCentroidEnergy a b c d p) ^ 2 ≤
+        C ^ 2 / (centroidEnergy p) ^ 2 := by
+      apply (div_le_div_iff₀ (sq_pos_of_pos hlin) (sq_pos_of_pos hp)).2
+      simpa only [one_mul] using hsquare
+    _ = C ^ 2 * (1 / (centroidEnergy p) ^ 2) := by ring
+
+/-- Energies of the transformed lattice indexed by the original
+bijection with the natural numbers. -/
+def linearGridEnergy (a b c d : ℝ) (n : ℕ) : ℝ :=
+  linearCentroidEnergy a b c d (gridPoint n)
+
+/-- Every nonsingular real affine lattice is analytically admissible
+for the same infinite canonical-product theorem C. -/
+theorem linearGridEnergy_admissible (a b c d : ℝ)
+    (hdet : a * d - b * c ≠ 0) (center direction : ℂ) :
+    Admissible (linearGridEnergy a b c d) center direction := by
+  apply admissible_of_inv_sq_summable
+  · intro n
+    exact linearCentroidEnergy_pos a b c d (gridPoint n)
+  · simpa only [linearGridEnergy, Function.comp_def] using
+      (linearCentroidEnergy_inv_sq_summable a b c d hdet).comp_injective
+        gridPoint_injective
+
+/-- Theorem C for all nonsingular linear images of the infinite square
+grid, including rectangles, oblique lattices and parallelogram tilings. -/
+theorem linearGrid_theoremC
+    (a b c d : ℝ) (hdet : a * d - b * c ≠ 0)
+    (center direction s : ℂ) (hd : direction ≠ 0)
+    (hz : canonicalProduct (linearGridEnergy a b c d) center direction s = 0) :
+    ∃ t : ℝ, s = center + direction * (t : ℂ) :=
+  theoremC_zero_localization
+    (linearGridEnergy_admissible a b c d hdet center direction) hd hz
+
+/-- Every rectangle with nonzero side lengths is covered. -/
+theorem rectangleGrid_theoremC (width height : ℝ)
+    (hw : width ≠ 0) (hh : height ≠ 0)
+    (center direction s : ℂ) (hd : direction ≠ 0)
+    (hz : canonicalProduct (linearGridEnergy width 0 0 height)
+      center direction s = 0) :
+    ∃ t : ℝ, s = center + direction * (t : ℂ) := by
+  apply linearGrid_theoremC width 0 0 height
+  · simpa using mul_ne_zero hw hh
+  · exact hd
+  · exact hz
+
+/-- Every nonsingular sheared rectangular grid (parallelograms) is covered. -/
+theorem parallelogramGrid_theoremC (width height shear : ℝ)
+    (hw : width ≠ 0) (hh : height ≠ 0)
+    (center direction s : ℂ) (hd : direction ≠ 0)
+    (hz : canonicalProduct (linearGridEnergy width shear 0 height)
+      center direction s = 0) :
+    ∃ t : ℝ, s = center + direction * (t : ℂ) := by
+  apply linearGrid_theoremC width shear 0 height
+  · simpa using mul_ne_zero hw hh
+  · exact hd
+  · exact hz
+
 end
 end InfiniteTilings
