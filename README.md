@@ -147,3 +147,39 @@ more work—to suitably separated aperiodic tilings.
 "machine-checked" here only after the GitHub Actions Lean/Mathlib
 build passes on the corresponding commit. Nothing in these results
 identifies the constructed function with the Riemann zeta function.
+
+
+## Rectangles, shears, and all invertible affine lattices
+
+The same \`InfiniteTilings.lean\` now treats every real matrix
+\`[[a,b],[c,d]]\` with nonzero determinant \`a*d - b*c\`, acting on the
+centroids of the infinite square grid. The transformed tiles are
+parallelograms, with rectangles as the diagonal-matrix special case.
+
+For every lattice point \`p\` with square centroid \`(x,y)\`, we assign
+
+\`\`\`text
+q(p) = 1 + (a*x + b*y)^2 + (c*x + d*y)^2.
+\`\`\`
+
+The new central proof is a quantitative comparison: invertibility gives
+a constant \`C > 0\` (independent of the lattice point) such that
+
+\`\`\`text
+1 + x^2 + y^2 ≤ C * q(p).
+\`\`\`
+
+This transfers the already certified square-centroid convergence theorem
+to every invertible linear deformation. It implies convergence of the
+paired infinite product and localization of **all** its zeros to any
+prescribed affine complex line.
+
+This covers arbitrary nondegenerate rectangles, sheared rectangular
+grids, and general parallelogram lattices *analytically*. It does not
+claim that their spectra equal the Riemann zeta spectrum.
+
+The result is AI-generated from Alessandro Odasso's experimental
+question, and is called certified only when Lean/Mathlib GitHub Actions
+passes on the precise commit.
+
+The affine-grid extension also proves that transformed parallelogram cells **cover the entire plane** and that distinct cells have **disjoint open interiors**, using an explicit inverse for the nonsingular matrix. Thus both the tiling geometry and the associated spectral-product summability are checked in one Lean source file.

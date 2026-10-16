@@ -392,5 +392,253 @@ theorem geometricCentroid_theoremC
     ∃ t : ℝ, s = center + direction * (t : ℂ) :=
   theoremC_zero_localization (geometricCentroidEnergy_admissible center direction) hd hz
 
+
+/-! ## All invertible linear images: rectangles and parallelograms -/
+
+/-- Apply the real 2×2 matrix to a point in the plane. -/
+def linearGridMap (a b c d : ℝ) (z : ℝ × ℝ) : ℝ × ℝ :=
+  (a * z.1 + b * z.2, c * z.1 + d * z.2)
+
+/-- Every real 2×2 matrix with nonzero determinant acts injectively
+on the plane; this is independent of the analytic-product arguments. -/
+theorem linearGridMap_injective (a b c d : ℝ)
+    (hdet : a * d - b * c ≠ 0) :
+    Function.Injective (linearGridMap a b c d) := by
+  intro x y h
+  have h₁ : a * (x.1 - y.1) + b * (x.2 - y.2) = 0 := by
+    have hf := congrArg Prod.fst h
+    dsimp [linearGridMap] at hf
+    linarith
+  have h₂ : c * (x.1 - y.1) + d * (x.2 - y.2) = 0 := by
+    have hs := congrArg Prod.snd h
+    dsimp [linearGridMap] at hs
+    linarith
+  have hxmul : (a * d - b * c) * (x.1 - y.1) = 0 := by
+    calc
+      _ = d * (a * (x.1 - y.1) + b * (x.2 - y.2)) -
+          b * (c * (x.1 - y.1) + d * (x.2 - y.2)) := by ring
+      _ = 0 := by rw [h₁, h₂]; ring
+  have hymul : (a * d - b * c) * (x.2 - y.2) = 0 := by
+    calc
+      _ = a * (c * (x.1 - y.1) + d * (x.2 - y.2)) -
+          c * (a * (x.1 - y.1) + b * (x.2 - y.2)) := by ring
+      _ = 0 := by rw [h₁, h₂]; ring
+  apply Prod.ext
+  · exact sub_eq_zero.mp ((mul_eq_zero.mp hxmul).resolve_left hdet)
+  · exact sub_eq_zero.mp ((mul_eq_zero.mp hymul).resolve_left hdet)
+
+/-- The explicit inverse formula makes the linear transformation
+surjective whenever its determinant is nonzero. -/
+theorem linearGridMap_surjective (a b c d : ℝ)
+    (hdet : a * d - b * c ≠ 0) :
+    Function.Surjective (linearGridMap a b c d) := by
+  intro z
+  refine ⟨((d * z.1 - b * z.2) / (a * d - b * c),
+           (a * z.2 - c * z.1) / (a * d - b * c)), ?_⟩
+  apply Prod.ext
+  · change a * ((d * z.1 - b * z.2) / (a * d - b * c)) +
+        b * ((a * z.2 - c * z.1) / (a * d - b * c)) = z.1
+    calc
+      _ = (a * (d * z.1 - b * z.2) +
+            b * (a * z.2 - c * z.1)) / (a * d - b * c) := by ring
+      _ = z.1 := by
+        apply (div_eq_iff hdet).2
+        ring
+  · change c * ((d * z.1 - b * z.2) / (a * d - b * c)) +
+        d * ((a * z.2 - c * z.1) / (a * d - b * c)) = z.2
+    calc
+      _ = (c * (d * z.1 - b * z.2) +
+            d * (a * z.2 - c * z.1)) / (a * d - b * c) := by ring
+      _ = z.2 := by
+        apply (div_eq_iff hdet).2
+        ring
+
+/-- A deformed unit square is a parallelogram cell. -/
+def linearSquareCell (a b c d : ℝ) (p : ℤ × ℤ) : Set (ℝ × ℝ) :=
+  linearGridMap a b c d '' squareCell p
+
+/-- The image of the open interior of a unit square. -/
+def linearSquareInterior (a b c d : ℝ) (p : ℤ × ℤ) : Set (ℝ × ℝ) :=
+  linearGridMap a b c d '' squareInterior p
+
+/-- Images of all integer unit squares under an invertible matrix
+still cover the whole plane. -/
+theorem linearSquareCell_covers_plane (a b c d : ℝ)
+    (hdet : a * d - b * c ≠ 0) (z : ℝ × ℝ) :
+    ∃ p : ℤ × ℤ, z ∈ linearSquareCell a b c d p := by
+  obtain ⟨w, hw⟩ := linearGridMap_surjective a b c d hdet z
+  obtain ⟨p, hp⟩ := squareCell_covers_plane w
+  exact ⟨p, ⟨w, hp, hw⟩⟩
+
+/-- The interiors of distinct transformed cells do not overlap. -/
+theorem linearSquareInterior_unique (a b c d : ℝ)
+    (hdet : a * d - b * c ≠ 0)
+    {p q : ℤ × ℤ} {z : ℝ × ℝ}
+    (hp : z ∈ linearSquareInterior a b c d p)
+    (hq : z ∈ linearSquareInterior a b c d q) : p = q := by
+  obtain ⟨x, hx, hxz⟩ := hp
+  obtain ⟨y, hy, hyz⟩ := hq
+  have hxy : x = y :=
+    (linearGridMap_injective a b c d hdet) (hxz.trans hyz.symm)
+  subst y
+  exact squareInterior_unique hx hy
+
+
+/-- The physical squared-centroid energy after applying a real 2×2
+linear transformation. Its determinant must be nonzero to preserve
+the two-dimensional nature of the tiling. -/
+def linearCentroidEnergy (a b c d : ℝ) (p : ℤ × ℤ) : ℝ :=
+  1 + (a * (squareCentroid p).1 + b * (squareCentroid p).2) ^ 2 +
+      (c * (squareCentroid p).1 + d * (squareCentroid p).2) ^ 2
+
+theorem linearCentroidEnergy_pos (a b c d : ℝ) (p : ℤ × ℤ) :
+    0 < linearCentroidEnergy a b c d p := by
+  unfold linearCentroidEnergy
+  positivity
+
+/-- The adjugate identity supplies a coercive quadratic lower bound for
+every invertible real 2×2 matrix. The two extra terms on the left are
+squares, so the inequality follows without analytic assumptions. -/
+private theorem linear_sq_control (a b c d x y : ℝ) :
+    (a * d - b * c) ^ 2 * (x ^ 2 + y ^ 2) ≤
+      (a ^ 2 + b ^ 2 + c ^ 2 + d ^ 2) *
+        ((a * x + b * y) ^ 2 + (c * x + d * y) ^ 2) := by
+  let u : ℝ := a * x + b * y
+  let v : ℝ := c * x + d * y
+  have hidentity :
+      (a * d - b * c) ^ 2 * (x ^ 2 + y ^ 2) +
+        (b * u + d * v) ^ 2 + (a * u + c * v) ^ 2 =
+        (a ^ 2 + b ^ 2 + c ^ 2 + d ^ 2) * (u ^ 2 + v ^ 2) := by
+    dsimp [u, v]
+    ring
+  calc
+    _ ≤ (a * d - b * c) ^ 2 * (x ^ 2 + y ^ 2) +
+          (b * u + d * v) ^ 2 + (a * u + c * v) ^ 2 := by
+            have h₁ : 0 ≤ (b * u + d * v) ^ 2 := sq_nonneg _
+            have h₂ : 0 ≤ (a * u + c * v) ^ 2 := sq_nonneg _
+            linarith
+    _ = (a ^ 2 + b ^ 2 + c ^ 2 + d ^ 2) * (u ^ 2 + v ^ 2) := hidentity
+    _ = _ := rfl
+
+/-- Quantitative Euclidean-energy comparison for any invertible
+2×2 real matrix; the constant is independent of lattice points. -/
+private theorem linear_energy_control (a b c d x y : ℝ)
+    (hdet : a * d - b * c ≠ 0) :
+    1 + x ^ 2 + y ^ 2 ≤
+      (((a * d - b * c) ^ 2 +
+            (a ^ 2 + b ^ 2 + c ^ 2 + d ^ 2)) /
+        (a * d - b * c) ^ 2) *
+      (1 + (a * x + b * y) ^ 2 + (c * x + d * y) ^ 2) := by
+  let δ : ℝ := a * d - b * c
+  let S : ℝ := a ^ 2 + b ^ 2 + c ^ 2 + d ^ 2
+  let u : ℝ := a * x + b * y
+  let v : ℝ := c * x + d * y
+  have hδ : 0 < δ ^ 2 := sq_pos_of_ne_zero hdet
+  have hS : 0 ≤ S := by dsimp [S]; positivity
+  have hUV : 0 ≤ u ^ 2 + v ^ 2 := by positivity
+  have hc : δ ^ 2 * (x ^ 2 + y ^ 2) ≤ S * (u ^ 2 + v ^ 2) := by
+    simpa [δ, S, u, v] using linear_sq_control a b c d x y
+  have hmain : δ ^ 2 * (1 + x ^ 2 + y ^ 2) ≤
+      (δ ^ 2 + S) * (1 + u ^ 2 + v ^ 2) := by
+    nlinarith only [hc, hδ.le, hS, hUV,
+      mul_nonneg hδ.le hUV, mul_nonneg hS hUV]
+  have hdiv : 1 + x ^ 2 + y ^ 2 ≤
+      ((δ ^ 2 + S) * (1 + u ^ 2 + v ^ 2)) / δ ^ 2 := by
+    apply (le_div_iff₀ hδ).2
+    nlinarith only [hmain]
+  calc
+    1 + x ^ 2 + y ^ 2 ≤
+        ((δ ^ 2 + S) * (1 + u ^ 2 + v ^ 2)) / δ ^ 2 := hdiv
+    _ = ((δ ^ 2 + S) / δ ^ 2) * (1 + u ^ 2 + v ^ 2) := by ring
+    _ = _ := rfl
+
+/-- Squared inverse Euclidean centroid energies remain summable under
+*every* nonsingular real linear deformation of the square grid. -/
+theorem linearCentroidEnergy_inv_sq_summable
+    (a b c d : ℝ) (hdet : a * d - b * c ≠ 0) :
+    Summable (fun p : ℤ × ℤ => 1 / (linearCentroidEnergy a b c d p) ^ 2) := by
+  let δ : ℝ := a * d - b * c
+  let S : ℝ := a ^ 2 + b ^ 2 + c ^ 2 + d ^ 2
+  let C : ℝ := (δ ^ 2 + S) / δ ^ 2
+  have hδ : 0 < δ ^ 2 := sq_pos_of_ne_zero hdet
+  have hS : 0 ≤ S := by dsimp [S]; positivity
+  have hC : 0 < C := div_pos (add_pos_of_pos_of_nonneg hδ hS) hδ
+  have hcomp (p : ℤ × ℤ) :
+      centroidEnergy p ≤ C * linearCentroidEnergy a b c d p := by
+    simpa only [centroidEnergy, linearCentroidEnergy, C, δ, S] using
+      linear_energy_control a b c d
+        (squareCentroid p).1 (squareCentroid p).2 hdet
+  have hsum : Summable (fun p : ℤ × ℤ =>
+      C ^ 2 * (1 / (centroidEnergy p) ^ 2)) :=
+    centroidEnergy_inv_sq_summable.mul_left (C ^ 2)
+  apply Summable.of_nonneg_of_le (fun _ => by positivity) (fun p => ?_) hsum
+  have hp : 0 < centroidEnergy p := centroidEnergy_pos p
+  have hlin : 0 < linearCentroidEnergy a b c d p :=
+    linearCentroidEnergy_pos a b c d p
+  have hsquare :
+      (centroidEnergy p) ^ 2 ≤ C ^ 2 * (linearCentroidEnergy a b c d p) ^ 2 := by
+    calc
+      _ ≤ (C * linearCentroidEnergy a b c d p) ^ 2 := by
+        gcongr
+        exact hcomp p
+      _ = _ := by ring
+  calc
+    1 / (linearCentroidEnergy a b c d p) ^ 2 ≤
+        C ^ 2 / (centroidEnergy p) ^ 2 := by
+      apply (div_le_div_iff₀ (sq_pos_of_pos hlin) (sq_pos_of_pos hp)).2
+      simpa only [one_mul] using hsquare
+    _ = C ^ 2 * (1 / (centroidEnergy p) ^ 2) := by ring
+
+/-- Energies of the transformed lattice indexed by the original
+bijection with the natural numbers. -/
+def linearGridEnergy (a b c d : ℝ) (n : ℕ) : ℝ :=
+  linearCentroidEnergy a b c d (gridPoint n)
+
+/-- Every nonsingular real affine lattice is analytically admissible
+for the same infinite canonical-product theorem C. -/
+theorem linearGridEnergy_admissible (a b c d : ℝ)
+    (hdet : a * d - b * c ≠ 0) (center direction : ℂ) :
+    Admissible (linearGridEnergy a b c d) center direction := by
+  apply admissible_of_inv_sq_summable
+  · intro n
+    exact linearCentroidEnergy_pos a b c d (gridPoint n)
+  · simpa only [linearGridEnergy, Function.comp_def] using
+      (linearCentroidEnergy_inv_sq_summable a b c d hdet).comp_injective
+        gridPoint_injective
+
+/-- Theorem C for all nonsingular linear images of the infinite square
+grid, including rectangles, oblique lattices and parallelogram tilings. -/
+theorem linearGrid_theoremC
+    (a b c d : ℝ) (hdet : a * d - b * c ≠ 0)
+    (center direction s : ℂ) (hd : direction ≠ 0)
+    (hz : canonicalProduct (linearGridEnergy a b c d) center direction s = 0) :
+    ∃ t : ℝ, s = center + direction * (t : ℂ) :=
+  theoremC_zero_localization
+    (linearGridEnergy_admissible a b c d hdet center direction) hd hz
+
+/-- Every rectangle with nonzero side lengths is covered. -/
+theorem rectangleGrid_theoremC (width height : ℝ)
+    (hw : width ≠ 0) (hh : height ≠ 0)
+    (center direction s : ℂ) (hd : direction ≠ 0)
+    (hz : canonicalProduct (linearGridEnergy width 0 0 height)
+      center direction s = 0) :
+    ∃ t : ℝ, s = center + direction * (t : ℂ) := by
+  apply linearGrid_theoremC width 0 0 height
+  · simpa using mul_ne_zero hw hh
+  · exact hd
+  · exact hz
+
+/-- Every nonsingular sheared rectangular grid (parallelograms) is covered. -/
+theorem parallelogramGrid_theoremC (width height shear : ℝ)
+    (hw : width ≠ 0) (hh : height ≠ 0)
+    (center direction s : ℂ) (hd : direction ≠ 0)
+    (hz : canonicalProduct (linearGridEnergy width shear 0 height)
+      center direction s = 0) :
+    ∃ t : ℝ, s = center + direction * (t : ℂ) := by
+  apply linearGrid_theoremC width shear 0 height
+  · simpa using mul_ne_zero hw hh
+  · exact hd
+  · exact hz
+
 end
 end InfiniteTilings
