@@ -12,10 +12,10 @@ AI assistance and must be read critically. **This project does not prove the
 Riemann hypothesis, identify its constructed product with the Riemann zeta
 function, or claim a new result about zeta zeros.**
 
-This README reconstructs the *chronological mathematical progression* by
-checking the historical versions of `README.md` and `InfiniteTilings.lean`.
-All twelve stages are part of `main`. Each step below separates
-its motivation, its precisely verified result and its remaining limitations.
+This README presents the mathematical results in their order of development.
+Each numbered section explains its objective, its formalized results and the
+limits of what the stated theorems establish. New results will be added as
+successive numbered sections alongside their Lean formalizations.
 
 ## The central idea, in one minute
 
@@ -67,7 +67,7 @@ is not necessarily unique or physically canonical.
 
 ---
 
-## 1. The starting analytic result: Theorem C (**proved on main**)
+## 1. The starting analytic result: Theorem C
 
 **Mathematical objective.** Establish a self-contained analytic tool: a normally convergent infinite product whose zero set is confined to an affine complex line, *independently* of any particular geometry. This proves the line-localization mechanism once; later stages only need to construct admissible positive levels.
 
@@ -138,7 +138,7 @@ construction**. They are not the Riemann xi or zeta function, and this
 product is not the different exponential genus-two product considered
 in the exploratory discussion.
 
-## 2. The first *actual* tiling: integer unit squares (**proved on main**)
+## 2. The first *actual* tiling: integer unit squares
 
 **Mathematical objective.** Verify that the index set of the infinite product can represent *real tiles of a plane-covering tessellation*, not merely a list of abstract points. Prove coverage, disjoint open interiors and a bijective enumeration, then supply one simple summable test energy.
 
@@ -180,7 +180,7 @@ no zeros off the chosen complex line.
 **Boundary:** this first energy uses encodings of integer coordinates;
 it is **not** Euclidean distance between centroids.
 
-## 3. Replacing encoded energies by Euclidean centroids (**proved on main**)
+## 3. Replacing encoded energies by Euclidean centroids
 
 **Mathematical objective.** Replace the artificial encoding-based energies with the true squared Euclidean distances of tile centroids from the origin. Establish the necessary inverse-square summability across the whole two-dimensional grid without inserting a rapidly growing factor by hand.
 
@@ -229,7 +229,7 @@ sequence. **Boundary:** even this physically motivated choice still
 *prescribes* the eventual product-zero levels; they are not operator
 eigenvalues.
 
-## 4. Rectangles, shears and invertible affine grids (**proved on main**)
+## 4. Rectangles, shears and invertible affine grids
 
 **Mathematical objective.** Show that the analytic construction is stable when tiles are stretched, scaled or sheared into rectangles and parallelograms. Prove one theorem for every invertible real two-dimensional linear transformation rather than handling shapes individually.
 
@@ -277,7 +277,7 @@ Theorem C applies for every nondegenerate linear deformation.
 **Boundary:** these remain highly structured affine images of a
 periodic lattice, not intrinsically aperiodic prototile systems.
 
-## 5. Arbitrarily shifted horizontal rows (**proved on main**)
+## 5. Arbitrarily shifted horizontal rows
 
 **Mathematical objective.** Relax global affine regularity by giving each horizontal row its own displacement. Distinguish *whether an actual tiling exists* from *whether the associated energy sequence is summable*: the two questions have different hypotheses.
 
@@ -321,7 +321,7 @@ for this energy comparison**, not for coverage or nonoverlap.
 such tiling retains the translation period $(1,0)$. It is not
 translation-aperiodic in both directions.
 
-## 6. A general coercive criterion for irregular point configurations (**proved on main**)
+## 6. A general coercive criterion for irregular point configurations
 
 **Mathematical objective.** Identify a reusable sufficient growth condition that works for arbitrary lattice-indexed energies and irregular collections of points. The criterion should capture the analytic core of earlier examples without repeatedly proving geometry-specific convergence estimates.
 
@@ -364,7 +364,7 @@ configurations*, not a theorem that arbitrary displaced points are
 centroids of actual nonoverlapping tiles. At the endpoint displacement
 $\frac{1}{2}$, distinct indices need not even have distinct points.
 
-## 7. A complete tiling with no nonzero translation period (**proved on main**)
+## 7. A complete tiling with no nonzero translation period
 
 **Mathematical objective.** Find an explicit infinite tiling with *no nonzero translation symmetry* as a particular arrangement, while retaining enough control of true centroids to apply Theorem C. This addresses the persistent period of the row-shift examples.
 
@@ -401,7 +401,7 @@ inverse-square energy summability and Theorem C for this example.
 It is not a proof of Penrose-style strong aperiodicity of a tile set:
 the same prototiles may admit periodic tilings.
 
-## 8. Finite operators detecting tile adjacency (**proved on main**)
+## 8. Finite operators detecting tile adjacency
 
 **Mathematical objective.** Pass from independent tile energies to an operator encoding **interactions**. For a finite patch, an amplitude at one tile is coupled to amplitudes at neighboring tiles. Prove the key symmetry identity needed for a real finite-dimensional spectrum.
 
@@ -435,7 +435,7 @@ for the finite graph.
 not yet the definition, domain analysis or spectral theorem for an
 unbounded operator acting on $\ell^2$ of an infinite tiling.
 
-## 9. A concrete two-tile interaction with distinct spectra (**proved on main**)
+## 9. A concrete two-tile interaction with distinct spectra
 
 **Mathematical objective.** Verify in a completely explicit two-tile model that changing the coupling induced by widths and binary markings changes the **whole set of eigenvalues**. Prove both eigenmodes and exclude any extra real eigenvalues.
 
@@ -483,7 +483,7 @@ are **not intrinsic chirality** (rectangles are achiral).
 The exact spectrum proved here belongs to a two-dimensional local
 operator, not the entire infinite tiling.
 
-## 10. Feeding real local eigenvalues into the product (**proved on main, PR #10**)
+## 10. Feeding real local eigenvalues into the product
 
 **Mathematical objective.** Insert proven real eigenvalues of local operators into a positive, summable sequence usable by the infinite product. The analytic requirements are essential: arbitrary real eigenvalues might be negative, zero or too small to make the product converge.
 
@@ -529,7 +529,7 @@ It is **not itself proved to be an eigenvalue** of the local adjacency
 operator, much less the spectrum of a single infinite operator.
 The choice of zero line remains completely independent of this bridge.
 
-## 11. A level that is an eigenvalue of the *combined* local operator (**proved on main**)
+## 11. A level that is an eigenvalue of the *combined* local operator
 
 **Mathematical objective.** Eliminate that last algebraic mismatch: construct a combined onsite-plus-interaction Hamiltonian such that the product's selected positive level **is a true eigenvalue of that Hamiltonian**. Reuse the centroid growth estimates to preserve product convergence.
 
@@ -574,7 +574,7 @@ by a function of an eigenvalue.
 the onsite potential $V_n$ is still chosen from centroid geometry.
 This is not a single infinite operator or a proof of zeta statistics.
 
-## 12. A first constraint on level counting (**proved on main**)
+## 12. A first constraint on level counting
 
 **Mathematical objective.** Move beyond the location of individual zeros to a necessary statistical test: **count the selected levels below a large threshold**. Prove that a uniformly bounded nonnegative coupling cannot shift those levels beyond a fixed amount.
 
@@ -639,56 +639,6 @@ geometry-dependent infinite operators, nor a theorem about
 nearest-neighbor spacing statistics.
 
 ---
-
-## What is established, and what remains open
-
-**Established on `main`:** the paired canonical product has
-compact-uniform convergence under proved sufficient conditions; its
-zeros stay on a prescribed complex line; explicit square,
-parallelogram, row-shifted and finite-defect tilings satisfy the stated
-geometric properties; centroid energies in the stated cases satisfy
-inverse-square summability; finite symmetric adjacency operators are
-defined; a marked two-tile model has exactly computable
-geometry-dependent eigenvalues; and these eigenvalues can influence
-the product's chosen zero levels.
-
-**Also proved on `main`:** selected positive levels
-are eigenvalues of combined two-site operators, and the sets of levels
-below a threshold satisfy bounds relative to the onsite potential.
-These remain **local** operators, not one infinite tiling operator.
-
-**Not established:** an operator on an actual **infinite**
-aperiodic tiling with a rigorously specified self-adjoint domain;
-its complete discrete spectrum, counting law, multiplicities, or
-unfolded spacing statistics; a canonical spectral determinant or
-trace formula derived from that infinite operator; or any
-identification of these products with Riemann's $\xi$- or
-$\zeta$-function. In particular, a guaranteed zero *line*
-is not a guaranteed match of *zero heights*.
-
-### The next mathematical questions
-
-1. **Choose the geometry precisely.** For a Farey-based experiment,
-   define the ambient space, the tiles, and the dual adjacency graph.
-   The classical Farey tessellation is hyperbolic and modular; it
-   should not be described without qualification as an intrinsically
-   aperiodic Euclidean prototile system.
-2. **Build a coherent operator, not unrelated local motifs.**
-   Use shape- and adjacency-dependent couplings, and, where intrinsic
-   chirality actually exists, study chirality-sensitive terms.
-   Prove symmetric weights first, then establish the required
-   self-adjoint realization on an infinite Hilbert space.
-3. **Prove genuine spectral control.** Separate point, continuous and
-   essential spectra; determine whether a discrete sequence suitable
-   for a canonical product exists; prove growth and counting
-   estimates rather than postulating them.
-4. **Test spectral statistics after controlling the counting law.**
-   Investigate multiplicities, unfolded nearest-neighbor spacings
-   and two-point correlations, and compare them with conjectured
-   and known properties of zeta zeros—without fitting parameters
-   merely to force an answer.
-
-These are **research directions**, not claims of proof.
 
 ## Reproducing the Lean verification
 
