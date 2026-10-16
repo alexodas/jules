@@ -82,3 +82,33 @@ OpenAI ChatGPT, with Mathlib as the proof library.
 This is an exploration of what LLMs can and cannot do in formal mathematics.
 The AI-generated content should be evaluated critically, and passing
 the Lean kernel is not evidence of mathematical novelty or of RH.
+
+
+## Geometric example: an infinite square tiling
+
+The **same** `InfiniteTilings.lean` file now also defines unit square cells
+indexed by `ℤ × ℤ`. It proves:
+
+1. Every point in the real plane belongs to a closed unit square.
+2. If a point belongs to the **open interiors** of two squares, the
+   squares have the same integer coordinates.
+3. An explicit enumeration `gridPoint : ℕ → ℤ × ℤ` visits every
+   integer lattice point, so the enumerated cells cover the plane.
+4. A positive *squared max-norm shell energy* assigned to each
+   enumerated square has summable inverse squares.
+5. Therefore this concrete energy family satisfies the earlier
+   compact-majorant admissibility hypothesis, and Theorem C applies.
+
+The energy is based on the **nonnegative integer encodings** of the two
+signed lattice coordinates: if they are `a,b`, then
+`q = (max(a,b) + 1)²`. This is deliberately **not** Euclidean
+centroid distance and **not** a proof of a convergence estimate for
+that different energy choice.
+
+The point of the new example is an end-to-end implication for one
+explicit infinite planar square tiling: geometry, positivity,
+summability, uniform convergence and line localization. It does
+not establish any identification with Riemann zeros.
+
+A green GitHub Actions build confirms these statements for
+the precise Lean declarations shown in the source file.
