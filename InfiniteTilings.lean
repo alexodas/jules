@@ -1435,5 +1435,203 @@ theorem opposed_eigenvalue_not_aligned :
   · rw [aligned_marked_coupling] at h2
     norm_num at h2
 
+
+/-! ## Spectral eigenvalues as the new geometric energies Q
+
+We combine the two established constructions without falsely identifying
+the infinite product with a determinant of an infinite tile operator.
+
+The number eig(n) is a real eigenvalue of a chosen local or finite-patch
+operator. The positive level Q(n)=q₀(n)*(1+eig(n)^2) retains a geometric
+growth envelope q₀(n), which makes the inverse-square sum convergent
+even if the operator eigenvalues remain bounded. The spectral factor
+genuinely moves zeros *along* the chosen affine complex line; it does
+not determine that line. The paired canonical factors still put their
+zeros on it by construction.
+
+An eigenvalue sequence alone, especially from uniformly bounded local
+operators, need not make any infinite product convergent. The growth
+factor is essential unless independent spectral growth has been proved.
+-/
+
+/-- A strictly positive geometric growth envelope, enhanced by
+arbitrary real spectral levels. -/
+def spectralEnvelopeEnergy (baseline eigenlevel : ℕ → ℝ) (n : ℕ) : ℝ :=
+  baseline n * (1 + (eigenlevel n) ^ 2)
+
+/-- The squared spectral contribution cannot decrease the baseline
+energy, so the original summability proof still applies. -/
+theorem spectralEnvelopeEnergy_ge (baseline eigenlevel : ℕ → ℝ)
+    (hpos : ∀ n, 0 < baseline n) (n : ℕ) :
+    baseline n ≤ spectralEnvelopeEnergy baseline eigenlevel n := by
+  unfold spectralEnvelopeEnergy
+  calc
+    baseline n = baseline n * 1 := by ring
+    _ ≤ baseline n * (1 + (eigenlevel n) ^ 2) :=
+      mul_le_mul_of_nonneg_left (by nlinarith [sq_nonneg (eigenlevel n)])
+        (hpos n).le
+
+theorem spectralEnvelopeEnergy_pos (baseline eigenlevel : ℕ → ℝ)
+    (hpos : ∀ n, 0 < baseline n) (n : ℕ) :
+    0 < spectralEnvelopeEnergy baseline eigenlevel n :=
+  lt_of_lt_of_le (hpos n) (spectralEnvelopeEnergy_ge baseline eigenlevel hpos n)
+
+/-- Convergence is inherited from the baseline, without assuming
+boundedness or a particular distribution for the real eigenvalues. -/
+theorem spectralEnvelopeEnergy_inv_sq_summable
+    (baseline eigenlevel : ℕ → ℝ)
+    (hpos : ∀ n, 0 < baseline n)
+    (hsum : Summable (fun n : ℕ => 1 / (baseline n) ^ 2)) :
+    Summable (fun n : ℕ =>
+      1 / (spectralEnvelopeEnergy baseline eigenlevel n) ^ 2) := by
+  apply Summable.of_nonneg_of_le (fun _ => by positivity) (fun n => ?_) hsum
+  show 1 / (spectralEnvelopeEnergy baseline eigenlevel n) ^ 2 ≤
+    1 / (baseline n) ^ 2
+  gcongr
+  exact spectralEnvelopeEnergy_ge baseline eigenlevel hpos n
+
+/-- Theorem C's compact majorant follows for any real spectral
+eigenvalue sequence added to an already-summable growth envelope. -/
+theorem spectralEnvelopeEnergy_admissible
+    (baseline eigenlevel : ℕ → ℝ)
+    (hpos : ∀ n, 0 < baseline n)
+    (hsum : Summable (fun n : ℕ => 1 / (baseline n) ^ 2))
+    (center direction : ℂ) :
+    Admissible (spectralEnvelopeEnergy baseline eigenlevel)
+      center direction :=
+  admissible_of_inv_sq_summable
+    (spectralEnvelopeEnergy_pos baseline eigenlevel hpos)
+    (spectralEnvelopeEnergy_inv_sq_summable baseline eigenlevel hpos hsum)
+    center direction
+
+/-- All zeros of a paired product enhanced with *real spectral
+eigenvalues* stay on the selected affine complex line. -/
+theorem spectralEnvelope_theoremC
+    (baseline eigenlevel : ℕ → ℝ)
+    (hpos : ∀ n, 0 < baseline n)
+    (hsum : Summable (fun n : ℕ => 1 / (baseline n) ^ 2))
+    (center direction s : ℂ) (hd : direction ≠ 0)
+    (hz : canonicalProduct (spectralEnvelopeEnergy baseline eigenlevel)
+      center direction s = 0) :
+    ∃ t : ℝ, s = center + direction * (t : ℂ) :=
+  theoremC_zero_localization
+    (spectralEnvelopeEnergy_admissible baseline eigenlevel hpos hsum
+      center direction) hd hz
+
+/-- Crucially, every positive Q(n) is also an *actual* zero of the
+n-th paired factor, not just a number used in a convergence bound. -/
+theorem factor_zero_at_positive_level
+    (q : ℕ → ℝ) (n : ℕ)
+    (hq : q n ≠ 0)
+    (center direction : ℂ) (hd : direction ≠ 0) :
+    factor q center direction n
+      (center + direction * (q n : ℂ)) = 0 := by
+  have hqc : (q n : ℂ) ≠ 0 := by exact_mod_cast hq
+  simp only [factor, perturb, add_neg_eq_sub, add_sub_cancel_left]
+  field_simp [hd, hqc] <;> ring
+
+/-- If one factor is zero, its infinite canonical product is zero,
+regardless of the order of all other factors. -/
+theorem canonicalProduct_zero_at_positive_level
+    (q : ℕ → ℝ) (n : ℕ) (hq : q n ≠ 0)
+    (center direction : ℂ) (hd : direction ≠ 0) :
+    canonicalProduct q center direction
+      (center + direction * (q n : ℂ)) = 0 := by
+  unfold canonicalProduct
+  exact tprod_of_exists_eq_zero
+    ⟨n, factor_zero_at_positive_level q n hq center direction hd⟩
+
+/-- Spectral levels therefore give explicit zeros at their corresponding
+Q(n), as well as the global no-off-line-zero localization theorem. -/
+theorem spectralEnvelope_has_zero_at_each_level
+    (baseline eigenlevel : ℕ → ℝ)
+    (hpos : ∀ n, 0 < baseline n)
+    (center direction : ℂ) (hd : direction ≠ 0) (n : ℕ) :
+    canonicalProduct (spectralEnvelopeEnergy baseline eigenlevel)
+      center direction
+      (center + direction *
+        (spectralEnvelopeEnergy baseline eigenlevel n : ℂ)) = 0 :=
+  canonicalProduct_zero_at_positive_level
+    (spectralEnvelopeEnergy baseline eigenlevel) n
+    (ne_of_gt (spectralEnvelopeEnergy_pos baseline eigenlevel hpos n))
+    center direction hd
+
+/-- For every n, the two-tile geometric operator with the specified
+marks has the following real eigenvalue, certified by a nonzero
+eigenvector. These are *local* operator eigenvalues, not the spectrum
+of an infinite adjacency operator. -/
+def localMarkedEigenlevel (marks : ℕ → Bool × Bool) (n : ℕ) : ℝ :=
+  markedDefectCoupling (marks n).1 (marks n).2
+
+theorem localMarkedEigenlevel_is_eigenvalue
+    (marks : ℕ → Bool × Bool) (n : ℕ) :
+    PairHasEigenvalue
+      (markedDefectOperator (marks n).1 (marks n).2)
+      (localMarkedEigenlevel marks n) :=
+  markedDefect_positive_mode (marks n).1 (marks n).2
+
+/-- Q(n) built from physical square-centroid growth *and* actual
+two-tile geometric operator eigenvalues. -/
+def markedSpectralGridEnergy (marks : ℕ → Bool × Bool) (n : ℕ) : ℝ :=
+  spectralEnvelopeEnergy geometricCentroidEnergy (localMarkedEigenlevel marks) n
+
+/-- This combined geometric-spectral Q meets the original analytic
+hypotheses, with no restriction on the sequence of local marks. -/
+theorem markedSpectralGrid_admissible
+    (marks : ℕ → Bool × Bool) (center direction : ℂ) :
+    Admissible (markedSpectralGridEnergy marks) center direction :=
+  spectralEnvelopeEnergy_admissible geometricCentroidEnergy
+    (localMarkedEigenlevel marks)
+    (fun n => centroidEnergy_pos (gridPoint n))
+    geometricCentroidEnergy_inv_sq_summable center direction
+
+/-- Original Theorem C applied to the *spectrally enriched* energies. -/
+theorem markedSpectralGrid_theoremC
+    (marks : ℕ → Bool × Bool)
+    (center direction s : ℂ) (hd : direction ≠ 0)
+    (hz : canonicalProduct (markedSpectralGridEnergy marks)
+      center direction s = 0) :
+    ∃ t : ℝ, s = center + direction * (t : ℂ) :=
+  theoremC_zero_localization
+    (markedSpectralGrid_admissible marks center direction) hd hz
+
+/-- Each Q(n), depending on a verified local operator eigenvalue,
+provides a zero of the infinite canonical product *at that level*. -/
+theorem markedSpectralGrid_zero_at_level
+    (marks : ℕ → Bool × Bool) (center direction : ℂ)
+    (hd : direction ≠ 0) (n : ℕ) :
+    canonicalProduct (markedSpectralGridEnergy marks) center direction
+      (center + direction * (markedSpectralGridEnergy marks n : ℂ)) = 0 := by
+  exact spectralEnvelope_has_zero_at_each_level geometricCentroidEnergy
+    (localMarkedEigenlevel marks)
+    (fun k => centroidEnergy_pos (gridPoint k))
+    center direction hd n
+
+/-- For aligned marks the spectral correction to any baseline Q
+is exactly 25/16, by the computed eigenvalue 3/4. -/
+theorem aligned_spectral_multiplier (base : ℝ) :
+    base * (1 + (markedDefectCoupling true true) ^ 2) =
+      base * (25 / 16) := by
+  rw [aligned_marked_coupling]
+  ring
+
+/-- For opposed marks it becomes 13/4, by the eigenvalue 3/2.
+Hence the same geometric envelope can give different zero levels. -/
+theorem opposed_spectral_multiplier (base : ℝ) :
+    base * (1 + (markedDefectCoupling true false) ^ 2) =
+      base * (13 / 4) := by
+  rw [opposed_marked_coupling]
+  ring
+
+/-- The local eigenvalue information makes the Q-levels genuinely
+different for aligned and opposed marks whenever the baseline is
+strictly positive. -/
+theorem orientation_changes_energy (base : ℝ) (hb : 0 < base) :
+    base * (1 + (markedDefectCoupling true true) ^ 2) ≠
+      base * (1 + (markedDefectCoupling true false) ^ 2) := by
+  rw [aligned_spectral_multiplier, opposed_spectral_multiplier]
+  intro h
+  nlinarith
+
 end
 end InfiniteTilings
