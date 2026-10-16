@@ -14,8 +14,7 @@ function, or claim a new result about zeta zeros.**
 
 This README reconstructs the *chronological mathematical progression* by
 checking the historical versions of `README.md` and `InfiniteTilings.lean`.
-All twelve stages are now merged into `main`, including the theorems from
-[PR #11](https://github.com/alexodas/jules/pull/11). Each step below separates
+All twelve stages are part of `main`. Each step below separates
 its motivation, its precisely verified result and its remaining limitations.
 
 ## The central idea, in one minute
@@ -530,11 +529,11 @@ It is **not itself proved to be an eigenvalue** of the local adjacency
 operator, much less the spectrum of a single infinite operator.
 The choice of zero line remains completely independent of this bridge.
 
-## 11. A level that is an eigenvalue of the *combined* local operator (**proved on main; PR #11**)
+## 11. A level that is an eigenvalue of the *combined* local operator (**proved on main**)
 
 **Mathematical objective.** Eliminate that last algebraic mismatch: construct a combined onsite-plus-interaction Hamiltonian such that the product's selected positive level **is a true eigenvalue of that Hamiltonian**. Reuse the centroid growth estimates to preserve product convergence.
 
-The next merged development improves the previous bridge by moving
+The next construction improves the previous bridge by moving
 the geometric baseline **inside** a two-site Hamiltonian:
 
 ```math
@@ -559,31 +558,27 @@ is an **actual eigenvalue of the full two-site operator $H_n$**,
 and it satisfies positivity, inverse-square summability,
 admissibility, zero localization and $D_Q(c+dQ_n)=0$.
 
-For the example introduced in PR #11, $V_n$ remains the square-centroid
+In this example, $V_n$ remains the square-centroid
 energy and $w_n$ is the marked coupling of the special rectangles.
 This is a step forward from multiplying a separately chosen baseline
 by a function of an eigenvalue.
 
 **Why this matters for the next step.** This makes a more direct operator-to-zero link. Nevertheless the separate matrices indexed by $n$ do not constitute a single infinite Hamiltonian, and their diagonal potentials are still prescribed geometric energies.
 
-**Lean anchors on `main` (introduced in PR #11):** `interactingPairOperator`,
+**Lean anchors:** `interactingPairOperator`,
 `interactingPair_positive_mode`, `interactingPair_negative_mode`,
 `pairOperatorEigenlevel_inv_sq_summable`,
 `markedPairEigenlevel_is_eigenvalue`,
 `markedPairEigenlevel_zero_at_level`.
-**Verification:** [PR #11](https://github.com/alexodas/jules/pull/11), commit
-[`864051f`](https://github.com/alexodas/jules/commit/864051f156eca95c249e6400c1e3d82b9c53b377),
-[successful Lean/Mathlib CI](https://github.com/alexodas/jules/actions/runs/38966538546).
-**Status:** merged into `main` in [commit `37eb338`](https://github.com/alexodas/jules/commit/37eb338cfe7f4db4efe0041eec17935dfbd67e94).
 **Boundary:** each $H_n$ is still a separate two-site operator;
 the onsite potential $V_n$ is still chosen from centroid geometry.
 This is not a single infinite operator or a proof of zeta statistics.
 
-## 12. A first constraint on level counting (**proved on main; PR #11**)
+## 12. A first constraint on level counting (**proved on main**)
 
 **Mathematical objective.** Move beyond the location of individual zeros to a necessary statistical test: **count the selected levels below a large threshold**. Prove that a uniformly bounded nonnegative coupling cannot shift those levels beyond a fixed amount.
 
-That same merged development proves a useful limitation of the simple
+The same construction also yields a useful limitation of the simple
 local model. Suppose $0\le w_n\le C$ and
 $Q_n=V_n+w_n$. Then, for every real threshold $T$,
 
@@ -635,7 +630,7 @@ external analytic facts **not independently formalized in this file**.
 
 **Why this matters for the next step.** This constrains spectral density. In particular, bounded corrections to a two-dimensional quadratic baseline cannot change its order-$T$ counting law into the order-$T\log T$ zeta-zero law when counting indexed levels with multiplicity. The asymptotic comparison itself is not a Lean theorem here.
 
-**Lean anchors on `main` (introduced in PR #11):**
+**Lean anchors:**
 `pairOperatorEigenlevel_threshold_sandwich`,
 `markedDefectCoupling_le_three_halves`,
 `markedPairEigenlevel_threshold_sandwich`.
@@ -657,7 +652,7 @@ defined; a marked two-tile model has exactly computable
 geometry-dependent eigenvalues; and these eigenvalues can influence
 the product's chosen zero levels.
 
-**Also proved on `main`, via merged PR #11:** selected positive levels
+**Also proved on `main`:** selected positive levels
 are eigenvalues of combined two-site operators, and the sets of levels
 below a threshold satisfy bounds relative to the onsite potential.
 These remain **local** operators, not one infinite tiling operator.
@@ -714,19 +709,6 @@ definitions and hypotheses**. It does not certify mathematical
 novelty, physical modeling choices, or implications that were never
 formalized. The source records no proof of the Riemann hypothesis.
 
-For orientation, these commits mark the main historical steps:
-
-- [Initial canonical-product Theorem C](https://github.com/alexodas/jules/commit/8e2e9d3cfac7892633d13b0f3c3fe37f8f64af7d)
-- [Explicit square-grid tiling and shell energies](https://github.com/alexodas/jules/commit/a2661ba6ef62ef4f3f208e6be5836d9f6c166770)
-- [Euclidean-centroid summability](https://github.com/alexodas/jules/commit/268addee42fda63b349c0b09de934719bdf078a5)
-- [All invertible linear grids](https://github.com/alexodas/jules/commit/09f393cb398d4b6efbde923dc85c6fae746c4603)
-- [Independent row shifts](https://github.com/alexodas/jules/commit/e481964f62538c2689d20974ba75ef4a9922e278)
-- [Coercive and bounded-point-displacement criteria](https://github.com/alexodas/jules/commit/20fd9be7faa5d3a489f1f1c38f3532c251e39728)
-- [The translation-aperiodic finite-defect tiling](https://github.com/alexodas/jules/commit/abbc8f9e67ff7896d3fa85dd70850df3a85dd063)
-- [Finite geometric adjacency and marked spectra](https://github.com/alexodas/jules/commit/4a4602b001ce646b42fdde8032cb50117a75c83f)
-- [Local eigenvalues coupled to canonical-product levels](https://github.com/alexodas/jules/commit/1f9e5832b1a60b85bff21044712ba46583043af1)
-- [Direct pair-Hamiltonian eigenlevels and threshold bounds (PR #11)](https://github.com/alexodas/jules/pull/11)
-
 ## Attribution and methodological purpose
 
 **Research questions and experimental direction:** Alessandro Odasso,
@@ -734,7 +716,7 @@ a non-mathematician exploring what large language models can and
 cannot accomplish in formal mathematics.
 
 **Formalizations and explanatory drafts:** AI-generated with OpenAI
-ChatGPT and checked, at the noted commits, with Lean 4 and Mathlib.
+ChatGPT and checked with Lean 4 and Mathlib.
 Mathematical statements should be judged on their explicit
 hypotheses and definitions, not on the apparent strength of an
 informal description. The project is an experiment in
