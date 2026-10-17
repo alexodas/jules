@@ -1,9 +1,9 @@
 import Mathlib
 
 /-!
-# Theorem C: line-localized zeros of an infinite canonical product
+# Canonical product: zeros on a prescribed line
 
-A family of positive geometric energies `q n` is called admissible
+A family of positive levels `q n` is called admissible
 when the paired factors have a summable majorant on each compact set.
 The paired factor `1 - ((s - center) / direction)^2 / (q n)^2`
 is a regularized product: the potentially divergent first-order terms
@@ -15,7 +15,7 @@ This module does NOT identify its zeros with the zeros of Riemann's zeta.
 open Filter
 open scoped BigOperators
 
-namespace InfiniteTilings
+namespace SpectralGeometry
 
 noncomputable section
 
@@ -37,8 +37,7 @@ majorant for the deviations of the canonical factors from 1 on
 every compact set. This is a checkable normal-convergence condition,
 rather than an assumption that the product already converges.
 
-For 2D tiling examples, the natural sufficient analytic bound is
-`∑ n, (q n)⁻² < ∞`; establishing that implication is separate.
+The sufficient bound `∑ n, (q n)⁻² < ∞` is proved below.
 -/
 structure Admissible (q : ℕ → ℝ) (center direction : ℂ) : Prop where
   positive : ∀ n, 0 < q n
@@ -130,114 +129,8 @@ theorem theoremC_zero_localization
     (by simpa [canonicalProduct, factor] using hz)
 
 
-/-! ## A concrete infinite square grid -/
 
-/-- A unit square with lower-left corner at the integer lattice point `p`. -/
-def squareCell (p : ℤ × ℤ) : Set (ℝ × ℝ) :=
-  {z | (p.1 : ℝ) ≤ z.1 ∧ z.1 ≤ (p.1 : ℝ) + 1 ∧
-       (p.2 : ℝ) ≤ z.2 ∧ z.2 ≤ (p.2 : ℝ) + 1}
-
-/-- The open interior of a unit grid square. -/
-def squareInterior (p : ℤ × ℤ) : Set (ℝ × ℝ) :=
-  {z | (p.1 : ℝ) < z.1 ∧ z.1 < (p.1 : ℝ) + 1 ∧
-       (p.2 : ℝ) < z.2 ∧ z.2 < (p.2 : ℝ) + 1}
-
-/-- Every point of the real plane belongs to some unit square. -/
-theorem squareCell_covers_plane (z : ℝ × ℝ) :
-    ∃ p : ℤ × ℤ, z ∈ squareCell p := by
-  refine ⟨(⌊z.1⌋, ⌊z.2⌋), ?_⟩
-  exact ⟨Int.floor_le z.1, le_of_lt (Int.lt_floor_add_one z.1),
-    Int.floor_le z.2, le_of_lt (Int.lt_floor_add_one z.2)⟩
-
-/-- Different grid squares have disjoint open interiors. -/
-theorem squareInterior_unique
-    {p q : ℤ × ℤ} {z : ℝ × ℝ}
-    (hp : z ∈ squareInterior p) (hq : z ∈ squareInterior q) : p = q := by
-  change (p.1 : ℝ) < z.1 ∧ z.1 < (p.1 : ℝ) + 1 ∧
-    (p.2 : ℝ) < z.2 ∧ z.2 < (p.2 : ℝ) + 1 at hp
-  change (q.1 : ℝ) < z.1 ∧ z.1 < (q.1 : ℝ) + 1 ∧
-    (q.2 : ℝ) < z.2 ∧ z.2 < (q.2 : ℝ) + 1 at hq
-  have h1 : p.1 < q.1 + 1 := by
-    exact_mod_cast (lt_trans hp.1 hq.2.1)
-  have h2 : q.1 < p.1 + 1 := by
-    exact_mod_cast (lt_trans hq.1 hp.2.1)
-  have h3 : p.2 < q.2 + 1 := by
-    exact_mod_cast (lt_trans hp.2.2.1 hq.2.2.2)
-  have h4 : q.2 < p.2 + 1 := by
-    exact_mod_cast (lt_trans hq.2.2.1 hp.2.2.2)
-  have heq1 : p.1 = q.1 := by omega
-  have heq2 : p.2 = q.2 := by omega
-  exact Prod.ext heq1 heq2
-
-/--
-A concrete enumeration of *all* integer lattice points. It is built
-from Mathlib's natural-number pairing and integer encoding.
--/
-def gridPoint (n : ℕ) : ℤ × ℤ :=
-  (Equiv.intEquivNat.symm (Nat.unpair n).1,
-   Equiv.intEquivNat.symm (Nat.unpair n).2)
-
-theorem gridPoint_surjective (p : ℤ × ℤ) :
-    ∃ n : ℕ, gridPoint n = p := by
-  refine ⟨Nat.pair (Equiv.intEquivNat p.1) (Equiv.intEquivNat p.2), ?_⟩
-  simp [gridPoint]
-
-/-- The enumerated square grid really covers the entire plane. -/
-theorem enumerated_squares_cover (z : ℝ × ℝ) :
-    ∃ n : ℕ, z ∈ squareCell (gridPoint n) := by
-  obtain ⟨p, hp⟩ := squareCell_covers_plane z
-  obtain ⟨n, hn⟩ := gridPoint_surjective p
-  exact ⟨n, hn.symm ▸ hp⟩
-
-/-!
-## A geometric energy with a provably summable inverse square
-
-The integer grid is enumerated by `Nat.unpair`. For the two nonnegative
-encoded coordinates `a,b`, choose the squared max-norm shell
-`(max a b + 1)^2`. The pairing map satisfies
-`n < (max a b + 1)^2`, which allows direct comparison with a
-classical convergent p-series. This is a shell energy associated with
-the grid indexing; it is **not** the Euclidean squared centroid norm.
--/
-
-/-- Squared max-norm shell energy of a square in the enumerated grid. -/
-def squareGridEnergy (n : ℕ) : ℝ :=
-  (((max (Nat.unpair n).1 (Nat.unpair n).2 + 1) ^ 2 : ℕ) : ℝ)
-
-theorem squareGridEnergy_pos (n : ℕ) : 0 < squareGridEnergy n := by
-  unfold squareGridEnergy
-  exact_mod_cast (pow_pos (Nat.succ_pos _) 2)
-
-theorem squareGridEnergy_grows (n : ℕ) :
-    (n : ℝ) + 1 ≤ squareGridEnergy n := by
-  have hn : n < (max (Nat.unpair n).1 (Nat.unpair n).2 + 1) ^ 2 := by
-    simpa only [Nat.pair_unpair] using
-      (Nat.pair_lt_max_add_one_sq (Nat.unpair n).1 (Nat.unpair n).2)
-  have hn' : n + 1 ≤ (max (Nat.unpair n).1 (Nat.unpair n).2 + 1) ^ 2 :=
-    Nat.succ_le_iff.mpr hn
-  have hnreal : (((n + 1 : ℕ) : ℝ) ≤ squareGridEnergy n) := by
-    change ((n + 1 : ℕ) : ℝ) ≤
-      (((max (Nat.unpair n).1 (Nat.unpair n).2 + 1) ^ 2 : ℕ) : ℝ)
-    exact_mod_cast hn'
-  simpa only [Nat.cast_add, Nat.cast_one] using hnreal
-
-/-- Geometry implies the summability needed by the canonical product. -/
-theorem squareGridEnergy_inv_sq_summable :
-    Summable (fun n : ℕ => 1 / (squareGridEnergy n) ^ 2) := by
-  have hseries : Summable (fun n : ℕ => 1 / (n : ℝ) ^ 2) :=
-    Real.summable_one_div_nat_pow.mpr (by norm_num)
-  have hshift : Summable (fun n : ℕ => 1 / ((n : ℝ) + 1) ^ 2) := by
-    simpa [Nat.cast_add] using
-      (summable_nat_add_iff (f := fun n : ℕ => 1 / (n : ℝ) ^ 2) 1).2 hseries
-  apply Summable.of_nonneg_of_le (fun n => by positivity) (fun n => ?_) hshift
-  show 1 / (squareGridEnergy n) ^ 2 ≤ 1 / ((n : ℝ) + 1) ^ 2
-  gcongr
-  exact squareGridEnergy_grows n
-
-/--
-Convert a summable sequence of inverse squared energies into the
-compact-majorant hypothesis of Theorem C.
--/
+/-- Summable inverse squares imply the compact-majorant condition. -/
 theorem admissible_of_inv_sq_summable
     {q : ℕ → ℝ} (hq : ∀ n, 0 < q n)
     (hsum : Summable (fun n => 1 / (q n) ^ 2))
@@ -260,22 +153,29 @@ theorem admissible_of_inv_sq_summable
   rw [hnorm]
   exact mul_le_mul_of_nonneg_right (hC _ ⟨s, hs, rfl⟩) (by positivity)
 
-/-- A genuine infinite square-grid energy is admissible without assuming it. -/
-theorem squareGridEnergy_admissible (center direction : ℂ) :
-    Admissible squareGridEnergy center direction :=
-  admissible_of_inv_sq_summable squareGridEnergy_pos
-    squareGridEnergy_inv_sq_summable center direction
 
-/--
-**Geometric Theorem C for the square grid**:
-all zeros of the infinite canonical product computed from the square
-grid's max-norm shell energy lie on the prescribed affine line.
--/
-theorem squareGrid_theoremC
-    (center direction s : ℂ) (hd : direction ≠ 0)
-    (hz : canonicalProduct squareGridEnergy center direction s = 0) :
-    ∃ t : ℝ, s = center + direction * (t : ℂ) :=
-  theoremC_zero_localization (squareGridEnergy_admissible center direction) hd hz
+/-- The n-th factor has a zero at its positive level. -/
+theorem factor_zero_at_positive_level
+    (q : ℕ → ℝ) (n : ℕ)
+    (hq : q n ≠ 0)
+    (center direction : ℂ) (hd : direction ≠ 0) :
+    factor q center direction n
+      (center + direction * (q n : ℂ)) = 0 := by
+  have hqc : (q n : ℂ) ≠ 0 := by exact_mod_cast hq
+  simp only [factor, perturb, add_sub_cancel_left]
+  field_simp [hd, hqc] <;> ring
+
+/-- If one factor is zero, its infinite canonical product is zero,
+regardless of the order of all other factors. -/
+theorem canonicalProduct_zero_at_positive_level
+    (q : ℕ → ℝ) (n : ℕ) (hq : q n ≠ 0)
+    (center direction : ℂ) (hd : direction ≠ 0) :
+    canonicalProduct q center direction
+      (center + direction * (q n : ℂ)) = 0 := by
+  unfold canonicalProduct
+  exact tprod_of_exists_eq_zero
+    ⟨n, factor_zero_at_positive_level q n hq center direction hd⟩
+
 
 end
-end InfiniteTilings
+end SpectralGeometry
