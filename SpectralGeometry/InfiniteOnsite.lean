@@ -37,18 +37,30 @@ noncomputable def infiniteOnsiteDomain
     simpa using hz
   add_mem' := by
     intro f g hf hg
-    have h := hf.add hg
-    convert h using 1
-    ext t
-    simp only [lp.coeFn_add, Pi.add_apply]
-    ring
+    have h : Memℓp
+        ((fun t : Tile => V t * f t) + fun t : Tile => V t * g t) 2 :=
+      hf.add hg
+    change Memℓp (fun t : Tile => V t * (f + g) t) 2
+    have heq :
+        (fun t : Tile => V t * (f + g) t) =
+          ((fun t : Tile => V t * f t) + fun t : Tile => V t * g t) := by
+      funext t
+      simp [mul_add]
+    rw [heq]
+    exact h
   smul_mem' := by
     intro a f hf
-    have h := hf.const_mul a
-    convert h using 1
-    ext t
-    simp only [lp.coeFn_smul, Pi.smul_apply, smul_eq_mul]
-    ring
+    have h : Memℓp (fun t : Tile => a * (V t * f t)) 2 :=
+      hf.const_mul a
+    change Memℓp (fun t : Tile => V t * (a • f) t) 2
+    have heq :
+        (fun t : Tile => V t * (a • f) t) =
+          (fun t : Tile => a * (V t * f t)) := by
+      funext t
+      simp only [lp.coeFn_smul, Pi.smul_apply, smul_eq_mul]
+      ring
+    rw [heq]
+    exact h
 
 /-- The diagonal multiplication operator with its natural ℓ² domain.
 It is a linear map into ℓ², even if the potential is unbounded. -/
@@ -60,14 +72,14 @@ noncomputable def infiniteOnsiteOperator
   map_add' := by
     intro f g
     apply lp.ext
-    intro t
+    funext t
     change V t * (f.1 t + g.1 t) =
       V t * f.1 t + V t * g.1 t
     ring
   map_smul' := by
     intro a f
     apply lp.ext
-    intro t
+    funext t
     change V t * (a * f.1 t) = a * (V t * f.1 t)
     ring
 
