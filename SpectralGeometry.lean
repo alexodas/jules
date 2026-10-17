@@ -4,6 +4,7 @@ import SpectralGeometry.FinitePositiveEnergy
 import SpectralGeometry.FiniteGeometricEnergy
 import SpectralGeometry.FiniteStrictPositivity
 import SpectralGeometry.InfiniteOnsite
+import SpectralGeometry.InfiniteOnsiteDensity
 
 /-!
 # Spectral Geometry
