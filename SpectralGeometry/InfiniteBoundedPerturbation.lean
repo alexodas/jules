@@ -45,7 +45,7 @@ theorem infiniteOnsiteOperator_energy_nonneg
   rw [lp.inner_eq_tsum]
   apply tsum_nonneg
   intro t
-  simpa [RCLike.inner_apply] using
+  simpa [RCLike.inner_apply, mul_comm] using
     infiniteOnsiteOperator_local_nonneg V hV ψ t
 
 /-- The sum of the unbounded onsite operator, a finite-edge Laplacian
