@@ -6,6 +6,7 @@ import SpectralGeometry.FiniteStrictPositivity
 import SpectralGeometry.InfiniteOnsite
 import SpectralGeometry.InfiniteOnsiteDensity
 import SpectralGeometry.InfiniteOnsiteEigenvalues
+import SpectralGeometry.InfiniteOnsiteSummability
 
 /-!
 # Spectral Geometry
