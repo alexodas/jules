@@ -32,8 +32,7 @@ theorem infiniteOnsiteDomain_single
     by_cases hti : t = i
     · subst t
       simp
-    · simp [lp.single_apply_ne (2 : ENNReal) i a hti,
-        lp.single_apply_ne (2 : ENNReal) i (V i * a) hti]
+    · simp only [lp.single_apply, Pi.single_eq_of_ne hti, mul_zero]
   have hmem : Memℓp
       (fun t : Tile => V t *
         (lp.single (2 : ENNReal) i a : TileHilbert Tile) t) 2 := by
