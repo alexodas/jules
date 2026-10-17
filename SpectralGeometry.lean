@@ -11,6 +11,8 @@ import SpectralGeometry.InfiniteOnsitePowerGrowth
 import SpectralGeometry.InfiniteFiniteEdgeInteraction
 import SpectralGeometry.InfiniteBoundedPerturbation
 import SpectralGeometry.InfiniteSummableEdgeInteraction
+import SpectralGeometry.InfiniteLocalMatching
+import SpectralGeometry.InfiniteLocalBoundedDegree
 
 /-!
 # Spectral Geometry
