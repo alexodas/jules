@@ -28,8 +28,8 @@ variable {Tile : Type*} [DecidableEq Tile]
 natural domain; no boundedness of the onsite potential is assumed. -/
 theorem infiniteOnsiteOperator_symmetric
     (V : Tile → ℝ) (ψ φ : infiniteOnsiteDomain V) :
-    (inner ℝ (ψ.1 : TileHilbert Tile) infiniteOnsiteOperator V φ) =
-      (inner ℝ infiniteOnsiteOperator V ψ (φ.1 : TileHilbert Tile)) := by
+    (inner ℝ ((ψ.1 : TileHilbert Tile)) (infiniteOnsiteOperator V φ)) =
+      (inner ℝ (infiniteOnsiteOperator V ψ) ((φ.1 : TileHilbert Tile))) := by
   rw [lp.inner_eq_tsum, lp.inner_eq_tsum]
   apply tsum_congr
   intro t
@@ -41,7 +41,7 @@ quadratic form on D(V), not merely nonnegative local terms. -/
 theorem infiniteOnsiteOperator_energy_nonneg
     (V : Tile → ℝ) (hV : ∀ t, 0 ≤ V t)
     (ψ : infiniteOnsiteDomain V) :
-    0 ≤ (inner ℝ (ψ.1 : TileHilbert Tile) infiniteOnsiteOperator V ψ) := by
+    0 ≤ (inner ℝ ((ψ.1 : TileHilbert Tile)) (infiniteOnsiteOperator V ψ)) := by
   rw [lp.inner_eq_tsum]
   apply tsum_nonneg
   intro t
@@ -82,10 +82,10 @@ theorem infiniteFiniteEdgePerturbedOperator_energy_eq
     (w : Tile × Tile → ℝ)
     (P : TileHilbert Tile →L[ℝ] TileHilbert Tile) (ε : ℝ)
     (ψ : infiniteOnsiteDomain V) :
-    (inner ℝ (ψ.1 : TileHilbert Tile) infiniteFiniteEdgePerturbedOperator V edges w P ε ψ) =
-      (inner ℝ (ψ.1 : TileHilbert Tile) infiniteOnsiteOperator V ψ) +
-        (inner ℝ (ψ.1 : TileHilbert Tile) infiniteFiniteEdgeLaplacian edges w ψ.1) +
-        ε * (inner ℝ (ψ.1 : TileHilbert Tile) P ψ.1) := by
+    (inner ℝ ((ψ.1 : TileHilbert Tile)) (infiniteFiniteEdgePerturbedOperator V edges w P ε ψ)) =
+      (inner ℝ ((ψ.1 : TileHilbert Tile)) (infiniteOnsiteOperator V ψ)) +
+        (inner ℝ ((ψ.1 : TileHilbert Tile)) (infiniteFiniteEdgeLaplacian edges w ψ.1)) +
+        ε * (inner ℝ ((ψ.1 : TileHilbert Tile)) (P ψ.1)) := by
   rw [infiniteFiniteEdgePerturbedOperator_apply]
   simp only [inner_add_right, real_inner_smul_right]
 
@@ -98,9 +98,9 @@ theorem infiniteFiniteEdgePerturbedOperator_energy_nonneg
     (P : TileHilbert Tile →L[ℝ] TileHilbert Tile) (ε : ℝ)
     (hV : ∀ t, 0 ≤ V t)
     (hw : ∀ e ∈ edges, 0 ≤ w e)
-    (hP : ∀ ψ : TileHilbert Tile, 0 ≤ (inner ℝ ψ P ψ))
+    (hP : ∀ ψ : TileHilbert Tile, 0 ≤ (inner ℝ (ψ) (P ψ)))
     (hε : 0 ≤ ε) (ψ : infiniteOnsiteDomain V) :
-    0 ≤ (inner ℝ (ψ.1 : TileHilbert Tile) infiniteFiniteEdgePerturbedOperator V edges w P ε ψ) := by
+    0 ≤ (inner ℝ ((ψ.1 : TileHilbert Tile)) (infiniteFiniteEdgePerturbedOperator V edges w P ε ψ)) := by
   rw [infiniteFiniteEdgePerturbedOperator_energy_eq]
   exact add_nonneg
     (add_nonneg (infiniteOnsiteOperator_energy_nonneg V hV ψ)
@@ -115,10 +115,10 @@ theorem infiniteFiniteEdgePerturbedOperator_symmetric
     (w : Tile × Tile → ℝ)
     (P : TileHilbert Tile →L[ℝ] TileHilbert Tile) (ε : ℝ)
     (hP : ∀ ψ φ : TileHilbert Tile,
-      (inner ℝ ψ P φ) = (inner ℝ P ψ φ))
+      (inner ℝ (ψ) (P φ)) = (inner ℝ (P ψ) (φ)))
     (ψ φ : infiniteOnsiteDomain V) :
-    (inner ℝ (ψ.1 : TileHilbert Tile) infiniteFiniteEdgePerturbedOperator V edges w P ε φ) =
-      (inner ℝ infiniteFiniteEdgePerturbedOperator V edges w P ε ψ (φ.1 : TileHilbert Tile)) := by
+    (inner ℝ ((ψ.1 : TileHilbert Tile)) (infiniteFiniteEdgePerturbedOperator V edges w P ε φ)) =
+      (inner ℝ (infiniteFiniteEdgePerturbedOperator V edges w P ε ψ) ((φ.1 : TileHilbert Tile))) := by
   rw [infiniteFiniteEdgePerturbedOperator_apply,
     infiniteFiniteEdgePerturbedOperator_apply]
   simp only [inner_add_right, inner_add_left,
