@@ -72,7 +72,7 @@ theorem infiniteEdgeLaplacian_symmetric
     (a b : Tile) (w : ℝ) (ψ φ : TileHilbert Tile) :
     (inner ℝ (ψ) (infiniteEdgeLaplacian a b w φ)) =
       (inner ℝ (infiniteEdgeLaplacian a b w ψ) (φ)) := by
-  rw [← real_inner_comm φ (infiniteEdgeLaplacian a b w ψ)]
+  rw [real_inner_comm φ (infiniteEdgeLaplacian a b w ψ)]
   rw [infiniteEdgeLaplacian_inner, infiniteEdgeLaplacian_inner]
   ring
 
