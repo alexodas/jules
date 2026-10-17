@@ -17,6 +17,7 @@ import SpectralGeometry.InfiniteLocalEigenvalueBounds
 import SpectralGeometry.InfiniteLocalSignedPerturbationGap
 import SpectralGeometry.InfiniteLocalCoerciveGap
 import SpectralGeometry.InfiniteLocalGraphNorm
+import SpectralGeometry.InfiniteLocalClosedGraph
 
 /-!
 # Spectral Geometry
