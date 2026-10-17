@@ -1,5 +1,7 @@
 import SpectralGeometry.InfiniteOnsite
 
+set_option maxHeartbeats 1000000
+
 /-!
 # Density of the natural domain of the infinite onsite operator
 
@@ -15,7 +17,7 @@ this file does not yet prove self-adjointness or spectral discreteness.
 
 namespace SpectralGeometry
 
-variable {Tile : Type*}
+variable {Tile : Type*} [DecidableEq Tile]
 
 /-- A state concentrated on one tile belongs to the natural domain of
 onsite multiplication, irrespective of the size of the potential there. -/
