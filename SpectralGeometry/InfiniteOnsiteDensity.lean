@@ -24,8 +24,10 @@ theorem infiniteOnsiteDomain_single
     lp.single (2 : ENNReal) i a ∈ infiniteOnsiteDomain V := by
   classical
   have heq :
-      (fun t : Tile => V t * (lp.single (2 : ENNReal) i a) t) =
-        (fun t : Tile => (lp.single (2 : ENNReal) i (V i * a)) t) := by
+      (fun t : Tile => V t *
+        (lp.single (2 : ENNReal) i a : TileHilbert Tile) t) =
+        (fun t : Tile =>
+          (lp.single (2 : ENNReal) i (V i * a) : TileHilbert Tile) t) := by
     funext t
     by_cases hti : t = i
     · subst t
@@ -33,9 +35,10 @@ theorem infiniteOnsiteDomain_single
     · simp [lp.single_apply_ne (2 : ENNReal) i a hti,
         lp.single_apply_ne (2 : ENNReal) i (V i * a) hti]
   have hmem : Memℓp
-      (fun t : Tile => V t * (lp.single (2 : ENNReal) i a) t) 2 := by
+      (fun t : Tile => V t *
+        (lp.single (2 : ENNReal) i a : TileHilbert Tile) t) 2 := by
     rw [heq]
-    exact (lp.single (2 : ENNReal) i (V i * a)).property
+    exact (lp.single (2 : ENNReal) i (V i * a) : TileHilbert Tile).property
   exact hmem
 
 /-- Every finite sum of single-tile states lies in the natural domain. -/
