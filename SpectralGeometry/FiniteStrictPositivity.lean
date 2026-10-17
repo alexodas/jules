@@ -69,9 +69,9 @@ theorem finiteGeometricPerturbedEnergy_pos
 /-- On an eigenvector, quadratic energy equals the eigenvalue times
 the sum of the squared amplitudes. -/
 private theorem finiteEnergy_on_eigenvector
-    (M : Matrix Tile Tile ℝ) (ψ : Tile → ℝ) (λ : ℝ)
-    (heigen : ∀ t, (∑ u : Tile, M t u * ψ u) = λ * ψ t) :
-    finiteQuadraticEnergy M ψ = λ * ∑ t : Tile, ψ t ^ 2 := by
+    (M : Matrix Tile Tile ℝ) (ψ : Tile → ℝ) (eigenvalue : ℝ)
+    (heigen : ∀ t, (∑ u : Tile, M t u * ψ u) = eigenvalue * ψ t) :
+    finiteQuadraticEnergy M ψ = eigenvalue * ∑ t : Tile, ψ t ^ 2 := by
   classical
   unfold finiteQuadraticEnergy
   calc
@@ -80,29 +80,29 @@ private theorem finiteEnergy_on_eigenvector
           apply Finset.sum_congr rfl
           intro t ht
           rw [Finset.mul_sum]
-    _ = ∑ t : Tile, λ * ψ t ^ 2 := by
+    _ = ∑ t : Tile, eigenvalue * ψ t ^ 2 := by
           apply Finset.sum_congr rfl
           intro t ht
           rw [heigen t]
           ring
-    _ = λ * ∑ t : Tile, ψ t ^ 2 := by rw [Finset.mul_sum]
+    _ = eigenvalue * ∑ t : Tile, ψ t ^ 2 := by rw [Finset.mul_sum]
 
 /-- A finite matrix with strictly positive quadratic energy can have
 no nonpositive eigenvalue with a nonzero real eigenvector. -/
 private theorem eigenvalue_pos_of_energy_pos
-    (M : Matrix Tile Tile ℝ) (ψ : Tile → ℝ) (λ : ℝ)
+    (M : Matrix Tile Tile ℝ) (ψ : Tile → ℝ) (eigenvalue : ℝ)
     (hQ : 0 < finiteQuadraticEnergy M ψ)
-    (heigen : ∀ t, (∑ u : Tile, M t u * ψ u) = λ * ψ t) :
-    0 < λ := by
+    (heigen : ∀ t, (∑ u : Tile, M t u * ψ u) = eigenvalue * ψ t) :
+    0 < eigenvalue := by
   have hnorm : 0 ≤ ∑ t : Tile, ψ t ^ 2 := by
     apply Finset.sum_nonneg
     intro t ht
     exact sq_nonneg _
-  rw [finiteEnergy_on_eigenvector M ψ λ heigen] at hQ
+  rw [finiteEnergy_on_eigenvector M ψ eigenvalue heigen] at hQ
   by_contra hn
-  have hλ : λ ≤ 0 := le_of_not_gt hn
-  have hnonpos : λ * (∑ t : Tile, ψ t ^ 2) ≤ 0 :=
-    mul_nonpos_of_nonpos_of_nonneg hλ hnorm
+  have heigenvalue : eigenvalue ≤ 0 := le_of_not_gt hn
+  have hnonpos : eigenvalue * (∑ t : Tile, ψ t ^ 2) ≤ 0 :=
+    mul_nonpos_of_nonpos_of_nonneg heigenvalue hnorm
   exact (not_le_of_gt hQ) hnonpos
 
 /-- Positive onsite energies exclude zero and negative eigenvalues for
@@ -113,14 +113,14 @@ theorem finiteGeometricEigenvalue_pos
     (hw : ∀ t u, w t u = w u t)
     (hwpos : ∀ t u, 0 ≤ w t u)
     (hdiag : ∀ t, w t t = 0)
-    (ψ : Tile → ℝ) (λ : ℝ)
+    (ψ : Tile → ℝ) (eigenvalue : ℝ)
     (hψ : ∃ t, ψ t ≠ 0)
     (heigen : ∀ t,
       (∑ u : Tile, finiteUnperturbedMatrix V w t u * ψ u) =
-        λ * ψ t) :
-    0 < λ := by
+        eigenvalue * ψ t) :
+    0 < eigenvalue := by
   exact eigenvalue_pos_of_energy_pos
-    (finiteUnperturbedMatrix V w) ψ λ
+    (finiteUnperturbedMatrix V w) ψ eigenvalue
     (finiteGeometricEnergy_pos V w hV hw hwpos hdiag ψ hψ)
     heigen
 
@@ -136,14 +136,14 @@ theorem finiteGeometricPerturbedEigenvalue_pos
     (hdiag : ∀ t, w t t = 0)
     (hP : ∀ χ : Tile → ℝ, 0 ≤ finiteQuadraticEnergy P χ)
     (hε : 0 ≤ ε)
-    (ψ : Tile → ℝ) (λ : ℝ)
+    (ψ : Tile → ℝ) (eigenvalue : ℝ)
     (hψ : ∃ t, ψ t ≠ 0)
     (heigen : ∀ t,
       (∑ u : Tile, finitePerturbedMatrix V w P ε t u * ψ u) =
-        λ * ψ t) :
-    0 < λ := by
+        eigenvalue * ψ t) :
+    0 < eigenvalue := by
   exact eigenvalue_pos_of_energy_pos
-    (finitePerturbedMatrix V w P ε) ψ λ
+    (finitePerturbedMatrix V w P ε) ψ eigenvalue
     (finiteGeometricPerturbedEnergy_pos V w P ε
       hV hw hwpos hdiag hP hε ψ hψ)
     heigen
