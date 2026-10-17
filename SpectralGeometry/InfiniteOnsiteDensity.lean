@@ -1,7 +1,5 @@
 import SpectralGeometry.InfiniteOnsite
 
-set_option maxHeartbeats 1000000
-
 /-!
 # Density of the natural domain of the infinite onsite operator
 
@@ -27,16 +25,17 @@ theorem infiniteOnsiteDomain_single
   classical
   change Memℓp
     (fun t : Tile => V t * (lp.single (2 : ENNReal) i a) t) 2
-  have hsupp :
-      Set.Finite
-        {t : Tile | V t * (lp.single (2 : ENNReal) i a) t ≠ 0} := by
-    apply (Set.finite_singleton i).subset
-    intro t ht
-    by_contra hti
-    have hzero : (lp.single (2 : ENNReal) i a) t = 0 :=
-      lp.single_apply_ne (2 : ENNReal) i a hti
-    simp [hzero] at ht
-  exact (memℓp_zero hsupp).of_exponent_ge (by norm_num)
+  have heq :
+      (fun t : Tile => V t * (lp.single (2 : ENNReal) i a) t) =
+        (fun t : Tile => (lp.single (2 : ENNReal) i (V i * a)) t) := by
+    funext t
+    by_cases hti : t = i
+    · subst t
+      simp
+    · simp [lp.single_apply_ne (2 : ENNReal) i a hti,
+        lp.single_apply_ne (2 : ENNReal) i (V i * a) hti]
+  rw [heq]
+  exact (lp.single (2 : ENNReal) i (V i * a)).property
 
 /-- Every finite sum of single-tile states lies in the natural domain. -/
 theorem infiniteOnsiteDomain_finset_sum
