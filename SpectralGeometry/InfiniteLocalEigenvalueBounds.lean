@@ -13,7 +13,7 @@ operator on its natural dense onsite domain:
 * Nonnegative onsite energies and a nonnegative bounded perturbation
   at nonnegative coupling rule out negative point eigenvalues.
 * When the perturbation is the identity, its coefficient ε produces a
-  uniform lower bound λ ≥ ε on every point eigenvalue, even when the
+  uniform lower bound eigenvalue ≥ ε on every point eigenvalue, even when the
   onsite potential is unbounded and the edge weights are not globally
   summable. In particular ε > 0 excludes zero eigenvalues.
 
@@ -36,11 +36,11 @@ theorem infiniteLocalMatchingPerturbedEigenvalue_nonneg
     (hV : ∀ t, 0 ≤ V t) (hw : ∀ i, 0 ≤ w i)
     (hP : ∀ ψ : TileHilbert Tile, 0 ≤ inner ℝ ψ (P ψ))
     (hε : 0 ≤ ε)
-    (ψ : infiniteOnsiteDomain V) (λ : ℝ)
+    (ψ : infiniteOnsiteDomain V) (eigenvalue : ℝ)
     (heigen : infiniteLocalMatchingPerturbedOperator D V σ w P ε ψ =
-      λ • (ψ.1 : TileHilbert Tile))
+      eigenvalue • (ψ.1 : TileHilbert Tile))
     (hψ : (ψ.1 : TileHilbert Tile) ≠ 0) :
-    0 ≤ λ := by
+    0 ≤ eigenvalue := by
   have henergy :=
     infiniteLocalMatchingPerturbedOperator_energy_nonneg
       D V σ w P ε hV hw hP hε ψ
@@ -48,8 +48,8 @@ theorem infiniteLocalMatchingPerturbedEigenvalue_nonneg
     sq_pos_of_pos (norm_pos_iff.mpr hψ)
   rw [heigen, real_inner_smul_right, real_inner_self_eq_norm_sq] at henergy
   by_contra hn
-  have hneg : λ < 0 := lt_of_not_ge hn
-  have hprod : λ * ‖(ψ.1 : TileHilbert Tile)‖ ^ 2 < 0 :=
+  have hneg : eigenvalue < 0 := lt_of_not_ge hn
+  have hprod : eigenvalue * ‖(ψ.1 : TileHilbert Tile)‖ ^ 2 < 0 :=
     mul_neg_of_neg_of_pos hneg hnorm
   linarith
 
@@ -60,13 +60,13 @@ theorem infiniteLocalMatchingIdentityShift_eigenvalue_ge
     (D : ℕ) (V : Tile → ℝ) (σ : Fin D → Tile ≃ Tile)
     (w : Fin D → ℝ) (ε : ℝ)
     (hV : ∀ t, 0 ≤ V t) (hw : ∀ i, 0 ≤ w i)
-    (ψ : infiniteOnsiteDomain V) (λ : ℝ)
+    (ψ : infiniteOnsiteDomain V) (eigenvalue : ℝ)
     (heigen :
       infiniteLocalMatchingPerturbedOperator D V σ w
         (ContinuousLinearMap.id ℝ (TileHilbert Tile)) ε ψ =
-        λ • (ψ.1 : TileHilbert Tile))
+        eigenvalue • (ψ.1 : TileHilbert Tile))
     (hψ : (ψ.1 : TileHilbert Tile) ≠ 0) :
-    ε ≤ λ := by
+    ε ≤ eigenvalue := by
   have honsite := infiniteOnsiteOperator_energy_nonneg V hV ψ
   have hedge :=
     infiniteLocalMatchingLaplacian_energy_nonneg D σ w hw ψ.1
@@ -87,11 +87,11 @@ theorem infiniteLocalMatchingIdentityShift_eigenvalue_ge
       inner ℝ (ψ.1 : TileHilbert Tile)
         (infiniteLocalMatchingPerturbedOperator D V σ w
           (ContinuousLinearMap.id ℝ (TileHilbert Tile)) ε ψ) =
-      λ * ‖(ψ.1 : TileHilbert Tile)‖ ^ 2 := by
+      eigenvalue * ‖(ψ.1 : TileHilbert Tile)‖ ^ 2 := by
     rw [heigen, real_inner_smul_right, real_inner_self_eq_norm_sq]
   have hbound :
       ε * ‖(ψ.1 : TileHilbert Tile)‖ ^ 2 ≤
-      λ * ‖(ψ.1 : TileHilbert Tile)‖ ^ 2 := by
+      eigenvalue * ‖(ψ.1 : TileHilbert Tile)‖ ^ 2 := by
     rw [← hvalue, hdecompose]
     linarith
   exact (mul_le_mul_iff_of_pos_right hnorm).mp hbound
@@ -103,15 +103,15 @@ theorem infiniteLocalMatchingIdentityShift_eigenvalue_pos
     (w : Fin D → ℝ) (ε : ℝ)
     (hV : ∀ t, 0 ≤ V t) (hw : ∀ i, 0 ≤ w i)
     (hε : 0 < ε)
-    (ψ : infiniteOnsiteDomain V) (λ : ℝ)
+    (ψ : infiniteOnsiteDomain V) (eigenvalue : ℝ)
     (heigen :
       infiniteLocalMatchingPerturbedOperator D V σ w
         (ContinuousLinearMap.id ℝ (TileHilbert Tile)) ε ψ =
-        λ • (ψ.1 : TileHilbert Tile))
+        eigenvalue • (ψ.1 : TileHilbert Tile))
     (hψ : (ψ.1 : TileHilbert Tile) ≠ 0) :
-    0 < λ :=
+    0 < eigenvalue :=
   lt_of_lt_of_le hε
     (infiniteLocalMatchingIdentityShift_eigenvalue_ge
-      D V σ w ε hV hw ψ λ heigen hψ)
+      D V σ w ε hV hw ψ eigenvalue heigen hψ)
 
 end SpectralGeometry
