@@ -130,9 +130,34 @@ The file also proves that setting `ε=0` recovers exactly the unperturbed geomet
 
 **Scope of the proof:** the verified theorem concerns a *finite* matrix. It does not yet establish positive eigenvalues, self-adjointness of the infinite tiling operator, discrete infinite spectrum, or inverse-square summability. Those are separate questions for later files.
 
-## 3. Building and verification
+## 3. Second finite-dimensional theorem: positivity under controlled perturbations
 
-The established analytic core is defined in `SpectralGeometry/CanonicalProduct.lean`, and the finite-dimensional symmetry theorem is in `SpectralGeometry/FinitePerturbation.lean`. Both are imported by the `SpectralGeometry.lean` entry point. The toolchain is Lean 4 `v4.35.0` with the corresponding version of Mathlib.
+The next theorem is formalized in **[`SpectralGeometry/FinitePositiveEnergy.lean`](SpectralGeometry/FinitePositiveEnergy.lean)**. It concerns the *quadratic energy* of the very same finite matrix defined in the preceding file. For a state `ψ`, define:
+
+```math
+Q_M(\psi)=\sum_{t,u}\psi(t)\,M_{tu}\,\psi(u).
+```
+
+The formalized identity says that the perturbed energy separates exactly into two parts:
+
+```math
+Q_{H_\varepsilon}(\psi)=Q_{H_0}(\psi)+\varepsilon Q_P(\psi).
+```
+
+**In simple terms:** if the original geometric operator has nonnegative energy for every configuration, and the chosen perturbation also has nonnegative energy, then turning on that perturbation with `ε\ge0` cannot make the total energy negative:
+
+```math
+\bigl(Q_{H_0}(\psi)\ge0,\ Q_P(\psi)\ge0,\ \varepsilon\ge0\bigr)
+\quad\Longrightarrow\quad Q_{H_\varepsilon}(\psi)\ge0.
+```
+
+The Lean file also proves that **strictly positive** base energy on every nonzero configuration stays strictly positive under the same assumptions. These results concern all tile-amplitude configurations, not a selection of eigenfunctions.
+
+**What this does *not* yet prove:** positivity of `H_0=V+L_w` directly from hypotheses such as `V(t)\ge0` and symmetric nonnegative `w(t,u)`. The theorem establishes *stability* of positivity **assuming** positivity of the original energy and the perturbation energy. Proving sufficient geometric conditions for that premise is a separate next step. We have not yet established the infinite-tiling spectral properties or formally proved eigenvalue positivity.
+
+## 4. Building and verification
+
+The established analytic core is in `SpectralGeometry/CanonicalProduct.lean`. The geometric finite-dimensional results are in `SpectralGeometry/FinitePerturbation.lean` and `SpectralGeometry/FinitePositiveEnergy.lean`. All three are imported by the `SpectralGeometry.lean` entry point. The toolchain is Lean 4 `v4.35.0` with the corresponding version of Mathlib.
 
 ```bash
 lake update
