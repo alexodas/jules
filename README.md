@@ -153,11 +153,29 @@ Q_{H_\varepsilon}(\psi)=Q_{H_0}(\psi)+\varepsilon Q_P(\psi).
 
 The Lean file also proves that **strictly positive** base energy on every nonzero configuration stays strictly positive under the same assumptions. These results concern all tile-amplitude configurations, not a selection of eigenfunctions.
 
-**What this does *not* yet prove:** positivity of `H_0=V+L_w` directly from hypotheses such as `V(t)\ge0` and symmetric nonnegative `w(t,u)`. The theorem establishes *stability* of positivity **assuming** positivity of the original energy and the perturbation energy. Proving sufficient geometric conditions for that premise is a separate next step. We have not yet established the infinite-tiling spectral properties or formally proved eigenvalue positivity.
+**Scope of the second result:** this theorem proves *stability* of positivity, assuming positivity of the original and perturbation energies. The following section derives a sufficient condition for the original energy from the geometric inputs themselves. The infinite-tiling spectral properties are still unproved.
 
-## 4. Building and verification
+## 4. Third finite-dimensional theorem: positivity from the geometry itself
 
-The established analytic core is in `SpectralGeometry/CanonicalProduct.lean`. The geometric finite-dimensional results are in `SpectralGeometry/FinitePerturbation.lean` and `SpectralGeometry/FinitePositiveEnergy.lean`. All three are imported by the `SpectralGeometry.lean` entry point. The toolchain is Lean 4 `v4.35.0` with the corresponding version of Mathlib.
+The third geometric result is developed in **[`SpectralGeometry/FiniteGeometricEnergy.lean`](SpectralGeometry/FiniteGeometricEnergy.lean)**. It answers the natural question left open by the previous section: *when do the tile energies and interaction weights themselves guarantee nonnegative energy?*
+
+For a finite set of tiles, assume the individual energies are nonnegative, the pair weights are symmetric and nonnegative, and self-interaction weights vanish (`w(t,t)=0`, consistent with summing only over `u\ne t`). The quadratic energy of the unperturbed matrix can then be rewritten as a **sum of squares**:
+
+```math
+Q_{H_0}(\psi)=
+\sum_t V(t)\psi(t)^2+
+\frac12\sum_{t,u}w(t,u)\bigl(\psi(t)-\psi(u)\bigr)^2.
+```
+
+Each summand is nonnegative. Thus **the geometry alone forces `Q_{H_0}(\psi)\ge0` for every real tile-amplitude configuration**. The factor `1/2` compensates for counting each pair of distinct tiles in both directions.
+
+Combining this with the preceding perturbation theorem also gives nonnegative energy for `H_\varepsilon=H_0+\varepsilon P` whenever `\varepsilon\ge0` and the quadratic energy of `P` is nonnegative.
+
+**Scope:** this is a statement about finite quadratic forms. Nonnegative energy allows *zero* eigenvalues; it does not itself establish strictly positive eigenvalues, an infinite self-adjoint operator, compact resolvent, or the inverse-square spectral summability needed for the canonical product.
+
+## 5. Building and verification
+
+The established analytic core is in `SpectralGeometry/CanonicalProduct.lean`. The finite-dimensional geometric results are in `SpectralGeometry/FinitePerturbation.lean`, `SpectralGeometry/FinitePositiveEnergy.lean`, and `SpectralGeometry/FiniteGeometricEnergy.lean`. All four Lean modules are imported by the `SpectralGeometry.lean` entry point. The toolchain is Lean 4 `v4.35.0` with the corresponding version of Mathlib.
 
 ```bash
 lake update
