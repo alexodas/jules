@@ -60,7 +60,8 @@ theorem infiniteIndexedEdgeOperator_norm_le
   calc
     ‖infiniteIndexedEdgeOperator ends w n‖ =
         ‖w n‖ * (‖v‖ * ‖v‖) := by
-          simp [infiniteIndexedEdgeOperator, v, InnerProductSpace.norm_rankOne]
+          change ‖w n • InnerProductSpace.rankOne ℝ v v‖ = _
+          rw [norm_smul, InnerProductSpace.norm_rankOne]
     _ ≤ ‖w n‖ * 4 := by
       apply mul_le_mul_of_nonneg_left ?_ (norm_nonneg _)
       nlinarith
@@ -92,10 +93,9 @@ theorem infiniteIndexedEdgeOperator_inner
       w n *
         (inner ℝ (infiniteEdgeVector (ends n).1 (ends n).2) φ) *
         (inner ℝ (infiniteEdgeVector (ends n).1 (ends n).2) ψ) := by
-  let v := infiniteEdgeVector (ends n).1 (ends n).2
-  change inner ℝ ψ ((w n * inner ℝ v φ) • v) =
-    w n * inner ℝ v φ * inner ℝ v ψ
-  rw [real_inner_smul_right, real_inner_comm ψ v]
+  simp only [infiniteIndexedEdgeOperator, ContinuousLinearMap.smul_apply,
+    InnerProductSpace.rankOne_apply, smul_smul, real_inner_smul_right]
+  rw [real_inner_comm ψ (infiniteEdgeVector (ends n).1 (ends n).2)]
   ring
 
 /-- Every indexed edge operator is symmetric, independently of weight sign. -/
@@ -120,6 +120,7 @@ theorem infiniteIndexedEdgeOperator_energy_nonneg
 
 /-- Inner products commute with the countable operator sum, by
 operator-norm summability and continuity of evaluation and pairing. -/
+set_option maxHeartbeats 1600000 in
 theorem infiniteSummableEdgeLaplacian_inner_eq_tsum
     (ends : ℕ → Tile × Tile) (w : ℕ → ℝ)
     (hw : Summable (fun n => ‖w n‖))
