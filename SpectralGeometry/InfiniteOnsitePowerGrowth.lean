@@ -22,8 +22,13 @@ private theorem onsite_power_square_eq
     ((((n + 1 : ℕ) : ℝ) ^ alpha) ^ 2) =
       (((n + 1 : ℕ) : ℝ) ^ (2 * alpha)) := by
   have hn : (0 : ℝ) ≤ ((n + 1 : ℕ) : ℝ) := by positivity
-  simpa only [mul_comm alpha (2 : ℝ)] using
-    (Real.rpow_mul_natCast hn alpha 2).symm
+  calc
+    ((((n + 1 : ℕ) : ℝ) ^ alpha) ^ 2) =
+        (((n + 1 : ℕ) : ℝ) ^ (alpha * 2)) := by
+      simpa using (Real.rpow_mul_natCast hn alpha 2).symm
+    _ = (((n + 1 : ℕ) : ℝ) ^ (2 * alpha)) := by
+      congr 1
+      ring
 
 /-- A power-law lower bound with exponent greater than one half is
 sufficient for square-reciprocal summability. The potential need not
