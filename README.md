@@ -2,7 +2,7 @@
 
 **An experimental mathematical research program in Lean 4 and Mathlib.**
 
-## 1. General aim: from tile geometry to the zeros of an analytic function
+## 1. Research program and geometric model
 
 We want to investigate how a tiling, including an **aperiodic** one with no natural arrangement into rows and columns, can determine a spectrum through a geometric operator. We distinguish what we **choose when defining the model** from what **emerges as an eigenvalue**.
 
@@ -65,7 +65,7 @@ We will investigate hypotheses yielding a positive, discrete spectrum with finit
 
 Perturbation theory is part of this program. A bounded self-adjoint perturbation preserves self-adjointness and compact resolvent when the unperturbed operator has those properties, but **positivity requires an additional condition** (for example, a perturbation sufficiently small relative to a positive lower bound). We will investigate how eigenvalues move with `ε` and when the analytic conditions below remain valid. These are mathematical objectives, not yet Lean theorems about an infinite geometric operator.
 
-### The established analytic result
+## 2. Canonical product and analytic foundations
 
 We already have the **definition and Lean formalization** of the canonical product:
 
@@ -113,7 +113,9 @@ s=\frac12\pm i\lambda_n(\varepsilon).
 
 **The line is imposed by the construction of the product, not derived from any property of the Riemann zeta function.** We have not yet formalized `H_\varepsilon` on an infinite tiling, proved its required spectral properties, or connected its spectrum to the product in Lean. This project does not prove the Riemann hypothesis and does not identify `D_\varepsilon` with the zeta function.
 
-## 2. First finite-dimensional theorem: symmetry survives perturbation
+## 3. Finite-dimensional geometric operators
+
+### 3.1. Symmetry under controlled perturbations
 
 The first theorem about our geometric operator is formalized in **[`SpectralGeometry/FinitePerturbation.lean`](SpectralGeometry/FinitePerturbation.lean)** and checked by Lean.
 
@@ -130,7 +132,7 @@ The file also proves that setting `ε=0` recovers exactly the unperturbed geomet
 
 **Scope of the proof:** the verified theorem concerns a *finite* matrix. It does not yet establish positive eigenvalues, self-adjointness of the infinite tiling operator, discrete infinite spectrum, or inverse-square summability. Those are separate questions for later files.
 
-## 3. Second finite-dimensional theorem: positivity under controlled perturbations
+### 3.2. Positivity under controlled perturbations
 
 The next theorem is formalized in **[`SpectralGeometry/FinitePositiveEnergy.lean`](SpectralGeometry/FinitePositiveEnergy.lean)**. It concerns the *quadratic energy* of the very same finite matrix defined in the preceding file. For a state `ψ`, define:
 
@@ -155,7 +157,7 @@ The Lean file also proves that **strictly positive** base energy on every nonzer
 
 **Scope of the second result:** this theorem proves *stability* of positivity, assuming positivity of the original and perturbation energies. The following section derives a sufficient condition for the original energy from the geometric inputs themselves. The infinite-tiling spectral properties are still unproved.
 
-## 4. Third finite-dimensional theorem: positivity from the geometry itself
+### 3.3. Nonnegative energy from geometry
 
 The third geometric result is developed in **[`SpectralGeometry/FiniteGeometricEnergy.lean`](SpectralGeometry/FiniteGeometricEnergy.lean)**. It answers the natural question left open by the previous section: *when do the tile energies and interaction weights themselves guarantee nonnegative energy?*
 
@@ -173,7 +175,7 @@ Combining this with the preceding perturbation theorem also gives nonnegative en
 
 **Scope:** this is a statement about finite quadratic forms. Nonnegative energy allows *zero* eigenvalues; it does not itself establish strictly positive eigenvalues, an infinite self-adjoint operator, compact resolvent, or the inverse-square spectral summability needed for the canonical product.
 
-## 5. Fourth finite-dimensional theorem: strictly positive energies and eigenvalues
+### 3.4. Strictly positive energies and eigenvalues
 
 The next step is formalized in **[`SpectralGeometry/FiniteStrictPositivity.lean`](SpectralGeometry/FiniteStrictPositivity.lean)**. The preceding theorem ruled out *negative* quadratic energy, but still allowed energy equal to zero. Here we prove a sufficient condition that excludes zero for every nonzero configuration.
 
@@ -200,7 +202,9 @@ Together with the **symmetry theorem** (when `P` is symmetric), this means every
 
 **Scope:** the result is finite-dimensional; the hypothesis `V(t)>0` for every tile is sufficient, not necessarily optimal. It does not yet construct the infinite operator, establish a uniform spectral gap across growing patches, or prove inverse-square eigenvalue summability.
 
-## 6. First infinite-dimensional construction: square-summable states and an operator domain
+## 4. Infinite-dimensional onsite operator
+
+### 4.1. Square-summable states and the natural operator domain
 
 The next Lean module, **[`SpectralGeometry/InfiniteOnsite.lean`](SpectralGeometry/InfiniteOnsite.lean)**, begins the transition from finite matrices to an arbitrary, possibly infinite, set of tiles `T`.
 
@@ -222,7 +226,7 @@ The new Lean file proves that `D(V)` is a real **linear subspace**, constructs `
 
 **Scope of this first infinite result:** only the individual-energy contribution is built here. The pair-interaction Laplacian `L_w` and the perturbation `\varepsilon P` have not yet been extended to the infinite setting. The density of `D(V)` is addressed in the next section. Self-adjointness, compact resolvent, discrete eigenvalues, and inverse-square summability are further steps, not consequences of simply defining the domain.
 
-## 7. Second infinite-dimensional theorem: the onsite domain is dense
+### 4.2. Density of the natural operator domain
 
 The new Lean module **[`SpectralGeometry/InfiniteOnsiteDensity.lean`](SpectralGeometry/InfiniteOnsiteDensity.lean)** establishes that the natural domain `D(V)` introduced in the previous section is **dense in `\ell^2(T)`**, even when the potential `V(t)` is unbounded and the set of tiles is infinite.
 
@@ -238,19 +242,7 @@ This does **not** say `D(V)=\ell^2(T)`. It says every square-summable state can 
 
 **Why it matters:** density is a crucial prerequisite for the Hilbert-space theory of adjoint and self-adjoint unbounded operators. It does *not*, by itself, establish self-adjointness, compact resolvent, a discrete infinite spectrum, or spectral summability. The infinite interaction operator and the perturbation also remain to be constructed.
 
-## 8. Building and verification
-
-The established analytic core is in `SpectralGeometry/CanonicalProduct.lean`. The finite-dimensional geometric results are in `SpectralGeometry/FinitePerturbation.lean`, `SpectralGeometry/FinitePositiveEnergy.lean`, `SpectralGeometry/FiniteGeometricEnergy.lean`, and `SpectralGeometry/FiniteStrictPositivity.lean`. These five modules and the three infinite-dimensional modules `SpectralGeometry/InfiniteOnsite.lean`, `SpectralGeometry/InfiniteOnsiteDensity.lean`, and `SpectralGeometry/InfiniteOnsiteEigenvalues.lean` are imported by the `SpectralGeometry.lean` entry point. The toolchain is Lean 4 `v4.35.0` with the corresponding version of Mathlib.
-
-```bash
-lake update
-lake exe cache get
-lake build
-```
-
-GitHub Actions automatically checks compilation on every change to `main` and on every pull request.
-
-## 9. Third infinite-dimensional theorem: positive onsite point eigenvalues
+### 4.3. Point eigenvalues and positivity
 
 The Lean module **[`SpectralGeometry/InfiniteOnsiteEigenvalues.lean`](SpectralGeometry/InfiniteOnsiteEigenvalues.lean)** studies which eigenvalues the densely defined multiplication operator `M_V` can have on an infinite tiling. No bound on `V` and no finiteness of the tile set are assumed.
 
@@ -268,3 +260,15 @@ The file formalizes this support restriction and two consequences:
 - If all energies satisfy the uniform lower bound `V(t)\ge c`, then every such eigenvalue satisfies `λ\ge c`.
 
 **Scope and important limitation:** these are results about the *point spectrum* of the infinite onsite multiplication operator. They do not prove that the operator is self-adjoint, that every `V(t)` occurs as an eigenvalue, that the entire spectrum is positive or discrete, or that the inverse-square eigenvalue series converges. The infinite interaction Laplacian and controlled perturbation still need to be constructed before we can study the full geometric operator `H_\varepsilon`.
+
+## 5. Building and verification
+
+The established analytic core is in `SpectralGeometry/CanonicalProduct.lean`. The finite-dimensional geometric results are in `SpectralGeometry/FinitePerturbation.lean`, `SpectralGeometry/FinitePositiveEnergy.lean`, `SpectralGeometry/FiniteGeometricEnergy.lean`, and `SpectralGeometry/FiniteStrictPositivity.lean`. These five modules and the three infinite-dimensional modules `SpectralGeometry/InfiniteOnsite.lean`, `SpectralGeometry/InfiniteOnsiteDensity.lean`, and `SpectralGeometry/InfiniteOnsiteEigenvalues.lean` are imported by the `SpectralGeometry.lean` entry point. The toolchain is Lean 4 `v4.35.0` with the corresponding version of Mathlib.
+
+```bash
+lake update
+lake exe cache get
+lake build
+```
+
+GitHub Actions automatically checks compilation on every change to `main` and on every pull request.
