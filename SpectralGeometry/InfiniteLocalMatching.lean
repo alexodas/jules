@@ -51,23 +51,25 @@ noncomputable def infiniteTileReindex (σ : Tile ≃ Tile) :
   norm_map' := by
     intro ψ
     have hp : (0 : ℝ) < (2 : ENNReal).toReal := by norm_num
-    have hs :
-        ‖(⟨(fun t => ψ (σ t) : PreLp (fun _ : Tile => ℝ)),
-          (memℓp_gen_iff hp).mpr
-            ((σ.summable_iff).mpr ((memℓp_gen_iff hp).mp ψ.property))
-             ⟩ : TileHilbert Tile)‖ ^ (2 : ENNReal).toReal =
-          ‖ψ‖ ^ (2 : ENNReal).toReal := by
-      rw [lp.norm_rpow_eq_tsum hp, lp.norm_rpow_eq_tsum hp]
-      exact σ.tsum_eq (fun t : Tile => ‖ψ t‖ ^ (2 : ENNReal).toReal)
-    have hp' : (2 : ENNReal).toReal = (2 : ℝ) := by norm_num
-    rw [hp'] at hs
-    have hs' :
-        ‖(⟨(fun t => ψ (σ t) : PreLp (fun _ : Tile => ℝ)),
-          (memℓp_gen_iff hp).mpr
-            ((σ.summable_iff).mpr ((memℓp_gen_iff hp).mp ψ.property))
-             ⟩ : TileHilbert Tile)‖ ^ 2 = ‖ψ‖ ^ 2 := by
-      simpa only [Real.rpow_natCast] using hs
-    exact (sq_eq_sq₀ (norm_nonneg _) (norm_nonneg _)).mp hs'
+    let φ : TileHilbert Tile :=
+      ⟨(fun t => ψ (σ t) : PreLp (fun _ : Tile => ℝ)),
+        (memℓp_gen_iff hp).mpr
+          ((σ.summable_iff).mpr ((memℓp_gen_iff hp).mp ψ.property))⟩
+    change ‖φ‖ = ‖ψ‖
+    have hsum :
+        (∑' t, ‖φ t‖ ^ (2 : ENNReal).toReal) =
+          (∑' t, ‖ψ t‖ ^ (2 : ENNReal).toReal) := by
+      change (∑' t, ‖ψ (σ t)‖ ^ (2 : ENNReal).toReal) =
+        (∑' t, ‖ψ t‖ ^ (2 : ENNReal).toReal)
+      exact σ.tsum_eq _
+    calc
+      ‖φ‖ =
+          (∑' t, ‖φ t‖ ^ (2 : ENNReal).toReal) ^
+            (1 / (2 : ENNReal).toReal) :=
+        lp.norm_eq_tsum_rpow hp φ
+      _ = (∑' t, ‖ψ t‖ ^ (2 : ENNReal).toReal) ^
+            (1 / (2 : ENNReal).toReal) := by rw [hsum]
+      _ = ‖ψ‖ := (lp.norm_eq_tsum_rpow hp ψ).symm
 
 /-- The matching permutation acts by composing a state with its
 bijection of tile labels. -/
