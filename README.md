@@ -113,9 +113,26 @@ s=\frac12\pm i\lambda_n(\varepsilon).
 
 **The line is imposed by the construction of the product, not derived from any property of the Riemann zeta function.** We have not yet formalized `H_\varepsilon` on an infinite tiling, proved its required spectral properties, or connected its spectrum to the product in Lean. This project does not prove the Riemann hypothesis and does not identify `D_\varepsilon` with the zeta function.
 
-### Building and verification
+## 2. First finite-dimensional theorem: symmetry survives perturbation
 
-The established analytic core is defined in `SpectralGeometry/CanonicalProduct.lean`; `SpectralGeometry.lean` is its entry point. The toolchain is Lean 4 `v4.35.0` with the corresponding version of Mathlib.
+The first theorem about our geometric operator is formalized in **[`SpectralGeometry/FinitePerturbation.lean`](SpectralGeometry/FinitePerturbation.lean)** and checked by Lean.
+
+**In simple terms:** imagine a finite collection of tiles. Each tile has its own energy, pairs of tiles interact with symmetric weights, and we add a perturbation matrix `P` whose influence is controlled by `ε`. If both the interaction weights and `P` are symmetric, **the complete matrix remains symmetric whatever real value we choose for `ε`**:
+
+```math
+w(t,u)=w(u,t),\quad P_{tu}=P_{ut}
+\quad\Longrightarrow\quad
+(H_{\varepsilon})_{tu}=(H_{\varepsilon})_{ut}
+\quad\text{for every }\varepsilon\in\mathbb R.
+```
+
+The file also proves that setting `ε=0` recovers exactly the unperturbed geometric matrix. This is useful because real symmetric finite matrices have real eigenvalues, so changing a symmetric perturbation cannot destroy that structural feature.
+
+**Scope of the proof:** the verified theorem concerns a *finite* matrix. It does not yet establish positive eigenvalues, self-adjointness of the infinite tiling operator, discrete infinite spectrum, or inverse-square summability. Those are separate questions for later files.
+
+## 3. Building and verification
+
+The established analytic core is defined in `SpectralGeometry/CanonicalProduct.lean`, and the finite-dimensional symmetry theorem is in `SpectralGeometry/FinitePerturbation.lean`. Both are imported by the `SpectralGeometry.lean` entry point. The toolchain is Lean 4 `v4.35.0` with the corresponding version of Mathlib.
 
 ```bash
 lake update
