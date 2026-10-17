@@ -88,7 +88,6 @@ theorem infiniteLocalShiftedPerturbed_energy_ge
     _ = inner ℝ (ψ.1 : TileHilbert Tile)
           (infiniteLocalShiftedPerturbedOperator D V σ w P ε shift ψ) := by
       rw [henergy]
-      ring
 
 /-- Lower bound on the residual for any real spectral parameter.
 When the coefficient on the left is positive, this is a genuine
