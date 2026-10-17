@@ -2,7 +2,7 @@ name: Lean 4 / Mathlib proof check
 
 on:
   push:
-    branches: [main, theorem-c-infinite-tilings]
+    branches: [main]
   pull_request:
   workflow_dispatch:
 
