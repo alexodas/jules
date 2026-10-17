@@ -3,6 +3,7 @@ import SpectralGeometry.FinitePerturbation
 import SpectralGeometry.FinitePositiveEnergy
 import SpectralGeometry.FiniteGeometricEnergy
 import SpectralGeometry.FiniteStrictPositivity
+import SpectralGeometry.InfiniteOnsite
 
 /-!
 # Spectral Geometry
