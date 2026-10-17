@@ -1,69 +1,69 @@
 # Jules Spectral Geometry
 
-**Programma di ricerca matematica sperimentale in Lean 4 e Mathlib.**
+**An experimental mathematical research program in Lean 4 and Mathlib.**
 
-## 1. Intendimento generale: dalla geometria dei tasselli agli zeri di una funzione analitica
+## 1. General aim: from tile geometry to the zeros of an analytic function
 
-Vogliamo studiare come una tassellazione, anche **aperiodica** e priva di righe e colonne naturali, possa determinare uno spettro tramite un operatore geometrico. Distinguiamo ciò che **scegliamo per definire il modello** da ciò che **emerge come autovalore**.
+We want to investigate how a tiling, including an **aperiodic** one with no natural arrangement into rows and columns, can determine a spectrum through a geometric operator. We distinguish what we **choose when defining the model** from what **emerges as an eigenvalue**.
 
-A ogni tassello `t` associamo un'energia individuale `V(t)`, che potrà dipendere da un numero arbitrario di proprietà: baricentro, area, forma, orientamento, chiralità quando pertinente, gerarchia di sostituzione e altre caratteristiche geometriche. A ogni coppia di tasselli associamo un peso d'interazione `w(t,u)`, anche quando non sono adiacenti. Per interazioni simmetriche e non negative, il modello di partenza sarà:
+To each tile \`t\`, we assign an individual energy \`V(t)\`, which may depend on an arbitrary number of properties: centroid, area, shape, orientation, chirality where applicable, substitution hierarchy, and other geometric features. To each pair of tiles, we assign an interaction weight \`w(t,u)\`, even when they are not adjacent. For symmetric, nonnegative interactions, our starting model will be:
 
-```math
-(H\psi)(t)=\underbrace{V(t)\psi(t)}_{\text{energia individuale}}+\underbrace{\sum_{u\ne t}w(t,u)(\psi(t)-\psi(u))}_{\text{interazioni}}.
-```
+\`\`\`math
+(H\psi)(t)=\underbrace{V(t)\psi(t)}_{\text{individual energy}}+\underbrace{\sum_{u\ne t}w(t,u)(\psi(t)-\psi(u))}_{\text{interactions}}.
+\`\`\`
 
-Il nostro obiettivo è dimostrare dapprima proprietà molto generali di questi operatori; in seguito studieremo tassellazioni particolari, come Penrose, Ammann–Beenker, Pinwheel e Spectre. **Non sceglieremo direttamente gli autovalori**: vorremmo ricavarli dall'operatore completo. L'energia individuale e la legge delle interazioni sono dati del modello, non autovalori già fissati.
+Our goal is first to prove very general properties of these operators; we will then study particular tilings, such as Penrose, Ammann–Beenker, Pinwheel, and Spectre. **We will not choose the eigenvalues directly**: we aim to derive them from the full operator. The individual energies and the interaction law are inputs to the model, not preassigned eigenvalues.
 
-Su una porzione finita di `N` tasselli, un operatore reale simmetrico ammette `N` autovalori reali contando le molteplicità. Su infiniti tasselli potrebbero invece comparire parti continue dello spettro. Studieremo condizioni adeguate, come autoaggiuntezza, positività e risolvente compatto, che permettano di enumerare gli autovalori:
+On a finite patch of \`N\` tiles, a real symmetric operator has \`N\` real eigenvalues, counted with multiplicity. For infinitely many tiles, however, the spectrum may also have continuous parts. We will investigate suitable conditions, such as self-adjointness, positivity, and compact resolvent, that allow us to enumerate the eigenvalues:
 
-```math
+\`\`\`math
 0<\lambda_0\le\lambda_1\le\lambda_2\le\cdots,\qquad \lambda_n\longrightarrow+\infty.
-```
+\`\`\`
 
-### Il risultato analitico acquisito
+### The established analytic result
 
-Disponiamo già della **definizione e formalizzazione Lean** della funzione canonica
+We already have the **definition and Lean formalization** of the canonical function
 
-```math
+\`\`\`math
 D_q(s)=\prod_{n=0}^{\infty}\left(1-\frac{(s-c)^2}{d^2q_n^2}\right),\qquad d\ne0.
-```
+\`\`\`
 
-La definizione, il criterio di convergenza e i teoremi sulla localizzazione degli zeri si trovano nel file **[`SpectralGeometry/CanonicalProduct.lean`](SpectralGeometry/CanonicalProduct.lean)**. In particolare, se `q_n>0` e
+The definition, convergence criterion, and theorems on the localization of zeros are in **[\`SpectralGeometry/CanonicalProduct.lean\`](SpectralGeometry/CanonicalProduct.lean)**. In particular, if \`q_n>0\` and
 
-```math
+\`\`\`math
 \sum_{n=0}^{\infty}\frac1{q_n^2}<\infty,
-```
+\`\`\`
 
-i teoremi formalizzati garantiscono la convergenza appropriata del prodotto, che **tutti i suoi zeri giacciono sulla retta prescelta** `s=c+dt` con `t` reale, e che ogni livello `q_n` produce zeri in `s=c\pm d q_n`.
+the formalized theorems establish the appropriate convergence of the product, that **all its zeros lie on the prescribed line** \`s=c+dt\` with real \`t\`, and that each level \`q_n\` gives rise to zeros at \`s=c\pm d q_n\`.
 
-Il nuovo problema è ottenere questi livelli come **autovalori dell'operatore geometrico infinito**:
+The new challenge is to obtain these levels as **eigenvalues of the infinite geometric operator**:
 
-```math
+\`\`\`math
 H\psi_n=\lambda_n\psi_n,\qquad q_n=\lambda_n.
-```
+\`\`\`
 
-Dovremo dimostrare che l'operatore scelto possiede uno spettro discreto positivo enumerabile, e inoltre che
+We will need to prove that the chosen operator has an enumerable, positive, discrete spectrum and, in addition, that
 
-```math
+\`\`\`math
 \sum_{n=0}^{\infty}\frac1{\lambda_n^2}<\infty.
-```
+\`\`\`
 
-Solo allora potremo definire rigorosamente `D_H(s)=D_{\lambda}(s)`. Per `c=1/2` e `d=i` avremo zeri in
+Only then will we be able to rigorously define \`D_H(s)=D_{\lambda}(s)\`. For \`c=1/2\` and \`d=i\`, we will obtain zeros at
 
-```math
+\`\`\`math
 s=\frac12\pm i\lambda_n.
-```
+\`\`\`
 
-**La retta è imposta dalla costruzione del prodotto, non ricavata da una proprietà della zeta di Riemann.** Non abbiamo ancora formalizzato l'operatore infinito o il suo legame spettrale con il prodotto; saranno oggetto dei prossimi risultati. Questo progetto non dimostra l'ipotesi di Riemann e non identifica `D_q` con la zeta.
+**The line is imposed by the construction of the product, not derived from any property of the Riemann zeta function.** We have not yet formalized the infinite operator or its spectral connection to the product; these will be the subject of future results. This project does not prove the Riemann hypothesis and does not identify \`D_q\` with the zeta function.
 
-### Compilazione e verifica
+### Building and verification
 
-Il nucleo analitico è definito in `SpectralGeometry/CanonicalProduct.lean`; `SpectralGeometry.lean` ne è il punto di ingresso. La toolchain è Lean 4 `v4.35.0` con Mathlib della stessa versione.
+The analytic core is defined in \`SpectralGeometry/CanonicalProduct.lean\`; \`SpectralGeometry.lean\` is its entry point. The toolchain is Lean 4 \`v4.35.0\` with the corresponding version of Mathlib.
 
-```bash
+\`\`\`bash
 lake update
 lake exe cache get
 lake build
-```
+\`\`\`
 
-La verifica automatica di GitHub Actions controlla la compilazione su ogni modifica a `main` e su ogni pull request.
+GitHub Actions automatically checks compilation on every change to \`main\` and on every pull request.
