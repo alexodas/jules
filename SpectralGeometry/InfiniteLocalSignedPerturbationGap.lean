@@ -34,14 +34,16 @@ theorem infiniteLocalBoundedPerturbation_inner_abs_le
   have hP : ‖P ψ‖ ≤ ‖P‖ * ‖ψ‖ := P.le_opNorm ψ
   have hupper : inner ℝ ψ (P ψ) ≤ ‖ψ‖ * ‖P ψ‖ :=
     real_inner_le_norm _ _
-  have hlower : inner ℝ ψ (-(P ψ)) ≤ ‖ψ‖ * ‖-(P ψ)‖ :=
+  have hlower :
+      inner ℝ ψ ((-1 : ℝ) • (P ψ)) ≤ ‖ψ‖ * ‖((-1 : ℝ) • (P ψ))‖ :=
     real_inner_le_norm _ _
-  simp only [real_inner_neg_right, norm_neg] at hlower
+  have hlower' : -(inner ℝ ψ (P ψ)) ≤ ‖ψ‖ * ‖P ψ‖ := by
+    simpa [real_inner_smul_right] using hlower
   have hmul : ‖ψ‖ * ‖P ψ‖ ≤ ‖P‖ * ‖ψ‖ ^ 2 := by
     have h := mul_le_mul_of_nonneg_left hP (norm_nonneg ψ)
     nlinarith
   apply abs_le.mpr
-  constructor <;> linarith
+  constructor <;> linarith [hlower']
 
 /-- No real point eigenvalue of the infinite local matching operator
 with an arbitrary signed bounded perturbation lies below -|ε|‖P‖.
