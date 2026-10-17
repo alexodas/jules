@@ -21,25 +21,25 @@ variable {Tile : Type*}
 onsite multiplication, irrespective of the size of the potential there. -/
 theorem infiniteOnsiteDomain_single
     (V : Tile → ℝ) (i : Tile) (a : ℝ) :
-    lp.single (2 : ℝ≥0∞) i a ∈ infiniteOnsiteDomain V := by
+    lp.single (2 : ENNReal) i a ∈ infiniteOnsiteDomain V := by
   classical
   change Memℓp
-    (fun t : Tile => V t * (lp.single (2 : ℝ≥0∞) i a) t) 2
+    (fun t : Tile => V t * (lp.single (2 : ENNReal) i a) t) 2
   have hsupp :
       Set.Finite
-        {t : Tile | V t * (lp.single (2 : ℝ≥0∞) i a) t ≠ 0} := by
+        {t : Tile | V t * (lp.single (2 : ENNReal) i a) t ≠ 0} := by
     apply (Set.finite_singleton i).subset
     intro t ht
     by_contra hti
-    have hzero : (lp.single (2 : ℝ≥0∞) i a) t = 0 :=
-      lp.single_apply_ne (2 : ℝ≥0∞) i a hti
+    have hzero : (lp.single (2 : ENNReal) i a) t = 0 :=
+      lp.single_apply_ne (2 : ENNReal) i a hti
     simp [hzero] at ht
   exact (memℓp_zero hsupp).of_exponent_ge (by norm_num)
 
 /-- Every finite sum of single-tile states lies in the natural domain. -/
 theorem infiniteOnsiteDomain_finset_sum
     (V : Tile → ℝ) (ψ : TileHilbert Tile) (s : Finset Tile) :
-    (∑ i ∈ s, lp.single (2 : ℝ≥0∞) i (ψ i)) ∈
+    (∑ i ∈ s, lp.single (2 : ENNReal) i (ψ i)) ∈
       infiniteOnsiteDomain V := by
   classical
   apply Submodule.sum_mem
@@ -57,8 +57,8 @@ theorem infiniteOnsiteDomain_dense
   apply Set.eq_univ_of_forall
   intro ψ
   have hsum : HasSum
-      (fun i : Tile => lp.single (2 : ℝ≥0∞) i (ψ i)) ψ :=
-    lp.hasSum_single (by norm_num : (2 : ℝ≥0∞) ≠ ⊤) ψ
+      (fun i : Tile => lp.single (2 : ENNReal) i (ψ i)) ψ :=
+    lp.hasSum_single (by norm_num : (2 : ENNReal) ≠ ⊤) ψ
   apply mem_closure_of_tendsto hsum
   exact Filter.Eventually.of_forall (fun s : Finset Tile =>
     infiniteOnsiteDomain_finset_sum V ψ s)
