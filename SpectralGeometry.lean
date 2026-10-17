@@ -1,6 +1,7 @@
 import SpectralGeometry.CanonicalProduct
 import SpectralGeometry.FinitePerturbation
 import SpectralGeometry.FinitePositiveEnergy
+import SpectralGeometry.FiniteGeometricEnergy
 
 /-!
 # Spectral Geometry
