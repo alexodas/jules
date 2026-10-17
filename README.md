@@ -12,6 +12,10 @@ To each tile `t`, we assign an individual energy `V(t)`, which may depend on an 
 (H\psi)(t)=\underbrace{V(t)\psi(t)}_{\text{individual energy}}+\underbrace{\sum_{u\ne t}w(t,u)(\psi(t)-\psi(u))}_{\text{interactions}}.
 ```
 
+Here, **`ψ` is a function that assigns an amplitude `ψ(t)` to each individual tile `t`**. It describes a configuration of the entire tiling, rather than an intrinsic geometric property of a tile. The interaction term compares its values on two tiles, `ψ(t)` and `ψ(u)`; the pair-dependent quantity is the weight `w(t,u)`. We do not prescribe `ψ` as a formula in the tile's geometric features: those features determine `V` and `w`, which in turn determine the operator `H`.
+
+An **eigenfunction** `ψₙ` is a nonzero configuration satisfying `Hψₙ = λₙψₙ`; the corresponding number `λₙ` is its **eigenvalue**. For an infinite tiling, configurations must belong to an appropriate function space (typically square-summable functions), and eigenfunctions must lie in the domain of `H`. These analytic requirements are part of the theory we intend to develop.
+
 Our goal is first to prove very general properties of these operators; we will then study particular tilings, such as Penrose, Ammann–Beenker, Pinwheel, and Spectre. **We will not choose the eigenvalues directly**: we aim to derive them from the full operator. The individual energies and the interaction law are inputs to the model, not preassigned eigenvalues.
 
 On a finite patch of `N` tiles, a real symmetric operator has `N` real eigenvalues, counted with multiplicity. For infinitely many tiles, however, the spectrum may also have continuous parts. We will investigate suitable conditions, such as self-adjointness, positivity, and compact resolvent, that allow us to enumerate the eigenvalues:
