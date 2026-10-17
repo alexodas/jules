@@ -8,6 +8,8 @@ import SpectralGeometry.InfiniteOnsiteDensity
 import SpectralGeometry.InfiniteOnsiteEigenvalues
 import SpectralGeometry.InfiniteOnsiteSummability
 import SpectralGeometry.InfiniteOnsitePowerGrowth
+import SpectralGeometry.InfiniteFiniteEdgeInteraction
+import SpectralGeometry.InfiniteBoundedPerturbation
 
 /-!
 # Spectral Geometry
