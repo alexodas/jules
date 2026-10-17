@@ -6,63 +6,116 @@
 
 We want to investigate how a tiling, including an **aperiodic** one with no natural arrangement into rows and columns, can determine a spectrum through a geometric operator. We distinguish what we **choose when defining the model** from what **emerges as an eigenvalue**.
 
-To each tile `t`, we assign an individual energy `V(t)`, which may depend on an arbitrary number of properties: centroid, area, shape, orientation, chirality where applicable, substitution hierarchy, and other geometric features. To each pair of tiles, we assign an interaction weight `w(t,u)`, even when they are not adjacent. For symmetric, nonnegative interactions, our starting model will be:
+### A geometric operator with three contributions
+
+Our proposed model is a one-parameter family of operators:
 
 ```math
-(H\psi)(t)=\underbrace{V(t)\psi(t)}_{\text{individual energy}}+\underbrace{\sum_{u\ne t}w(t,u)(\psi(t)-\psi(u))}_{\text{interactions}}.
+H_{\varepsilon}=V+L_w+\varepsilon P,\qquad \varepsilon\in\mathbb R.
 ```
 
-Here, **`ψ` is a function that assigns an amplitude `ψ(t)` to each individual tile `t`**. It describes a configuration of the entire tiling, rather than an intrinsic geometric property of a tile. The interaction term compares its values on two tiles, `ψ(t)` and `ψ(u)`; the pair-dependent quantity is the weight `w(t,u)`. We do not prescribe `ψ` as a formula in the tile's geometric features: those features determine `V` and `w`, which in turn determine the operator `H`.
-
-An **eigenfunction** `ψₙ` is a nonzero configuration satisfying `Hψₙ = λₙψₙ`; the corresponding number `λₙ` is its **eigenvalue**. For an infinite tiling, configurations must belong to an appropriate function space (typically square-summable functions), and eigenfunctions must lie in the domain of `H`. These analytic requirements are part of the theory we intend to develop.
-
-Our goal is first to prove very general properties of these operators; we will then study particular tilings, such as Penrose, Ammann–Beenker, Pinwheel, and Spectre. **We will not choose the eigenvalues directly**: we aim to derive them from the full operator. The individual energies and the interaction law are inputs to the model, not preassigned eigenvalues.
-
-On a finite patch of `N` tiles, a real symmetric operator has `N` real eigenvalues, counted with multiplicity. For infinitely many tiles, however, the spectrum may also have continuous parts. We will investigate suitable conditions, such as self-adjointness, positivity, and compact resolvent, that allow us to enumerate the eigenvalues:
+Its action on a configuration `ψ`, evaluated at a tile `t`, is:
 
 ```math
-0<\lambda_0\le\lambda_1\le\lambda_2\le\cdots,\qquad \lambda_n\longrightarrow+\infty.
+(H_{\varepsilon}\psi)(t)=
+\underbrace{V(t)\psi(t)}_{\text{individual energy}}
++\underbrace{\sum_{u\ne t}w(t,u)\bigl(\psi(t)-\psi(u)\bigr)}_{\text{interactions}}
++\underbrace{\varepsilon(P\psi)(t)}_{\text{controlled perturbation}}.
 ```
+
+The three contributions play different roles:
+
+- **Individual energy `V(t)`.** We assign an energy to each tile using any number of geometric features: centroid, area, shape, orientation, chirality where applicable, substitution hierarchy, or other properties.
+- **Interactions `w(t,u)`.** We prescribe weights between pairs of tiles, including nonadjacent ones. Initially, we consider symmetric nonnegative weights, `w(t,u)=w(u,t)\ge0`, so `L_w` is a weighted graph Laplacian.
+- **Perturbation `P`.** We introduce an additional linear operator, scaled by the adjustable parameter `ε`. It may represent a local defect, a change in couplings, or a collective effect involving distant tiles. We study it separately even when it could be absorbed into `V` or `w`. At `ε=0`, we recover the unperturbed operator `H_0=V+L_w`.
+
+Here, **`ψ` assigns an amplitude `ψ(t)` to every tile**. It is a configuration of the entire tiling, not an intrinsic property of one tile. The interaction term compares amplitudes on two tiles; `w(t,u)` describes their geometric relationship. We do not preselect the eigenfunctions using formulas for individual tile features.
+
+For a finite patch of `N` tiles, after ordering the tiles, the same construction has the matrix form:
+
+```math
+H_{\varepsilon}=
+\mathrm{diag}\left(V_i+\sum_jw_{ij}\right)-W+\varepsilon P,
+\qquad W=(w_{ij}).
+```
+
+The geometry determines the matrix entries; **we do not choose the eigenvalues**. The perturbation matrix can have both diagonal and off-diagonal entries. If `P` is real symmetric, then `H_{\varepsilon}` is real symmetric for any real `ε` and has `N` real eigenvalues, counted with multiplicity. Symmetry by itself does not guarantee positivity.
+
+An **eigenfunction** `ψ_n^{(\varepsilon)}` is a nonzero configuration satisfying:
+
+```math
+H_{\varepsilon}\psi_n^{(\varepsilon)}
+=\lambda_n(\varepsilon)\psi_n^{(\varepsilon)}.
+```
+
+Both eigenfunctions and eigenvalues may change with `ε`. We are interested primarily in **the eigenvalues `λ_n(ε)`**, not in the coefficients of an arbitrary configuration expanded in eigenfunctions.
+
+### From finite matrices to an infinite tiling
+
+Our first goal is to prove properties that hold for general classes of geometric operators and perturbations. We can then study particular tilings, such as Penrose, Ammann–Beenker, Pinwheel, and Spectre, without imposing a periodic lattice.
+
+For infinitely many tiles, a natural state space is the space of square-summable amplitudes `ℓ²(T)`. We must rigorously define the operator domains, the convergence of interaction and perturbation terms, and conditions for self-adjointness. Unlike a finite symmetric matrix, an infinite operator can have continuous spectrum.
+
+We will investigate hypotheses yielding a positive, discrete spectrum with finite multiplicities, for example through a positive self-adjoint operator with compact resolvent:
+
+```math
+0<\lambda_0(\varepsilon)\le\lambda_1(\varepsilon)\le\cdots,
+\qquad \lambda_n(\varepsilon)\longrightarrow+\infty.
+```
+
+Perturbation theory is part of this program. A bounded self-adjoint perturbation preserves self-adjointness and compact resolvent when the unperturbed operator has those properties, but **positivity requires an additional condition** (for example, a perturbation sufficiently small relative to a positive lower bound). We will investigate how eigenvalues move with `ε` and when the analytic conditions below remain valid. These are mathematical objectives, not yet Lean theorems about an infinite geometric operator.
 
 ### The established analytic result
 
-We already have the **definition and Lean formalization** of the canonical function
+We already have the **definition and Lean formalization** of the canonical product:
 
 ```math
-D_q(s)=\prod_{n=0}^{\infty}\left(1-\frac{(s-c)^2}{d^2q_n^2}\right),\qquad d\ne0.
+D_q(s)=\prod_{n=0}^{\infty}
+\left(1-\frac{(s-c)^2}{d^2q_n^2}\right),
+\qquad d\ne0.
 ```
 
-The definition, convergence criterion, and theorems on the localization of zeros are in **[`SpectralGeometry/CanonicalProduct.lean`](SpectralGeometry/CanonicalProduct.lean)**. In particular, if `q_n>0` and
+Its definition, convergence criterion, and zero-localization theorems are in **[`SpectralGeometry/CanonicalProduct.lean`](SpectralGeometry/CanonicalProduct.lean)**. In particular, if the levels `q_n` are positive and
 
 ```math
 \sum_{n=0}^{\infty}\frac1{q_n^2}<\infty,
 ```
 
-the formalized theorems establish the appropriate convergence of the product, that **all its zeros lie on the prescribed line** `s=c+dt` with real `t`, and that each level `q_n` gives rise to zeros at `s=c\pm d q_n`.
+the formalized theorems establish the appropriate convergence of the product, that **all its zeros lie on the prescribed affine line** `s=c+dt` with real `t`, and that each level `q_n` gives rise to zeros at `s=c\pm d q_n`.
 
-The new challenge is to obtain these levels as **eigenvalues of the infinite geometric operator**:
-
-```math
-H\psi_n=\lambda_n\psi_n,\qquad q_n=\lambda_n.
-```
-
-We will need to prove that the chosen operator has an enumerable, positive, discrete spectrum and, in addition, that
+Our new challenge is to obtain these levels from **the full infinite geometric operator, including its controlled perturbation**, by setting:
 
 ```math
-\sum_{n=0}^{\infty}\frac1{\lambda_n^2}<\infty.
+q_n=\lambda_n(\varepsilon),\qquad
+H_\varepsilon\psi_n^{(\varepsilon)}
+=\lambda_n(\varepsilon)\psi_n^{(\varepsilon)}.
 ```
 
-Only then will we be able to rigorously define `D_H(s)=D_{\lambda}(s)`. For `c=1/2` and `d=i`, we will obtain zeros at
+We must prove that this operator has the required positive, discrete eigenvalue sequence and that, for the chosen `ε`,
 
 ```math
-s=\frac12\pm i\lambda_n.
+\sum_{n=0}^{\infty}\frac1{\lambda_n(\varepsilon)^2}<\infty.
 ```
 
-**The line is imposed by the construction of the product, not derived from any property of the Riemann zeta function.** We have not yet formalized the infinite operator or its spectral connection to the product; these will be the subject of future results. This project does not prove the Riemann hypothesis and does not identify `D_q` with the zeta function.
+Under these conditions, we can apply the existing canonical-product theory to the **spectrally determined family**:
+
+```math
+D_{\varepsilon}(s)=
+\prod_{n=0}^{\infty}
+\left(1-\frac{(s-c)^2}{d^2\lambda_n(\varepsilon)^2}\right).
+```
+
+For `c=1/2` and `d=i`, its zeros lie on the prescribed critical line, at heights given by the eigenvalues:
+
+```math
+s=\frac12\pm i\lambda_n(\varepsilon).
+```
+
+**The line is imposed by the construction of the product, not derived from any property of the Riemann zeta function.** We have not yet formalized `H_\varepsilon` on an infinite tiling, proved its required spectral properties, or connected its spectrum to the product in Lean. This project does not prove the Riemann hypothesis and does not identify `D_\varepsilon` with the zeta function.
 
 ### Building and verification
 
-The analytic core is defined in `SpectralGeometry/CanonicalProduct.lean`; `SpectralGeometry.lean` is its entry point. The toolchain is Lean 4 `v4.35.0` with the corresponding version of Mathlib.
+The established analytic core is defined in `SpectralGeometry/CanonicalProduct.lean`; `SpectralGeometry.lean` is its entry point. The toolchain is Lean 4 `v4.35.0` with the corresponding version of Mathlib.
 
 ```bash
 lake update
