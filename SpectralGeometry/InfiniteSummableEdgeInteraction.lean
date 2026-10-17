@@ -1,6 +1,7 @@
 import SpectralGeometry.InfiniteBoundedPerturbation
 import Mathlib.Analysis.InnerProductSpace.LinearMap
 import Mathlib.Analysis.Normed.Operator.Bilinear
+import Mathlib.Topology.Algebra.InfiniteSum.ContinuousEval
 
 /-!
 # Countably many summable geometric interactions on an infinite Hilbert space
@@ -96,7 +97,6 @@ theorem infiniteIndexedEdgeOperator_inner
   simp only [infiniteIndexedEdgeOperator, ContinuousLinearMap.smul_apply,
     InnerProductSpace.rankOne_apply, smul_smul, real_inner_smul_right]
   rw [real_inner_comm ψ (infiniteEdgeVector (ends n).1 (ends n).2)]
-  ring
 
 /-- Every indexed edge operator is symmetric, independently of weight sign. -/
 theorem infiniteIndexedEdgeOperator_symmetric
@@ -118,9 +118,10 @@ theorem infiniteIndexedEdgeOperator_energy_nonneg
     (sq_nonneg (inner ℝ (infiniteEdgeVector (ends n).1 (ends n).2) ψ))
     using 1 <;> ring
 
+set_option maxHeartbeats 700000
+
 /-- Inner products commute with the countable operator sum, by
 operator-norm summability and continuity of evaluation and pairing. -/
-set_option maxHeartbeats 1600000 in
 theorem infiniteSummableEdgeLaplacian_inner_eq_tsum
     (ends : ℕ → Tile × Tile) (w : ℕ → ℝ)
     (hw : Summable (fun n => ‖w n‖))
@@ -130,9 +131,9 @@ theorem infiniteSummableEdgeLaplacian_inner_eq_tsum
   have hOp := infiniteIndexedEdgeOperators_summable ends w hw
   have hState :
       Summable (fun n => infiniteIndexedEdgeOperator ends w n φ) :=
-    (ContinuousLinearMap.apply ℝ (TileHilbert Tile) φ).summable hOp
+    summable_apply hOp φ
   change inner ℝ ψ ((∑' n, infiniteIndexedEdgeOperator ends w n) φ) = _
-  rw [(ContinuousLinearMap.apply ℝ (TileHilbert Tile) φ).map_tsum hOp]
+  rw [tsum_apply hOp φ]
   simpa using (innerSL ℝ ψ).map_tsum hState
 
 /-- The countably infinite interaction has nonnegative finite quadratic
