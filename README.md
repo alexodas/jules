@@ -511,9 +511,41 @@ For `D` matching colors with nonnegative weights `wᵢ≤W` and `W≥0`, the ear
 
 **Scope:** this module establishes explicit norm comparisons, not closedness, self-adjointness, surjectivity, compact resolvent, discreteness of spectrum, or eigenvalue summability. Showing that the natural onsite operator is closed, then transferring this property to the boundedly perturbed operator, is a separate next step.
 
+### 4.14. Closed graphs of the onsite and full infinite local operators
+
+The Lean module **[`SpectralGeometry/InfiniteLocalClosedGraph.lean`](SpectralGeometry/InfiniteLocalClosedGraph.lean)** establishes a first genuine **closed-operator** property, building on the graph-norm estimates of §4.13.
+
+The onsite operator `M_V` is multiplication by an arbitrary real onsite potential `V(t)`, possibly unbounded. Its natural domain is
+
+```math
+D(V)=\{\psi\in\ell^2(T): V\psi\in\ell^2(T)\}.
+```
+
+The module proves that the graph
+
+```math
+G(M_V)=\{(\psi,M_V\psi):\psi\in D(V)\}
+\subseteq\ell^2(T)\times\ell^2(T)
+```
+
+is **closed**. Informally, whenever the inputs `ψₙ` converge in `ℓ²` and their outputs `M_V ψₙ` also converge in `ℓ²`, the limiting input is still in the natural domain, and the limiting output equals the onsite operator applied to it. The proof identifies the graph with the coordinatewise equations `η(t)=V(t)ψ(t)`; each coordinate evaluation on `ℓ²` is continuous, so these simultaneous equations define a closed set.
+
+The interaction Laplacian built from finitely many matching colors is a **bounded** operator, as is any bounded linear perturbation `P` and the identity shift. Therefore, for
+
+```math
+H_{\varepsilon,m}=M_V+L_w+\varepsilon P+mI
+\quad\text{on }D(V),
+```
+
+the graph `G(H_{\varepsilon,m})` is also **closed**. The proof is explicit: subtracting the bounded correction `B=L_w+εP+mI` from the output of a graph pair reduces it to a pair in `G(M_V)`. This subtraction is continuous.
+
+No nonnegativity of `V`, matching weights or `P` is needed for closedness, and no symmetry of `P` is assumed. The matching-family representation remains the same special class of infinite local interactions as in §4.9.
+
+**Scope:** closedness is **not the same as self-adjointness**. In particular, this result alone does not show that the operator equals its adjoint, has a resolvent at any given point, has compact resolvent, possesses a purely discrete spectrum, or satisfies inverse-square spectral summability. These remain separate formalization goals.
+
 ## 5. Building and verification
 
-The established analytic core is in `SpectralGeometry/CanonicalProduct.lean`. The finite-dimensional geometric results are in `SpectralGeometry/FinitePerturbation.lean`, `SpectralGeometry/FinitePositiveEnergy.lean`, `SpectralGeometry/FiniteGeometricEnergy.lean`, and `SpectralGeometry/FiniteStrictPositivity.lean`. These four finite-dimensional modules and the fourteen infinite-dimensional modules `SpectralGeometry/InfiniteOnsite.lean`, `SpectralGeometry/InfiniteOnsiteDensity.lean`, `SpectralGeometry/InfiniteOnsiteEigenvalues.lean`, `SpectralGeometry/InfiniteOnsiteSummability.lean`, `SpectralGeometry/InfiniteOnsitePowerGrowth.lean`, `SpectralGeometry/InfiniteFiniteEdgeInteraction.lean`, `SpectralGeometry/InfiniteBoundedPerturbation.lean`, `SpectralGeometry/InfiniteSummableEdgeInteraction.lean`, `SpectralGeometry/InfiniteLocalMatching.lean`, `SpectralGeometry/InfiniteLocalBoundedDegree.lean`, `SpectralGeometry/InfiniteLocalEigenvalueBounds.lean`, `SpectralGeometry/InfiniteLocalSignedPerturbationGap.lean`, `SpectralGeometry/InfiniteLocalCoerciveGap.lean`, and `SpectralGeometry/InfiniteLocalGraphNorm.lean` are imported by the `SpectralGeometry.lean` entry point. The toolchain is Lean 4 `v4.35.0` with the corresponding version of Mathlib.
+The established analytic core is in `SpectralGeometry/CanonicalProduct.lean`. The finite-dimensional geometric results are in `SpectralGeometry/FinitePerturbation.lean`, `SpectralGeometry/FinitePositiveEnergy.lean`, `SpectralGeometry/FiniteGeometricEnergy.lean`, and `SpectralGeometry/FiniteStrictPositivity.lean`. These four finite-dimensional modules and the fifteen infinite-dimensional modules `SpectralGeometry/InfiniteOnsite.lean`, `SpectralGeometry/InfiniteOnsiteDensity.lean`, `SpectralGeometry/InfiniteOnsiteEigenvalues.lean`, `SpectralGeometry/InfiniteOnsiteSummability.lean`, `SpectralGeometry/InfiniteOnsitePowerGrowth.lean`, `SpectralGeometry/InfiniteFiniteEdgeInteraction.lean`, `SpectralGeometry/InfiniteBoundedPerturbation.lean`, `SpectralGeometry/InfiniteSummableEdgeInteraction.lean`, `SpectralGeometry/InfiniteLocalMatching.lean`, `SpectralGeometry/InfiniteLocalBoundedDegree.lean`, `SpectralGeometry/InfiniteLocalEigenvalueBounds.lean`, `SpectralGeometry/InfiniteLocalSignedPerturbationGap.lean`, `SpectralGeometry/InfiniteLocalCoerciveGap.lean`, `SpectralGeometry/InfiniteLocalGraphNorm.lean`, and `SpectralGeometry/InfiniteLocalClosedGraph.lean` are imported by the `SpectralGeometry.lean` entry point. The toolchain is Lean 4 `v4.35.0` with the corresponding version of Mathlib.
 
 ```bash
 lake update
