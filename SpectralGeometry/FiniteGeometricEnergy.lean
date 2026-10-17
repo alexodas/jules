@@ -80,12 +80,8 @@ private theorem geometricEnergy_expansion
     _ = (∑ t : Tile, V t * ψ t ^ 2) +
         (∑ t : Tile, ∑ u : Tile, w t u * ψ t ^ 2) -
           (∑ t : Tile, ∑ u : Tile, w t u * ψ t * ψ u) := by
-            simp only [Finset.sum_sub_distrib, Finset.sum_add_distrib,
-              Finset.sum_mul]
-            congr 1
-            apply Finset.sum_congr rfl
-            intro t ht
-            ring
+            simp only [add_mul, Finset.sum_mul,
+              Finset.sum_add_distrib, Finset.sum_sub_distrib]
 
 /-- Symmetric weights make the two quadratic diagonal pair sums equal. -/
 private theorem geometricEnergy_swap
