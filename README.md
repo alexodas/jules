@@ -301,9 +301,41 @@ The file proves that these levels are positive and form an `Admissible` sequence
 
 **Scope:** indexing the tiles and assuming this lower bound are external modeling choices here; no Penrose, Pinwheel, or other aperiodic tiling has been proved to generate the prescribed growth. The converse divergence applies only to the exact power-law example, not to all sequences satisfying a weak lower bound. These are statements about the diagonal onsite spectrum and its analytic product, **not** self-adjointness or compact resolvent for the full interacting operator and **not** an identification with the Riemann zeta zeros.
 
+### 4.6. Geometric interactions acting on infinite square-summable states
+
+The Lean module **[`SpectralGeometry/InfiniteFiniteEdgeInteraction.lean`](SpectralGeometry/InfiniteFiniteEdgeInteraction.lean)** introduces genuine pairwise interaction operators on the infinite Hilbert space `ℓ²(T)`. For an edge joining tiles `a` and `b` with weight `w≥0`, its action is
+
+```math
+L_{a,b}\psi = w(\psi(a)-\psi(b))(\delta_a-\delta_b).
+```
+
+This state remains square-summable even when `T` is infinite: only two coordinates can be affected. Its exact quadratic energy is
+
+```math
+\langle \psi,L_{a,b}\psi\rangle
+ = w(\psi(a)-\psi(b))^2\ge0.
+```
+
+The module proves that the edge operator is linear and symmetric, and that **any finite collection of these geometric edges** gives a well-defined symmetric, nonnegative interaction on infinite `ℓ²(T)`.
+
+**Precise scope:** the ambient set of tiles may be infinite, but the number of active interaction edges in this first construction is **finite**. The genuinely infinite-edge Laplacian still needs a convergence or uniform-weight hypothesis. This theorem is not yet a model of every edge in an infinite Penrose or other tiling.
+
+### 4.7. Combining infinite onsite energies, interactions, and perturbations
+
+The Lean module **[`SpectralGeometry/InfiniteBoundedPerturbation.lean`](SpectralGeometry/InfiniteBoundedPerturbation.lean)** combines the existing potentially unbounded onsite operator `M_V` with the finite-edge interaction operator and an **everywhere-defined bounded linear** perturbation `P`:
+
+```math
+H_\varepsilon\psi = M_V\psi+L_{E,w}\psi+\varepsilon P\psi,
+\qquad \psi\in D(V).
+```
+
+All terms map the same state into `ℓ²(T)`; hence their sum is defined on the existing dense onsite domain `D(V)`. Lean formalizes the **exact decomposition of the full quadratic energy**. Assuming `V(t)≥0`, nonnegative active edge weights, `\langle\psi,P\psi\rangle≥0` and `\varepsilon≥0`, the combined energy is nonnegative. The combined operator is also symmetric if the perturbation is symmetric.
+
+**Crucial distinction:** positivity *does* survive an operator sum when the three quadratic forms are well-defined and nonnegative on a shared domain (and the perturbation has the correct sign). However, **self-adjointness, compact resolvent, discrete spectrum, strict positivity and inverse-square spectral summability do not follow automatically from these componentwise hypotheses**. The `V(n)` growth results in §§4.4–4.5 currently refer only to the diagonal operator; they are not yet theorems about eigenvalues of `H_\varepsilon`.
+
 ## 5. Building and verification
 
-The established analytic core is in `SpectralGeometry/CanonicalProduct.lean`. The finite-dimensional geometric results are in `SpectralGeometry/FinitePerturbation.lean`, `SpectralGeometry/FinitePositiveEnergy.lean`, `SpectralGeometry/FiniteGeometricEnergy.lean`, and `SpectralGeometry/FiniteStrictPositivity.lean`. These five modules and the five infinite-dimensional modules `SpectralGeometry/InfiniteOnsite.lean`, `SpectralGeometry/InfiniteOnsiteDensity.lean`, `SpectralGeometry/InfiniteOnsiteEigenvalues.lean`, `SpectralGeometry/InfiniteOnsiteSummability.lean`, and `SpectralGeometry/InfiniteOnsitePowerGrowth.lean` are imported by the `SpectralGeometry.lean` entry point. The toolchain is Lean 4 `v4.35.0` with the corresponding version of Mathlib.
+The established analytic core is in `SpectralGeometry/CanonicalProduct.lean`. The finite-dimensional geometric results are in `SpectralGeometry/FinitePerturbation.lean`, `SpectralGeometry/FinitePositiveEnergy.lean`, `SpectralGeometry/FiniteGeometricEnergy.lean`, and `SpectralGeometry/FiniteStrictPositivity.lean`. These five modules and the seven infinite-dimensional modules `SpectralGeometry/InfiniteOnsite.lean`, `SpectralGeometry/InfiniteOnsiteDensity.lean`, `SpectralGeometry/InfiniteOnsiteEigenvalues.lean`, `SpectralGeometry/InfiniteOnsiteSummability.lean`, `SpectralGeometry/InfiniteOnsitePowerGrowth.lean`, `SpectralGeometry/InfiniteFiniteEdgeInteraction.lean`, and `SpectralGeometry/InfiniteBoundedPerturbation.lean` are imported by the `SpectralGeometry.lean` entry point. The toolchain is Lean 4 `v4.35.0` with the corresponding version of Mathlib.
 
 ```bash
 lake update
