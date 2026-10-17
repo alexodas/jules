@@ -51,13 +51,13 @@ theorem infiniteLocalGraphNorm_correction_le
           ‖L state + ε • P state‖ + ‖shift • state‖ :=
         norm_add_le _ _
       _ ≤ (‖L state‖ + ‖ε • P state‖) + ‖shift • state‖ :=
-        add_le_add_right (norm_add_le _ _) _
+        add_le_add_left (norm_add_le _ _) _
       _ = (‖L state‖ + |ε| * ‖P state‖) +
           |shift| * ‖state‖ := by
         simp only [norm_smul, Real.norm_eq_abs]
       _ ≤ (‖L‖ * ‖state‖ + |ε| * (‖P‖ * ‖state‖)) +
           |shift| * ‖state‖ := by
-        apply add_le_add_right
+        apply add_le_add_left
         exact add_le_add hL
           (mul_le_mul_of_nonneg_left hP (abs_nonneg ε))
       _ = (‖L‖ + |ε| * ‖P‖ + |shift|) * ‖state‖ := by ring
@@ -98,7 +98,7 @@ theorem infiniteLocalGraphNorm_full_le
     _ ≤ ‖infiniteOnsiteOperator V ψ‖ +
           ‖infiniteLocalShiftedPerturbedOperator D V σ w P ε shift ψ -
             infiniteOnsiteOperator V ψ‖ := norm_add_le _ _
-    _ ≤ _ := add_le_add_left hcor _
+    _ ≤ _ := add_le_add_right hcor _
 
 /-- Conversely, the onsite graph contribution is controlled by the full
 operator graph contribution, with exactly the same bounded constant. -/
@@ -125,7 +125,7 @@ theorem infiniteLocalGraphNorm_onsite_le
     _ ≤ ‖infiniteLocalShiftedPerturbedOperator D V σ w P ε shift ψ‖ +
           ‖infiniteLocalShiftedPerturbedOperator D V σ w P ε shift ψ -
             infiniteOnsiteOperator V ψ‖ := norm_sub_le _ _
-    _ ≤ _ := add_le_add_left hcor _
+    _ ≤ _ := add_le_add_right hcor _
 
 /-- With D involutive matching colors and weights bounded by W,
 the geometric constant 2DW replaces the abstract interaction norm. -/
@@ -152,6 +152,6 @@ theorem infiniteLocalGraphNorm_onsite_geometric_bound
   have hscaled :=
     mul_le_mul_of_nonneg_right hcoeff
       (norm_nonneg (ψ.1 : TileHilbert Tile))
-  exact hbase.trans (add_le_add_left hscaled _)
+  exact hbase.trans (add_le_add_right hscaled _)
 
 end SpectralGeometry
