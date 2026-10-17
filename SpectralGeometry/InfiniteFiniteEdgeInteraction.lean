@@ -58,11 +58,11 @@ noncomputable def infiniteEdgeLaplacian (a b : Tile) (w : ℝ) :
 the difference of amplitudes at its two endpoints. -/
 theorem infiniteEdgeLaplacian_inner
     (a b : Tile) (w : ℝ) (ψ φ : TileHilbert Tile) :
-    ⟪ψ, infiniteEdgeLaplacian a b w φ⟫_ℝ =
+    (inner ℝ ψ infiniteEdgeLaplacian a b w φ) =
       w * (φ a - φ b) * (ψ a - ψ b) := by
-  change ⟪ψ, (w * (φ a - φ b)) • infiniteEdgeVector a b⟫_ℝ = _
+  change (inner ℝ ψ (w * (φ a - φ b)) • infiniteEdgeVector a b) = _
   rw [real_inner_smul_right]
-  have he : ⟪ψ, infiniteEdgeVector a b⟫_ℝ = ψ a - ψ b := by
+  have he : (inner ℝ ψ infiniteEdgeVector a b) = ψ a - ψ b := by
     simp [infiniteEdgeVector, inner_sub_right, lp.inner_single_right,
       RCLike.inner_apply]
   rw [he]
@@ -71,16 +71,16 @@ theorem infiniteEdgeLaplacian_inner
 /-- An individual undirected edge interaction is symmetric. -/
 theorem infiniteEdgeLaplacian_symmetric
     (a b : Tile) (w : ℝ) (ψ φ : TileHilbert Tile) :
-    ⟪ψ, infiniteEdgeLaplacian a b w φ⟫_ℝ =
-      ⟪infiniteEdgeLaplacian a b w ψ, φ⟫_ℝ := by
-  rw [real_inner_comm]
+    (inner ℝ ψ infiniteEdgeLaplacian a b w φ) =
+      (inner ℝ infiniteEdgeLaplacian a b w ψ φ) := by
+  rw [real_inner_comm (infiniteEdgeLaplacian a b w ψ) φ]
   rw [infiniteEdgeLaplacian_inner, infiniteEdgeLaplacian_inner]
   ring
 
 /-- Nonnegative weights give nonnegative energy on any ℓ² state. -/
 theorem infiniteEdgeLaplacian_energy_nonneg
     (a b : Tile) (w : ℝ) (hw : 0 ≤ w) (ψ : TileHilbert Tile) :
-    0 ≤ ⟪ψ, infiniteEdgeLaplacian a b w ψ⟫_ℝ := by
+    0 ≤ (inner ℝ ψ infiniteEdgeLaplacian a b w ψ) := by
   rw [infiniteEdgeLaplacian_inner]
   convert mul_nonneg hw (sq_nonneg (ψ a - ψ b)) using 1 <;> ring
 
@@ -96,7 +96,7 @@ whenever every active edge carries a nonnegative weight. -/
 theorem infiniteFiniteEdgeLaplacian_energy_nonneg
     (edges : Finset (Tile × Tile)) (w : Tile × Tile → ℝ)
     (hw : ∀ e ∈ edges, 0 ≤ w e) (ψ : TileHilbert Tile) :
-    0 ≤ ⟪ψ, infiniteFiniteEdgeLaplacian edges w ψ⟫_ℝ := by
+    0 ≤ (inner ℝ ψ infiniteFiniteEdgeLaplacian edges w ψ) := by
   simp only [infiniteFiniteEdgeLaplacian, LinearMap.sum_apply, inner_sum]
   apply Finset.sum_nonneg
   intro e he
@@ -106,8 +106,8 @@ theorem infiniteFiniteEdgeLaplacian_energy_nonneg
 theorem infiniteFiniteEdgeLaplacian_symmetric
     (edges : Finset (Tile × Tile)) (w : Tile × Tile → ℝ)
     (ψ φ : TileHilbert Tile) :
-    ⟪ψ, infiniteFiniteEdgeLaplacian edges w φ⟫_ℝ =
-      ⟪infiniteFiniteEdgeLaplacian edges w ψ, φ⟫_ℝ := by
+    (inner ℝ ψ infiniteFiniteEdgeLaplacian edges w φ) =
+      (inner ℝ infiniteFiniteEdgeLaplacian edges w ψ φ) := by
   simp only [infiniteFiniteEdgeLaplacian, LinearMap.sum_apply,
     inner_sum, sum_inner]
   apply Finset.sum_congr rfl
