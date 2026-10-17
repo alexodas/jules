@@ -61,7 +61,7 @@ noncomputable def infiniteTileReindex (σ : Tile ≃ Tile) :
           (∑' t, ‖ψ t‖ ^ (2 : ENNReal).toReal) := by
       change (∑' t, ‖ψ (σ t)‖ ^ (2 : ENNReal).toReal) =
         (∑' t, ‖ψ t‖ ^ (2 : ENNReal).toReal)
-      exact σ.tsum_eq _
+      exact σ.tsum_eq (fun t : Tile => ‖ψ t‖ ^ (2 : ENNReal).toReal)
     calc
       ‖φ‖ =
           (∑' t, ‖φ t‖ ^ (2 : ENNReal).toReal) ^
