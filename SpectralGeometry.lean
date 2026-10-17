@@ -10,6 +10,7 @@ import SpectralGeometry.InfiniteOnsiteSummability
 import SpectralGeometry.InfiniteOnsitePowerGrowth
 import SpectralGeometry.InfiniteFiniteEdgeInteraction
 import SpectralGeometry.InfiniteBoundedPerturbation
+import SpectralGeometry.InfiniteSummableEdgeInteraction
 
 /-!
 # Spectral Geometry
