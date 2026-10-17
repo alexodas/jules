@@ -14,6 +14,7 @@ import SpectralGeometry.InfiniteSummableEdgeInteraction
 import SpectralGeometry.InfiniteLocalMatching
 import SpectralGeometry.InfiniteLocalBoundedDegree
 import SpectralGeometry.InfiniteLocalEigenvalueBounds
+import SpectralGeometry.InfiniteLocalSignedPerturbationGap
 
 /-!
 # Spectral Geometry
