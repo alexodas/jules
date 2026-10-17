@@ -375,9 +375,34 @@ that all nonnegative matching weights give **nonnegative, finite quadratic energ
 
 **Scope:** this is an important subclass of uniformly bounded-degree graphs: those described by finitely many involutive matching permutations with a constant weight per color. We have **not** proved that arbitrary locally finite graphs (including a specific Penrose adjacency graph) have been represented this way; tile-dependent edge weights and general graph decompositions require additional work. Symmetry and positivity still do **not** establish self-adjointness, compact resolvent, or inverse-square summability of the full spectrum.
 
+### 4.10. Lower bounds on point eigenvalues of infinite local operators
+
+The Lean module **[`SpectralGeometry/InfiniteLocalEigenvalueBounds.lean`](SpectralGeometry/InfiniteLocalEigenvalueBounds.lean)** studies point eigenvalues of the **full infinite local matching model** introduced in §4.9, including the unbounded onsite term, infinitely many local interactions (represented by finitely many involutive matching colors), and a bounded perturbation.
+
+Suppose the onsite potential is nonnegative (`V(t)≥0`), the matching weights are nonnegative (`wᵢ≥0`), and the bounded perturbation `P` has nonnegative quadratic energy. For `ε≥0`, every nonzero eigenstate of the combined operator has a **nonnegative eigenvalue**:
+
+```math
+H_\varepsilon\psi=\lambda\psi,\quad\psi\ne0
+\quad\Longrightarrow\quad \lambda\ge0.
+```
+
+The proof uses the nonnegative total quadratic energy established in §4.9 and the eigenvector identity `⟨ψ,Hεψ⟩=λ‖ψ‖²`. It does **not** presuppose an eigenbasis or a discrete spectrum.
+
+A particularly transparent way to obtain a **strict positive lower bound** is a uniform scalar (identity) perturbation `P=I`. With `V≥0` and `wᵢ≥0`, any existing point eigenvalue obeys, for **every real** `ε`,
+
+```math
+H_\varepsilon=M_V+L_w+\varepsilon I,\qquad
+H_\varepsilon\psi=\lambda\psi,\ \psi\ne0
+\quad\Longrightarrow\quad \lambda\ge\varepsilon.
+```
+
+Indeed, the onsite and interaction quadratic energies are nonnegative, so `(λ-ε)‖ψ‖²≥0`. If `ε>0`, every point eigenvalue is **strictly positive**. This bound holds without absolute summability of all edge weights and without bounding `V` from above.
+
+**Scope:** these theorems constrain eigenvalues *if nonzero eigenvectors exist*. They neither show that point eigenvalues exist nor rule out continuous spectrum. The full operator's self-adjointness, compact resolvent, discreteness, inverse-square summability, and connection to the canonical product remain open formalization goals.
+
 ## 5. Building and verification
 
-The established analytic core is in `SpectralGeometry/CanonicalProduct.lean`. The finite-dimensional geometric results are in `SpectralGeometry/FinitePerturbation.lean`, `SpectralGeometry/FinitePositiveEnergy.lean`, `SpectralGeometry/FiniteGeometricEnergy.lean`, and `SpectralGeometry/FiniteStrictPositivity.lean`. These four finite-dimensional modules and the ten infinite-dimensional modules `SpectralGeometry/InfiniteOnsite.lean`, `SpectralGeometry/InfiniteOnsiteDensity.lean`, `SpectralGeometry/InfiniteOnsiteEigenvalues.lean`, `SpectralGeometry/InfiniteOnsiteSummability.lean`, `SpectralGeometry/InfiniteOnsitePowerGrowth.lean`, `SpectralGeometry/InfiniteFiniteEdgeInteraction.lean`, `SpectralGeometry/InfiniteBoundedPerturbation.lean`, `SpectralGeometry/InfiniteSummableEdgeInteraction.lean`, `SpectralGeometry/InfiniteLocalMatching.lean`, and `SpectralGeometry/InfiniteLocalBoundedDegree.lean` are imported by the `SpectralGeometry.lean` entry point. The toolchain is Lean 4 `v4.35.0` with the corresponding version of Mathlib.
+The established analytic core is in `SpectralGeometry/CanonicalProduct.lean`. The finite-dimensional geometric results are in `SpectralGeometry/FinitePerturbation.lean`, `SpectralGeometry/FinitePositiveEnergy.lean`, `SpectralGeometry/FiniteGeometricEnergy.lean`, and `SpectralGeometry/FiniteStrictPositivity.lean`. These four finite-dimensional modules and the eleven infinite-dimensional modules `SpectralGeometry/InfiniteOnsite.lean`, `SpectralGeometry/InfiniteOnsiteDensity.lean`, `SpectralGeometry/InfiniteOnsiteEigenvalues.lean`, `SpectralGeometry/InfiniteOnsiteSummability.lean`, `SpectralGeometry/InfiniteOnsitePowerGrowth.lean`, `SpectralGeometry/InfiniteFiniteEdgeInteraction.lean`, `SpectralGeometry/InfiniteBoundedPerturbation.lean`, `SpectralGeometry/InfiniteSummableEdgeInteraction.lean`, `SpectralGeometry/InfiniteLocalMatching.lean`, and `SpectralGeometry/InfiniteLocalBoundedDegree.lean`, and `SpectralGeometry/InfiniteLocalEigenvalueBounds.lean` are imported by the `SpectralGeometry.lean` entry point. The toolchain is Lean 4 `v4.35.0` with the corresponding version of Mathlib.
 
 ```bash
 lake update
