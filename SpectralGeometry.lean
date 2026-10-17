@@ -1,8 +1,9 @@
 import SpectralGeometry.CanonicalProduct
+import SpectralGeometry.FinitePerturbation
 
 /-!
 # Spectral Geometry
 
-Entry point for the analytic core. Geometric operators and spectral bridges
-will be added when they contain formally checked results.
+Entry point for the formally checked analytic product and the developing
+geometric-operator theory.
 -/
