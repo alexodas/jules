@@ -123,29 +123,29 @@ theorem infiniteLocalMatching_resolvent_eigenpair_iff
       _ = μ⁻¹ • f := by abel
 
 /-- An equivalent, directly usable statement with an unbounded
-eigenvalue λ ≠ a: the corresponding resolvent eigenvalue is
-(λ-a)⁻¹. -/
+eigenvalue eigenvalue ≠ a: the corresponding resolvent eigenvalue is
+(eigenvalue-a)⁻¹. -/
 theorem infiniteLocalMatching_resolvent_eigenpair_iff_of_ne
     (D : ℕ) (V : Tile → ℝ) (σ : Fin D → Tile ≃ Tile)
     (w : Fin D → ℝ) (P : CorrespondenceEnd Tile)
     (ε shift a : ℝ) (hgap : ∀ t, 1 ≤ V t - a)
     (hsmall : ‖(infiniteLocalBoundedCorrection D σ w P ε shift).comp
       (infiniteOnsiteResolventCLM V a hgap)‖ < 1)
-    (λ : ℝ) (hλ : λ ≠ a) (f : TileHilbert Tile) :
+    (eigenvalue : ℝ) (heigenvalue : eigenvalue ≠ a) (f : TileHilbert Tile) :
     infiniteBoundedOnsiteResolvent V a hgap
       (infiniteLocalBoundedCorrection D σ w P ε shift) hsmall f =
-        (λ - a)⁻¹ • f ↔
+        (eigenvalue - a)⁻¹ • f ↔
       ∃ ψ : infiniteOnsiteDomain V,
         (ψ.1 : TileHilbert Tile) = f ∧
         infiniteLocalShiftedPerturbedOperator D V σ w P ε shift ψ =
-          λ • f := by
-  have hμ : (λ - a)⁻¹ ≠ 0 :=
-    inv_ne_zero (sub_ne_zero.mpr hλ)
+          eigenvalue • f := by
+  have hμ : (eigenvalue - a)⁻¹ ≠ 0 :=
+    inv_ne_zero (sub_ne_zero.mpr heigenvalue)
   have hh :=
     infiniteLocalMatching_resolvent_eigenpair_iff
       D V σ w P ε shift a hgap hsmall
-      (λ - a)⁻¹ hμ f
-  have hvalue : a + ((λ - a)⁻¹)⁻¹ = λ := by
+      (eigenvalue - a)⁻¹ hμ f
+  have hvalue : a + ((eigenvalue - a)⁻¹)⁻¹ = eigenvalue := by
     rw [inv_inv]
     ring
   simpa only [hvalue] using hh
