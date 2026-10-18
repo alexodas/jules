@@ -693,6 +693,7 @@ completed only after the corresponding Lean file is imported by
 | --- | --- | --- | --- |
 | **P0 — completed** | Onsite inverse identity | The bounded map `infiniteOnsiteResolventCLM` takes values in the natural domain and is a two-sided inverse of the shifted onsite operator (§4.19) | **Formalized and Lean-checked** |
 | **P1 — critical (initial case formalized)** | Compact resolvent for the full local operator | Compact inverse of `M_V+B-aI` for bounded `B` under `‖B R_a‖<1`, with both inverse identities (§4.20) | **Small-correction theorem formalized; quantitative/structural extensions pending** |
+| **P1 — next** | Quantitative compact resolvent bounds | From a gap `V(t)-a≥δ≥1` show `‖R_a‖≤1/δ`, then `‖B R_a‖<1` whenever `‖B‖<δ`; obtain a compact shifted inverse with no global small-coupling assumption by choosing `a` far enough below any lower bound for `V` | **Planned** |
 | **P1 — infrastructure** | Spectral-theory interface | Express the established adjoint-domain characterization in an API usable by Mathlib's self-adjoint spectral theorems | Planned |
 | **P2 — high** | Discrete spectrum | Derive real isolated eigenvalues of finite multiplicity and appropriate spectral exhaustion from self-adjointness plus compact resolvent | Planned |
 | **P2 — high** | Eigenvalue growth and summability | Transfer quantitative onsite growth to the eigenvalues of the interacting operator, then prove summability of inverse squares under sufficiently strong growth | Planned |
@@ -736,6 +737,25 @@ onsite gap `V(t)-a≥δ>0` and the quantitative estimate
 ```
 
 **The first small-correction case is now proved** in §4.20: the inverse maps to the natural domain, both inverse identities hold, and the bounded resolvent is compact. The hypothesis is explicitly `‖B R_a‖<1`; the next extension is to derive convenient numeric bounds directly from `‖B‖` and onsite gaps, and to package the substitution `B=L_w+εP+mI` into a dedicated local-matching theorem. No conclusion is asserted for arbitrary unbounded interactions.
+
+**Next quantitative milestone (P1):** Prove a general norm estimate
+`‖R_a‖≤1/δ` when `V(t)-a≥δ≥1`. Since
+`‖B R_a‖≤‖B‖‖R_a‖`, the explicit sufficient condition `‖B‖<δ`
+then gives the compact inverse constructed in §4.20. If `V(t)≥v₀`
+for all tiles, choose `δ=‖B‖+1` and `a=v₀-δ` to find a real
+spectral shift with compact inverse for **every fixed bounded B**,
+without assuming B itself is small. This says *some* sufficiently
+negative shift works; it makes no claim about resolvents at all
+spectral parameters.
+
+**Geometric specialization:** instantiate `B=L_w+εP+mI` with
+the already formalized matching-family norm estimate
+`‖L_w‖≤2DW` (for nonnegative matching weights bounded by `W`).
+The sufficient explicit gap is
+`δ>2DW+|ε|‖P‖+|m|`. The new Lean module should prove the bound,
+the existence of a sufficiently negative shift, and ideally a
+named corollary for this local matching model. The milestone is
+complete only after a successful full `lake build`.
 
 In parallel, bridge the explicit adjoint-pair theorem of §4.15 to
 the self-adjointness interfaces used by Mathlib. This is needed for the
