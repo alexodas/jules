@@ -66,7 +66,11 @@ theorem infiniteOnsite_adjoint_pair_iff
     rw [hsingle] at h
     change inner ℝ (lp.single (2 : ENNReal) t (V t)) η =
       inner ℝ (lp.single (2 : ENNReal) t (1 : ℝ)) χ at h
-    simpa [lp.inner_single_left, RCLike.inner_apply] using h
+    have ht : η t * V t = χ t := by
+      simpa [lp.inner_single_left, RCLike.inner_apply] using h
+    calc
+      χ t = η t * V t := ht.symm
+      _ = V t * η t := mul_comm _ _
   · rintro ⟨ψ, hψ⟩
     have hf : (ψ.1 : TileHilbert Tile) = η :=
       congrArg Prod.fst hψ
@@ -132,7 +136,9 @@ theorem infiniteLocalShiftedPerturbed_adjoint_pair_iff
           inner ℝ (infiniteOnsiteOperator V φ) η +
               inner ℝ (φ.1 : TileHilbert Tile) (B η) =
             inner ℝ (φ.1 : TileHilbert Tile) χ := by
-        simpa only [inner_add_left, hsym] using h
+        rw [inner_add_left] at h
+        rw [hsym] at h
+        exact h
       rw [inner_sub_right]
       linarith
     have hOnsiteGraph :
