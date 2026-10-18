@@ -143,4 +143,88 @@ private theorem infiniteOnsiteFiniteDiagonal_apply
     lp.singleContinuousLinearMap_apply, lp.single_apply,
     Finset.sum_ite_eq', smul_eq_mul]
 
+
+/-- Uniform control of the truncation error from the coefficients omitted
+outside the finite set. -/
+private theorem infiniteOnsiteDiagonal_error_norm_le
+    (c : Tile → ℝ) (hc : ∀ t, ‖c t‖ ≤ 1)
+    (s : Finset Tile) (B : ℝ) (hB : 0 ≤ B)
+    (hout : ∀ t, t ∉ s → ‖c t‖ ≤ B) :
+    ‖infiniteOnsiteDiagonalContraction c hc -
+      infiniteOnsiteFiniteDiagonal c s‖ ≤ B := by
+  apply ContinuousLinearMap.opNorm_le_bound _ hB
+  intro f
+  have hpoint (t : Tile) :
+      ‖((infiniteOnsiteDiagonalContraction c hc -
+          infiniteOnsiteFiniteDiagonal c s) f) t‖ ≤ ‖(B • f) t‖ := by
+    have heq :
+        ((infiniteOnsiteDiagonalContraction c hc -
+          infiniteOnsiteFiniteDiagonal c s) f) t =
+          c t * f t - (if t ∈ s then c t * f t else 0) := by
+      rw [ContinuousLinearMap.sub_apply, lp.coeFn_sub, Pi.sub_apply,
+        infiniteOnsiteDiagonalContraction_apply,
+        infiniteOnsiteFiniteDiagonal_apply]
+    by_cases ht : t ∈ s
+    · simp [heq, ht]
+    · rw [heq, if_neg ht, sub_zero]
+      have hh : ‖c t‖ * ‖f t‖ ≤ B * ‖f t‖ :=
+        mul_le_mul_of_nonneg_right (hout t ht) (norm_nonneg _)
+      simpa only [lp.coeFn_smul, Pi.smul_apply, smul_eq_mul,
+        norm_mul, Real.norm_eq_abs, abs_of_nonneg hB] using hh
+  have hnorm :
+      ‖(infiniteOnsiteDiagonalContraction c hc -
+          infiniteOnsiteFiniteDiagonal c s) f‖ ≤ ‖B • f‖ :=
+    lp.norm_mono (by norm_num : (2 : ENNReal) ≠ 0) hpoint
+  simpa [norm_smul, Real.norm_eq_abs, abs_of_nonneg hB] using hnorm
+
+/-- The inverse of a uniformly gapped onsite multiplication operator is
+compact whenever every low-energy sublevel of its potential is finite.
+
+This is only an assertion about the diagonal onsite operator; the bounded
+interaction and perturbation are not included. -/
+theorem infiniteOnsiteResolventCLM_compact
+    (V : Tile → ℝ) (a : ℝ)
+    (hgap : ∀ t, 1 ≤ V t - a)
+    (hproper : ∀ R : ℝ, (infiniteOnsiteLowEnergyTiles V R).Finite) :
+    IsCompactOperator (infiniteOnsiteResolventCLM V a hgap) := by
+  classical
+  let c : Tile → ℝ := fun t => (V t - a)⁻¹
+  let hc : ∀ t : Tile, ‖c t‖ ≤ 1 :=
+    onsiteUnitGap_inverse_norm_le_one V a hgap
+  let s : ℕ → Finset Tile := fun n =>
+    (hproper (a + ((n : ℝ) + 1))).toFinset
+  let F : ℕ → TileHilbert Tile →L[ℝ] TileHilbert Tile :=
+    fun n => infiniteOnsiteFiniteDiagonal c (s n)
+  have hbound (n : ℕ) :
+      ‖infiniteOnsiteResolventCLM V a hgap - F n‖ ≤
+        (((n : ℝ) + 1)⁻¹) := by
+    change ‖infiniteOnsiteDiagonalContraction c hc -
+      infiniteOnsiteFiniteDiagonal c (s n)‖ ≤ (((n : ℝ) + 1)⁻¹)
+    apply infiniteOnsiteDiagonal_error_norm_le c hc (s n)
+      (((n : ℝ) + 1)⁻¹) (by positivity)
+    intro t ht
+    have hnot : ¬ V t ≤ a + ((n : ℝ) + 1) := by
+      simpa [s, infiniteOnsiteLowEnergyTiles] using ht
+    have hlarge : (n : ℝ) + 1 ≤ V t - a := by
+      have hh : a + ((n : ℝ) + 1) < V t := lt_of_not_ge hnot
+      linarith
+    have hpos : 0 < V t - a := lt_of_lt_of_le (by norm_num) (hgap t)
+    have hle := one_div_le_one_div_of_le
+      (by positivity : (0 : ℝ) < (n : ℝ) + 1) hlarge
+    simpa only [c, Real.norm_eq_abs, abs_of_pos (inv_pos.mpr hpos),
+      one_div] using hle
+  have hlim : Filter.Tendsto F Filter.atTop
+      (nhds (infiniteOnsiteResolventCLM V a hgap)) := by
+    apply tendsto_iff_norm_sub_tendsto_zero.mpr
+    apply squeeze_zero
+    · intro n
+      exact norm_nonneg _
+    · intro n
+      simpa only [norm_sub_rev] using hbound n
+    · simpa only [one_div] using
+        (tendsto_one_div_add_atTop_nhds_zero_nat (𝕜 := ℝ))
+  exact isCompactOperator_of_tendsto hlim
+    (Filter.Eventually.of_forall (fun n =>
+      infiniteOnsiteFiniteDiagonal_compact c (s n)))
+
 end SpectralGeometry
