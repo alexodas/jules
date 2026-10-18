@@ -27,6 +27,7 @@ import SpectralGeometry.InfiniteLocalCompactResolvent
 import SpectralGeometry.InfiniteLocalCompactResolventBounds
 import SpectralGeometry.InfiniteLocalSelfAdjointPMap
 import SpectralGeometry.InfiniteLocalResolventSpectrum
+import SpectralGeometry.InfiniteLocalEigenpairCorrespondence
 
 /-!
 # Spectral Geometry
