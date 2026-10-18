@@ -639,3 +639,99 @@ lake build
 ```
 
 GitHub Actions automatically checks compilation on every change to `main` and on every pull request.
+
+## 6. Roadmap: next formally checked theorems
+
+This section records **planned formalization milestones**, not statements already
+proved in Lean. Priorities follow mathematical dependencies: first connect the
+onsite compact map to the genuine inverse, then transfer compactness to the
+interacting operator, and only then build a spectral sequence for the canonical
+product. Each milestone counts as completed only after the corresponding Lean
+file is imported by `SpectralGeometry.lean` and the full `lake build` passes.
+
+| Priority | Milestone | Mathematical target | Status |
+| --- | --- | --- | --- |
+| **P0 — first** | Onsite inverse identity | Show that the bounded map `infiniteOnsiteResolventCLM` solves the shifted onsite equation on the natural domain, and is a two-sided inverse there | **Planned** |
+| **P1 — critical** | Compact resolvent for the full local operator | Transfer compactness from `M_V` to `H=M_V+L_w+εP+mI` under explicit boundedness and gap conditions | Planned |
+| **P1 — infrastructure** | Spectral-theory interface | Express the established adjoint-domain characterization in an API usable by Mathlib's self-adjoint spectral theorems | Planned |
+| **P2 — high** | Discrete spectrum | Derive real isolated eigenvalues of finite multiplicity and appropriate spectral exhaustion from self-adjointness plus compact resolvent | Planned |
+| **P2 — high** | Eigenvalue growth and summability | Transfer quantitative onsite growth to the eigenvalues of the interacting operator, then prove summability of inverse squares under sufficiently strong growth | Planned |
+| **P3 — integration** | Spectrally defined canonical product | Instantiate the existing admissibility and zero-localization results with the full operator's positive, summable eigenvalues | Planned |
+| **P4 — geometric applications** | Specific aperiodic tiling | Check the operator hypotheses for a concrete tiling model rather than assuming them abstractly | Planned |
+
+### 6.1. P0 — Identify the bounded onsite map with the actual inverse
+
+Use the natural onsite domain `D(V)` and the unit-gap assumption
+`1 ≤ V(t)-a` from §§4.16 and 4.18. Let `R_a` be the already constructed
+continuous linear map, acting coordinatewise by
+`(R_a f)(t)=(V(t)-a)⁻¹ f(t)`. Prove explicitly that
+
+```math
+R_a f\in D(V),\qquad (M_V-aI)R_a f=f
+\quad\text{for every }f\in\ell^2(T),
+```
+
+and, for each `ψ∈D(V)`, that
+
+```math
+R_a\bigl((M_V-aI)\psi\bigr)=\psi.
+```
+
+The pointwise formula, bijectivity, and compactness are already available;
+the missing result is the **formal connection between those constructions**.
+The first implementation should live in
+`SpectralGeometry/InfiniteOnsiteResolventIdentity.lean`, import the
+existing resolvent module, and require no new growth hypothesis.
+
+### 6.2. P1 — Compact resolvent of the interacting operator
+
+Write `H=M_V+B` on `D(V)`, where the interaction and perturbation
+correction `B=L_w+εP+mI` is bounded. Establish a sufficiently strong
+onsite gap `V(t)-a≥δ>0` and the quantitative estimate
+`‖R_a‖≤1/δ`. If `‖B R_a‖<1`, a Neumann-series argument should yield
+
+```math
+(H-aI)^{-1}=R_a\,(I+B R_a)^{-1}.
+```
+
+This also requires checking the **natural-domain mapping property** of
+the inverse and both inverse identities. Since `R_a` is compact under
+onsite properness and `(I+B R_a)^{-1}` is bounded, the product is
+compact. The plan applies in particular to the bounded matching-family
+interaction already formalized; it does not assert the result for arbitrary
+unbounded interactions or nonsymmetric operators without extra assumptions.
+
+In parallel, bridge the explicit adjoint-pair theorem of §4.15 to
+the self-adjointness interfaces used by Mathlib. This is needed for the
+subsequent spectral theorem, even though a compact inverse can first be
+constructed without assuming that the bounded correction is symmetric.
+
+### 6.3. P2 — Discreteness, multiplicity, and quantitative growth
+
+Under the appropriate self-adjointness and compact-resolvent hypotheses,
+formalize the passage from a compact resolvent to a discrete real
+spectrum with finite-multiplicity eigenvalues and no finite accumulation
+point. Additional lower bounds must rule out zero before forming inverse
+powers of eigenvalues.
+
+Next, prove an eigenvalue comparison under bounded symmetric
+perturbations, of the form
+`λₙ(M_V+B) ≥ λₙ(M_V)-‖B‖`, using an appropriately ordered
+eigenvalue enumeration and suitable multiplicity conventions. The
+power-law onsite assumptions of §4.5 are intended inputs; the
+inverse-square summability of the **full** operator's eigenvalues is a
+separate theorem, not a consequence of compact resolvent alone.
+
+### 6.4. P3–P4 — Analytic integration and concrete geometry
+
+With positive eigenvalues `λₙ` of the full operator and a checked
+summability hypothesis `∑ₙ λₙ⁻²<∞`, instantiate the existing
+`Admissible` and canonical-product theorems from §2. A smaller,
+independent end-to-end onsite example may be formalized earlier as an
+integration test, but must not be represented as a theorem about the
+interacting system.
+
+Only after the abstract spectral chain is complete should a specific
+Penrose, Ammann–Beenker, Pinwheel, Spectre, or other aperiodic geometry
+be used to **verify** the required potential growth and interaction
+hypotheses. No link to the Riemann zeta function is asserted or implied.
