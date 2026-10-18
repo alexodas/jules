@@ -162,7 +162,7 @@ private theorem infiniteOnsiteFiniteDiagonal_apply
         if t ∈ insert i s then c t * f t else 0
       by_cases ht : t = i
       · subst t
-        simp [lp.coeFn_smul, lp.single_apply, Finset.mem_insert,
+        simp [hi, lp.coeFn_smul, lp.single_apply, Finset.mem_insert,
           smul_eq_mul]
       · have hit : i ≠ t := Ne.symm ht
         simp [lp.coeFn_smul, lp.single_apply, Finset.mem_insert,
