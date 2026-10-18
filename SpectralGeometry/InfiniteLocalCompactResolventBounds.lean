@@ -136,16 +136,15 @@ theorem infiniteLocalBoundedCorrection_norm_le_geometric
   have hL : ‖L‖ ≤ 2 * (D : ℝ) * W :=
     infiniteLocalMatchingLaplacian_norm_le D σ w W hW hw0 hw
   have hid :
-      ‖(ContinuousLinearMap.id ℝ (TileHilbert Tile))‖ ≤ 1 := by
-    simpa only [] using
-      (norm_one_le : ‖(1 : QuantEnd Tile)‖ ≤ 1)
+      ‖(ContinuousLinearMap.id ℝ (TileHilbert Tile))‖ ≤ 1 :=
+    ContinuousLinearMap.norm_id_le
   change ‖L + ε • P + shift • ContinuousLinearMap.id ℝ (TileHilbert Tile)‖ ≤
     2 * (D : ℝ) * W + |ε| * ‖P‖ + |shift|
   calc
     ‖L + ε • P + shift • ContinuousLinearMap.id ℝ (TileHilbert Tile)‖ ≤
         (‖L‖ + ‖ε • P‖) +
           ‖shift • ContinuousLinearMap.id ℝ (TileHilbert Tile)‖ := by
-      exact (norm_add_le _ _).trans (add_le_add_right (norm_add_le _ _) _)
+      exact (norm_add_le _ _).trans (add_le_add_left (norm_add_le _ _) _)
     _ = ‖L‖ + |ε| * ‖P‖ +
         |shift| * ‖ContinuousLinearMap.id ℝ (TileHilbert Tile)‖ := by
       simp only [norm_smul, Real.norm_eq_abs]
