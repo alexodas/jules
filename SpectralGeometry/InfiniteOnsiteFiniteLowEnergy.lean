@@ -60,16 +60,16 @@ theorem infiniteOnsiteEigenvector_support_finite
 of the finite low-energy tile set under the potential V. -/
 theorem infiniteOnsitePointEigenvalues_below_subset_image
     (V : Tile → ℝ) (R : ℝ) :
-    {λ | λ ≤ R ∧
+    {a | a ≤ R ∧
       ∃ ψ : infiniteOnsiteDomain V,
         (∃ t : Tile, ψ.1 t ≠ 0) ∧
         infiniteOnsiteOperator V ψ =
-          λ • (ψ.1 : TileHilbert Tile)} ⊆
+          a • (ψ.1 : TileHilbert Tile)} ⊆
       V '' infiniteOnsiteLowEnergyTiles V R := by
-  intro λ hλ
-  rcases hλ with ⟨hbound, ψ, ⟨t, ht⟩, heigen⟩
+  intro a ha
+  rcases ha with ⟨hbound, ψ, ⟨t, ht⟩, heigen⟩
   have heq := infiniteOnsiteEigenvalue_eq_at_nonzero
-    V ψ λ heigen t ht
+    V ψ a heigen t ht
   refine ⟨t, ?_, ?_⟩
   · change V t ≤ R
     rw [← heq]
@@ -81,11 +81,11 @@ point eigenvalues below each fixed real threshold. -/
 theorem infiniteOnsitePointEigenvalues_below_finite
     (V : Tile → ℝ) (R : ℝ)
     (hfinite : (infiniteOnsiteLowEnergyTiles V R).Finite) :
-    {λ | λ ≤ R ∧
+    {a | a ≤ R ∧
       ∃ ψ : infiniteOnsiteDomain V,
         (∃ t : Tile, ψ.1 t ≠ 0) ∧
         infiniteOnsiteOperator V ψ =
-          λ • (ψ.1 : TileHilbert Tile)}.Finite := by
+          a • (ψ.1 : TileHilbert Tile)}.Finite := by
   exact (hfinite.image V).subset
     (infiniteOnsitePointEigenvalues_below_subset_image V R)
 
