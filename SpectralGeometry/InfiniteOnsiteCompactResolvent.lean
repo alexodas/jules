@@ -82,6 +82,8 @@ theorem infiniteOnsiteResolventCLM_apply
 
 
 /-- Evaluation of one tile coordinate as a continuous linear functional. -/
+variable [DecidableEq Tile]
+
 private noncomputable def infiniteOnsiteCoordinateCLM (t : Tile) :
     TileHilbert Tile →L[ℝ] ℝ where
   toFun := fun f => f t
@@ -122,14 +124,17 @@ private theorem infiniteOnsiteFiniteDiagonal_compact
           IsCompactOperator
             ((lp.singleContinuousLinearMap ℝ (fun _ : Tile => ℝ) (2 : ENNReal) t).comp
               (infiniteOnsiteCoordinateCLM t)) := by
-        simpa only [ContinuousLinearMap.comp_apply] using
-          hsingle.comp_clm (infiniteOnsiteCoordinateCLM t)
+        convert hsingle.comp_clm (infiniteOnsiteCoordinateCLM t) using 1
+        funext f
+        rfl
       have hterm :
           IsCompactOperator
             ((c t) •
               ((lp.singleContinuousLinearMap ℝ (fun _ : Tile => ℝ)
                 (2 : ENNReal) t).comp (infiniteOnsiteCoordinateCLM t))) := by
-        simpa only [ContinuousLinearMap.coe_smul] using hcomp.smul (c t)
+        convert hcomp.smul (c t) using 1
+        funext f
+        rfl
       simpa only [Finset.sum_insert ht, ContinuousLinearMap.coe_add] using
         hterm.add ih
 
