@@ -80,4 +80,67 @@ theorem infiniteOnsiteResolventCLM_apply
     (f : TileHilbert Tile) (t : Tile) :
     infiniteOnsiteResolventCLM V a hgap f t = (V t - a)⁻¹ * f t := rfl
 
+
+/-- Evaluation of one tile coordinate as a continuous linear functional. -/
+private noncomputable def infiniteOnsiteCoordinateCLM (t : Tile) :
+    TileHilbert Tile →L[ℝ] ℝ where
+  toFun := fun f => f t
+  map_add' := by
+    intro f g
+    rfl
+  map_smul' := by
+    intro r f
+    rfl
+  cont := (lp.lipschitzWith_one_eval (2 : ENNReal) t).continuous
+
+/-- A finite sum of coordinate extraction followed by single-tile insertion.
+It has finite rank by construction. -/
+private noncomputable def infiniteOnsiteFiniteDiagonal
+    (c : Tile → ℝ) (s : Finset Tile) :
+    TileHilbert Tile →L[ℝ] TileHilbert Tile :=
+  ∑ t ∈ s, (c t) •
+    ((lp.singleContinuousLinearMap ℝ (fun _ : Tile => ℝ) (2 : ENNReal) t).comp
+      (infiniteOnsiteCoordinateCLM t))
+
+/-- Any such finite diagonal truncation is a compact operator. -/
+private theorem infiniteOnsiteFiniteDiagonal_compact
+    (c : Tile → ℝ) (s : Finset Tile) :
+    IsCompactOperator (infiniteOnsiteFiniteDiagonal c s :
+      TileHilbert Tile → TileHilbert Tile) := by
+  classical
+  unfold infiniteOnsiteFiniteDiagonal
+  induction s using Finset.induction_on with
+  | empty =>
+      simpa using (isCompactOperator_zero :
+        IsCompactOperator (0 : TileHilbert Tile → TileHilbert Tile))
+  | @insert t s ht ih =>
+      have hsingle :
+          IsCompactOperator
+            (lp.singleContinuousLinearMap ℝ (fun _ : Tile => ℝ) (2 : ENNReal) t) :=
+        isCompactOperator_of_locallyCompactSpace_rng _
+      have hcomp :
+          IsCompactOperator
+            ((lp.singleContinuousLinearMap ℝ (fun _ : Tile => ℝ) (2 : ENNReal) t).comp
+              (infiniteOnsiteCoordinateCLM t)) := by
+        simpa only [ContinuousLinearMap.comp_apply] using
+          hsingle.comp_clm (infiniteOnsiteCoordinateCLM t)
+      have hterm :
+          IsCompactOperator
+            ((c t) •
+              ((lp.singleContinuousLinearMap ℝ (fun _ : Tile => ℝ)
+                (2 : ENNReal) t).comp (infiniteOnsiteCoordinateCLM t))) := by
+        simpa only [ContinuousLinearMap.coe_smul] using hcomp.smul (c t)
+      simpa only [Finset.sum_insert ht, ContinuousLinearMap.coe_add] using
+        hterm.add ih
+
+/-- A finite diagonal truncation vanishes outside its finite index set. -/
+private theorem infiniteOnsiteFiniteDiagonal_apply
+    (c : Tile → ℝ) (s : Finset Tile) (f : TileHilbert Tile) (t : Tile) :
+    infiniteOnsiteFiniteDiagonal c s f t =
+      if t ∈ s then c t * f t else 0 := by
+  classical
+  simp [infiniteOnsiteFiniteDiagonal, infiniteOnsiteCoordinateCLM,
+    lp.singleContinuousLinearMap_apply, lp.single_apply,
+    Finset.sum_ite_eq', smul_eq_mul]
+
 end SpectralGeometry
