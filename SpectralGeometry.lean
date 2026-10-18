@@ -24,6 +24,7 @@ import SpectralGeometry.InfiniteOnsiteFiniteLowEnergy
 import SpectralGeometry.InfiniteOnsiteCompactResolvent
 import SpectralGeometry.InfiniteOnsiteResolventIdentity
 import SpectralGeometry.InfiniteLocalCompactResolvent
+import SpectralGeometry.InfiniteLocalCompactResolventBounds
 
 /-!
 # Spectral Geometry
