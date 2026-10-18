@@ -58,7 +58,7 @@ theorem infiniteLocalMatchingFullEigenspace_mem_iff
         infiniteLocalShiftedPerturbedOperator D V σ w P ε shift ψ =
           eigenvalue • f := by
   simpa only [infiniteLocalMatchingFullEigenspace,
-    mem_eigenspace_iff] using
+    Module.End.mem_eigenspace_iff] using
       (infiniteLocalMatching_resolvent_eigenpair_iff_of_ne
         D V σ w P ε shift a hgap hsmall eigenvalue hne f)
 
