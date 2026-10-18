@@ -50,6 +50,7 @@ private theorem selfAdjoint_of_pairing_iff_graph
     obtain ⟨φ, hφ, hAφ⟩ := (LinearPMap.mem_graph_iff A).mp hxy
     have hp := (hpair η χ).mpr ha φ
     change inner ℝ y η - inner ℝ x χ = 0
+    simp only [Prod.fst, Prod.snd] at hφ hAφ
     rw [← hφ, ← hAφ]
     exact sub_eq_zero.mpr hp
 
