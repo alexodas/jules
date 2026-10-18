@@ -21,6 +21,7 @@ import SpectralGeometry.InfiniteLocalClosedGraph
 import SpectralGeometry.InfiniteLocalAdjointCharacterization
 import SpectralGeometry.InfiniteOnsiteResolvent
 import SpectralGeometry.InfiniteOnsiteFiniteLowEnergy
+import SpectralGeometry.InfiniteOnsiteCompactResolvent
 
 /-!
 # Spectral Geometry
