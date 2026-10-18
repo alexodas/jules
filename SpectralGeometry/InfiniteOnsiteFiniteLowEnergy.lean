@@ -1,4 +1,5 @@
 import SpectralGeometry.InfiniteLocalAdjointCharacterization
+import SpectralGeometry.InfiniteOnsiteEigenvalues
 
 /-!
 # Finite low-energy sectors of the infinite onsite operator
@@ -59,7 +60,7 @@ theorem infiniteOnsiteEigenvector_support_finite
 of the finite low-energy tile set under the potential V. -/
 theorem infiniteOnsitePointEigenvalues_below_subset_image
     (V : Tile → ℝ) (R : ℝ) :
-    {λ : ℝ | λ ≤ R ∧
+    {λ | λ ≤ R ∧
       ∃ ψ : infiniteOnsiteDomain V,
         (∃ t : Tile, ψ.1 t ≠ 0) ∧
         infiniteOnsiteOperator V ψ =
@@ -80,7 +81,7 @@ point eigenvalues below each fixed real threshold. -/
 theorem infiniteOnsitePointEigenvalues_below_finite
     (V : Tile → ℝ) (R : ℝ)
     (hfinite : (infiniteOnsiteLowEnergyTiles V R).Finite) :
-    {λ : ℝ | λ ≤ R ∧
+    {λ | λ ≤ R ∧
       ∃ ψ : infiniteOnsiteDomain V,
         (∃ t : Tile, ψ.1 t ≠ 0) ∧
         infiniteOnsiteOperator V ψ =
