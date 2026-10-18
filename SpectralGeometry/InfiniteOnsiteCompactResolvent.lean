@@ -42,7 +42,7 @@ noncomputable def infiniteOnsiteDiagonalContraction
         funext t
         change c t * (r * f t) = r * (c t * f t)
         ring }
-  exact F.mkContinuous 1 (by norm_num) (fun f => by
+  exact F.mkContinuous 1 (fun f => by
     calc
       ‖F f‖ ≤ ‖f‖ := lp.norm_mono (by norm_num : (2 : ENNReal) ≠ 0) (fun t => by
         change ‖c t * f t‖ ≤ ‖f t‖
@@ -79,10 +79,5 @@ theorem infiniteOnsiteResolventCLM_apply
     (V : Tile → ℝ) (a : ℝ) (hgap : ∀ t, 1 ≤ V t - a)
     (f : TileHilbert Tile) (t : Tile) :
     infiniteOnsiteResolventCLM V a hgap f t = (V t - a)⁻¹ * f t := rfl
-
-theorem infiniteOnsiteResolventCLM_norm_le_one
-    (V : Tile → ℝ) (a : ℝ) (hgap : ∀ t, 1 ≤ V t - a) :
-    ‖infiniteOnsiteResolventCLM V a hgap‖ ≤ 1 :=
-  LinearMap.mkContinuous_norm_le _ (by norm_num)
 
 end SpectralGeometry
