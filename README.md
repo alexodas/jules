@@ -628,9 +628,29 @@ The finite truncations thus converge to `R_a` in operator norm. Since compact op
 
 **Scope:** this is a compact-resolvent theorem only for diagonal onsite multiplication under an additional, explicitly assumed growth condition. It does not prove compactness of the full interacting and perturbed operator, any property of an actual aperiodic tiling, or inverse-square summability of the resulting eigenvalues. Compact resolvent by itself is insufficient to guarantee the summability required for the canonical product.
 
+### 4.19. The bounded onsite resolvent is the shifted inverse on its natural domain
+
+The Lean module **[`SpectralGeometry/InfiniteOnsiteResolventIdentity.lean`](SpectralGeometry/InfiniteOnsiteResolventIdentity.lean)** connects the bounded continuous resolvent constructed in §4.18 to the unbounded onsite multiplication operator of §4.1 and the bijectivity theorem of §4.16.
+
+Under the unit-gap hypothesis `1≤V(t)-a`, let `R_a` be the coordinatewise bounded operator from §4.18. Lean proves that **for every** `f∈ℓ²(T)` the state `R_a f` belongs to the natural domain `D(V)` and satisfies
+
+```math
+R_a f\in D(V),\qquad (M_V-aI)(R_a f)=f.
+```
+
+Conversely, **for every** `ψ∈D(V)`, Lean proves the other inverse identity:
+
+```math
+R_a\bigl((M_V-aI)\psi\bigr)=\psi.
+```
+
+Thus the bounded continuous map is explicitly shown to be the **two-sided inverse of the shifted onsite operator on its actual natural domain**, rather than merely a map with the expected coordinate formula. Combined with §4.18, proper onsite potential growth makes this genuine inverse compact.
+
+**Scope:** this closes the onsite inverse-identification milestone P0 from §6 without introducing any new potential-growth hypothesis. It does **not** prove that the full interacting operator `H=M_V+L_w+εP+mI` is invertible or has compact resolvent; that remains P1.
+
 ## 5. Building and verification
 
-The established analytic core is in `SpectralGeometry/CanonicalProduct.lean`. The finite-dimensional geometric results are in `SpectralGeometry/FinitePerturbation.lean`, `SpectralGeometry/FinitePositiveEnergy.lean`, `SpectralGeometry/FiniteGeometricEnergy.lean`, and `SpectralGeometry/FiniteStrictPositivity.lean`. These four finite-dimensional modules and the nineteen infinite-dimensional modules `SpectralGeometry/InfiniteOnsite.lean`, `SpectralGeometry/InfiniteOnsiteDensity.lean`, `SpectralGeometry/InfiniteOnsiteEigenvalues.lean`, `SpectralGeometry/InfiniteOnsiteSummability.lean`, `SpectralGeometry/InfiniteOnsitePowerGrowth.lean`, `SpectralGeometry/InfiniteFiniteEdgeInteraction.lean`, `SpectralGeometry/InfiniteBoundedPerturbation.lean`, `SpectralGeometry/InfiniteSummableEdgeInteraction.lean`, `SpectralGeometry/InfiniteLocalMatching.lean`, `SpectralGeometry/InfiniteLocalBoundedDegree.lean`, `SpectralGeometry/InfiniteLocalEigenvalueBounds.lean`, `SpectralGeometry/InfiniteLocalSignedPerturbationGap.lean`, `SpectralGeometry/InfiniteLocalCoerciveGap.lean`, `SpectralGeometry/InfiniteLocalGraphNorm.lean`, `SpectralGeometry/InfiniteLocalClosedGraph.lean`, `SpectralGeometry/InfiniteLocalAdjointCharacterization.lean`, `SpectralGeometry/InfiniteOnsiteResolvent.lean`, `SpectralGeometry/InfiniteOnsiteFiniteLowEnergy.lean` and `SpectralGeometry/InfiniteOnsiteCompactResolvent.lean` are imported by the `SpectralGeometry.lean` entry point. The toolchain is Lean 4 `v4.35.0` with the corresponding version of Mathlib.
+The established analytic core is in `SpectralGeometry/CanonicalProduct.lean`. The finite-dimensional geometric results are in `SpectralGeometry/FinitePerturbation.lean`, `SpectralGeometry/FinitePositiveEnergy.lean`, `SpectralGeometry/FiniteGeometricEnergy.lean`, and `SpectralGeometry/FiniteStrictPositivity.lean`. These four finite-dimensional modules and the twenty infinite-dimensional modules `SpectralGeometry/InfiniteOnsite.lean`, `SpectralGeometry/InfiniteOnsiteDensity.lean`, `SpectralGeometry/InfiniteOnsiteEigenvalues.lean`, `SpectralGeometry/InfiniteOnsiteSummability.lean`, `SpectralGeometry/InfiniteOnsitePowerGrowth.lean`, `SpectralGeometry/InfiniteFiniteEdgeInteraction.lean`, `SpectralGeometry/InfiniteBoundedPerturbation.lean`, `SpectralGeometry/InfiniteSummableEdgeInteraction.lean`, `SpectralGeometry/InfiniteLocalMatching.lean`, `SpectralGeometry/InfiniteLocalBoundedDegree.lean`, `SpectralGeometry/InfiniteLocalEigenvalueBounds.lean`, `SpectralGeometry/InfiniteLocalSignedPerturbationGap.lean`, `SpectralGeometry/InfiniteLocalCoerciveGap.lean`, `SpectralGeometry/InfiniteLocalGraphNorm.lean`, `SpectralGeometry/InfiniteLocalClosedGraph.lean`, `SpectralGeometry/InfiniteLocalAdjointCharacterization.lean`, `SpectralGeometry/InfiniteOnsiteResolvent.lean`, `SpectralGeometry/InfiniteOnsiteFiniteLowEnergy.lean` and `SpectralGeometry/InfiniteOnsiteCompactResolvent.lean` and `SpectralGeometry/InfiniteOnsiteResolventIdentity.lean` are imported by the `SpectralGeometry.lean` entry point. The toolchain is Lean 4 `v4.35.0` with the corresponding version of Mathlib.
 
 ```bash
 lake update
@@ -642,16 +662,17 @@ GitHub Actions automatically checks compilation on every change to `main` and on
 
 ## 6. Roadmap: next formally checked theorems
 
-This section records **planned formalization milestones**, not statements already
-proved in Lean. Priorities follow mathematical dependencies: first connect the
-onsite compact map to the genuine inverse, then transfer compactness to the
-interacting operator, and only then build a spectral sequence for the canonical
-product. Each milestone counts as completed only after the corresponding Lean
-file is imported by `SpectralGeometry.lean` and the full `lake build` passes.
+This section records the **remaining formalization milestones** and marks
+completed work explicitly. Priorities follow mathematical dependencies:
+first connect the onsite compact map to the genuine inverse (P0, now complete),
+then transfer compactness to the interacting operator, and only then build a
+spectral sequence for the canonical product. Each milestone counts as
+completed only after the corresponding Lean file is imported by
+`SpectralGeometry.lean` and the full `lake build` passes.
 
 | Priority | Milestone | Mathematical target | Status |
 | --- | --- | --- | --- |
-| **P0 — first** | Onsite inverse identity | Show that the bounded map `infiniteOnsiteResolventCLM` solves the shifted onsite equation on the natural domain, and is a two-sided inverse there | **Planned** |
+| **P0 — completed** | Onsite inverse identity | The bounded map `infiniteOnsiteResolventCLM` takes values in the natural domain and is a two-sided inverse of the shifted onsite operator (§4.19) | **Formalized and Lean-checked** |
 | **P1 — critical** | Compact resolvent for the full local operator | Transfer compactness from `M_V` to `H=M_V+L_w+εP+mI` under explicit boundedness and gap conditions | Planned |
 | **P1 — infrastructure** | Spectral-theory interface | Express the established adjoint-domain characterization in an API usable by Mathlib's self-adjoint spectral theorems | Planned |
 | **P2 — high** | Discrete spectrum | Derive real isolated eigenvalues of finite multiplicity and appropriate spectral exhaustion from self-adjointness plus compact resolvent | Planned |
@@ -659,7 +680,7 @@ file is imported by `SpectralGeometry.lean` and the full `lake build` passes.
 | **P3 — integration** | Spectrally defined canonical product | Instantiate the existing admissibility and zero-localization results with the full operator's positive, summable eigenvalues | Planned |
 | **P4 — geometric applications** | Specific aperiodic tiling | Check the operator hypotheses for a concrete tiling model rather than assuming them abstractly | Planned |
 
-### 6.1. P0 — Identify the bounded onsite map with the actual inverse
+### 6.1. P0 — Completed: identify the bounded onsite map with the actual inverse
 
 Use the natural onsite domain `D(V)` and the unit-gap assumption
 `1 ≤ V(t)-a` from §§4.16 and 4.18. Let `R_a` be the already constructed
@@ -677,11 +698,12 @@ and, for each `ψ∈D(V)`, that
 R_a\bigl((M_V-aI)\psi\bigr)=\psi.
 ```
 
-The pointwise formula, bijectivity, and compactness are already available;
-the missing result is the **formal connection between those constructions**.
-The first implementation should live in
-`SpectralGeometry/InfiniteOnsiteResolventIdentity.lean`, import the
-existing resolvent module, and require no new growth hypothesis.
+The pointwise formula, bijectivity, and compactness were previously available;
+**the two inverse identities and domain membership are now formalized** in
+`SpectralGeometry/InfiniteOnsiteResolventIdentity.lean`, which imports the
+existing compact-resolvent module. No new growth hypothesis is needed.
+The next unfinished milestone is **P1**, transferring compactness to the
+complete operator with bounded geometric interactions and perturbations.
 
 ### 6.2. P1 — Compact resolvent of the interacting operator
 
