@@ -575,9 +575,32 @@ Combined with the independently formalized **density of `D(V)`** (§4.2) and **c
 
 **Technical scope:** the proof states the full adjoint-pair characterization directly rather than packaging it as a Mathlib `UnboundedLinearOperator`/`IsSelfAdjoint` API instance. This does **not** establish compact resolvent, discrete spectrum, eigenvalue existence, inverse-square summability, or a particular tiling graph. The conclusion for the full operator requires the symmetry hypotheses on the matching permutations and `P`; it is not asserted for arbitrary nonsymmetric perturbations.
 
+### 4.16. Solving a real shifted onsite resolvent equation
+
+The Lean module **[`SpectralGeometry/InfiniteOnsiteResolvent.lean`](SpectralGeometry/InfiniteOnsiteResolvent.lean)** starts the constructive resolvent program. §4.15 established an explicit adjoint-pair characterization for the onsite and symmetric interacting operators; here we obtain **existence and uniqueness** of solutions to a shifted onsite operator equation, rather than only spectral inequalities or adjoint information.
+
+Take an arbitrary real onsite potential `V:T→ℝ`, which may be unbounded above, and a real parameter `a` such that **every onsite energy is at least one unit above** `a`:
+
+```math
+V(t)-a\ge 1\qquad\text{for all tiles }t.
+```
+
+For **every** input `f∈ℓ²(T)`, Lean proves there exists exactly one `ψ∈D(V)` solving
+
+```math
+(M_V-aI)\psi=f,\qquad
+\psi(t)=\frac{f(t)}{V(t)-a}.
+```
+
+The proof shows that the coordinatewise inverse gives a square-summable state because `|(V(t)-a)^{-1}|≤1`. It then checks that `Vψ=f+aψ` is square-summable, so the solution lies in the **natural unbounded onsite domain**. A separate injectivity argument proves that distinct domain states cannot have the same image, giving bijectivity.
+
+**What this establishes:** the shifted **onsite** operator `M_V-aI : D(V)→ℓ²(T)` is a bijection under the explicit unit-gap assumption, with a concrete coordinate formula for its inverse. This is a genuine solvability statement, stronger than merely excluding real point eigenvalues.
+
+**What is still open in this formalization:** a continuous/bounded inverse operator and its operator norm bound have not yet been packaged; compactness of this inverse requires an additional finite-sublevel or growth hypothesis. The bijectivity of the **interacting** operator's shift, compact resolvent, discreteness and summability of its full spectrum, and any specialized aperiodic-tiling model are not proved here. The one-unit condition is a convenient sufficient hypothesis, not a necessary one.
+
 ## 5. Building and verification
 
-The established analytic core is in `SpectralGeometry/CanonicalProduct.lean`. The finite-dimensional geometric results are in `SpectralGeometry/FinitePerturbation.lean`, `SpectralGeometry/FinitePositiveEnergy.lean`, `SpectralGeometry/FiniteGeometricEnergy.lean`, and `SpectralGeometry/FiniteStrictPositivity.lean`. These four finite-dimensional modules and the sixteen infinite-dimensional modules `SpectralGeometry/InfiniteOnsite.lean`, `SpectralGeometry/InfiniteOnsiteDensity.lean`, `SpectralGeometry/InfiniteOnsiteEigenvalues.lean`, `SpectralGeometry/InfiniteOnsiteSummability.lean`, `SpectralGeometry/InfiniteOnsitePowerGrowth.lean`, `SpectralGeometry/InfiniteFiniteEdgeInteraction.lean`, `SpectralGeometry/InfiniteBoundedPerturbation.lean`, `SpectralGeometry/InfiniteSummableEdgeInteraction.lean`, `SpectralGeometry/InfiniteLocalMatching.lean`, `SpectralGeometry/InfiniteLocalBoundedDegree.lean`, `SpectralGeometry/InfiniteLocalEigenvalueBounds.lean`, `SpectralGeometry/InfiniteLocalSignedPerturbationGap.lean`, `SpectralGeometry/InfiniteLocalCoerciveGap.lean`, `SpectralGeometry/InfiniteLocalGraphNorm.lean`, `SpectralGeometry/InfiniteLocalClosedGraph.lean`, and `SpectralGeometry/InfiniteLocalAdjointCharacterization.lean` are imported by the `SpectralGeometry.lean` entry point. The toolchain is Lean 4 `v4.35.0` with the corresponding version of Mathlib.
+The established analytic core is in `SpectralGeometry/CanonicalProduct.lean`. The finite-dimensional geometric results are in `SpectralGeometry/FinitePerturbation.lean`, `SpectralGeometry/FinitePositiveEnergy.lean`, `SpectralGeometry/FiniteGeometricEnergy.lean`, and `SpectralGeometry/FiniteStrictPositivity.lean`. These four finite-dimensional modules and the seventeen infinite-dimensional modules `SpectralGeometry/InfiniteOnsite.lean`, `SpectralGeometry/InfiniteOnsiteDensity.lean`, `SpectralGeometry/InfiniteOnsiteEigenvalues.lean`, `SpectralGeometry/InfiniteOnsiteSummability.lean`, `SpectralGeometry/InfiniteOnsitePowerGrowth.lean`, `SpectralGeometry/InfiniteFiniteEdgeInteraction.lean`, `SpectralGeometry/InfiniteBoundedPerturbation.lean`, `SpectralGeometry/InfiniteSummableEdgeInteraction.lean`, `SpectralGeometry/InfiniteLocalMatching.lean`, `SpectralGeometry/InfiniteLocalBoundedDegree.lean`, `SpectralGeometry/InfiniteLocalEigenvalueBounds.lean`, `SpectralGeometry/InfiniteLocalSignedPerturbationGap.lean`, `SpectralGeometry/InfiniteLocalCoerciveGap.lean`, `SpectralGeometry/InfiniteLocalGraphNorm.lean`, `SpectralGeometry/InfiniteLocalClosedGraph.lean`, `SpectralGeometry/InfiniteLocalAdjointCharacterization.lean`, and `SpectralGeometry/InfiniteOnsiteResolvent.lean` are imported by the `SpectralGeometry.lean` entry point. The toolchain is Lean 4 `v4.35.0` with the corresponding version of Mathlib.
 
 ```bash
 lake update
