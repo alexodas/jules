@@ -721,11 +721,35 @@ The new module proves that `R_a` is self-adjoint as a continuous linear map, usi
 - **Spectral totality:** the orthogonal complement of the supremum of all eigenspaces of `R_a` is zero. Equivalently, their linear span is dense in the real Hilbert space.
 - **Local matching specialization:** if each matching permutation is involutive and the bounded perturbation `P` is symmetric, the corrected geometric resolvent is self-adjoint whenever the explicit Neumann condition is satisfied. The gap bounds of §4.21 provide sufficient conditions for its existence.
 
-**Important distinction:** these are formalized properties of the **compact bounded resolvent**. A later P2 theorem must transfer eigenvectors and nonzero resolvent eigenvalues to the unbounded operator `H` via the relation `λ=a+μ⁻¹`, prove the corresponding spectral enumeration and isolation properties, and then establish quantitative growth. No inverse-square eigenvalue summability is established here.
+**Important distinction:** these are formalized properties of the **compact bounded resolvent**. Section 4.24 separately transfers nonzero resolvent eigenpairs to eigenpairs of the unbounded operator `H` via `λ=a+μ⁻¹`. Spectral enumeration, isolation properties, and quantitative growth remain open. No inverse-square eigenvalue summability is established here.
+
+### 4.24. Eigenpair correspondence between the compact resolvent and the full operator
+
+The Lean module **[`SpectralGeometry/InfiniteLocalEigenpairCorrespondence.lean`](SpectralGeometry/InfiniteLocalEigenpairCorrespondence.lean)** connects the spectral statements about the **bounded** resolvent in §4.23 to genuine eigenvectors of the **unbounded** geometric operator on its natural domain. Let `R_a=(M_V+B-aI)⁻¹` denote the two-sided inverse constructed in §4.20, with its original norm-smallness and unit-gap hypotheses. For each **nonzero** real `μ` and state `f∈ℓ²(T)`, Lean proves the equivalence
+
+```math
+R_a f=\mu f\quad\Longleftrightarrow\quad
+\exists\,\psi\in D(V):\ \psi=f,\quad
+(M_V+B-aI)\psi=\mu^{-1}f.
+```
+
+In the forward direction, the domain witness is constructed explicitly from the resolvent applied to `μ⁻¹ f`. Consequently, every resolvent eigenvector with nonzero eigenvalue belongs to the natural domain. Conversely, the already formalized left-inverse identity recovers the bounded-resolvent eigenvector equation.
+
+For the complete finite-color matching operator `H=M_V+L_w+εP+mI`, the corresponding Lean theorem gives
+
+```math
+R_a f=\mu f\quad\Longleftrightarrow\quad
+\exists\,\psi\in D(V):\ \psi=f,\quad
+H\psi=(a+\mu^{-1})f.
+```
+
+An additional formulation starts with an arbitrary real `λ≠a` and uses `μ=(λ-a)⁻¹`. For nonzero `f`, these are genuine eigenpairs. The correspondence itself is algebraic and does **not** require the bounded correction to be symmetric; the compact self-adjoint spectral conclusions of §4.23 still require their own properness and symmetry hypotheses.
+
+**Scope:** the eigenpair correspondence at a fixed resolvent shift is now formalized. Discreteness and isolation of the **full** spectrum, an eigenvalue enumeration with multiplicities, eigenvalue growth, and inverse-square summability are separate P2 targets not established by this module.
 
 ## 5. Building and verification
 
-The established analytic core is in `SpectralGeometry/CanonicalProduct.lean`. The finite-dimensional geometric results are in `SpectralGeometry/FinitePerturbation.lean`, `SpectralGeometry/FinitePositiveEnergy.lean`, `SpectralGeometry/FiniteGeometricEnergy.lean`, and `SpectralGeometry/FiniteStrictPositivity.lean`. These four finite-dimensional modules and the twenty-four infinite-dimensional modules `SpectralGeometry/InfiniteOnsite.lean`, `SpectralGeometry/InfiniteOnsiteDensity.lean`, `SpectralGeometry/InfiniteOnsiteEigenvalues.lean`, `SpectralGeometry/InfiniteOnsiteSummability.lean`, `SpectralGeometry/InfiniteOnsitePowerGrowth.lean`, `SpectralGeometry/InfiniteFiniteEdgeInteraction.lean`, `SpectralGeometry/InfiniteBoundedPerturbation.lean`, `SpectralGeometry/InfiniteSummableEdgeInteraction.lean`, `SpectralGeometry/InfiniteLocalMatching.lean`, `SpectralGeometry/InfiniteLocalBoundedDegree.lean`, `SpectralGeometry/InfiniteLocalEigenvalueBounds.lean`, `SpectralGeometry/InfiniteLocalSignedPerturbationGap.lean`, `SpectralGeometry/InfiniteLocalCoerciveGap.lean`, `SpectralGeometry/InfiniteLocalGraphNorm.lean`, `SpectralGeometry/InfiniteLocalClosedGraph.lean`, `SpectralGeometry/InfiniteLocalAdjointCharacterization.lean`, `SpectralGeometry/InfiniteOnsiteResolvent.lean`, `SpectralGeometry/InfiniteOnsiteFiniteLowEnergy.lean` and `SpectralGeometry/InfiniteOnsiteCompactResolvent.lean` and `SpectralGeometry/InfiniteOnsiteResolventIdentity.lean` `SpectralGeometry/InfiniteLocalCompactResolvent.lean` and `SpectralGeometry/InfiniteLocalCompactResolventBounds.lean` and `SpectralGeometry/InfiniteLocalSelfAdjointPMap.lean` and `SpectralGeometry/InfiniteLocalResolventSpectrum.lean` are imported by the `SpectralGeometry.lean` entry point. The toolchain is Lean 4 `v4.35.0` with the corresponding version of Mathlib.
+The established analytic core is in `SpectralGeometry/CanonicalProduct.lean`. The finite-dimensional geometric results are in `SpectralGeometry/FinitePerturbation.lean`, `SpectralGeometry/FinitePositiveEnergy.lean`, `SpectralGeometry/FiniteGeometricEnergy.lean`, and `SpectralGeometry/FiniteStrictPositivity.lean`. These four finite-dimensional modules and the twenty-five infinite-dimensional modules `SpectralGeometry/InfiniteOnsite.lean`, `SpectralGeometry/InfiniteOnsiteDensity.lean`, `SpectralGeometry/InfiniteOnsiteEigenvalues.lean`, `SpectralGeometry/InfiniteOnsiteSummability.lean`, `SpectralGeometry/InfiniteOnsitePowerGrowth.lean`, `SpectralGeometry/InfiniteFiniteEdgeInteraction.lean`, `SpectralGeometry/InfiniteBoundedPerturbation.lean`, `SpectralGeometry/InfiniteSummableEdgeInteraction.lean`, `SpectralGeometry/InfiniteLocalMatching.lean`, `SpectralGeometry/InfiniteLocalBoundedDegree.lean`, `SpectralGeometry/InfiniteLocalEigenvalueBounds.lean`, `SpectralGeometry/InfiniteLocalSignedPerturbationGap.lean`, `SpectralGeometry/InfiniteLocalCoerciveGap.lean`, `SpectralGeometry/InfiniteLocalGraphNorm.lean`, `SpectralGeometry/InfiniteLocalClosedGraph.lean`, `SpectralGeometry/InfiniteLocalAdjointCharacterization.lean`, `SpectralGeometry/InfiniteOnsiteResolvent.lean`, `SpectralGeometry/InfiniteOnsiteFiniteLowEnergy.lean` and `SpectralGeometry/InfiniteOnsiteCompactResolvent.lean` and `SpectralGeometry/InfiniteOnsiteResolventIdentity.lean` `SpectralGeometry/InfiniteLocalCompactResolvent.lean` and `SpectralGeometry/InfiniteLocalCompactResolventBounds.lean` and `SpectralGeometry/InfiniteLocalSelfAdjointPMap.lean` and `SpectralGeometry/InfiniteLocalResolventSpectrum.lean` and `SpectralGeometry/InfiniteLocalEigenpairCorrespondence.lean` are imported by the `SpectralGeometry.lean` entry point. The toolchain is Lean 4 `v4.35.0` with the corresponding version of Mathlib.
 
 ```bash
 lake update
@@ -751,7 +775,7 @@ completed only after the corresponding Lean file is imported by
 | **P1 — critical (initial case formalized)** | Compact resolvent for the full local operator | Compact inverse of `M_V+B-aI` for bounded `B` under `‖B R_a‖<1`, with both inverse identities (§4.20) | **Small-correction theorem formalized; quantitative/structural extensions pending** |
 | **P1 — quantitative (formalized)** | Quantitative compact resolvent bounds | Bounds `‖R_a‖≤1/δ`, obtains compact inverse from `‖B‖<δ`, proves existence of a sufficiently negative real shift for any bounded `B`, and gives geometric bounds for matching families (§4.21) | **Formalized; next P1 milestone is spectral-theory integration** |
 | **P1 — infrastructure (formalized)** | Self-adjointness in Mathlib's partial-operator API | Package onsite and local matching operators as `LinearPMap` on the natural domain, and prove `IsSelfAdjoint` from adjoint-pair characterization and density (§4.22) | **Formalized; spectral discreteness remains P2** |
-| **P2 — in progress (bounded resolvent)** | Discrete spectrum | Prove the compact interacting resolvent is self-adjoint, its nonzero eigenspaces are finite-dimensional and its eigenspaces are total (§4.23); transfer these statements to the unbounded operator and enumerate its spectrum next | **Initial spectral theorems formalized; full operator spectrum pending** |
+| **P2 — in progress (eigenpair correspondence)** | Discrete spectrum | Compact self-adjoint resolvent eigenspaces are finite-dimensional and total (§4.23); nonzero resolvent eigenpairs correspond to full unbounded local-operator eigenpairs by `λ=a+μ⁻¹` (§4.24). Isolation, exhaustion and enumeration remain | **Eigenpair correspondence formalized; discrete spectrum and enumeration pending** |
 | **P2 — high** | Eigenvalue growth and summability | Transfer quantitative onsite growth to the eigenvalues of the interacting operator, then prove summability of inverse squares under sufficiently strong growth | Planned |
 | **P3 — integration** | Spectrally defined canonical product | Instantiate the existing admissibility and zero-localization results with the full operator's positive, summable eigenvalues | Planned |
 | **P4 — geometric applications** | Specific aperiodic tiling | Check the operator hypotheses for a concrete tiling model rather than assuming them abstractly | Planned |
@@ -817,7 +841,7 @@ for Mathlib's spectral theorem interfaces.
 
 ### 6.3. P2 — Discreteness, multiplicity, and quantitative growth
 
-**First P2 step (§4.23):** The compact bounded resolvent of the symmetric local operator has been shown to be self-adjoint. Its nonzero eigenspaces are finite-dimensional and the supremum of all its eigenspaces is dense, using Mathlib's compact self-adjoint spectral theorem. The next step is to transfer the resolvent eigenvalue equation to the unbounded operator on the natural domain, prove the appropriate spectral exhaustion and isolation of eigenvalues, and select an enumeration with multiplicity. A lower spectral bound and exclusion of zero are necessary for inverse powers.
+**First P2 step (§4.23):** The compact bounded resolvent of the symmetric local operator has been shown to be self-adjoint. Its nonzero eigenspaces are finite-dimensional and the supremum of all its eigenspaces is dense, using Mathlib's compact self-adjoint spectral theorem. **Second P2 step (§4.24):** the nonzero resolvent eigenpair equation is now equivalent to the eigenpair equation for the unbounded local operator on its natural domain, with eigenvalue `λ=a+μ⁻¹`. The next task is to formalize the spectral exhaustion and isolation statements for the unbounded operator and choose an enumeration with multiplicity. A lower spectral bound and exclusion of zero are necessary for inverse powers.
 
 Next, prove an eigenvalue comparison under bounded symmetric
 perturbations, of the form
