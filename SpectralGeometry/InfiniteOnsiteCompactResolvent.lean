@@ -81,9 +81,9 @@ theorem infiniteOnsiteResolventCLM_apply
     infiniteOnsiteResolventCLM V a hgap f t = (V t - a)⁻¹ * f t := rfl
 
 
-/-- Evaluation of one tile coordinate as a continuous linear functional. -/
 variable [DecidableEq Tile]
 
+/-- Evaluation of one tile coordinate as a continuous linear functional. -/
 private noncomputable def infiniteOnsiteCoordinateCLM (t : Tile) :
     TileHilbert Tile →L[ℝ] ℝ where
   toFun := fun f => f t
@@ -133,10 +133,8 @@ private theorem infiniteOnsiteFiniteDiagonal_compact
               ((lp.singleContinuousLinearMap ℝ (fun _ : Tile => ℝ)
                 (2 : ENNReal) t).comp (infiniteOnsiteCoordinateCLM t))) := by
         convert hcomp.smul (c t) using 1
-        funext f
-        rfl
-      simpa only [Finset.sum_insert ht, ContinuousLinearMap.coe_add] using
-        hterm.add ih
+      rw [Finset.sum_insert ht]
+      convert hterm.add ih using 1 <;> (funext f; rfl)
 
 /-- A finite diagonal truncation vanishes outside its finite index set. -/
 private theorem infiniteOnsiteFiniteDiagonal_apply
@@ -144,9 +142,13 @@ private theorem infiniteOnsiteFiniteDiagonal_apply
     infiniteOnsiteFiniteDiagonal c s f t =
       if t ∈ s then c t * f t else 0 := by
   classical
-  simp [infiniteOnsiteFiniteDiagonal, infiniteOnsiteCoordinateCLM,
-    lp.singleContinuousLinearMap_apply, lp.single_apply,
-    Finset.sum_ite_eq', smul_eq_mul]
+  simp only [infiniteOnsiteFiniteDiagonal, ContinuousLinearMap.sum_apply,
+    ContinuousLinearMap.smul_apply, ContinuousLinearMap.comp_apply,
+    lp.singleContinuousLinearMap_apply]
+  change (∑ i ∈ s, c i • lp.single (2 : ENNReal) i (f i)) t =
+    if t ∈ s then c t * f t else 0
+  simp [lp.coeFn_sum, Finset.sum_apply, lp.coeFn_smul,
+    lp.single_apply, Finset.sum_ite_eq', smul_eq_mul]
 
 
 /-- Uniform control of the truncation error from the coefficients omitted
@@ -170,7 +172,8 @@ private theorem infiniteOnsiteDiagonal_error_norm_le
         infiniteOnsiteDiagonalContraction_apply,
         infiniteOnsiteFiniteDiagonal_apply]
     by_cases ht : t ∈ s
-    · simp [heq, ht]
+    · rw [heq, if_pos ht, sub_self, norm_zero]
+      exact norm_nonneg _
     · rw [heq, if_neg ht, sub_zero]
       have hh : ‖c t‖ * ‖f t‖ ≤ B * ‖f t‖ :=
         mul_le_mul_of_nonneg_right (hout t ht) (norm_nonneg _)
