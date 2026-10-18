@@ -688,9 +688,32 @@ For the finite-color matching-family model from §4.9, with `D` matching colors 
 
 Thus `V(t)-a≥δ≥1` and `δ>2DW+|ε|‖P‖+|m|` suffice for the compact shifted inverse of the actual local matching operator via its already-proved bounded-correction identity. Neither symmetry of `P` nor a fixed small coupling is required for this existence result. Self-adjoint spectral decomposition, discrete eigenvalues, and inverse-square summability remain separate P1/P2 milestones.
 
+### 4.22. Self-adjoint onsite and infinite local operators in Mathlib's partial-operator API
+
+The Lean module **[`SpectralGeometry/InfiniteLocalSelfAdjointPMap.lean`](SpectralGeometry/InfiniteLocalSelfAdjointPMap.lean)** bridges the explicit natural-domain operators and adjoint-pair characterizations of §§4.14–4.15 to Mathlib's **`LinearPMap`** type for partially defined (potentially unbounded) linear operators.
+
+The module first packages onsite multiplication `M_V` as a `LinearPMap` with domain `D(V)`. It then combines density of `D(V)` with the previously proved adjoint-pair equivalence to establish
+
+```math
+M_V^*=M_V
+```
+
+in the precise sense of Mathlib's `IsSelfAdjoint` predicate for `LinearPMap`. Thus the conclusion is no longer solely an explicit characterization of possible adjoint pairs.
+
+For the complete infinite local matching operator
+
+```math
+H_{\varepsilon,m}=M_V+L_w+\varepsilon P+mI
+\quad\text{on }D(V),
+```
+
+the same argument proves `IsSelfAdjoint` for its `LinearPMap` representation when each matching permutation is involutive and the bounded perturbation `P` is symmetric. A reusable graph-and-pairing lemma identifies the adjoint graph with the original graph, using Mathlib's `LinearPMap.adjoint_graph_eq_graph_adjoint`. **The actual domain remains `D(V)`; it is not silently replaced by all of `ℓ²(T)`.**
+
+**Scope:** this establishes the operator-theoretic interface needed before applying later spectral results. It requires the stated symmetry assumptions for the full local operator and makes no claim about compactness without the properness/gap hypotheses of §§4.20–4.21. Discrete eigenvalue enumeration, finite multiplicities, eigenvalue growth, and inverse-square summability remain future P2 goals.
+
 ## 5. Building and verification
 
-The established analytic core is in `SpectralGeometry/CanonicalProduct.lean`. The finite-dimensional geometric results are in `SpectralGeometry/FinitePerturbation.lean`, `SpectralGeometry/FinitePositiveEnergy.lean`, `SpectralGeometry/FiniteGeometricEnergy.lean`, and `SpectralGeometry/FiniteStrictPositivity.lean`. These four finite-dimensional modules and the twenty-two infinite-dimensional modules `SpectralGeometry/InfiniteOnsite.lean`, `SpectralGeometry/InfiniteOnsiteDensity.lean`, `SpectralGeometry/InfiniteOnsiteEigenvalues.lean`, `SpectralGeometry/InfiniteOnsiteSummability.lean`, `SpectralGeometry/InfiniteOnsitePowerGrowth.lean`, `SpectralGeometry/InfiniteFiniteEdgeInteraction.lean`, `SpectralGeometry/InfiniteBoundedPerturbation.lean`, `SpectralGeometry/InfiniteSummableEdgeInteraction.lean`, `SpectralGeometry/InfiniteLocalMatching.lean`, `SpectralGeometry/InfiniteLocalBoundedDegree.lean`, `SpectralGeometry/InfiniteLocalEigenvalueBounds.lean`, `SpectralGeometry/InfiniteLocalSignedPerturbationGap.lean`, `SpectralGeometry/InfiniteLocalCoerciveGap.lean`, `SpectralGeometry/InfiniteLocalGraphNorm.lean`, `SpectralGeometry/InfiniteLocalClosedGraph.lean`, `SpectralGeometry/InfiniteLocalAdjointCharacterization.lean`, `SpectralGeometry/InfiniteOnsiteResolvent.lean`, `SpectralGeometry/InfiniteOnsiteFiniteLowEnergy.lean` and `SpectralGeometry/InfiniteOnsiteCompactResolvent.lean` and `SpectralGeometry/InfiniteOnsiteResolventIdentity.lean` `SpectralGeometry/InfiniteLocalCompactResolvent.lean` and `SpectralGeometry/InfiniteLocalCompactResolventBounds.lean` are imported by the `SpectralGeometry.lean` entry point. The toolchain is Lean 4 `v4.35.0` with the corresponding version of Mathlib.
+The established analytic core is in `SpectralGeometry/CanonicalProduct.lean`. The finite-dimensional geometric results are in `SpectralGeometry/FinitePerturbation.lean`, `SpectralGeometry/FinitePositiveEnergy.lean`, `SpectralGeometry/FiniteGeometricEnergy.lean`, and `SpectralGeometry/FiniteStrictPositivity.lean`. These four finite-dimensional modules and the twenty-three infinite-dimensional modules `SpectralGeometry/InfiniteOnsite.lean`, `SpectralGeometry/InfiniteOnsiteDensity.lean`, `SpectralGeometry/InfiniteOnsiteEigenvalues.lean`, `SpectralGeometry/InfiniteOnsiteSummability.lean`, `SpectralGeometry/InfiniteOnsitePowerGrowth.lean`, `SpectralGeometry/InfiniteFiniteEdgeInteraction.lean`, `SpectralGeometry/InfiniteBoundedPerturbation.lean`, `SpectralGeometry/InfiniteSummableEdgeInteraction.lean`, `SpectralGeometry/InfiniteLocalMatching.lean`, `SpectralGeometry/InfiniteLocalBoundedDegree.lean`, `SpectralGeometry/InfiniteLocalEigenvalueBounds.lean`, `SpectralGeometry/InfiniteLocalSignedPerturbationGap.lean`, `SpectralGeometry/InfiniteLocalCoerciveGap.lean`, `SpectralGeometry/InfiniteLocalGraphNorm.lean`, `SpectralGeometry/InfiniteLocalClosedGraph.lean`, `SpectralGeometry/InfiniteLocalAdjointCharacterization.lean`, `SpectralGeometry/InfiniteOnsiteResolvent.lean`, `SpectralGeometry/InfiniteOnsiteFiniteLowEnergy.lean` and `SpectralGeometry/InfiniteOnsiteCompactResolvent.lean` and `SpectralGeometry/InfiniteOnsiteResolventIdentity.lean` `SpectralGeometry/InfiniteLocalCompactResolvent.lean` and `SpectralGeometry/InfiniteLocalCompactResolventBounds.lean` and `SpectralGeometry/InfiniteLocalSelfAdjointPMap.lean` are imported by the `SpectralGeometry.lean` entry point. The toolchain is Lean 4 `v4.35.0` with the corresponding version of Mathlib.
 
 ```bash
 lake update
@@ -715,7 +738,7 @@ completed only after the corresponding Lean file is imported by
 | **P0 — completed** | Onsite inverse identity | The bounded map `infiniteOnsiteResolventCLM` takes values in the natural domain and is a two-sided inverse of the shifted onsite operator (§4.19) | **Formalized and Lean-checked** |
 | **P1 — critical (initial case formalized)** | Compact resolvent for the full local operator | Compact inverse of `M_V+B-aI` for bounded `B` under `‖B R_a‖<1`, with both inverse identities (§4.20) | **Small-correction theorem formalized; quantitative/structural extensions pending** |
 | **P1 — quantitative (formalized)** | Quantitative compact resolvent bounds | Bounds `‖R_a‖≤1/δ`, obtains compact inverse from `‖B‖<δ`, proves existence of a sufficiently negative real shift for any bounded `B`, and gives geometric bounds for matching families (§4.21) | **Formalized; next P1 milestone is spectral-theory integration** |
-| **P1 — infrastructure** | Spectral-theory interface | Express the established adjoint-domain characterization in an API usable by Mathlib's self-adjoint spectral theorems | Planned |
+| **P1 — infrastructure (formalized)** | Self-adjointness in Mathlib's partial-operator API | Package onsite and local matching operators as `LinearPMap` on the natural domain, and prove `IsSelfAdjoint` from adjoint-pair characterization and density (§4.22) | **Formalized; spectral discreteness remains P2** |
 | **P2 — high** | Discrete spectrum | Derive real isolated eigenvalues of finite multiplicity and appropriate spectral exhaustion from self-adjointness plus compact resolvent | Planned |
 | **P2 — high** | Eigenvalue growth and summability | Transfer quantitative onsite growth to the eigenvalues of the interacting operator, then prove summability of inverse squares under sufficiently strong growth | Planned |
 | **P3 — integration** | Spectrally defined canonical product | Instantiate the existing admissibility and zero-localization results with the full operator's positive, summable eigenvalues | Planned |
@@ -778,10 +801,7 @@ negative shift, and the named local-matching corollary. The next
 independent P1 milestone is to package the adjoint-domain criterion
 for Mathlib's spectral theorem interfaces.
 
-In parallel, bridge the explicit adjoint-pair theorem of §4.15 to
-the self-adjointness interfaces used by Mathlib. This is needed for the
-subsequent spectral theorem, even though a compact inverse can first be
-constructed without assuming that the bounded correction is symmetric.
+**Self-adjointness integration (P1, §4.22):** The onsite and symmetric local matching operators are now represented by Mathlib's `LinearPMap` with their unchanged natural domain. The earlier adjoint-pair equivalences give genuine `IsSelfAdjoint` theorems in this API. This satisfies the operator-interface milestone; the next priority is the **P2 spectral stage** (discreteness, finite multiplicities, and growth) under appropriate compact-resolvent and symmetry hypotheses.
 
 ### 6.3. P2 — Discreteness, multiplicity, and quantitative growth
 
