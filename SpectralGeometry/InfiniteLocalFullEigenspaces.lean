@@ -57,10 +57,16 @@ theorem infiniteLocalMatchingFullEigenspace_mem_iff
         (ψ.1 : TileHilbert Tile) = f ∧
         infiniteLocalShiftedPerturbedOperator D V σ w P ε shift ψ =
           eigenvalue • f := by
-  simpa only [infiniteLocalMatchingFullEigenspace,
-    Module.End.mem_eigenspace_iff] using
-      (infiniteLocalMatching_resolvent_eigenpair_iff_of_ne
-        D V σ w P ε shift a hgap hsmall eigenvalue hne f)
+  change
+    infiniteBoundedOnsiteResolvent V a hgap
+      (infiniteLocalBoundedCorrection D σ w P ε shift) hsmall f =
+        (eigenvalue - a)⁻¹ • f ↔
+      ∃ ψ : infiniteOnsiteDomain V,
+        (ψ.1 : TileHilbert Tile) = f ∧
+        infiniteLocalShiftedPerturbedOperator D V σ w P ε shift ψ =
+          eigenvalue • f
+  exact infiniteLocalMatching_resolvent_eigenpair_iff_of_ne
+    D V σ w P ε shift a hgap hsmall eigenvalue hne f
 
 /-- Every real eigenvalue of the full matching operator other than
 the resolvent shift has a finite-dimensional eigenspace when the
