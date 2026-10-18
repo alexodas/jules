@@ -2,14 +2,17 @@ import SpectralGeometry.InfiniteOnsiteResolvent
 import SpectralGeometry.InfiniteOnsiteFiniteLowEnergy
 
 /-!
-# The bounded onsite resolvent: first step towards compactness
+# The bounded and compact onsite resolvent
 
-The diagonal inverse of M_V - a I is a contraction on real ℓ²
-under the unit-gap assumption V(t)-a ≥ 1.
+Under the unit-gap assumption V(t)-a ≥ 1, the coordinatewise inverse
+of the shifted diagonal onsite operator is a contraction on real ℓ².
 
-This file first packages the coordinatewise inverse as an actual
-continuous linear map. A subsequent proof will establish compactness
-under the additional hypothesis of finite onsite sublevel sets.
+This module packages that inverse as a continuous linear map and,
+assuming every onsite potential sublevel set is finite, proves its
+compactness through finite-rank truncations converging in operator norm.
+
+The result concerns only diagonal onsite multiplication, not the full
+operator with geometric interactions and controlled perturbations.
 -/
 
 namespace SpectralGeometry
