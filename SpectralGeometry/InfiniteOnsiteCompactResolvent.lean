@@ -142,21 +142,31 @@ private theorem infiniteOnsiteFiniteDiagonal_apply
     infiniteOnsiteFiniteDiagonal c s f t =
       if t ∈ s then c t * f t else 0 := by
   classical
-  simp only [infiniteOnsiteFiniteDiagonal, ContinuousLinearMap.sum_apply,
-    ContinuousLinearMap.smul_apply, ContinuousLinearMap.comp_apply,
-    lp.singleContinuousLinearMap_apply]
-  change (∑ i ∈ s, c i • lp.single (2 : ENNReal) i (f i)) t =
-    if t ∈ s then c t * f t else 0
-  calc
-    (∑ i ∈ s, c i • lp.single (2 : ENNReal) i (f i)) t =
-        ∑ i ∈ s, (c i • lp.single (2 : ENNReal) i (f i)) t := by
-      change (infiniteOnsiteCoordinateCLM t)
-        (∑ i ∈ s, c i • lp.single (2 : ENNReal) i (f i)) =
-        ∑ i ∈ s, (infiniteOnsiteCoordinateCLM t)
-          (c i • lp.single (2 : ENNReal) i (f i))
-      simp only [map_sum]
-    _ = if t ∈ s then c t * f t else 0 := by
-      simp [lp.single_apply, Finset.sum_ite_eq', smul_eq_mul]
+  induction s using Finset.induction_on with
+  | empty =>
+      simp [infiniteOnsiteFiniteDiagonal]
+  | @insert i s hi ih =>
+      have hsum :
+          infiniteOnsiteFiniteDiagonal c (insert i s) =
+            c i • ((lp.singleContinuousLinearMap ℝ (fun _ : Tile => ℝ)
+              (2 : ENNReal) i).comp (infiniteOnsiteCoordinateCLM i)) +
+              infiniteOnsiteFiniteDiagonal c s := by
+        simp [infiniteOnsiteFiniteDiagonal, Finset.sum_insert hi]
+      rw [hsum, ContinuousLinearMap.add_apply,
+        lp.coeFn_add, Pi.add_apply, ih]
+      simp only [ContinuousLinearMap.smul_apply,
+        ContinuousLinearMap.comp_apply, lp.singleContinuousLinearMap_apply]
+      change
+        (c i • lp.single (2 : ENNReal) i (f i)) t +
+          (if t ∈ s then c t * f t else 0) =
+        if t ∈ insert i s then c t * f t else 0
+      by_cases ht : t = i
+      · subst t
+        simp [lp.coeFn_smul, lp.single_apply, Finset.mem_insert,
+          smul_eq_mul]
+      · have hit : i ≠ t := Ne.symm ht
+        simp [lp.coeFn_smul, lp.single_apply, Finset.mem_insert,
+          ht, hit, smul_eq_mul]
 
 
 /-- Uniform control of the truncation error from the coefficients omitted
