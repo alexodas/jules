@@ -19,6 +19,7 @@ import SpectralGeometry.InfiniteLocalCoerciveGap
 import SpectralGeometry.InfiniteLocalGraphNorm
 import SpectralGeometry.InfiniteLocalClosedGraph
 import SpectralGeometry.InfiniteLocalAdjointCharacterization
+import SpectralGeometry.InfiniteOnsiteResolvent
 
 /-!
 # Spectral Geometry
