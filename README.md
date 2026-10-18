@@ -648,9 +648,28 @@ Thus the bounded continuous map is explicitly shown to be the **two-sided invers
 
 **Scope:** this closes the onsite inverse-identification milestone P0 from §6 without introducing any new potential-growth hypothesis. It does **not** prove that the full interacting operator `H=M_V+L_w+εP+mI` is invertible or has compact resolvent; that remains P1.
 
+### 4.20. Compact resolvent under small bounded interactions and perturbations
+
+The Lean module **[`SpectralGeometry/InfiniteLocalCompactResolvent.lean`](SpectralGeometry/InfiniteLocalCompactResolvent.lean)** transfers the compact onsite resolvent of §§4.18–4.19 to an operator with a bounded correction. Let `B:ℓ²(T)→ℓ²(T)` be a continuous linear map and let
+
+```math
+H=M_V+B\quad\text{on }D(V),\qquad
+R_a=(M_V-aI)^{-1}.
+```
+
+Assume the unit gap `V(t)-a≥1`, finite onsite sublevel sets as in §4.18, and the quantitative **smallness condition** `‖B R_a‖<1`. Neumann-series invertibility of `I+B R_a` provides
+
+```math
+(H-aI)^{-1}=R_a(I+B R_a)^{-1}.
+```
+
+The module constructs this expression as a continuous linear map, shows that its outputs belong to `D(V)`, proves both inverse identities for the **full** shifted operator, and proves its compactness by composition with the compact onsite resolvent.
+
+The result applies to any bounded correction satisfying the stated condition, in particular to the finite-color matching-family interaction with a bounded controlled perturbation encoded by `B=L_w+εP+mI`. It does **not** claim that `‖B R_a‖<1` holds automatically for arbitrary coupling strengths or at an arbitrary spectral shift. No spectral discreteness or inverse-square eigenvalue summability follows merely from this result; those remain separate goals.
+
 ## 5. Building and verification
 
-The established analytic core is in `SpectralGeometry/CanonicalProduct.lean`. The finite-dimensional geometric results are in `SpectralGeometry/FinitePerturbation.lean`, `SpectralGeometry/FinitePositiveEnergy.lean`, `SpectralGeometry/FiniteGeometricEnergy.lean`, and `SpectralGeometry/FiniteStrictPositivity.lean`. These four finite-dimensional modules and the twenty infinite-dimensional modules `SpectralGeometry/InfiniteOnsite.lean`, `SpectralGeometry/InfiniteOnsiteDensity.lean`, `SpectralGeometry/InfiniteOnsiteEigenvalues.lean`, `SpectralGeometry/InfiniteOnsiteSummability.lean`, `SpectralGeometry/InfiniteOnsitePowerGrowth.lean`, `SpectralGeometry/InfiniteFiniteEdgeInteraction.lean`, `SpectralGeometry/InfiniteBoundedPerturbation.lean`, `SpectralGeometry/InfiniteSummableEdgeInteraction.lean`, `SpectralGeometry/InfiniteLocalMatching.lean`, `SpectralGeometry/InfiniteLocalBoundedDegree.lean`, `SpectralGeometry/InfiniteLocalEigenvalueBounds.lean`, `SpectralGeometry/InfiniteLocalSignedPerturbationGap.lean`, `SpectralGeometry/InfiniteLocalCoerciveGap.lean`, `SpectralGeometry/InfiniteLocalGraphNorm.lean`, `SpectralGeometry/InfiniteLocalClosedGraph.lean`, `SpectralGeometry/InfiniteLocalAdjointCharacterization.lean`, `SpectralGeometry/InfiniteOnsiteResolvent.lean`, `SpectralGeometry/InfiniteOnsiteFiniteLowEnergy.lean` and `SpectralGeometry/InfiniteOnsiteCompactResolvent.lean` and `SpectralGeometry/InfiniteOnsiteResolventIdentity.lean` are imported by the `SpectralGeometry.lean` entry point. The toolchain is Lean 4 `v4.35.0` with the corresponding version of Mathlib.
+The established analytic core is in `SpectralGeometry/CanonicalProduct.lean`. The finite-dimensional geometric results are in `SpectralGeometry/FinitePerturbation.lean`, `SpectralGeometry/FinitePositiveEnergy.lean`, `SpectralGeometry/FiniteGeometricEnergy.lean`, and `SpectralGeometry/FiniteStrictPositivity.lean`. These four finite-dimensional modules and the twenty-one infinite-dimensional modules `SpectralGeometry/InfiniteOnsite.lean`, `SpectralGeometry/InfiniteOnsiteDensity.lean`, `SpectralGeometry/InfiniteOnsiteEigenvalues.lean`, `SpectralGeometry/InfiniteOnsiteSummability.lean`, `SpectralGeometry/InfiniteOnsitePowerGrowth.lean`, `SpectralGeometry/InfiniteFiniteEdgeInteraction.lean`, `SpectralGeometry/InfiniteBoundedPerturbation.lean`, `SpectralGeometry/InfiniteSummableEdgeInteraction.lean`, `SpectralGeometry/InfiniteLocalMatching.lean`, `SpectralGeometry/InfiniteLocalBoundedDegree.lean`, `SpectralGeometry/InfiniteLocalEigenvalueBounds.lean`, `SpectralGeometry/InfiniteLocalSignedPerturbationGap.lean`, `SpectralGeometry/InfiniteLocalCoerciveGap.lean`, `SpectralGeometry/InfiniteLocalGraphNorm.lean`, `SpectralGeometry/InfiniteLocalClosedGraph.lean`, `SpectralGeometry/InfiniteLocalAdjointCharacterization.lean`, `SpectralGeometry/InfiniteOnsiteResolvent.lean`, `SpectralGeometry/InfiniteOnsiteFiniteLowEnergy.lean` and `SpectralGeometry/InfiniteOnsiteCompactResolvent.lean` and `SpectralGeometry/InfiniteOnsiteResolventIdentity.lean` and `SpectralGeometry/InfiniteLocalCompactResolvent.lean` are imported by the `SpectralGeometry.lean` entry point. The toolchain is Lean 4 `v4.35.0` with the corresponding version of Mathlib.
 
 ```bash
 lake update
@@ -673,7 +692,7 @@ completed only after the corresponding Lean file is imported by
 | Priority | Milestone | Mathematical target | Status |
 | --- | --- | --- | --- |
 | **P0 — completed** | Onsite inverse identity | The bounded map `infiniteOnsiteResolventCLM` takes values in the natural domain and is a two-sided inverse of the shifted onsite operator (§4.19) | **Formalized and Lean-checked** |
-| **P1 — critical** | Compact resolvent for the full local operator | Transfer compactness from `M_V` to `H=M_V+L_w+εP+mI` under explicit boundedness and gap conditions | Planned |
+| **P1 — critical (initial case formalized)** | Compact resolvent for the full local operator | Compact inverse of `M_V+B-aI` for bounded `B` under `‖B R_a‖<1`, with both inverse identities (§4.20) | **Small-correction theorem formalized; quantitative/structural extensions pending** |
 | **P1 — infrastructure** | Spectral-theory interface | Express the established adjoint-domain characterization in an API usable by Mathlib's self-adjoint spectral theorems | Planned |
 | **P2 — high** | Discrete spectrum | Derive real isolated eigenvalues of finite multiplicity and appropriate spectral exhaustion from self-adjointness plus compact resolvent | Planned |
 | **P2 — high** | Eigenvalue growth and summability | Transfer quantitative onsite growth to the eigenvalues of the interacting operator, then prove summability of inverse squares under sufficiently strong growth | Planned |
@@ -705,7 +724,7 @@ existing compact-resolvent module. No new growth hypothesis is needed.
 The next unfinished milestone is **P1**, transferring compactness to the
 complete operator with bounded geometric interactions and perturbations.
 
-### 6.2. P1 — Compact resolvent of the interacting operator
+### 6.2. P1 — Compact resolvent of the interacting operator (small-correction case checked)
 
 Write `H=M_V+B` on `D(V)`, where the interaction and perturbation
 correction `B=L_w+εP+mI` is bounded. Establish a sufficiently strong
@@ -716,12 +735,7 @@ onsite gap `V(t)-a≥δ>0` and the quantitative estimate
 (H-aI)^{-1}=R_a\,(I+B R_a)^{-1}.
 ```
 
-This also requires checking the **natural-domain mapping property** of
-the inverse and both inverse identities. Since `R_a` is compact under
-onsite properness and `(I+B R_a)^{-1}` is bounded, the product is
-compact. The plan applies in particular to the bounded matching-family
-interaction already formalized; it does not assert the result for arbitrary
-unbounded interactions or nonsymmetric operators without extra assumptions.
+**The first small-correction case is now proved** in §4.20: the inverse maps to the natural domain, both inverse identities hold, and the bounded resolvent is compact. The hypothesis is explicitly `‖B R_a‖<1`; the next extension is to derive convenient numeric bounds directly from `‖B‖` and onsite gaps, and to package the substitution `B=L_w+εP+mI` into a dedicated local-matching theorem. No conclusion is asserted for arbitrary unbounded interactions.
 
 In parallel, bridge the explicit adjoint-pair theorem of §4.15 to
 the self-adjointness interfaces used by Mathlib. This is needed for the

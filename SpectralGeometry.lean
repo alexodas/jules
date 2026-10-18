@@ -23,6 +23,7 @@ import SpectralGeometry.InfiniteOnsiteResolvent
 import SpectralGeometry.InfiniteOnsiteFiniteLowEnergy
 import SpectralGeometry.InfiniteOnsiteCompactResolvent
 import SpectralGeometry.InfiniteOnsiteResolventIdentity
+import SpectralGeometry.InfiniteLocalCompactResolvent
 
 /-!
 # Spectral Geometry
