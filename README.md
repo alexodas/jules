@@ -543,9 +543,41 @@ No nonnegativity of `V`, matching weights or `P` is needed for closedness, and n
 
 **Scope:** closedness is **not the same as self-adjointness**. In particular, this result alone does not show that the operator equals its adjoint, has a resolvent at any given point, has compact resolvent, possesses a purely discrete spectrum, or satisfies inverse-square spectral summability. These remain separate formalization goals.
 
+### 4.15. Explicit adjoint characterization and self-adjointness criterion
+
+The Lean module **[`SpectralGeometry/InfiniteLocalAdjointCharacterization.lean`](SpectralGeometry/InfiniteLocalAdjointCharacterization.lean)** begins the self-adjointness stage by characterizing **exactly which input-output pairs satisfy the adjoint pairing identity** for the densely defined operator on its natural domain `D(V)`.
+
+For a real Hilbert-space operator `A`, a pair of square-summable states `(η,χ)` is an *adjoint pair* when
+
+```math
+\langle A\varphi,\eta\rangle=\langle\varphi,\chi\rangle
+\quad\text{for every }\varphi\in D(V).
+```
+
+The module first shows that, for onsite multiplication `M_V` by an arbitrary real potential (even if unbounded), this identity holds **if and only if** `η∈D(V)` and `χ=M_Vη`. The key proof tests the identity on states concentrated on a single tile, forcing the coordinatewise equation `χ(t)=V(t)η(t)`. Because `χ∈ℓ²`, this also forces `η` into the natural onsite domain. The reverse implication uses the previously proved symmetry of onsite multiplication.
+
+For the **complete infinite local matching operator**
+
+```math
+H_{\varepsilon,m}=M_V+L_w+\varepsilon P+mI
+```
+
+the analogous characterization is established assuming **involutive matching permutations** and **a symmetric bounded perturbation `P`**. Under these conditions its bounded correction `B=L_w+εP+mI` is symmetric, so an adjoint-pair identity for `H` reduces to one for `M_V` with output `χ-Bη`. The result is
+
+```math
+\bigl[\ \langle H\varphi,\eta\rangle
+=\langle\varphi,\chi\rangle\ \ \forall\varphi\in D(V)\ \bigr]
+\iff
+\bigl[\ \eta\in D(V),\ \chi=H\eta\ \bigr].
+```
+
+Combined with the independently formalized **density of `D(V)`** (§4.2) and **closedness** (§4.14), this is a mathematically explicit **adjoint-domain equality**, the defining substance of self-adjointness for these real densely defined operators. Unlike symmetry alone, it excludes additional adjoint-domain states.
+
+**Technical scope:** the proof states the full adjoint-pair characterization directly rather than packaging it as a Mathlib `UnboundedLinearOperator`/`IsSelfAdjoint` API instance. This does **not** establish compact resolvent, discrete spectrum, eigenvalue existence, inverse-square summability, or a particular tiling graph. The conclusion for the full operator requires the symmetry hypotheses on the matching permutations and `P`; it is not asserted for arbitrary nonsymmetric perturbations.
+
 ## 5. Building and verification
 
-The established analytic core is in `SpectralGeometry/CanonicalProduct.lean`. The finite-dimensional geometric results are in `SpectralGeometry/FinitePerturbation.lean`, `SpectralGeometry/FinitePositiveEnergy.lean`, `SpectralGeometry/FiniteGeometricEnergy.lean`, and `SpectralGeometry/FiniteStrictPositivity.lean`. These four finite-dimensional modules and the fifteen infinite-dimensional modules `SpectralGeometry/InfiniteOnsite.lean`, `SpectralGeometry/InfiniteOnsiteDensity.lean`, `SpectralGeometry/InfiniteOnsiteEigenvalues.lean`, `SpectralGeometry/InfiniteOnsiteSummability.lean`, `SpectralGeometry/InfiniteOnsitePowerGrowth.lean`, `SpectralGeometry/InfiniteFiniteEdgeInteraction.lean`, `SpectralGeometry/InfiniteBoundedPerturbation.lean`, `SpectralGeometry/InfiniteSummableEdgeInteraction.lean`, `SpectralGeometry/InfiniteLocalMatching.lean`, `SpectralGeometry/InfiniteLocalBoundedDegree.lean`, `SpectralGeometry/InfiniteLocalEigenvalueBounds.lean`, `SpectralGeometry/InfiniteLocalSignedPerturbationGap.lean`, `SpectralGeometry/InfiniteLocalCoerciveGap.lean`, `SpectralGeometry/InfiniteLocalGraphNorm.lean`, and `SpectralGeometry/InfiniteLocalClosedGraph.lean` are imported by the `SpectralGeometry.lean` entry point. The toolchain is Lean 4 `v4.35.0` with the corresponding version of Mathlib.
+The established analytic core is in `SpectralGeometry/CanonicalProduct.lean`. The finite-dimensional geometric results are in `SpectralGeometry/FinitePerturbation.lean`, `SpectralGeometry/FinitePositiveEnergy.lean`, `SpectralGeometry/FiniteGeometricEnergy.lean`, and `SpectralGeometry/FiniteStrictPositivity.lean`. These four finite-dimensional modules and the sixteen infinite-dimensional modules `SpectralGeometry/InfiniteOnsite.lean`, `SpectralGeometry/InfiniteOnsiteDensity.lean`, `SpectralGeometry/InfiniteOnsiteEigenvalues.lean`, `SpectralGeometry/InfiniteOnsiteSummability.lean`, `SpectralGeometry/InfiniteOnsitePowerGrowth.lean`, `SpectralGeometry/InfiniteFiniteEdgeInteraction.lean`, `SpectralGeometry/InfiniteBoundedPerturbation.lean`, `SpectralGeometry/InfiniteSummableEdgeInteraction.lean`, `SpectralGeometry/InfiniteLocalMatching.lean`, `SpectralGeometry/InfiniteLocalBoundedDegree.lean`, `SpectralGeometry/InfiniteLocalEigenvalueBounds.lean`, `SpectralGeometry/InfiniteLocalSignedPerturbationGap.lean`, `SpectralGeometry/InfiniteLocalCoerciveGap.lean`, `SpectralGeometry/InfiniteLocalGraphNorm.lean`, `SpectralGeometry/InfiniteLocalClosedGraph.lean`, and `SpectralGeometry/InfiniteLocalAdjointCharacterization.lean` are imported by the `SpectralGeometry.lean` entry point. The toolchain is Lean 4 `v4.35.0` with the corresponding version of Mathlib.
 
 ```bash
 lake update
