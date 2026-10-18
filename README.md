@@ -63,7 +63,7 @@ We will investigate hypotheses yielding a positive, discrete spectrum with finit
 \qquad \lambda_n(\varepsilon)\longrightarrow+\infty.
 ```
 
-Perturbation theory is part of this program. A bounded self-adjoint perturbation preserves self-adjointness and compact resolvent when the unperturbed operator has those properties, but **positivity requires an additional condition** (for example, a perturbation sufficiently small relative to a positive lower bound). We will investigate how eigenvalues move with `ε` and when the analytic conditions below remain valid. These are mathematical objectives, not yet Lean theorems about an infinite geometric operator.
+Perturbation theory is part of this program. A bounded self-adjoint perturbation preserves self-adjointness and compact resolvent when the unperturbed operator has those properties, but **positivity requires an additional condition** (for example, a perturbation sufficiently small relative to a positive lower bound). We will investigate how the ordered eigenvalues move with `ε` and when the analytic conditions below remain valid. The abstract infinite local operator is already constructed, with compact-resolvent and self-adjointness theorems under explicit hypotheses (§§4.20–4.22). A positive, enumerated full spectrum with quantitative growth and inverse-square summability remains a research objective.
 
 ## 2. Canonical product and analytic foundations
 
@@ -111,7 +111,7 @@ For `c=1/2` and `d=i`, its zeros lie on the prescribed critical line, at heights
 s=\frac12\pm i\lambda_n(\varepsilon).
 ```
 
-**The line is imposed by the construction of the product, not derived from any property of the Riemann zeta function.** We have not yet formalized `H_\varepsilon` on an infinite tiling, proved its required spectral properties, or connected its spectrum to the product in Lean. This project does not prove the Riemann hypothesis and does not identify `D_\varepsilon` with the zeta function.
+**The line is imposed by the construction of the product, not derived from any property of the Riemann zeta function.** We have formalized an abstract infinite matching-family operator and proved conditional spectral properties (§§4.20–4.25), but have not instantiated it on a particular aperiodic tiling, proved the required positive enumerated spectrum with inverse-square summability, or connected its spectrum to the product in Lean. This project does not prove the Riemann hypothesis and does not identify `D_\varepsilon` with the zeta function.
 
 ## 3. Finite-dimensional geometric operators
 
@@ -155,7 +155,7 @@ Q_{H_\varepsilon}(\psi)=Q_{H_0}(\psi)+\varepsilon Q_P(\psi).
 
 The Lean file also proves that **strictly positive** base energy on every nonzero configuration stays strictly positive under the same assumptions. These results concern all tile-amplitude configurations, not a selection of eigenfunctions.
 
-**Scope of the second result:** this theorem proves *stability* of positivity, assuming positivity of the original and perturbation energies. The following section derives a sufficient condition for the original energy from the geometric inputs themselves. The infinite-tiling spectral properties are still unproved.
+**Scope of the second result:** this theorem proves *stability* of positivity, assuming positivity of the original and perturbation energies. The following section derives a sufficient condition for the original energy from the geometric inputs themselves. At this stage of the finite-dimensional development, the infinite-operator theorems have not yet been introduced; §§4.20–4.25 describe the subsequent results. Full-spectrum enumeration and inverse-square summability remain unproved.
 
 ### 3.3. Nonnegative energy from geometry
 
@@ -200,7 +200,7 @@ Q_{H_\varepsilon}(\psi)=
 
 Together with the **symmetry theorem** (when `P` is symmetric), this means every eigenvalue of the real symmetric *finite* perturbed matrix is strictly positive under these hypotheses.
 
-**Scope:** the result is finite-dimensional; the hypothesis `V(t)>0` for every tile is sufficient, not necessarily optimal. It does not yet construct the infinite operator, establish a uniform spectral gap across growing patches, or prove inverse-square eigenvalue summability.
+**Scope:** the result is finite-dimensional; the hypothesis `V(t)>0` for every tile is sufficient, not necessarily optimal. This finite-dimensional theorem does not itself construct the infinite operator or establish a uniform gap across growing patches. The later abstract infinite-operator construction appears in §4; inverse-square summability for the interacting spectrum remains open.
 
 ## 4. Infinite-dimensional onsite operator
 
@@ -224,7 +224,7 @@ D(V)=\left\{\psi\in\ell^2(T):t\mapsto V(t)\psi(t)\in\ell^2(T)\right\},
 
 The new Lean file proves that `D(V)` is a real **linear subspace**, constructs `M_V:D(V)\to\ell^2(T)` as a linear map, checks its value on each tile, and proves that when `V(t)\ge0`, each local energy contribution `\psi(t)(M_V\psi)(t)` is nonnegative. These facts require neither a finite number of tiles nor a bounded potential.
 
-**Scope of this first infinite result:** only the individual-energy contribution is built here. The pair-interaction Laplacian `L_w` and the perturbation `\varepsilon P` have not yet been extended to the infinite setting. The density of `D(V)` is addressed in the next section. Self-adjointness, compact resolvent, discrete eigenvalues, and inverse-square summability are further steps, not consequences of simply defining the domain.
+**Scope of this first infinite result:** only the individual-energy contribution is built here. The pair-interaction Laplacian `L_w` and the perturbation `\varepsilon P` are not yet included **in this first module**; §§4.6–4.9 subsequently construct infinite interactions. The density of `D(V)` is addressed in §4.2, and §§4.20–4.25 establish conditional self-adjointness, compact resolvent and finite multiplicity. These later theorems require additional hypotheses and do not follow merely from defining the domain; full-spectrum enumeration and inverse-square summability remain open.
 
 ### 4.2. Density of the natural operator domain
 
@@ -240,7 +240,7 @@ Any square-summable configuration can be approximated arbitrarily closely (in th
 
 This does **not** say `D(V)=\ell^2(T)`. It says every square-summable state can be approximated as accurately as desired by states on which the onsite operator is well-defined. Mathlib's convergent sum of `lp.single` states supplies the approximation theorem.
 
-**Why it matters:** density is a crucial prerequisite for the Hilbert-space theory of adjoint and self-adjoint unbounded operators. It does *not*, by itself, establish self-adjointness, compact resolvent, a discrete infinite spectrum, or spectral summability. The infinite interaction operator and the perturbation also remain to be constructed.
+**Why it matters:** density is a crucial prerequisite for the Hilbert-space theory of adjoint and self-adjoint unbounded operators. It does *not*, by itself, establish self-adjointness, compact resolvent, a discrete infinite spectrum, or spectral summability. The infinite interaction operator and perturbation are constructed in later modules (§§4.6–4.9), not as consequences of density alone.
 
 ### 4.3. Point eigenvalues and positivity
 
@@ -259,7 +259,7 @@ The file formalizes this support restriction and two consequences:
 - If every onsite energy satisfies `V(t)>0`, then **every eigenvalue with a nonzero eigenstate is strictly positive**: `λ>0`.
 - If all energies satisfy the uniform lower bound `V(t)\ge c`, then every such eigenvalue satisfies `λ\ge c`.
 
-**Scope and important limitation:** these are results about the *point spectrum* of the infinite onsite multiplication operator. They do not prove that the operator is self-adjoint, that every `V(t)` occurs as an eigenvalue, that the entire spectrum is positive or discrete, or that the inverse-square eigenvalue series converges. The infinite interaction Laplacian and controlled perturbation still need to be constructed before we can study the full geometric operator `H_\varepsilon`.
+**Scope and important limitation:** these are results about the *point spectrum* of the infinite onsite multiplication operator. They do not prove that the operator is self-adjoint, that every `V(t)` occurs as an eigenvalue, that the entire spectrum is positive or discrete, or that the inverse-square eigenvalue series converges. The subsequent §§4.6–4.9 construct interactions and bounded perturbations, while §§4.20–4.25 prove further conditional results for the full geometric operator `H_\varepsilon`.
 
 ### 4.4. A sufficient growth condition for summable spectral levels
 
@@ -318,7 +318,7 @@ This state remains square-summable even when `T` is infinite: only two coordinat
 
 The module proves that the edge operator is linear and symmetric, and that **any finite collection of these geometric edges** gives a well-defined symmetric, nonnegative interaction on infinite `ℓ²(T)`.
 
-**Precise scope:** the ambient set of tiles may be infinite, but the number of active interaction edges in this first construction is **finite**. The genuinely infinite-edge Laplacian still needs a convergence or uniform-weight hypothesis. This theorem is not yet a model of every edge in an infinite Penrose or other tiling.
+**Precise scope:** the ambient set of tiles may be infinite, but the number of active interaction edges in this first construction is **finite**. The genuinely infinite-edge Laplacian requires a convergence or uniform-weight hypothesis, addressed by later constructions in §§4.8–4.9. This finite-edge theorem does not model every edge of a particular Penrose or other aperiodic tiling.
 
 ### 4.7. Combining infinite onsite energies, interactions, and perturbations
 
@@ -351,7 +351,7 @@ L_w=\sum_{n=0}^\infty w_n\lvert v_n\rangle\langle v_n\rvert.
 
 If in addition every `w_n≥0`, the module proves the infinite operator is **symmetric and has nonnegative, finite quadratic energy** on every square-summable state. Lean also proves that the combined `M_V+L_w+εP` on the **original dense domain `D(V)`** is symmetric under symmetric `P` and nonnegative when `V≥0`, `w≥0`, `ε≥0`, and the bounded perturbation `P` has nonnegative quadratic energy.
 
-**What is not claimed:** this is a sufficient `ℓ¹` condition on the *entire* edge list, not yet a bounded-degree local graph condition. Infinite tilings with uniformly bounded non-decaying weights typically have infinitely many edges and do not satisfy `∑|w_n|<∞`. No geometry-specific weight bound, self-adjointness of the full unbounded sum, compact resolvent, or full-spectrum inverse-square summability is established.
+**What is not claimed:** this is a sufficient `ℓ¹` condition on the *entire* edge list, not yet a bounded-degree local graph condition. Infinite tilings with uniformly bounded non-decaying weights typically have infinitely many edges and do not satisfy `∑|w_n|<∞`. The matching-family construction in §4.9 addresses a different infinite-edge model; the subsequent §§4.20–4.22 prove compact resolvent and self-adjointness for that model under explicit hypotheses. This summable-edge module alone establishes neither those results nor full-spectrum inverse-square summability.
 
 ### 4.9. Bounded-degree local interactions from infinite matching families
 
@@ -709,7 +709,7 @@ H_{\varepsilon,m}=M_V+L_w+\varepsilon P+mI
 
 the same argument proves `IsSelfAdjoint` for its `LinearPMap` representation when each matching permutation is involutive and the bounded perturbation `P` is symmetric. A reusable graph-and-pairing lemma identifies the adjoint graph with the original graph, using Mathlib's `LinearPMap.adjoint_graph_eq_graph_adjoint`. **The actual domain remains `D(V)`; it is not silently replaced by all of `ℓ²(T)`.**
 
-**Scope:** this establishes the operator-theoretic interface needed before applying later spectral results. It requires the stated symmetry assumptions for the full local operator and makes no claim about compactness without the properness/gap hypotheses of §§4.20–4.21. Discrete eigenvalue enumeration, finite multiplicities, eigenvalue growth, and inverse-square summability remain future P2 goals.
+**Scope:** this establishes the operator-theoretic interface needed before applying later spectral results. It requires the stated symmetry assumptions for the full local operator and makes no claim about compactness without the properness/gap hypotheses of §§4.20–4.21. The later §4.25 proves finite-dimensional full-operator eigenspaces under compact-resolvent hypotheses. Spectral isolation, exhaustive eigenvalue enumeration, eigenvalue growth, and inverse-square summability remain P2 goals.
 
 ### 4.23. Compact self-adjoint resolvents and their eigenspaces
 
@@ -759,7 +759,46 @@ Under involutive matching permutations and symmetry of the bounded perturbation 
 
 ## 5. Building and verification
 
-The established analytic core is in `SpectralGeometry/CanonicalProduct.lean`. The finite-dimensional geometric results are in `SpectralGeometry/FinitePerturbation.lean`, `SpectralGeometry/FinitePositiveEnergy.lean`, `SpectralGeometry/FiniteGeometricEnergy.lean`, and `SpectralGeometry/FiniteStrictPositivity.lean`. These four finite-dimensional modules and the twenty-six infinite-dimensional modules `SpectralGeometry/InfiniteOnsite.lean`, `SpectralGeometry/InfiniteOnsiteDensity.lean`, `SpectralGeometry/InfiniteOnsiteEigenvalues.lean`, `SpectralGeometry/InfiniteOnsiteSummability.lean`, `SpectralGeometry/InfiniteOnsitePowerGrowth.lean`, `SpectralGeometry/InfiniteFiniteEdgeInteraction.lean`, `SpectralGeometry/InfiniteBoundedPerturbation.lean`, `SpectralGeometry/InfiniteSummableEdgeInteraction.lean`, `SpectralGeometry/InfiniteLocalMatching.lean`, `SpectralGeometry/InfiniteLocalBoundedDegree.lean`, `SpectralGeometry/InfiniteLocalEigenvalueBounds.lean`, `SpectralGeometry/InfiniteLocalSignedPerturbationGap.lean`, `SpectralGeometry/InfiniteLocalCoerciveGap.lean`, `SpectralGeometry/InfiniteLocalGraphNorm.lean`, `SpectralGeometry/InfiniteLocalClosedGraph.lean`, `SpectralGeometry/InfiniteLocalAdjointCharacterization.lean`, `SpectralGeometry/InfiniteOnsiteResolvent.lean`, `SpectralGeometry/InfiniteOnsiteFiniteLowEnergy.lean` and `SpectralGeometry/InfiniteOnsiteCompactResolvent.lean` and `SpectralGeometry/InfiniteOnsiteResolventIdentity.lean` `SpectralGeometry/InfiniteLocalCompactResolvent.lean` and `SpectralGeometry/InfiniteLocalCompactResolventBounds.lean` and `SpectralGeometry/InfiniteLocalSelfAdjointPMap.lean` and `SpectralGeometry/InfiniteLocalResolventSpectrum.lean` and `SpectralGeometry/InfiniteLocalEigenpairCorrespondence.lean` and `SpectralGeometry/InfiniteLocalFullEigenspaces.lean` are imported by the `SpectralGeometry.lean` entry point. The toolchain is Lean 4 `v4.35.0` with the corresponding version of Mathlib.
+The canonical import list is maintained in [`SpectralGeometry.lean`](SpectralGeometry.lean). It currently imports **31 Lean modules**: one analytic core, four finite-dimensional modules, and twenty-six infinite-dimensional modules.
+
+- **Analytic core (1):** [`CanonicalProduct.lean`](SpectralGeometry/CanonicalProduct.lean)
+- **Finite-dimensional geometry (4):**
+  - [`FinitePerturbation.lean`](SpectralGeometry/FinitePerturbation.lean)
+  - [`FinitePositiveEnergy.lean`](SpectralGeometry/FinitePositiveEnergy.lean)
+  - [`FiniteGeometricEnergy.lean`](SpectralGeometry/FiniteGeometricEnergy.lean)
+  - [`FiniteStrictPositivity.lean`](SpectralGeometry/FiniteStrictPositivity.lean)
+- **Onsite foundations, growth and summability (5):**
+  - [`InfiniteOnsite.lean`](SpectralGeometry/InfiniteOnsite.lean)
+  - [`InfiniteOnsiteDensity.lean`](SpectralGeometry/InfiniteOnsiteDensity.lean)
+  - [`InfiniteOnsiteEigenvalues.lean`](SpectralGeometry/InfiniteOnsiteEigenvalues.lean)
+  - [`InfiniteOnsiteSummability.lean`](SpectralGeometry/InfiniteOnsiteSummability.lean)
+  - [`InfiniteOnsitePowerGrowth.lean`](SpectralGeometry/InfiniteOnsitePowerGrowth.lean)
+- **Infinite interactions and local-operator estimates (11):**
+  - [`InfiniteFiniteEdgeInteraction.lean`](SpectralGeometry/InfiniteFiniteEdgeInteraction.lean)
+  - [`InfiniteBoundedPerturbation.lean`](SpectralGeometry/InfiniteBoundedPerturbation.lean)
+  - [`InfiniteSummableEdgeInteraction.lean`](SpectralGeometry/InfiniteSummableEdgeInteraction.lean)
+  - [`InfiniteLocalMatching.lean`](SpectralGeometry/InfiniteLocalMatching.lean)
+  - [`InfiniteLocalBoundedDegree.lean`](SpectralGeometry/InfiniteLocalBoundedDegree.lean)
+  - [`InfiniteLocalEigenvalueBounds.lean`](SpectralGeometry/InfiniteLocalEigenvalueBounds.lean)
+  - [`InfiniteLocalSignedPerturbationGap.lean`](SpectralGeometry/InfiniteLocalSignedPerturbationGap.lean)
+  - [`InfiniteLocalCoerciveGap.lean`](SpectralGeometry/InfiniteLocalCoerciveGap.lean)
+  - [`InfiniteLocalGraphNorm.lean`](SpectralGeometry/InfiniteLocalGraphNorm.lean)
+  - [`InfiniteLocalClosedGraph.lean`](SpectralGeometry/InfiniteLocalClosedGraph.lean)
+  - [`InfiniteLocalAdjointCharacterization.lean`](SpectralGeometry/InfiniteLocalAdjointCharacterization.lean)
+- **Onsite resolvents and compactness (4):**
+  - [`InfiniteOnsiteResolvent.lean`](SpectralGeometry/InfiniteOnsiteResolvent.lean)
+  - [`InfiniteOnsiteFiniteLowEnergy.lean`](SpectralGeometry/InfiniteOnsiteFiniteLowEnergy.lean)
+  - [`InfiniteOnsiteCompactResolvent.lean`](SpectralGeometry/InfiniteOnsiteCompactResolvent.lean)
+  - [`InfiniteOnsiteResolventIdentity.lean`](SpectralGeometry/InfiniteOnsiteResolventIdentity.lean)
+- **Interacting resolvents and spectral results (6):**
+  - [`InfiniteLocalCompactResolvent.lean`](SpectralGeometry/InfiniteLocalCompactResolvent.lean)
+  - [`InfiniteLocalCompactResolventBounds.lean`](SpectralGeometry/InfiniteLocalCompactResolventBounds.lean)
+  - [`InfiniteLocalSelfAdjointPMap.lean`](SpectralGeometry/InfiniteLocalSelfAdjointPMap.lean)
+  - [`InfiniteLocalResolventSpectrum.lean`](SpectralGeometry/InfiniteLocalResolventSpectrum.lean)
+  - [`InfiniteLocalEigenpairCorrespondence.lean`](SpectralGeometry/InfiniteLocalEigenpairCorrespondence.lean)
+  - [`InfiniteLocalFullEigenspaces.lean`](SpectralGeometry/InfiniteLocalFullEigenspaces.lean)
+
+The project uses Lean 4 `v4.35.0` with its corresponding Mathlib version. Every module listed above is imported by the root entry point.
 
 ```bash
 lake update
@@ -782,9 +821,9 @@ completed only after the corresponding Lean file is imported by
 | Priority | Milestone | Mathematical target | Status |
 | --- | --- | --- | --- |
 | **P0 — completed** | Onsite inverse identity | The bounded map `infiniteOnsiteResolventCLM` takes values in the natural domain and is a two-sided inverse of the shifted onsite operator (§4.19) | **Formalized and Lean-checked** |
-| **P1 — critical (initial case formalized)** | Compact resolvent for the full local operator | Compact inverse of `M_V+B-aI` for bounded `B` under `‖B R_a‖<1`, with both inverse identities (§4.20) | **Small-correction theorem formalized; quantitative/structural extensions pending** |
-| **P1 — quantitative (formalized)** | Quantitative compact resolvent bounds | Bounds `‖R_a‖≤1/δ`, obtains compact inverse from `‖B‖<δ`, proves existence of a sufficiently negative real shift for any bounded `B`, and gives geometric bounds for matching families (§4.21) | **Formalized; next P1 milestone is spectral-theory integration** |
-| **P1 — infrastructure (formalized)** | Self-adjointness in Mathlib's partial-operator API | Package onsite and local matching operators as `LinearPMap` on the natural domain, and prove `IsSelfAdjoint` from adjoint-pair characterization and density (§4.22) | **Formalized; spectral discreteness remains P2** |
+| **P1 — completed (compact inverse)** | Compact resolvent for the full local operator | Compact inverse of `M_V+B-aI` for bounded `B` under `‖B R_a‖<1`, with both inverse identities (§4.20) | **Formalized and Lean-checked; quantitative and matching-family corollaries in §4.21** |
+| **P1 — completed (quantitative)** | Quantitative compact resolvent bounds | Bounds `‖R_a‖≤1/δ`, obtains compact inverse from `‖B‖<δ`, proves existence of a sufficiently negative real shift for any bounded `B`, and gives geometric bounds for matching families (§4.21) | **Formalized and Lean-checked; self-adjointness interface completed in §4.22** |
+| **P1 — completed (self-adjointness)** | Self-adjointness in Mathlib's partial-operator API | Package onsite and local matching operators as `LinearPMap` on the natural domain, and prove `IsSelfAdjoint` from adjoint-pair characterization and density (§4.22) | **Formalized and Lean-checked; discrete-spectrum work continues in P2** |
 | **P2 — in progress (finite multiplicity)** | Discrete spectrum | Compact resolvent eigenspaces are total (§4.23), eigenpairs transfer to the full unbounded operator (§4.24), and every full real eigenspace is finite-dimensional with orthogonality for distinct symmetric eigenvalues (§4.25) | **Finite multiplicity/orthogonality formalized; spectral isolation, exhaustion and enumeration pending** |
 | **P2 — high** | Eigenvalue growth and summability | Transfer quantitative onsite growth to the eigenvalues of the interacting operator, then prove summability of inverse squares under sufficiently strong growth | Planned |
 | **P3 — integration** | Spectrally defined canonical product | Instantiate the existing admissibility and zero-localization results with the full operator's positive, summable eigenvalues | Planned |
@@ -812,21 +851,21 @@ The pointwise formula, bijectivity, and compactness were previously available;
 **the two inverse identities and domain membership are now formalized** in
 `SpectralGeometry/InfiniteOnsiteResolventIdentity.lean`, which imports the
 existing compact-resolvent module. No new growth hypothesis is needed.
-The next unfinished milestone is **P1**, transferring compactness to the
-complete operator with bounded geometric interactions and perturbations.
+P1 has since been formalized in §§4.20–4.22; the current unfinished
+milestones concern **P2**, beginning with spectral isolation, exhaustion and enumeration.
 
-### 6.2. P1 — Compact resolvent of the interacting operator (small-correction case checked)
+### 6.2. P1 — Completed: interacting compact resolvent and self-adjointness
 
 Write `H=M_V+B` on `D(V)`, where the interaction and perturbation
 correction `B=L_w+εP+mI` is bounded. Establish a sufficiently strong
 onsite gap `V(t)-a≥δ>0` and the quantitative estimate
-`‖R_a‖≤1/δ`. If `‖B R_a‖<1`, a Neumann-series argument should yield
+`‖R_a‖≤1/δ`. If `‖B R_a‖<1`, the formalized Neumann-series argument yields
 
 ```math
 (H-aI)^{-1}=R_a\,(I+B R_a)^{-1}.
 ```
 
-**The first small-correction case is now proved** in §4.20: the inverse maps to the natural domain, both inverse identities hold, and the bounded resolvent is compact. The hypothesis is explicitly `‖B R_a‖<1`; the next extension is to derive convenient numeric bounds directly from `‖B‖` and onsite gaps, and to package the substitution `B=L_w+εP+mI` into a dedicated local-matching theorem. No conclusion is asserted for arbitrary unbounded interactions.
+**The small-correction case is proved** in §4.20: the inverse maps to the natural domain, both inverse identities hold, and the bounded resolvent is compact. The hypothesis there is explicitly `‖B R_a‖<1`. The subsequent §4.21 supplies quantitative norm bounds, sufficiently negative shifts and a dedicated local-matching corollary. No conclusion is asserted for arbitrary unbounded interactions.
 
 **Quantitative milestone (P1, §4.21):** The formalized theorem establishes a general norm estimate
 `‖R_a‖≤1/δ` when `V(t)-a≥δ≥1`. Since
@@ -842,10 +881,9 @@ spectral parameters.
 the already formalized matching-family norm estimate
 `‖L_w‖≤2DW` (for nonnegative matching weights bounded by `W`).
 The sufficient explicit gap is
-`δ>2DW+|ε|‖P‖+|m|`. The new module formalizes the bound, the existence of a sufficiently
-negative shift, and the named local-matching corollary. The next
-independent P1 milestone is to package the adjoint-domain criterion
-for Mathlib's spectral theorem interfaces.
+`δ>2DW+|ε|‖P‖+|m|`. The §4.21 module formalizes this bound, the existence
+of a sufficiently negative shift, and the named local-matching corollary.
+The required self-adjointness interface was subsequently formalized in §4.22.
 
 **Self-adjointness integration (P1, §4.22):** The onsite and symmetric local matching operators are now represented by Mathlib's `LinearPMap` with their unchanged natural domain. The earlier adjoint-pair equivalences give genuine `IsSelfAdjoint` theorems in this API. This satisfies the operator-interface milestone; the next priority is the **P2 spectral stage** (discreteness, finite multiplicities, and growth) under appropriate compact-resolvent and symmetry hypotheses.
 
