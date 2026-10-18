@@ -157,7 +157,7 @@ private theorem infiniteOnsiteFiniteDiagonal_apply
       simp only [ContinuousLinearMap.smul_apply,
         ContinuousLinearMap.comp_apply, lp.singleContinuousLinearMap_apply]
       change
-        (c i • lp.single (2 : ENNReal) i (f i)) t +
+        (c i • (lp.single (2 : ENNReal) i (f i) : TileHilbert Tile)) t +
           (if t ∈ s then c t * f t else 0) =
         if t ∈ insert i s then c t * f t else 0
       by_cases ht : t = i
