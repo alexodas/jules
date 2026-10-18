@@ -74,8 +74,14 @@ theorem infiniteOnsiteUnitGap_shift_surjective
       _ = f t + a * x t := by rw [hx t]
   have hmem : Memℓp (fun t : Tile => V t * x t) 2 := by
     have hh : Memℓp (fun t : Tile => f t + a * x t) 2 := by
-      simpa only [Pi.add_apply] using
-        (f.property.add (x.property.const_mul a))
+      have hh0 := f.property.add (x.property.const_mul a)
+      have heq :
+          ((f : Tile → ℝ) + (fun t : Tile => a * x t)) =
+            (fun t : Tile => f t + a * x t) := by
+        funext t
+        rfl
+      rw [heq] at hh0
+      exact hh0
     have heq :
         (fun t : Tile => V t * x t) =
           (fun t : Tile => f t + a * x t) := by
@@ -107,8 +113,15 @@ theorem infiniteOnsiteUnitGap_shift_injective
   have hcoord :
       V t * ψ.1 t - a * ψ.1 t =
         V t * φ.1 t - a * φ.1 t := by
-    simpa only [lp.coeFn_sub, lp.coeFn_smul, Pi.smul_apply,
-      smul_eq_mul, infiniteOnsiteOperator_apply] using ht
+    have hleft :
+        (infiniteOnsiteOperator V ψ - a • (ψ.1 : TileHilbert Tile)) t =
+          V t * ψ.1 t - a * ψ.1 t := by
+      rfl
+    have hright :
+        (infiniteOnsiteOperator V φ - a • (φ.1 : TileHilbert Tile)) t =
+          V t * φ.1 t - a * φ.1 t := by
+      rfl
+    exact hleft.symm.trans (ht.trans hright)
   have hmul : (V t - a) * (ψ.1 t - φ.1 t) = 0 := by
     nlinarith [hcoord]
   have hne : V t - a ≠ 0 :=
