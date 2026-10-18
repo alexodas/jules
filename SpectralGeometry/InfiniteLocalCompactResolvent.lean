@@ -57,8 +57,8 @@ private theorem inverse_one_plus_apply_right
     (R B : OnsiteEnd Tile) (U : (OnsiteEnd Tile)ˣ)
     (hU : (U : OnsiteEnd Tile) = 1 + B.comp R)
     (f : TileHilbert Tile) :
-    (U⁻¹ : OnsiteEnd Tile) f +
-      B (R ((U⁻¹ : OnsiteEnd Tile) f)) = f := by
+    (↑(U⁻¹) : OnsiteEnd Tile) f +
+      B (R ((↑(U⁻¹) : OnsiteEnd Tile) f)) = f := by
   have h := congrArg (fun T : OnsiteEnd Tile => T f) (Units.mul_inv U)
   rw [hU] at h
   simpa [ContinuousLinearMap.mul_apply, ContinuousLinearMap.add_apply,
@@ -68,7 +68,7 @@ private theorem inverse_one_plus_apply_left
     (R B : OnsiteEnd Tile) (U : (OnsiteEnd Tile)ˣ)
     (hU : (U : OnsiteEnd Tile) = 1 + B.comp R)
     (f : TileHilbert Tile) :
-    (U⁻¹ : OnsiteEnd Tile) (f + B (R f)) = f := by
+    (↑(U⁻¹) : OnsiteEnd Tile) (f + B (R f)) = f := by
   have h := congrArg (fun T : OnsiteEnd Tile => T f) (Units.inv_mul U)
   rw [hU] at h
   simpa [ContinuousLinearMap.mul_apply, ContinuousLinearMap.add_apply,
@@ -82,7 +82,7 @@ noncomputable def infiniteBoundedOnsiteResolvent
     (hsmall : ‖B.comp (infiniteOnsiteResolventCLM V a hgap)‖ < 1) :
     OnsiteEnd Tile :=
   (infiniteOnsiteResolventCLM V a hgap).comp
-    ((infiniteBoundedOnsiteCorrectionUnit V a hgap B hsmall)⁻¹ :
+    (↑((infiniteBoundedOnsiteCorrectionUnit V a hgap B hsmall)⁻¹) :
       OnsiteEnd Tile)
 
 /-- The corrected resolvent takes values in the unbounded onsite
@@ -93,7 +93,7 @@ noncomputable def infiniteBoundedOnsiteResolventSolution
     (hsmall : ‖B.comp (infiniteOnsiteResolventCLM V a hgap)‖ < 1)
     (f : TileHilbert Tile) : infiniteOnsiteDomain V :=
   infiniteOnsiteResolventSolution V a hgap
-    (((infiniteBoundedOnsiteCorrectionUnit V a hgap B hsmall)⁻¹ :
+    ((↑((infiniteBoundedOnsiteCorrectionUnit V a hgap B hsmall)⁻¹) :
       OnsiteEnd Tile) f)
 
 /-- The full shifted onsite-plus-bounded operator maps its constructed
@@ -107,7 +107,7 @@ theorem infiniteBoundedOnsiteResolvent_right_inverse
       (infiniteBoundedOnsiteResolventSolution V a hgap B hsmall f) = f := by
   let R := infiniteOnsiteResolventCLM V a hgap
   let U := infiniteBoundedOnsiteCorrectionUnit V a hgap B hsmall
-  let g : TileHilbert Tile := (U⁻¹ : OnsiteEnd Tile) f
+  let g : TileHilbert Tile := (↑(U⁻¹) : OnsiteEnd Tile) f
   have h0 :=
     infiniteOnsiteResolventCLM_shift_right_inverse V a hgap g
   have h1 := inverse_one_plus_apply_right R B U
@@ -136,10 +136,10 @@ theorem infiniteBoundedOnsiteResolvent_left_inverse
     infiniteOnsiteResolventCLM_shift_left_inverse V a hgap ψ
   have hU := inverse_one_plus_apply_left R B U
     (infiniteBoundedOnsiteCorrectionUnit_val V a hgap B hsmall) g
-  change R ((U⁻¹ : OnsiteEnd Tile) (g + B ψ.1)) = ψ.1
+  change R ((↑(U⁻¹) : OnsiteEnd Tile) (g + B ψ.1)) = ψ.1
   calc
-    R ((U⁻¹ : OnsiteEnd Tile) (g + B ψ.1)) =
-        R ((U⁻¹ : OnsiteEnd Tile) (g + B (R g))) := by rw [hR]
+    R ((↑(U⁻¹) : OnsiteEnd Tile) (g + B ψ.1)) =
+        R ((↑(U⁻¹) : OnsiteEnd Tile) (g + B (R g))) := by rw [hR]
     _ = R g := by rw [hU]
     _ = ψ.1 := hR
 
@@ -152,11 +152,12 @@ theorem infiniteBoundedOnsiteResolvent_compact
     (hsmall : ‖B.comp (infiniteOnsiteResolventCLM V a hgap)‖ < 1) :
     IsCompactOperator
       (infiniteBoundedOnsiteResolvent V a hgap B hsmall) := by
+  classical
   let R := infiniteOnsiteResolventCLM V a hgap
   let U := infiniteBoundedOnsiteCorrectionUnit V a hgap B hsmall
   have hc : IsCompactOperator R :=
     infiniteOnsiteResolventCLM_compact V a hgap hproper
-  have hh := hc.comp_clm (U⁻¹ : OnsiteEnd Tile)
+  have hh := hc.comp_clm (↑(U⁻¹) : OnsiteEnd Tile)
   convert hh using 1
   funext f
   rfl
