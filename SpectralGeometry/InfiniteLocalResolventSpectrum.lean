@@ -44,7 +44,6 @@ private theorem infiniteBoundedOnsiteShift_symmetric
     inner_sub_left, inner_sub_right, real_inner_smul_left, real_inner_smul_right]
   rw [infiniteOnsiteOperator_symmetric V ψ φ,
     hB (ψ.1 : TileHilbert Tile) (φ.1 : TileHilbert Tile)]
-  ring
 
 /-- The bounded inverse of the shifted symmetric unbounded operator
 is genuinely self-adjoint as a continuous linear map. -/
