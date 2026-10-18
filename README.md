@@ -608,9 +608,29 @@ The hypothesis of finite low-energy sublevel sets is a precise form of *onsite p
 
 **Important scope:** these results are for `M_V`, **not yet for the fully interacting operator** `H=M_V+L_w+εP+mI`. They do not prove compact resolvent, discreteness of the full spectrum, inverse-square summability, or existence of eigenvalues. A subsequent step will need to control finite-dimensional truncation tails or directly construct compact onsite resolvents, then transfer compactness across bounded perturbations.
 
+### 4.18. Compact resolvent of a proper onsite potential
+
+The Lean module **[`SpectralGeometry/InfiniteOnsiteCompactResolvent.lean`](SpectralGeometry/InfiniteOnsiteCompactResolvent.lean)** packages the inverse of the shifted diagonal onsite operator as a continuous linear map on real `ℓ²(T)`. It then uses the finite-low-energy property of §4.17 to prove compactness.
+
+Fix a real shift `a` and assume both the **uniform gap** `V(t)-a≥1` for every tile and **properness of the onsite potential**: every sublevel set `{t | V(t)≤R}` is finite. The inverse furnished by §4.16 acts coordinatewise as
+
+```math
+(R_a f)(t)=\frac{f(t)}{V(t)-a}.
+```
+
+For each natural number `n`, truncate to the finite set `S_n={t | V(t)≤a+n+1}`. The corresponding operator `R_{a,n}` has finite rank and is compact, while the discarded coefficients satisfy the explicit operator-norm estimate
+
+```math
+\|R_a-R_{a,n}\|\le \frac{1}{n+1}.
+```
+
+The finite truncations thus converge to `R_a` in operator norm. Since compact operators are closed under operator-norm limits, **`R_a` is compact**.
+
+**Scope:** this is a compact-resolvent theorem only for diagonal onsite multiplication under an additional, explicitly assumed growth condition. It does not prove compactness of the full interacting and perturbed operator, any property of an actual aperiodic tiling, or inverse-square summability of the resulting eigenvalues. Compact resolvent by itself is insufficient to guarantee the summability required for the canonical product.
+
 ## 5. Building and verification
 
-The established analytic core is in `SpectralGeometry/CanonicalProduct.lean`. The finite-dimensional geometric results are in `SpectralGeometry/FinitePerturbation.lean`, `SpectralGeometry/FinitePositiveEnergy.lean`, `SpectralGeometry/FiniteGeometricEnergy.lean`, and `SpectralGeometry/FiniteStrictPositivity.lean`. These four finite-dimensional modules and the eighteen infinite-dimensional modules `SpectralGeometry/InfiniteOnsite.lean`, `SpectralGeometry/InfiniteOnsiteDensity.lean`, `SpectralGeometry/InfiniteOnsiteEigenvalues.lean`, `SpectralGeometry/InfiniteOnsiteSummability.lean`, `SpectralGeometry/InfiniteOnsitePowerGrowth.lean`, `SpectralGeometry/InfiniteFiniteEdgeInteraction.lean`, `SpectralGeometry/InfiniteBoundedPerturbation.lean`, `SpectralGeometry/InfiniteSummableEdgeInteraction.lean`, `SpectralGeometry/InfiniteLocalMatching.lean`, `SpectralGeometry/InfiniteLocalBoundedDegree.lean`, `SpectralGeometry/InfiniteLocalEigenvalueBounds.lean`, `SpectralGeometry/InfiniteLocalSignedPerturbationGap.lean`, `SpectralGeometry/InfiniteLocalCoerciveGap.lean`, `SpectralGeometry/InfiniteLocalGraphNorm.lean`, `SpectralGeometry/InfiniteLocalClosedGraph.lean`, `SpectralGeometry/InfiniteLocalAdjointCharacterization.lean`, `SpectralGeometry/InfiniteOnsiteResolvent.lean` and `SpectralGeometry/InfiniteOnsiteFiniteLowEnergy.lean` are imported by the `SpectralGeometry.lean` entry point. The toolchain is Lean 4 `v4.35.0` with the corresponding version of Mathlib.
+The established analytic core is in `SpectralGeometry/CanonicalProduct.lean`. The finite-dimensional geometric results are in `SpectralGeometry/FinitePerturbation.lean`, `SpectralGeometry/FinitePositiveEnergy.lean`, `SpectralGeometry/FiniteGeometricEnergy.lean`, and `SpectralGeometry/FiniteStrictPositivity.lean`. These four finite-dimensional modules and the nineteen infinite-dimensional modules `SpectralGeometry/InfiniteOnsite.lean`, `SpectralGeometry/InfiniteOnsiteDensity.lean`, `SpectralGeometry/InfiniteOnsiteEigenvalues.lean`, `SpectralGeometry/InfiniteOnsiteSummability.lean`, `SpectralGeometry/InfiniteOnsitePowerGrowth.lean`, `SpectralGeometry/InfiniteFiniteEdgeInteraction.lean`, `SpectralGeometry/InfiniteBoundedPerturbation.lean`, `SpectralGeometry/InfiniteSummableEdgeInteraction.lean`, `SpectralGeometry/InfiniteLocalMatching.lean`, `SpectralGeometry/InfiniteLocalBoundedDegree.lean`, `SpectralGeometry/InfiniteLocalEigenvalueBounds.lean`, `SpectralGeometry/InfiniteLocalSignedPerturbationGap.lean`, `SpectralGeometry/InfiniteLocalCoerciveGap.lean`, `SpectralGeometry/InfiniteLocalGraphNorm.lean`, `SpectralGeometry/InfiniteLocalClosedGraph.lean`, `SpectralGeometry/InfiniteLocalAdjointCharacterization.lean`, `SpectralGeometry/InfiniteOnsiteResolvent.lean` , `SpectralGeometry/InfiniteOnsiteFiniteLowEnergy.lean` and `SpectralGeometry/InfiniteOnsiteCompactResolvent.lean` are imported by the `SpectralGeometry.lean` entry point. The toolchain is Lean 4 `v4.35.0` with the corresponding version of Mathlib.
 
 ```bash
 lake update
