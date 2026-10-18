@@ -147,8 +147,16 @@ private theorem infiniteOnsiteFiniteDiagonal_apply
     lp.singleContinuousLinearMap_apply]
   change (∑ i ∈ s, c i • lp.single (2 : ENNReal) i (f i)) t =
     if t ∈ s then c t * f t else 0
-  simp [lp.coeFn_sum, Finset.sum_apply, lp.coeFn_smul,
-    lp.single_apply, Finset.sum_ite_eq', smul_eq_mul]
+  calc
+    (∑ i ∈ s, c i • lp.single (2 : ENNReal) i (f i)) t =
+        ∑ i ∈ s, (c i • lp.single (2 : ENNReal) i (f i)) t := by
+      change (infiniteOnsiteCoordinateCLM t)
+        (∑ i ∈ s, c i • lp.single (2 : ENNReal) i (f i)) =
+        ∑ i ∈ s, (infiniteOnsiteCoordinateCLM t)
+          (c i • lp.single (2 : ENNReal) i (f i))
+      simp only [map_sum]
+    _ = if t ∈ s then c t * f t else 0 := by
+      simp [lp.single_apply, Finset.sum_ite_eq', smul_eq_mul]
 
 
 /-- Uniform control of the truncation error from the coefficients omitted
