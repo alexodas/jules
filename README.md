@@ -509,7 +509,7 @@ For `D` matching colors with nonnegative weights `wᵢ≤W` and `W≥0`, the ear
 
 **Interpretation:** the bounded interactions and perturbations cannot change the size of the unbounded part in an uncontrolled way. The natural domain stays `D(V)`, and the graph measurements of `M_V` and `H_{\varepsilon,m}` control one another quantitatively. These statements require no positivity assumption on `V`, and no positivity or symmetry assumption on `P`.
 
-**Scope:** this module establishes explicit norm comparisons, not closedness, self-adjointness, surjectivity, compact resolvent, discreteness of spectrum, or eigenvalue summability. Showing that the natural onsite operator is closed, then transferring this property to the boundedly perturbed operator, is a separate next step.
+**Scope:** this module establishes explicit norm comparisons, not closedness, self-adjointness, surjectivity, compact resolvent, discreteness of spectrum, or eigenvalue summability. Closedness of the natural onsite operator and of its boundedly perturbed counterpart is established separately in §4.14.
 
 ### 4.14. Closed graphs of the onsite and full infinite local operators
 
@@ -596,7 +596,7 @@ The proof shows that the coordinatewise inverse gives a square-summable state be
 
 **What this establishes:** the shifted **onsite** operator `M_V-aI : D(V)→ℓ²(T)` is a bijection under the explicit unit-gap assumption, with a concrete coordinate formula for its inverse. This is a genuine solvability statement, stronger than merely excluding real point eigenvalues.
 
-**What is still open in this formalization:** a continuous/bounded inverse operator and its operator norm bound have not yet been packaged; compactness of this inverse requires an additional finite-sublevel or growth hypothesis. The bijectivity of the **interacting** operator's shift, compact resolvent, discreteness and summability of its full spectrum, and any specialized aperiodic-tiling model are not proved here. The one-unit condition is a convenient sufficient hypothesis, not a necessary one.
+**Relation to subsequent results:** this module establishes bijectivity and the coordinate formula, but does not itself package the inverse as a continuous linear map. That construction and the compactness proof under a finite-sublevel hypothesis are established in §4.18. Bijectivity of the **interacting** operator's shift, compactness of its resolvent, discreteness and inverse-square summability of its full spectrum, and any specialized aperiodic-tiling model remain open formalization goals. The one-unit condition is a convenient sufficient hypothesis, not a necessary one.
 
 ### 4.17. Finite low-energy sectors under a proper onsite potential
 
@@ -606,7 +606,7 @@ Lean proves two consequences on the natural onsite domain: any genuine point eig
 
 The hypothesis of finite low-energy sublevel sets is a precise form of *onsite potential growth at infinity*. It is additional to previous results and is **not claimed for an arbitrary potential or automatically for a particular geometric tiling**.
 
-**Important scope:** these results are for `M_V`, **not yet for the fully interacting operator** `H=M_V+L_w+εP+mI`. They do not prove compact resolvent, discreteness of the full spectrum, inverse-square summability, or existence of eigenvalues. A subsequent step will need to control finite-dimensional truncation tails or directly construct compact onsite resolvents, then transfer compactness across bounded perturbations.
+**Important scope:** these results concern `M_V`, **not the fully interacting operator** `H=M_V+L_w+εP+mI`. On their own they do not prove compact resolvent, spectral discreteness, inverse-square summability, or eigenvalue existence for an arbitrary potential. The finite-rank approximation and compact onsite resolvent are proved in §4.18 under the additional unit-gap assumption. Establishing a compact resolvent and the required spectral growth for the interacting and perturbed operator remains a separate goal.
 
 ### 4.18. Compact resolvent of a proper onsite potential
 
