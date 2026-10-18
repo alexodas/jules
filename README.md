@@ -667,9 +667,30 @@ The module constructs this expression as a continuous linear map, shows that its
 
 The result applies to any bounded correction satisfying the stated condition, in particular to the finite-color matching-family interaction with a bounded controlled perturbation encoded by `B=L_w+εP+mI`. It does **not** claim that `‖B R_a‖<1` holds automatically for arbitrary coupling strengths or at an arbitrary spectral shift. No spectral discreteness or inverse-square eigenvalue summability follows merely from this result; those remain separate goals.
 
+### 4.21. Quantitative compact-resolvent bounds and sufficiently negative shifts
+
+The Lean module **[`SpectralGeometry/InfiniteLocalCompactResolventBounds.lean`](SpectralGeometry/InfiniteLocalCompactResolventBounds.lean)** strengthens the conditional compact-inverse theorem of §4.20. If a positive gap `δ` satisfies `V(t)-a≥δ>0` and the earlier unit-gap condition holds, it establishes the **operator norm estimate**
+
+```math
+\|R_a\|\le\delta^{-1}.
+```
+
+For any bounded correction `B` with `‖B‖<δ`, the product estimate implies `‖B R_a‖<1`; consequently, the inverse of `M_V+B-aI` exists on the natural onsite domain and is compact under the same finite-sublevel hypothesis as §4.18.
+
+**No global smallness assumption is needed to find one resolvent point.** If `V(t)≥v₀` for all tiles, then choosing `δ=‖B‖+1` and `a=v₀-δ` supplies a real shift with compact inverse for *any fixed bounded B*. This proves existence of **some sufficiently negative real resolvent point**, not invertibility at all spectral parameters.
+
+For the finite-color matching-family model from §4.9, with `D` matching colors and weights `0≤wᵢ≤W`, the formalized geometric bound is
+
+```math
+\|L_w+\varepsilon P+mI\|
+ \le 2DW+|\varepsilon|\,\|P\|+|m|.
+```
+
+Thus `V(t)-a≥δ≥1` and `δ>2DW+|ε|‖P‖+|m|` suffice for the compact shifted inverse of the actual local matching operator via its already-proved bounded-correction identity. Neither symmetry of `P` nor a fixed small coupling is required for this existence result. Self-adjoint spectral decomposition, discrete eigenvalues, and inverse-square summability remain separate P1/P2 milestones.
+
 ## 5. Building and verification
 
-The established analytic core is in `SpectralGeometry/CanonicalProduct.lean`. The finite-dimensional geometric results are in `SpectralGeometry/FinitePerturbation.lean`, `SpectralGeometry/FinitePositiveEnergy.lean`, `SpectralGeometry/FiniteGeometricEnergy.lean`, and `SpectralGeometry/FiniteStrictPositivity.lean`. These four finite-dimensional modules and the twenty-one infinite-dimensional modules `SpectralGeometry/InfiniteOnsite.lean`, `SpectralGeometry/InfiniteOnsiteDensity.lean`, `SpectralGeometry/InfiniteOnsiteEigenvalues.lean`, `SpectralGeometry/InfiniteOnsiteSummability.lean`, `SpectralGeometry/InfiniteOnsitePowerGrowth.lean`, `SpectralGeometry/InfiniteFiniteEdgeInteraction.lean`, `SpectralGeometry/InfiniteBoundedPerturbation.lean`, `SpectralGeometry/InfiniteSummableEdgeInteraction.lean`, `SpectralGeometry/InfiniteLocalMatching.lean`, `SpectralGeometry/InfiniteLocalBoundedDegree.lean`, `SpectralGeometry/InfiniteLocalEigenvalueBounds.lean`, `SpectralGeometry/InfiniteLocalSignedPerturbationGap.lean`, `SpectralGeometry/InfiniteLocalCoerciveGap.lean`, `SpectralGeometry/InfiniteLocalGraphNorm.lean`, `SpectralGeometry/InfiniteLocalClosedGraph.lean`, `SpectralGeometry/InfiniteLocalAdjointCharacterization.lean`, `SpectralGeometry/InfiniteOnsiteResolvent.lean`, `SpectralGeometry/InfiniteOnsiteFiniteLowEnergy.lean` and `SpectralGeometry/InfiniteOnsiteCompactResolvent.lean` and `SpectralGeometry/InfiniteOnsiteResolventIdentity.lean` and `SpectralGeometry/InfiniteLocalCompactResolvent.lean` are imported by the `SpectralGeometry.lean` entry point. The toolchain is Lean 4 `v4.35.0` with the corresponding version of Mathlib.
+The established analytic core is in `SpectralGeometry/CanonicalProduct.lean`. The finite-dimensional geometric results are in `SpectralGeometry/FinitePerturbation.lean`, `SpectralGeometry/FinitePositiveEnergy.lean`, `SpectralGeometry/FiniteGeometricEnergy.lean`, and `SpectralGeometry/FiniteStrictPositivity.lean`. These four finite-dimensional modules and the twenty-two infinite-dimensional modules `SpectralGeometry/InfiniteOnsite.lean`, `SpectralGeometry/InfiniteOnsiteDensity.lean`, `SpectralGeometry/InfiniteOnsiteEigenvalues.lean`, `SpectralGeometry/InfiniteOnsiteSummability.lean`, `SpectralGeometry/InfiniteOnsitePowerGrowth.lean`, `SpectralGeometry/InfiniteFiniteEdgeInteraction.lean`, `SpectralGeometry/InfiniteBoundedPerturbation.lean`, `SpectralGeometry/InfiniteSummableEdgeInteraction.lean`, `SpectralGeometry/InfiniteLocalMatching.lean`, `SpectralGeometry/InfiniteLocalBoundedDegree.lean`, `SpectralGeometry/InfiniteLocalEigenvalueBounds.lean`, `SpectralGeometry/InfiniteLocalSignedPerturbationGap.lean`, `SpectralGeometry/InfiniteLocalCoerciveGap.lean`, `SpectralGeometry/InfiniteLocalGraphNorm.lean`, `SpectralGeometry/InfiniteLocalClosedGraph.lean`, `SpectralGeometry/InfiniteLocalAdjointCharacterization.lean`, `SpectralGeometry/InfiniteOnsiteResolvent.lean`, `SpectralGeometry/InfiniteOnsiteFiniteLowEnergy.lean` and `SpectralGeometry/InfiniteOnsiteCompactResolvent.lean` and `SpectralGeometry/InfiniteOnsiteResolventIdentity.lean` `SpectralGeometry/InfiniteLocalCompactResolvent.lean` and `SpectralGeometry/InfiniteLocalCompactResolventBounds.lean` are imported by the `SpectralGeometry.lean` entry point. The toolchain is Lean 4 `v4.35.0` with the corresponding version of Mathlib.
 
 ```bash
 lake update
@@ -693,7 +714,7 @@ completed only after the corresponding Lean file is imported by
 | --- | --- | --- | --- |
 | **P0 — completed** | Onsite inverse identity | The bounded map `infiniteOnsiteResolventCLM` takes values in the natural domain and is a two-sided inverse of the shifted onsite operator (§4.19) | **Formalized and Lean-checked** |
 | **P1 — critical (initial case formalized)** | Compact resolvent for the full local operator | Compact inverse of `M_V+B-aI` for bounded `B` under `‖B R_a‖<1`, with both inverse identities (§4.20) | **Small-correction theorem formalized; quantitative/structural extensions pending** |
-| **P1 — next** | Quantitative compact resolvent bounds | From a gap `V(t)-a≥δ≥1` show `‖R_a‖≤1/δ`, then `‖B R_a‖<1` whenever `‖B‖<δ`; obtain a compact shifted inverse with no global small-coupling assumption by choosing `a` far enough below any lower bound for `V` | **Planned** |
+| **P1 — quantitative (formalized)** | Quantitative compact resolvent bounds | Bounds `‖R_a‖≤1/δ`, obtains compact inverse from `‖B‖<δ`, proves existence of a sufficiently negative real shift for any bounded `B`, and gives geometric bounds for matching families (§4.21) | **Formalized; next P1 milestone is spectral-theory integration** |
 | **P1 — infrastructure** | Spectral-theory interface | Express the established adjoint-domain characterization in an API usable by Mathlib's self-adjoint spectral theorems | Planned |
 | **P2 — high** | Discrete spectrum | Derive real isolated eigenvalues of finite multiplicity and appropriate spectral exhaustion from self-adjointness plus compact resolvent | Planned |
 | **P2 — high** | Eigenvalue growth and summability | Transfer quantitative onsite growth to the eigenvalues of the interacting operator, then prove summability of inverse squares under sufficiently strong growth | Planned |
@@ -738,7 +759,7 @@ onsite gap `V(t)-a≥δ>0` and the quantitative estimate
 
 **The first small-correction case is now proved** in §4.20: the inverse maps to the natural domain, both inverse identities hold, and the bounded resolvent is compact. The hypothesis is explicitly `‖B R_a‖<1`; the next extension is to derive convenient numeric bounds directly from `‖B‖` and onsite gaps, and to package the substitution `B=L_w+εP+mI` into a dedicated local-matching theorem. No conclusion is asserted for arbitrary unbounded interactions.
 
-**Next quantitative milestone (P1):** Prove a general norm estimate
+**Quantitative milestone (P1, §4.21):** The formalized theorem establishes a general norm estimate
 `‖R_a‖≤1/δ` when `V(t)-a≥δ≥1`. Since
 `‖B R_a‖≤‖B‖‖R_a‖`, the explicit sufficient condition `‖B‖<δ`
 then gives the compact inverse constructed in §4.20. If `V(t)≥v₀`
@@ -752,10 +773,10 @@ spectral parameters.
 the already formalized matching-family norm estimate
 `‖L_w‖≤2DW` (for nonnegative matching weights bounded by `W`).
 The sufficient explicit gap is
-`δ>2DW+|ε|‖P‖+|m|`. The new Lean module should prove the bound,
-the existence of a sufficiently negative shift, and ideally a
-named corollary for this local matching model. The milestone is
-complete only after a successful full `lake build`.
+`δ>2DW+|ε|‖P‖+|m|`. The new module formalizes the bound, the existence of a sufficiently
+negative shift, and the named local-matching corollary. The next
+independent P1 milestone is to package the adjoint-domain criterion
+for Mathlib's spectral theorem interfaces.
 
 In parallel, bridge the explicit adjoint-pair theorem of §4.15 to
 the self-adjointness interfaces used by Mathlib. This is needed for the
