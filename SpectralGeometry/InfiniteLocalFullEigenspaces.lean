@@ -57,6 +57,8 @@ theorem infiniteLocalMatchingFullEigenspace_mem_iff
         (ψ.1 : TileHilbert Tile) = f ∧
         infiniteLocalShiftedPerturbedOperator D V σ w P ε shift ψ =
           eigenvalue • f := by
+  unfold infiniteLocalMatchingFullEigenspace
+  rw [Module.End.mem_eigenspace_iff]
   change
     infiniteBoundedOnsiteResolvent V a hgap
       (infiniteLocalBoundedCorrection D σ w P ε shift) hsmall f =
