@@ -709,7 +709,7 @@ H_{\varepsilon,m}=M_V+L_w+\varepsilon P+mI
 
 the same argument proves `IsSelfAdjoint` for its `LinearPMap` representation when each matching permutation is involutive and the bounded perturbation `P` is symmetric. A reusable graph-and-pairing lemma identifies the adjoint graph with the original graph, using Mathlib's `LinearPMap.adjoint_graph_eq_graph_adjoint`. **The actual domain remains `D(V)`; it is not silently replaced by all of `ℓ²(T)`.**
 
-**Scope:** this establishes the operator-theoretic interface needed before applying later spectral results. It requires the stated symmetry assumptions for the full local operator and makes no claim about compactness without the properness/gap hypotheses of §§4.20–4.21. The later §4.25 proves finite-dimensional full-operator eigenspaces under compact-resolvent hypotheses, while §4.29 proves isolation of nonzero real spectral points of the compact bounded resolvent. Isolation of the full unbounded-operator spectrum, exhaustive eigenvalue enumeration, eigenvalue growth, and inverse-square summability remain P2 goals.
+**Scope:** this establishes the operator-theoretic interface needed before applying later spectral results. It requires the stated symmetry assumptions for the full local operator and makes no claim about compactness without the properness/gap hypotheses of §§4.20–4.21. The later §4.25 proves finite-dimensional full-operator eigenspaces under compact-resolvent hypotheses, while §4.29 proves isolation of nonzero real spectral points of the compact bounded resolvent. Section 4.30 subsequently establishes isolation and bounded-interval finiteness for **genuine full-operator real eigenvalues**. Identification of the entire unbounded spectrum, eigenvalue enumeration with multiplicities, growth, and inverse-square summability remain open.
 
 ### 4.23. Compact self-adjoint resolvents and their eigenspaces
 
@@ -721,7 +721,7 @@ The new module proves that `R_a` is self-adjoint as a continuous linear map, usi
 - **Spectral totality:** the orthogonal complement of the supremum of all eigenspaces of `R_a` is zero. Equivalently, their linear span is dense in the real Hilbert space.
 - **Local matching specialization:** if each matching permutation is involutive and the bounded perturbation `P` is symmetric, the corrected geometric resolvent is self-adjoint whenever the explicit Neumann condition is satisfied. The gap bounds of §4.21 provide sufficient conditions for its existence.
 
-**Important distinction:** these are formalized properties of the **compact bounded resolvent**. Section 4.24 separately transfers nonzero resolvent eigenpairs to eigenpairs of the unbounded operator `H` via `λ=a+μ⁻¹`; §4.29 subsequently proves isolation of nonzero real spectral points of the compact resolvent. Isolation of the full unbounded-operator spectrum, spectral enumeration, and quantitative growth remain open. No inverse-square eigenvalue summability is established here.
+**Important distinction:** these are formalized properties of the **compact bounded resolvent**. Section 4.24 separately transfers nonzero resolvent eigenpairs to eigenpairs of the unbounded operator `H` via `λ=a+μ⁻¹`; §4.29 subsequently proves isolation of nonzero real spectral points of the compact resolvent. Section 4.30 also isolates genuine full-operator real eigenvalues and proves that only finitely many distinct eigenvalues occur in each bounded interval. The entire unbounded spectrum, spectral enumeration with multiplicities, and quantitative growth remain open. No inverse-square eigenvalue summability is established here.
 
 ### 4.24. Eigenpair correspondence between the compact resolvent and the full operator
 
@@ -745,7 +745,7 @@ H\psi=(a+\mu^{-1})f.
 
 An additional formulation starts with an arbitrary real `λ≠a` and uses `μ=(λ-a)⁻¹`. For nonzero `f`, these are genuine eigenpairs. The correspondence itself is algebraic and does **not** require the bounded correction to be symmetric; the compact self-adjoint spectral conclusions of §4.23 still require their own properness and symmetry hypotheses.
 
-**Scope:** the eigenpair correspondence at a fixed resolvent shift is now formalized. Discreteness and isolation of the **full** spectrum, an eigenvalue enumeration with multiplicities, eigenvalue growth, and inverse-square summability are separate P2 targets not established by this module.
+**Scope:** the eigenpair correspondence at a fixed resolvent shift is now formalized. Subsequent §4.30 transfers resolvent isolation to the full operator's **real point spectrum**, including finiteness of distinct eigenvalues on bounded intervals. Identifying the **entire** unbounded spectrum, enumeration with multiplicities, growth, and inverse-square summability remain separate P2 goals.
 
 ### 4.25. Finite multiplicity and orthogonality of full local eigenvectors
 
@@ -755,7 +755,7 @@ The module identifies membership in this submodule with the actual domain-restri
 
 Under involutive matching permutations and symmetry of the bounded perturbation `P`, eigenvectors corresponding to **different real eigenvalues are orthogonal**. This orthogonality theorem is an operator-symmetry consequence and does not need the extra compactness hypotheses.
 
-**Still open:** finite-dimensional eigenspaces and orthogonality do not alone imply that every spectral point is an eigenvalue, that each eigenvalue is isolated, or that the eigenvalues admit an enumeration with no finite accumulation. These spectral exhaustion and isolation claims remain P2 goals and are not asserted in §4.25.
+**Scope:** finite-dimensional eigenspaces and orthogonality alone do not imply isolation. Section 4.30 uses the additional compact-resolvent spectral isolation from §4.29 to establish isolation and bounded-interval finiteness of **genuine full-operator eigenvalues**. Exhaustion of the entire unbounded spectrum and an enumeration respecting multiplicities remain separate P2 goals.
 
 ### 4.26. Fredholm spectral exhaustion for the nonzero local resolvent spectrum
 
@@ -772,7 +772,7 @@ H\psi=(a+\mu^{-1})\psi.
 
 Equivalently, for a real parameter `λ≠a`, the transformed value `(λ-a)⁻¹` belongs to the resolvent spectrum **if and only if** `λ` admits a nonzero eigenvector of the unbounded full local operator. The forward implication uses Fredholm's alternative; the reverse implication uses the two-sided inverse and the eigenpair correspondence from §4.24. **No symmetry hypothesis is needed** for this compact-operator spectral-point/eigenpair equivalence.
 
-**Precise scope:** the proof exhausts the **nonzero spectrum of the compact bounded resolvent**, not the full spectrum of the unbounded `LinearPMap` by a separate spectral-mapping theorem. The special point `0` of the compact resolvent spectrum is deliberately excluded from this correspondence. Section 4.29 subsequently proves that the nonzero real spectral points of the compact resolvent are isolated and that zero is their only possible accumulation point. Isolation of the entire unbounded-operator spectrum, its spectral-mapping theorem, and ordered eigenvalue enumeration remain further P2 goals.
+**Precise scope:** the proof exhausts the **nonzero spectrum of the compact bounded resolvent**, not the full spectrum of the unbounded `LinearPMap` by a separate spectral-mapping theorem. The special point `0` of the compact resolvent spectrum is deliberately excluded from this correspondence. Section 4.29 subsequently proves that the nonzero real spectral points of the compact resolvent are isolated and that zero is their only possible accumulation point. Section 4.30 further isolates the actual full-operator real eigenvalues and shows that they have no finite accumulation, without identifying the entire unbounded-operator spectrum. Full spectral mapping and ordered enumeration with multiplicities remain further P2 goals.
 
 ### 4.27. Completeness of genuine eigenvectors of the full infinite local operator
 
@@ -784,7 +784,7 @@ Second, by the eigenpair correspondence of §4.24, every nonzero resolvent eigen
 
 This result requires the existing compactness conditions (onsite finite sublevels, the unit gap and the Neumann smallness condition), involutive matchings and symmetry of the bounded perturbation. It is stronger than merely stating that the resolvent has complete eigenvectors; it directly packages the genuine unbounded operator's natural-domain eigenvectors as a total family.
 
-**Scope:** the complete eigenvector family need not yet be enumerated or ordered. Dense eigenvector span alone does **not** establish that finite full-operator eigenvalues are isolated, that there are no finite spectral accumulation points, or any spectral growth or inverse-square summability estimate. These remain the next P2 milestones.
+**Scope:** the complete eigenvector family need not yet be enumerated or ordered. Dense eigenvector span alone does **not** establish that finite full-operator eigenvalues are isolated, that there are no finite spectral accumulation points, or any spectral growth or inverse-square summability estimate. Section 4.30 subsequently establishes isolation and no finite accumulation for genuine real eigenvalues. Ordering them with multiplicities and proving growth and inverse-square summability remain open.
 
 ### 4.28. A resolvent-norm exclusion zone for full-operator eigenvalues
 
@@ -798,7 +798,7 @@ If a nonzero state in the natural domain is a full-operator eigenvector at a rea
 
 The module also formalizes the contrapositive: whenever `λ≠a` and `|(λ-a)⁻¹|>‖R_a‖‖I‖`, every natural-domain solution of `Hψ=λψ` is zero. Here `I` is the identity operator on `ℓ²(T)`. Its norm is one on a nonzero Hilbert space; the Lean statement retains the factor `‖I‖` to avoid requiring a nontrivial-space instance when the tile type can be empty. This excludes genuine eigenvalues from a quantitative neighborhood of the **chosen resolvent shift**. It does not require the symmetry assumptions used for self-adjoint spectral completeness.
 
-**Precise scope:** the result isolates the selected resolvent shift from point eigenvalues with an explicit norm test. It does **not** prove that each full-operator eigenvalue is isolated from other eigenvalues, that the entire unbounded spectrum is exhausted by eigenvalues, that the spectrum can be ordered, or that inverse-square summability holds. Those stronger P2 targets remain open.
+**Precise scope:** the result isolates the selected resolvent shift from point eigenvalues with an explicit norm test. It does **not** prove that each full-operator eigenvalue is isolated from other eigenvalues, that the entire unbounded spectrum is exhausted by eigenvalues, that the spectrum can be ordered, or that inverse-square summability holds. Section 4.30 subsequently establishes isolation and bounded-interval finiteness for genuine full-operator real eigenvalues; full-spectrum identification, enumeration, and summability remain open.
 
 ### 4.29. Isolation of nonzero points in the compact resolvent spectrum
 
@@ -822,11 +822,24 @@ Consequently, **every nonzero real spectral point is isolated**. More precisely,
 
 In particular, **zero is the only possible accumulation point** of the real spectrum of the compact resolvent. The module does not require a nonempty tile type or an infinite-dimensional Hilbert space.
 
-**Scope:** this finishes the bounded-resolvent isolation milestone, not the corresponding statement about the **entire unbounded operator spectrum**. Transferring isolation through `λ=a+μ⁻¹`, proving full spectral mapping and ordering eigenvalues with multiplicities remain the next open steps (§6).
+**Scope:** this finishes the bounded-resolvent isolation milestone. The following §4.30 transfers it via `λ=a+μ⁻¹` to **genuine real eigenvalues** of the unbounded operator. Identifying the entire unbounded-operator spectrum, proving full spectral mapping, and ordering eigenvalues with multiplicities remain separate steps (§6).
+
+### 4.30. Isolation and local finiteness of genuine full-operator eigenvalues
+
+The Lean module **[`SpectralGeometry/InfiniteLocalFullEigenvalueIsolation.lean`](SpectralGeometry/InfiniteLocalFullEigenvalueIsolation.lean)** transfers the compact-resolvent spectral results of §4.29 to the actual **real point spectrum** of the unbounded matching-family operator `H=M_V+L_w+εP+mI` on its unchanged natural domain `D(V)`.
+
+Write `Eig(H)` for the set of real parameters `λ` for which there is a **nonzero** `ψ∈D(V)` with `Hψ=λψ`. Under the earlier unit onsite gap at `a`, finite onsite sublevel sets, Neumann smallness, involutive matchings, and symmetry of `P`, the module proves:
+
+- **Pointwise isolation:** for each `λ∈Eig(H)`, there exists `r>0` such that every `ν∈Eig(H)` with `|ν−λ|<r` satisfies `ν=λ`. Unlike §4.28, this concerns *every* genuine eigenvalue, not just the selected shift.
+- **Finiteness in bounded intervals:** for every `M≥0`, the set `{λ∈Eig(H) : |λ|≤M}` is finite. Thus distinct genuine real eigenvalues have **no finite accumulation point**, even at a real parameter that is not itself an eigenvalue.
+
+The transfer uses the existing equivalence `λ∈Eig(H) ↔ (λ−a)⁻¹∈σ_ℝ(R_a)` for `λ≠a` (§4.26). The already-checked two-sided inverse excludes `a` as an eigenvalue (§4.25). Continuity and injectivity of `λ↦(λ−a)⁻¹` yield isolation, while bounded `|λ|` ensures the corresponding resolvent spectral parameters remain uniformly away from zero, so §4.29 gives finiteness.
+
+**Precise scope:** these results identify properties of the **real point spectrum**, not the entire spectrum of the unbounded `LinearPMap` (whose full spectral-mapping theorem is not yet formalized). Local finiteness counts **distinct eigenvalues**, not multiplicities. An ordered enumeration with multiplicities, eigenvalue growth, and inverse-square summability remain open (§6).
 
 ## 5. Building and verification
 
-The canonical import list is maintained in [`SpectralGeometry.lean`](SpectralGeometry.lean). It currently imports **35 Lean modules**: one analytic core, four finite-dimensional modules, and thirty infinite-dimensional modules.
+The canonical import list is maintained in [`SpectralGeometry.lean`](SpectralGeometry.lean). It currently imports **36 Lean modules**: one analytic core, four finite-dimensional modules, and thirty-one infinite-dimensional modules.
 
 - **Analytic core (1):** [`CanonicalProduct.lean`](SpectralGeometry/CanonicalProduct.lean)
 - **Finite-dimensional geometry (4):**
@@ -857,7 +870,7 @@ The canonical import list is maintained in [`SpectralGeometry.lean`](SpectralGeo
   - [`InfiniteOnsiteFiniteLowEnergy.lean`](SpectralGeometry/InfiniteOnsiteFiniteLowEnergy.lean)
   - [`InfiniteOnsiteCompactResolvent.lean`](SpectralGeometry/InfiniteOnsiteCompactResolvent.lean)
   - [`InfiniteOnsiteResolventIdentity.lean`](SpectralGeometry/InfiniteOnsiteResolventIdentity.lean)
-- **Interacting resolvents and spectral results (10):**
+- **Interacting resolvents and spectral results (11):**
   - [`InfiniteLocalCompactResolvent.lean`](SpectralGeometry/InfiniteLocalCompactResolvent.lean)
   - [`InfiniteLocalCompactResolventBounds.lean`](SpectralGeometry/InfiniteLocalCompactResolventBounds.lean)
   - [`InfiniteLocalSelfAdjointPMap.lean`](SpectralGeometry/InfiniteLocalSelfAdjointPMap.lean)
@@ -868,6 +881,7 @@ The canonical import list is maintained in [`SpectralGeometry.lean`](SpectralGeo
   - [`InfiniteLocalFullEigenvectorsComplete.lean`](SpectralGeometry/InfiniteLocalFullEigenvectorsComplete.lean)
   - [`InfiniteLocalResolventNormGap.lean`](SpectralGeometry/InfiniteLocalResolventNormGap.lean)
   - [`InfiniteLocalResolventSpectralIsolation.lean`](SpectralGeometry/InfiniteLocalResolventSpectralIsolation.lean)
+  - [`InfiniteLocalFullEigenvalueIsolation.lean`](SpectralGeometry/InfiniteLocalFullEigenvalueIsolation.lean)
 
 The project uses Lean 4 `v4.35.0` with its corresponding Mathlib version. Every module listed above is imported by the root entry point.
 
@@ -888,11 +902,7 @@ passes.
 
 ### 6.1. P2 — Discrete spectrum and eigenvalue enumeration
 
-1. **Transfer isolation to the full operator.** Via
-   `λ=a+μ⁻¹`, show that genuine full-operator eigenvalues are isolated
-   and have no finite accumulation point. This is stronger than excluding
-   eigenvalues near the single shift `a`.
-2. **Exhaust and enumerate the full spectrum.** Establish the appropriate
+1. **Exhaust and enumerate the full spectrum.** Establish the appropriate
    spectral-mapping statement for the unbounded operator on its natural
    domain, beyond the existing eigenpair correspondence. Enumerate
    eigenvalues **with multiplicities**; handle finite tile sets separately
@@ -901,14 +911,14 @@ passes.
 
 ### 6.2. P2 — Positivity, comparison, and summability
 
-3. **Prove a uniform positive spectral gap.** Give explicit hypotheses on
+2. **Prove a uniform positive spectral gap.** Give explicit hypotheses on
    the onsite potential `V` and bounded symmetric correction
    `B=L_w+εP+mI` ensuring every full eigenvalue satisfies
    `λ≥c>0`; for example, a lower onsite bound greater than `‖B‖`.
-4. **Compare ordered eigenvalues.** Develop a min–max or eigenvalue-counting
+3. **Compare ordered eigenvalues.** Develop a min–max or eigenvalue-counting
    argument, respecting multiplicities, to prove a bound of the form
    `λₙ(M_V+B) ≥ λₙ(M_V)-‖B‖` against the ordered onsite levels.
-5. **Prove inverse-square summability.** Transfer a sufficiently strong
+4. **Prove inverse-square summability.** Transfer a sufficiently strong
    lower growth bound on the **ordered onsite levels** (for example,
    `Vₙ ≳ (n+1)^α` with `α>1/2`) to the full interacting spectrum,
    then prove `∑ₙ 1/λₙ² < ∞`. Compact resolvent alone does not
@@ -916,7 +926,7 @@ passes.
 
 ### 6.3. P3 — Connect the spectrum to the canonical product
 
-6. **Instantiate the analytic theory.** Package the positive, enumerated,
+5. **Instantiate the analytic theory.** Package the positive, enumerated,
    inverse-square-summable eigenvalues of the **full perturbed operator**
    as an `Admissible` sequence, then apply the canonical-product and
    zero-localization theorems from §2. A smaller onsite-only end-to-end
@@ -925,7 +935,7 @@ passes.
 
 ### 6.4. P4 — Verify a concrete geometric model
 
-7. **Construct a genuine tiling example.** Select an aperiodic tiling,
+6. **Construct a genuine tiling example.** Select an aperiodic tiling,
    formalize its tiles, weights, potential and perturbation, and check
    the hypotheses needed above. In particular, verify a bounded local
    interaction model and the required potential growth; do not assume
