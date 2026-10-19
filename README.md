@@ -757,9 +757,26 @@ Under involutive matching permutations and symmetry of the bounded perturbation 
 
 **Still open:** finite-dimensional eigenspaces and orthogonality do not alone imply that every spectral point is an eigenvalue, that each eigenvalue is isolated, or that the eigenvalues admit an enumeration with no finite accumulation. These spectral exhaustion and isolation claims remain P2 goals and are not asserted in §4.25.
 
+### 4.26. Fredholm spectral exhaustion for the nonzero local resolvent spectrum
+
+The Lean module **[`SpectralGeometry/InfiniteLocalFredholmSpectralExhaustion.lean`](SpectralGeometry/InfiniteLocalFredholmSpectralExhaustion.lean)** makes a first rigorous spectral-exhaustion statement using Mathlib's **Fredholm alternative for compact operators**. Let `H=M_V+L_w+εP+mI` on its natural domain `D(V)`, and suppose the resolvent `R_a=(H-aI)⁻¹` exists and is compact under the already formalized onsite-gap, finite-sublevel and Neumann-smallness hypotheses.
+
+For every real `μ≠0`, the module proves the following equivalence, where the spectrum on the left is the standard **bounded-operator spectrum in Mathlib**:
+
+```math
+\mu\in\sigma(R_a)
+\quad\Longleftrightarrow\quad
+\exists\,\psi\in D(V)\setminus\{0\}:
+H\psi=(a+\mu^{-1})\psi.
+```
+
+Equivalently, for a real parameter `λ≠a`, the transformed value `(λ-a)⁻¹` belongs to the resolvent spectrum **if and only if** `λ` admits a nonzero eigenvector of the unbounded full local operator. The forward implication uses Fredholm's alternative; the reverse implication uses the two-sided inverse and the eigenpair correspondence from §4.24. **No symmetry hypothesis is needed** for this compact-operator spectral-point/eigenpair equivalence.
+
+**Precise scope:** the proof exhausts the **nonzero spectrum of the compact bounded resolvent**, not the full spectrum of the unbounded `LinearPMap` by a separate spectral-mapping theorem. The special point `0` of the compact resolvent spectrum is deliberately excluded. Isolation of nonzero spectral points, their possible accumulation only at zero, isolation of finite full-operator eigenvalues, and ordered eigenvalue enumeration remain further P2 goals.
+
 ## 5. Building and verification
 
-The canonical import list is maintained in [`SpectralGeometry.lean`](SpectralGeometry.lean). It currently imports **31 Lean modules**: one analytic core, four finite-dimensional modules, and twenty-six infinite-dimensional modules.
+The canonical import list is maintained in [`SpectralGeometry.lean`](SpectralGeometry.lean). It currently imports **32 Lean modules**: one analytic core, four finite-dimensional modules, and twenty-seven infinite-dimensional modules.
 
 - **Analytic core (1):** [`CanonicalProduct.lean`](SpectralGeometry/CanonicalProduct.lean)
 - **Finite-dimensional geometry (4):**
@@ -790,13 +807,14 @@ The canonical import list is maintained in [`SpectralGeometry.lean`](SpectralGeo
   - [`InfiniteOnsiteFiniteLowEnergy.lean`](SpectralGeometry/InfiniteOnsiteFiniteLowEnergy.lean)
   - [`InfiniteOnsiteCompactResolvent.lean`](SpectralGeometry/InfiniteOnsiteCompactResolvent.lean)
   - [`InfiniteOnsiteResolventIdentity.lean`](SpectralGeometry/InfiniteOnsiteResolventIdentity.lean)
-- **Interacting resolvents and spectral results (6):**
+- **Interacting resolvents and spectral results (7):**
   - [`InfiniteLocalCompactResolvent.lean`](SpectralGeometry/InfiniteLocalCompactResolvent.lean)
   - [`InfiniteLocalCompactResolventBounds.lean`](SpectralGeometry/InfiniteLocalCompactResolventBounds.lean)
   - [`InfiniteLocalSelfAdjointPMap.lean`](SpectralGeometry/InfiniteLocalSelfAdjointPMap.lean)
   - [`InfiniteLocalResolventSpectrum.lean`](SpectralGeometry/InfiniteLocalResolventSpectrum.lean)
   - [`InfiniteLocalEigenpairCorrespondence.lean`](SpectralGeometry/InfiniteLocalEigenpairCorrespondence.lean)
   - [`InfiniteLocalFullEigenspaces.lean`](SpectralGeometry/InfiniteLocalFullEigenspaces.lean)
+  - [`InfiniteLocalFredholmSpectralExhaustion.lean`](SpectralGeometry/InfiniteLocalFredholmSpectralExhaustion.lean)
 
 The project uses Lean 4 `v4.35.0` with its corresponding Mathlib version. Every module listed above is imported by the root entry point.
 
@@ -824,7 +842,7 @@ completed only after the corresponding Lean file is imported by
 | **P1 — completed (compact inverse)** | Compact resolvent for the full local operator | Compact inverse of `M_V+B-aI` for bounded `B` under `‖B R_a‖<1`, with both inverse identities (§4.20) | **Formalized and Lean-checked; quantitative and matching-family corollaries in §4.21** |
 | **P1 — completed (quantitative)** | Quantitative compact resolvent bounds | Bounds `‖R_a‖≤1/δ`, obtains compact inverse from `‖B‖<δ`, proves existence of a sufficiently negative real shift for any bounded `B`, and gives geometric bounds for matching families (§4.21) | **Formalized and Lean-checked; self-adjointness interface completed in §4.22** |
 | **P1 — completed (self-adjointness)** | Self-adjointness in Mathlib's partial-operator API | Package onsite and local matching operators as `LinearPMap` on the natural domain, and prove `IsSelfAdjoint` from adjoint-pair characterization and density (§4.22) | **Formalized and Lean-checked; discrete-spectrum work continues in P2** |
-| **P2 — in progress (finite multiplicity)** | Discrete spectrum | Compact resolvent eigenspaces are total (§4.23), eigenpairs transfer to the full unbounded operator (§4.24), and every full real eigenspace is finite-dimensional with orthogonality for distinct symmetric eigenvalues (§4.25) | **Finite multiplicity/orthogonality formalized; spectral isolation, exhaustion and enumeration pending** |
+| **P2 — in progress (resolvent spectral exhaustion)** | Discrete spectrum | Compact resolvent eigenspaces are total (§4.23); nonzero eigenpairs transfer to the unbounded operator (§4.24); full eigenspaces have finite multiplicity and distinct symmetric eigenvalues are orthogonal (§4.25); Fredholm's alternative identifies **every nonzero resolvent spectral point** with an actual full local eigenpair (§4.26) | **Nonzero compact-resolvent spectrum exhausted by eigenpairs; isolation, unbounded full-spectrum identification and enumeration pending** |
 | **P2 — high** | Eigenvalue growth and summability | Transfer quantitative onsite growth to the eigenvalues of the interacting operator, then prove summability of inverse squares under sufficiently strong growth | Planned |
 | **P3 — integration** | Spectrally defined canonical product | Instantiate the existing admissibility and zero-localization results with the full operator's positive, summable eigenvalues | Planned |
 | **P4 — geometric applications** | Specific aperiodic tiling | Check the operator hypotheses for a concrete tiling model rather than assuming them abstractly | Planned |
@@ -889,7 +907,7 @@ The required self-adjointness interface was subsequently formalized in §4.22.
 
 ### 6.3. P2 — Discreteness, multiplicity, and quantitative growth
 
-**First P2 step (§4.23):** The compact bounded resolvent of the symmetric local operator has been shown to be self-adjoint. Its nonzero eigenspaces are finite-dimensional and the supremum of all its eigenspaces is dense, using Mathlib's compact self-adjoint spectral theorem. **Second P2 step (§4.24):** the nonzero resolvent eigenpair equation is now equivalent to the eigenpair equation for the unbounded local operator on its natural domain, with eigenvalue `λ=a+μ⁻¹`. **Third P2 step (§4.25):** the full unbounded operator's eigenspaces are now finite-dimensional, the chosen resolvent shift is not an eigenvalue, and symmetric local eigenvectors at distinct eigenvalues are orthogonal. The next task remains spectral exhaustion, isolation and enumeration with multiplicity. These do not follow from finite multiplicity alone. A lower spectral bound and exclusion of zero are necessary for inverse powers.
+**First P2 step (§4.23):** The compact bounded resolvent of the symmetric local operator has been shown to be self-adjoint. Its nonzero eigenspaces are finite-dimensional and the supremum of all its eigenspaces is dense, using Mathlib's compact self-adjoint spectral theorem. **Second P2 step (§4.24):** the nonzero resolvent eigenpair equation is now equivalent to the eigenpair equation for the unbounded local operator on its natural domain, with eigenvalue `λ=a+μ⁻¹`. **Third P2 step (§4.25):** the full unbounded operator's eigenspaces are now finite-dimensional, the chosen resolvent shift is not an eigenvalue, and symmetric local eigenvectors at distinct eigenvalues are orthogonal. **Fourth P2 step (§4.26):** Fredholm's alternative now identifies every nonzero spectral point of the compact bounded resolvent with an actual nonzero eigenpair of the full operator on `D(V)`, in both directions. Next, establish isolation away from zero for the compact resolvent, transfer this to the operator eigenvalues and formalize spectral enumeration. The identification of the entire unbounded `LinearPMap` spectrum remains separate; finite multiplicity alone does not imply these conclusions. A lower spectral bound and exclusion of zero are necessary for inverse powers.
 
 Next, prove an eigenvalue comparison under bounded symmetric
 perturbations, of the form
