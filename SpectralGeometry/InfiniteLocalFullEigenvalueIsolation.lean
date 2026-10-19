@@ -28,11 +28,11 @@ real number admitting a nonzero eigenvector in the natural onsite domain. -/
 def infiniteLocalMatchingHasFullEigenvalue
     (D : ℕ) (V : Tile → ℝ) (σ : Fin D → Tile ≃ Tile)
     (w : Fin D → ℝ) (P : FullIsolationEnd Tile)
-    (ε shift λ : ℝ) : Prop :=
+    (ε shift eigenvalue : ℝ) : Prop :=
   ∃ ψ : infiniteOnsiteDomain V,
     (ψ.1 : TileHilbert Tile) ≠ 0 ∧
       infiniteLocalShiftedPerturbedOperator D V σ w P ε shift ψ =
-        λ • (ψ.1 : TileHilbert Tile)
+        eigenvalue • (ψ.1 : TileHilbert Tile)
 
 /-- No eigenvalue of the full matching operator can coincide with a
 real shift a at which the constructed two-sided resolvent exists. -/
@@ -42,10 +42,10 @@ private theorem full_local_eigenvalue_ne_resolvent_shift
     (ε shift a : ℝ) (hgap : ∀ t, 1 ≤ V t - a)
     (hsmall : ‖(infiniteLocalBoundedCorrection D σ w P ε shift).comp
       (infiniteOnsiteResolventCLM V a hgap)‖ < 1)
-    (λ : ℝ) (hλ : infiniteLocalMatchingHasFullEigenvalue D V σ w P ε shift λ) :
-    λ ≠ a := by
+    (eigenvalue : ℝ) (heigenvalue : infiniteLocalMatchingHasFullEigenvalue D V σ w P ε shift eigenvalue) :
+    eigenvalue ≠ a := by
   intro heq
-  rcases hλ with ⟨ψ, hψne, hψ⟩
+  rcases heigenvalue with ⟨ψ, hψne, hψ⟩
   rw [heq] at hψ
   exact hψne (infiniteLocalMatching_no_eigenvector_at_shift
     D V σ w P ε shift a hgap hsmall ψ hψ)
@@ -66,11 +66,11 @@ theorem infiniteLocalMatching_full_eigenvalue_isolated
     (hσ : ∀ i t, σ i (σ i t) = t)
     (hP : ∀ ψ φ : TileHilbert Tile,
       inner ℝ ψ (P φ) = inner ℝ (P ψ) φ)
-    (λ : ℝ) (hλ : infiniteLocalMatchingHasFullEigenvalue D V σ w P ε shift λ) :
+    (eigenvalue : ℝ) (heigenvalue : infiniteLocalMatchingHasFullEigenvalue D V σ w P ε shift eigenvalue) :
     ∃ r : ℝ, 0 < r ∧
       ∀ ν : ℝ,
         infiniteLocalMatchingHasFullEigenvalue D V σ w P ε shift ν →
-        dist ν λ < r → ν = λ := by
+        dist ν eigenvalue < r → ν = eigenvalue := by
   let B := infiniteLocalBoundedCorrection D σ w P ε shift
   let R := infiniteBoundedOnsiteResolvent V a hgap B hsmall
   have hB : ∀ ψ φ : TileHilbert Tile,
@@ -78,29 +78,29 @@ theorem infiniteLocalMatching_full_eigenvalue_isolated
     intro ψ φ
     exact infiniteLocalBoundedCorrection_symmetric
       D σ w P ε shift hσ hP ψ φ
-  have hλne : λ ≠ a :=
+  have heigenvaluene : eigenvalue ≠ a :=
     full_local_eigenvalue_ne_resolvent_shift
-      D V σ w P ε shift a hgap hsmall λ hλ
-  have hμne : (λ - a)⁻¹ ≠ 0 :=
-    inv_ne_zero (sub_ne_zero.mpr hλne)
-  have hμspec : (λ - a)⁻¹ ∈ spectrum ℝ R :=
+      D V σ w P ε shift a hgap hsmall eigenvalue heigenvalue
+  have hμne : (eigenvalue - a)⁻¹ ≠ 0 :=
+    inv_ne_zero (sub_ne_zero.mpr heigenvaluene)
+  have hμspec : (eigenvalue - a)⁻¹ ∈ spectrum ℝ R :=
     (infiniteLocalMatching_full_eigenpair_iff_resolvent_spectrum
-      D V σ w P ε shift a hgap hproper hsmall λ hλne).mpr hλ
+      D V σ w P ε shift a hgap hproper hsmall eigenvalue heigenvaluene).mpr heigenvalue
   obtain ⟨r, hr, hiso⟩ :=
     infiniteBoundedOnsiteResolvent_nonzero_spectrum_isolated
-      V a hgap hproper B hB hsmall (λ - a)⁻¹ hμne hμspec
+      V a hgap hproper B hB hsmall (eigenvalue - a)⁻¹ hμne hμspec
   have hcont :
-      ContinuousAt (fun x : ℝ => (x - a)⁻¹) λ := by
+      ContinuousAt (fun x : ℝ => (x - a)⁻¹) eigenvalue := by
     exact (continuousAt_id.sub continuousAt_const).inv₀
-      (sub_ne_zero.mpr hλne)
+      (sub_ne_zero.mpr heigenvaluene)
   have hneigh :
-      {ν : ℝ | dist ((ν - a)⁻¹) ((λ - a)⁻¹) < r} ∈ 𝓝 λ := by
+      {ν : ℝ | dist ((ν - a)⁻¹) ((eigenvalue - a)⁻¹) < r} ∈ 𝓝 eigenvalue := by
     have hball :
         (fun x : ℝ => (x - a)⁻¹) ⁻¹'
-          Metric.ball ((λ - a)⁻¹) r ∈ 𝓝 λ :=
+          Metric.ball ((eigenvalue - a)⁻¹) r ∈ 𝓝 eigenvalue :=
       hcont.tendsto (Metric.ball_mem_nhds hr)
     change ((fun x : ℝ => (x - a)⁻¹) ⁻¹'
-      Metric.ball ((λ - a)⁻¹) r) ∈ 𝓝 λ
+      Metric.ball ((eigenvalue - a)⁻¹) r) ∈ 𝓝 eigenvalue
     exact hball
   obtain ⟨δ, hδ, hsubset⟩ := Metric.mem_nhds_iff.mp hneigh
   refine ⟨δ, hδ, ?_⟩
@@ -111,11 +111,11 @@ theorem infiniteLocalMatching_full_eigenvalue_isolated
   have hνspec : (ν - a)⁻¹ ∈ spectrum ℝ R :=
     (infiniteLocalMatching_full_eigenpair_iff_resolvent_spectrum
       D V σ w P ε shift a hgap hproper hsmall ν hνne).mpr hν
-  have hcloseres : dist ((ν - a)⁻¹) ((λ - a)⁻¹) < r :=
+  have hcloseres : dist ((ν - a)⁻¹) ((eigenvalue - a)⁻¹) < r :=
     hsubset (Metric.mem_ball.mpr (by simpa [dist_comm] using hclose))
-  have hinv : (ν - a)⁻¹ = (λ - a)⁻¹ :=
+  have hinv : (ν - a)⁻¹ = (eigenvalue - a)⁻¹ :=
     hiso _ hνspec hcloseres
-  have hsub : ν - a = λ - a := inv_injective hinv
+  have hsub : ν - a = eigenvalue - a := inv_injective hinv
   linarith
 
 
@@ -135,8 +135,8 @@ theorem infiniteLocalMatching_full_eigenvalues_bounded_finite
     (hP : ∀ ψ φ : TileHilbert Tile,
       inner ℝ ψ (P φ) = inner ℝ (P ψ) φ)
     (M : ℝ) (hM : 0 ≤ M) :
-    {λ : ℝ | ‖λ‖ ≤ M ∧
-      infiniteLocalMatchingHasFullEigenvalue D V σ w P ε shift λ}.Finite := by
+    {eigenvalue : ℝ | ‖eigenvalue‖ ≤ M ∧
+      infiniteLocalMatchingHasFullEigenvalue D V σ w P ε shift eigenvalue}.Finite := by
   let B := infiniteLocalBoundedCorrection D σ w P ε shift
   let R := infiniteBoundedOnsiteResolvent V a hgap B hsmall
   let d : ℝ := M + ‖a‖ + 1
@@ -151,35 +151,35 @@ theorem infiniteLocalMatching_full_eigenvalues_bounded_finite
     exact infiniteLocalBoundedCorrection_symmetric
       D σ w P ε shift hσ hP ψ φ
   let S : Set ℝ :=
-    {λ : ℝ | ‖λ‖ ≤ M ∧
-      infiniteLocalMatchingHasFullEigenvalue D V σ w P ε shift λ}
+    {eigenvalue : ℝ | ‖eigenvalue‖ ≤ M ∧
+      infiniteLocalMatchingHasFullEigenvalue D V σ w P ε shift eigenvalue}
   let F : Set ℝ := {μ : ℝ | δ ≤ ‖μ‖ ∧ μ ∈ spectrum ℝ R}
   have hfinite : F.Finite :=
     infiniteBoundedOnsiteResolvent_finite_spectrum_away_zero
       V a hgap hproper B hB hsmall δ hδ
-  have hmaps : Set.MapsTo (fun λ : ℝ => (λ - a)⁻¹) S F := by
-    intro λ hλ
-    rcases hλ with ⟨hsize, hλeig⟩
-    have hne : λ ≠ a :=
+  have hmaps : Set.MapsTo (fun eigenvalue : ℝ => (eigenvalue - a)⁻¹) S F := by
+    intro eigenvalue heigenvalue
+    rcases heigenvalue with ⟨hsize, heigenvalueeig⟩
+    have hne : eigenvalue ≠ a :=
       full_local_eigenvalue_ne_resolvent_shift
-        D V σ w P ε shift a hgap hsmall λ hλeig
-    have hnpos : 0 < ‖λ - a‖ :=
+        D V σ w P ε shift a hgap hsmall eigenvalue heigenvalueeig
+    have hnpos : 0 < ‖eigenvalue - a‖ :=
       (norm_pos_iff).mpr (sub_ne_zero.mpr hne)
-    have hle : ‖λ - a‖ ≤ d := by
-      have htri := norm_sub_le λ a
+    have hle : ‖eigenvalue - a‖ ≤ d := by
+      have htri := norm_sub_le eigenvalue a
       dsimp [d]
       linarith
-    have hrecip : δ ≤ ‖(λ - a)⁻¹‖ := by
-      change d⁻¹ ≤ ‖(λ - a)⁻¹‖
+    have hrecip : δ ≤ ‖(eigenvalue - a)⁻¹‖ := by
+      change d⁻¹ ≤ ‖(eigenvalue - a)⁻¹‖
       rw [norm_inv]
       exact inv_anti₀ hnpos hle
-    have hspec : (λ - a)⁻¹ ∈ spectrum ℝ R :=
+    have hspec : (eigenvalue - a)⁻¹ ∈ spectrum ℝ R :=
       (infiniteLocalMatching_full_eigenpair_iff_resolvent_spectrum
-        D V σ w P ε shift a hgap hproper hsmall λ hne).mpr hλeig
+        D V σ w P ε shift a hgap hproper hsmall eigenvalue hne).mpr heigenvalueeig
     exact ⟨hrecip, hspec⟩
-  have hinj : Set.InjOn (fun λ : ℝ => (λ - a)⁻¹) S := by
-    intro λ _ ν _ heq
-    have hh : λ - a = ν - a := inv_injective heq
+  have hinj : Set.InjOn (fun eigenvalue : ℝ => (eigenvalue - a)⁻¹) S := by
+    intro eigenvalue _ ν _ heq
+    have hh : eigenvalue - a = ν - a := inv_injective heq
     linarith
   exact Set.Finite.of_injOn hmaps hinj hfinite
 
