@@ -9,19 +9,18 @@
   are isolated, locally finite and countable, and its real bounded-inverse
   spectrum is characterized by eigenvectors under the stated hypotheses
   (§§4.20–4.32).
-- **Most recent formalized step:** under explicit lower-boundedness and
-  infinite-spectrum hypotheses, the interacting real spectrum has a
-  **globally ordered, multiplicity-exact sequence** indexed by ℕ (§4.37).
-  Every admissible eigenvalue/copy-index pair appears exactly once. The
-  finite-spectrum and bounded-window counterparts remain in §4.36.
-- **Next research milestone:** prove **λₙ → +∞** for this global sequence
-  under the existing finite-window hypotheses, then establish quantitative
-  eigenvalue comparison and summability. A complex-spectrum extension
-  remains a separate possible goal.
-- **Still open:** a formal divergence theorem, quantitative eigenvalue
-  comparison and inverse-square summability for the **full interacting**
-  operator, the bridge to the canonical product, and an instantiated
-  aperiodic tiling. See the [tracked roadmap](#6-roadmap-proof-status-and-next-steps).
+- **Most recent formalized step:** the globally ordered, exactly
+  multiplicity-tagged real eigenvalue sequence from §4.37 satisfies
+  **λₙ → +∞**, using finite spectral windows and an explicit lower
+  bound for the infinite interacting spectrum (§4.38).
+- **Next research milestone:** prove a **comparison or min–max bound**
+  for ordered interacting eigenvalues relative to onsite levels, then
+  derive sufficient quantitative growth and inverse-square summability.
+  Complex-spectrum formalization remains an optional separate goal.
+- **Still open:** quantitative eigenvalue comparison and inverse-square
+  summability for the **full interacting** operator, a general positive
+  real spectral gap under the desired hypotheses, the canonical-product
+  instantiation, and an explicit aperiodic tiling. See the [tracked roadmap](#6-roadmap-proof-status-and-next-steps).
 
 **Scope:** all existing infinite-operator results require their stated
 hypotheses. The project does **not** identify its canonical product with the
@@ -81,7 +80,7 @@ Our first goal is to prove properties that hold for general classes of geometric
 
 For infinitely many tiles, a natural state space is the space of square-summable amplitudes `ℓ²(T)`. We must rigorously define the operator domains, the convergence of interaction and perturbation terms, and conditions for self-adjointness. Unlike a finite symmetric matrix, an infinite operator can have continuous spectrum.
 
-For the abstract matching-family operator, we have formalized self-adjointness and compact resolvent under explicit hypotheses, finite-dimensional eigenspaces, isolation and local finiteness of genuine real eigenvalues, an unordered countable real point-spectrum listing, real bounded-inverse spectral mapping, and an unordered multiplicity-tagged listing, exact real spectral coverage, totality of the real spectral eigenspaces, and a global ordered infinite-spectrum tagged enumeration under explicit lower-bound and infinitude hypotheses (§§4.20–4.37). The stronger goal is a **positive, ordered spectrum with multiplicities** and controlled growth, for example:
+For the abstract matching-family operator, we have formalized self-adjointness and compact resolvent under explicit hypotheses, finite-dimensional eigenspaces, isolation and local finiteness of genuine real eigenvalues, an unordered countable real point-spectrum listing, real bounded-inverse spectral mapping, and an unordered multiplicity-tagged listing, exact real spectral coverage, totality of the real spectral eigenspaces, and a global ordered infinite-spectrum tagged enumeration diverging to +∞ under explicit lower-bound and infinitude hypotheses (§§4.20–4.38). The stronger goal is a **positive, ordered spectrum with multiplicities** and controlled growth, for example:
 
 ```math
 0<\lambda_0(\varepsilon)\le\lambda_1(\varepsilon)\le\cdots,
@@ -136,7 +135,7 @@ For `c=1/2` and `d=i`, its zeros lie on the prescribed critical line, at heights
 s=\frac12\pm i\lambda_n(\varepsilon).
 ```
 
-**The line is imposed by the construction of the product, not derived from any property of the Riemann zeta function.** The formalized abstract matching-family results extend through §4.37, including real spectral exhaustion, exact multiplicity-tagged coverage, dense span of real spectral eigenspaces, and a globally ordered infinite tagged-eigenvalue enumeration **conditional on explicit infinitude and lower-bound assumptions**. The quantitative divergence and summability properties of this sequence remain to be proved. We have not instantiated a particular aperiodic tiling, proved positive **ordered** eigenvalues with their multiplicities and inverse-square summability for the full interacting operator, or connected that spectrum to the canonical product in Lean. This project does not prove the Riemann hypothesis and does not identify `D_\varepsilon` with the zeta function.
+**The line is imposed by the construction of the product, not derived from any property of the Riemann zeta function.** The formalized abstract matching-family results extend through §4.38, including real spectral exhaustion, exact multiplicity-tagged coverage, dense span of real spectral eigenspaces, and a global ordered infinite tagged-eigenvalue sequence with **λₙ → +∞ conditional on explicit infinitude and lower-bound assumptions**. Quantitative lower growth rates and inverse-square summability remain unproved. We have not instantiated a particular aperiodic tiling, proved positive **ordered** eigenvalues with their multiplicities and inverse-square summability for the full interacting operator, or connected that spectrum to the canonical product in Lean. This project does not prove the Riemann hypothesis and does not identify `D_\varepsilon` with the zeta function.
 
 ## 3. Finite-dimensional geometric operators
 
@@ -1022,11 +1021,30 @@ Writing `λₙ=(t_n)_1` yields a **nondecreasing sequence of real full-operator 
 
 Consequently each real eigenvalue occurs precisely as often as its **finite geometric eigenspace dimension**, rather than merely being included in an unordered set-theoretic range. This does not follow from countability alone; the key additional ingredients are local finiteness, lower boundedness, and infinitude.
 
-**Precise scope:** the hypotheses of lower boundedness and infinite spectrum are explicit, not inferred for all possible geometric models. Empty and finite spectra are handled separately by §4.36. The theorem concerns the *real* full interacting point/bounded-inverse spectrum, not the unformalized complex spectrum. **Divergence `λₙ→+∞`, quantitative comparison with onsite levels, inverse-square summability, and any concrete aperiodic model remain open.** These are recorded in §6.
+**Precise scope:** the hypotheses of lower boundedness and infinite spectrum are explicit, not inferred for all possible geometric models. Empty and finite spectra are handled separately by §4.36. The theorem concerns the *real* full interacting point/bounded-inverse spectrum, not the unformalized complex spectrum. **Divergence `λₙ→+∞` is proved in §4.38; quantitative comparison with onsite levels, inverse-square summability, and any concrete aperiodic model remain open.** These are recorded in §6.
+
+### 4.38. Divergence to +∞ of the globally ordered full real spectrum
+
+The Lean module **[`SpectralGeometry/InfiniteLocalFullOrderedEigenvalueDivergence.lean`](SpectralGeometry/InfiniteLocalFullOrderedEigenvalueDivergence.lean)** completes the divergence milestone in P2 after the exact multiplicity-aware global enumeration of §4.37.
+
+First, an abstract filter lemma proves that a real sequence `f : ℕ → ℝ` converges to `+∞` whenever, for every real `B`, only finitely many indices satisfy `f(n) < B`. The proof uses the equality of the cofinite filter and `atTop` on the natural numbers; monotonicity is not required by this standalone criterion.
+
+For the **full interacting matching-family operator**, suppose the onsite gap, finite onsite-sublevel, resolvent-smallness, and symmetry assumptions of §§4.30–4.37 hold. Additionally, assume a **uniform real lower bound** on all genuine eigenvalues and take an **injective global enumeration of the exact multiplicity tags** from §4.37. For any threshold `B`, all indexed tags below `B` lie in a bounded window of radius `|L|+|B|`. Section 4.36 proves that this window contains finitely many tags, **counting geometric multiplicities**. Injectivity of the tag enumeration therefore gives a finite set of such indices.
+
+Lean establishes the full limit in the filter formulation:
+
+```math
+\operatorname{Tendsto}(\lambda_n,\operatorname{atTop},\operatorname{atTop}),
+\qquad \lambda_n=(t_n)_1,
+```
+
+equivalently, `λₙ → +∞`. It also proves an existence theorem combining a **strictly increasing, range-exact global enumeration of tags** with divergence of the projected real eigenvalues. With §4.37, each eigenvalue is represented **exactly as many times as its finite geometric eigenspace dimension**.
+
+**Scope:** the assumptions that the tagged spectrum is infinite and the real eigenvalues are bounded below are explicit and are **not** established here for every geometric potential. A limit of `+∞` is a **qualitative** result: it does not imply a polynomial growth rate, a positive spectral gap, or `∑ₙ λₙ⁻² < ∞`. Proving sufficient quantitative comparison and summability conditions for the full operator remains open (§6.2); no claim about the unformalized complex spectrum or a concrete aperiodic model is made.
 
 ## 5. Building and verification
 
-The canonical import list is maintained in [`SpectralGeometry.lean`](SpectralGeometry.lean). It currently imports **43 Lean modules**: one analytic core, four finite-dimensional modules, and thirty-eight infinite-dimensional modules.
+The canonical import list is maintained in [`SpectralGeometry.lean`](SpectralGeometry.lean). It currently imports **44 Lean modules**: one analytic core, four finite-dimensional modules, and thirty-nine infinite-dimensional modules.
 
 - **Analytic core (1):** [`CanonicalProduct.lean`](SpectralGeometry/CanonicalProduct.lean)
 - **Finite-dimensional geometry (4):**
@@ -1057,7 +1075,7 @@ The canonical import list is maintained in [`SpectralGeometry.lean`](SpectralGeo
   - [`InfiniteOnsiteFiniteLowEnergy.lean`](SpectralGeometry/InfiniteOnsiteFiniteLowEnergy.lean)
   - [`InfiniteOnsiteCompactResolvent.lean`](SpectralGeometry/InfiniteOnsiteCompactResolvent.lean)
   - [`InfiniteOnsiteResolventIdentity.lean`](SpectralGeometry/InfiniteOnsiteResolventIdentity.lean)
-- **Interacting resolvents and spectral results (18):**
+- **Interacting resolvents and spectral results (19):**
   - [`InfiniteLocalCompactResolvent.lean`](SpectralGeometry/InfiniteLocalCompactResolvent.lean)
   - [`InfiniteLocalCompactResolventBounds.lean`](SpectralGeometry/InfiniteLocalCompactResolventBounds.lean)
   - [`InfiniteLocalSelfAdjointPMap.lean`](SpectralGeometry/InfiniteLocalSelfAdjointPMap.lean)
@@ -1076,6 +1094,7 @@ The canonical import list is maintained in [`SpectralGeometry.lean`](SpectralGeo
   - [`InfiniteLocalFullRealSpectralCompleteness.lean`](SpectralGeometry/InfiniteLocalFullRealSpectralCompleteness.lean)
   - [`InfiniteLocalFullOrderedMultiplicityWindows.lean`](SpectralGeometry/InfiniteLocalFullOrderedMultiplicityWindows.lean)
   - [`InfiniteLocalFullGlobalOrderedEnumeration.lean`](SpectralGeometry/InfiniteLocalFullGlobalOrderedEnumeration.lean)
+  - [`InfiniteLocalFullOrderedEigenvalueDivergence.lean`](SpectralGeometry/InfiniteLocalFullOrderedEigenvalueDivergence.lean)
 
 The project uses Lean 4 `v4.35.0` with its corresponding Mathlib version. Every module listed above is imported by the root entry point.
 
@@ -1155,18 +1174,30 @@ whole phase. An unchecked item is an **open goal**, not an established theorem.
   with its exact finite geometric multiplicity. This does **not** yet
   prove the hypotheses or divergence for every geometric model.
 
-**Open milestones — in dependency order**
+**Formalized asymptotic divergence**
 
-- [ ] **NEXT — Divergence for the infinite case.** Under the hypotheses required for
-  an infinite lower-bounded ordered spectrum, prove
-  `λₙ → +∞`. Local finiteness of distinct eigenvalues alone does not supply
-  an ordered, multiplicity-aware sequence.
+- [x] **Divergence for the infinite case (§4.38).** Under the established
+  compactness, symmetry, lower-bound and infinite-tag assumptions,
+  prove that every exact, injective global tagged enumeration has real
+  eigenvalue coordinates tending to `+∞`. The proof explicitly combines
+  finiteness of bounded **multiplicity-tagged** windows (§4.36), the
+  globally ordered enumeration (§4.37) and the cofinite-filter criterion.
+  This is qualitative divergence, not a polynomial growth estimate.
+
+**Open milestones**
+
 - [ ] **Optional complex-spectrum extension.** If needed for later analytic
   goals, formalize the complexification and appropriate unbounded-operator
   spectral notion and connect it to the real one. Real self-adjoint
   completeness from §4.35 alone does not constitute such a theorem.
 
 ### 6.2. P2 — Positivity, comparison, and summability
+
+**NEXT P2 quantitative target:** prove the ordered full-operator eigenvalue
+comparison/min–max bound below, then transfer sufficient onsite growth to
+inverse-square summability. The independent positive-gap milestone may be
+developed alongside it. §4.38 proves only qualitative divergence.
+
 
 **Formalized prerequisites (not the final full-spectrum estimates)**
 
