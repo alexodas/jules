@@ -51,7 +51,7 @@ theorem infiniteLocalMatching_resolvent_spectrum_iff_full_eigenpair
   have hcompact : IsCompactOperator R :=
     infiniteBoundedOnsiteResolvent_compact V a hgap hproper
       (infiniteLocalBoundedCorrection D σ w P ε shift) hsmall
-  have hfred : (R.toLinearMap).HasEigenvalue μ ↔ μ ∈ spectrum ℝ R :=
+  have hfred : Module.End.HasEigenvalue R.toLinearMap μ ↔ μ ∈ spectrum ℝ R :=
     IsCompactOperator.hasEigenvalue_iff_mem_spectrum hcompact hμ
   change μ ∈ spectrum ℝ R ↔
     ∃ ψ : infiniteOnsiteDomain V,
