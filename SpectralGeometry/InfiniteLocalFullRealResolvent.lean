@@ -103,4 +103,34 @@ theorem infiniteBoundedOnsite_realRegular_of_unit
     rw [← hfactor, hinvmul]
     exact infiniteBoundedOnsiteResolvent_left_inverse V a hgap B hsmall ψ
 
+
+/-- A real parameter b different from the known resolvent shift a
+has a bounded two-sided inverse for H-bI whenever its reciprocal
+spectral parameter (b-a)⁻¹ lies outside the bounded spectrum of Rₐ.
+Unlike the eigenpair correspondence, this constructs the inverse
+on every forcing term, with values in D(V). -/
+theorem infiniteBoundedOnsite_realRegular_of_notMem_resolventSpectrum
+    (V : Tile → ℝ) (a b : ℝ) (hgap : ∀ t, 1 ≤ V t - a)
+    (B : ShiftEnd Tile)
+    (hsmall : ‖B.comp (infiniteOnsiteResolventCLM V a hgap)‖ < 1)
+    (hb : b ≠ a)
+    (hnot : (b - a)⁻¹ ∉ spectrum ℝ
+      (infiniteBoundedOnsiteResolvent V a hgap B hsmall)) :
+    infiniteBoundedOnsiteRealRegular V B b := by
+  let R := infiniteBoundedOnsiteResolvent V a hgap B hsmall
+  let t : ℝˣ := Units.mk0 (b - a) (sub_ne_zero.mpr hb)
+  have ht : (t : ℝ) = b - a := rfl
+  have htinv : (↑(t⁻¹) : ℝ) = (b - a)⁻¹ := by
+    simp [t]
+  have hunitR : IsUnit ((b - a)⁻¹ • (1 : ShiftEnd Tile) - R) := by
+    simpa only [Algebra.algebraMap_eq_smul_one] using
+      (spectrum.notMem_iff.mp hnot)
+  have htunit : IsUnit ((t⁻¹) • (1 : ShiftEnd Tile) - R) := by
+    simpa only [Units.smul_def, htinv] using hunitR
+  have hfactor : IsUnit (1 - (t : ℝ) • R) := by
+    have hu := (IsUnit.smul_sub_iff_sub_inv_smul (t⁻¹) R).mp htunit
+    simpa only [inv_inv, Units.smul_def] using hu
+  exact infiniteBoundedOnsite_realRegular_of_unit V a b hgap B hsmall
+    (by simpa only [ht] using hfactor)
+
 end SpectralGeometry
