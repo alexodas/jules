@@ -36,6 +36,7 @@ import SpectralGeometry.InfiniteLocalResolventSpectralIsolation
 import SpectralGeometry.InfiniteLocalFullEigenvalueIsolation
 import SpectralGeometry.InfiniteLocalFullEigenvalueEnumeration
 import SpectralGeometry.InfiniteLocalFullRealResolvent
+import SpectralGeometry.InfiniteLocalFullEigenvalueMultiplicity
 
 /-!
 # Spectral Geometry
