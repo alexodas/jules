@@ -99,7 +99,9 @@ theorem infiniteLocalMatching_full_eigenvalue_isolated
         (fun x : ℝ => (x - a)⁻¹) ⁻¹'
           Metric.ball ((λ - a)⁻¹) r ∈ 𝓝 λ :=
       hcont.tendsto (Metric.ball_mem_nhds hr)
-    change ((fun x : ℝ => (x - a)⁻¹) ⁻¹'\n      Metric.ball ((λ - a)⁻¹) r) ∈ 𝓝 λ\n    exact hball
+    change ((fun x : ℝ => (x - a)⁻¹) ⁻¹'
+      Metric.ball ((λ - a)⁻¹) r) ∈ 𝓝 λ
+    exact hball
   obtain ⟨δ, hδ, hsubset⟩ := Metric.mem_nhds_iff.mp hneigh
   refine ⟨δ, hδ, ?_⟩
   intro ν hν hclose
