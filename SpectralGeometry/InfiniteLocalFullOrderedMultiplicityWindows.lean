@@ -8,7 +8,7 @@ import Mathlib.Order.Prod.Lex.Basic
 For the full interacting matching-family operator, earlier modules proved:
 * bounded real spectral intervals contain only finitely many distinct values;
 * each genuine real eigenvalue has finite positive geometric multiplicity;
-* multiplicity tags (λ, k), with k < multiplicity(λ), cover exactly the real
+* multiplicity tags (eigenvalue, k), with k < multiplicity(eigenvalue), cover exactly the real
   point spectrum.
 
 This module proves the next ordering step: the multiplicity tags lying in
@@ -18,7 +18,7 @@ a complete sorted list whenever the entire point spectrum is finite.
 
 Lexicographic order puts distinct eigenvalues in increasing order and,
 for equal eigenvalues, puts the distinct multiplicity indices in order.
-The construction preserves the exact (λ, k) tags rather than arbitrarily
+The construction preserves the exact (eigenvalue, k) tags rather than arbitrarily
 repeating eigenvalues. These local and finite-spectrum results do NOT
 yet construct a global ℕ-indexed enumeration in an infinite Hilbert space.
 -/
@@ -41,24 +41,24 @@ theorem infiniteLocalMatching_full_multiplicity_tags_finite_of_finite_eigenvalue
     (hsmall : ‖(infiniteLocalBoundedCorrection D σ w P ε shift).comp
       (infiniteOnsiteResolventCLM V a hgap)‖ < 1)
     (hfinite :
-      {λ : ℝ | infiniteLocalMatchingHasFullEigenvalue
-        D V σ w P ε shift λ}.Finite) :
+      {eigenvalue : ℝ | infiniteLocalMatchingHasFullEigenvalue
+        D V σ w P ε shift eigenvalue}.Finite) :
     (infiniteLocalMatchingFullMultiplicityTags
       D V σ w P ε shift a hgap hproper hsmall).Finite := by
   classical
   let m := infiniteLocalMatchingFullMultiplicity
     D V σ w P ε shift a hgap hproper hsmall
-  let E : Set ℝ := {λ | infiniteLocalMatchingHasFullEigenvalue D V σ w P ε shift λ}
-  have hfib (λ : ℝ) :
-      ((fun k : ℕ => (λ, k)) '' (Set.Iio (m λ) : Set ℕ)).Finite :=
-    (Set.finite_Iio (m λ)).image (fun k : ℕ => (λ, k))
-  have hbig : (⋃ λ ∈ E,
-      ((fun k : ℕ => (λ, k)) '' (Set.Iio (m λ) : Set ℕ))).Finite :=
-    hfinite.biUnion (fun λ _ => hfib λ)
+  let E : Set ℝ := {eigenvalue | infiniteLocalMatchingHasFullEigenvalue D V σ w P ε shift eigenvalue}
+  have hfib (eigenvalue : ℝ) :
+      ((fun k : ℕ => (eigenvalue, k)) '' (Set.Iio (m eigenvalue) : Set ℕ)).Finite :=
+    (Set.finite_Iio (m eigenvalue)).image (fun k : ℕ => (eigenvalue, k))
+  have hbig : (⋃ eigenvalue ∈ E,
+      ((fun k : ℕ => (eigenvalue, k)) '' (Set.Iio (m eigenvalue) : Set ℕ))).Finite :=
+    hfinite.biUnion (fun eigenvalue _ => hfib eigenvalue)
   apply hbig.subset
-  rintro ⟨λ, k⟩ ⟨heigen, hk⟩
+  rintro ⟨eigenvalue, k⟩ ⟨heigen, hk⟩
   apply Set.mem_iUnion.mpr
-  refine ⟨λ, Set.mem_iUnion.mpr ⟨heigen, ?_⟩⟩
+  refine ⟨eigenvalue, Set.mem_iUnion.mpr ⟨heigen, ?_⟩⟩
   exact ⟨k, hk, rfl⟩
 
 /-- The real multiplicity-tagged spectrum restricted to a bounded
@@ -83,24 +83,24 @@ theorem infiniteLocalMatching_full_bounded_multiplicity_tags_finite
   let m := infiniteLocalMatchingFullMultiplicity
     D V σ w P ε shift a hgap hproper hsmall
   let E : Set ℝ :=
-    {λ | ‖λ‖ ≤ M ∧ infiniteLocalMatchingHasFullEigenvalue D V σ w P ε shift λ}
+    {eigenvalue | ‖eigenvalue‖ ≤ M ∧ infiniteLocalMatchingHasFullEigenvalue D V σ w P ε shift eigenvalue}
   have hvalues : E.Finite :=
     infiniteLocalMatching_full_eigenvalues_bounded_finite
       D V σ w P ε shift a hgap hproper hsmall hσ hP M hM
-  have hfib (λ : ℝ) :
-      ((fun k : ℕ => (λ, k)) '' (Set.Iio (m λ) : Set ℕ)).Finite :=
-    (Set.finite_Iio (m λ)).image (fun k : ℕ => (λ, k))
-  have hbig : (⋃ λ ∈ E,
-      ((fun k : ℕ => (λ, k)) '' (Set.Iio (m λ) : Set ℕ))).Finite :=
-    hvalues.biUnion (fun λ _ => hfib λ)
+  have hfib (eigenvalue : ℝ) :
+      ((fun k : ℕ => (eigenvalue, k)) '' (Set.Iio (m eigenvalue) : Set ℕ)).Finite :=
+    (Set.finite_Iio (m eigenvalue)).image (fun k : ℕ => (eigenvalue, k))
+  have hbig : (⋃ eigenvalue ∈ E,
+      ((fun k : ℕ => (eigenvalue, k)) '' (Set.Iio (m eigenvalue) : Set ℕ))).Finite :=
+    hvalues.biUnion (fun eigenvalue _ => hfib eigenvalue)
   apply hbig.subset
-  rintro ⟨λ, k⟩ ⟨⟨heigen, hk⟩, hbound⟩
+  rintro ⟨eigenvalue, k⟩ ⟨⟨heigen, hk⟩, hbound⟩
   apply Set.mem_iUnion.mpr
-  refine ⟨λ, Set.mem_iUnion.mpr ⟨⟨hbound, heigen⟩, ?_⟩⟩
+  refine ⟨eigenvalue, Set.mem_iUnion.mpr ⟨⟨hbound, heigen⟩, ?_⟩⟩
   exact ⟨k, hk, rfl⟩
 
 /-- Any finite collection of multiplicity tags has an exact, finite
-lexicographically ordered representation. A pair (λ, k) is included
+lexicographically ordered representation. A pair (eigenvalue, k) is included
 once and only once; no duplicates can be inserted by sorting. -/
 theorem spectralTags_exists_lex_sorted_list
     (S : Set (ℝ × ℕ)) (hfinite : S.Finite) :
@@ -168,8 +168,8 @@ theorem infiniteLocalMatching_full_finite_spectrum_exists_lex_sorted_list
     (hsmall : ‖(infiniteLocalBoundedCorrection D σ w P ε shift).comp
       (infiniteOnsiteResolventCLM V a hgap)‖ < 1)
     (hfinite :
-      {λ : ℝ | infiniteLocalMatchingHasFullEigenvalue
-        D V σ w P ε shift λ}.Finite) :
+      {eigenvalue : ℝ | infiniteLocalMatchingHasFullEigenvalue
+        D V σ w P ε shift eigenvalue}.Finite) :
     ∃ l : List (ℝ ×ₗ ℕ),
       l.Pairwise (· ≤ ·) ∧
       l.Nodup ∧
