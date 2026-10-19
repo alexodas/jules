@@ -9,18 +9,18 @@
   are isolated, locally finite and countable, and its real bounded-inverse
   spectrum is characterized by eigenvectors under the stated hypotheses
   (§§4.20–4.32).
-- **Most recent formalized step:** the globally ordered, exactly
-  multiplicity-tagged real eigenvalue sequence from §4.37 satisfies
-  **λₙ → +∞**, using finite spectral windows and an explicit lower
-  bound for the infinite interacting spectrum (§4.38).
-- **Next research milestone:** prove a **comparison or min–max bound**
-  for ordered interacting eigenvalues relative to onsite levels, then
-  derive sufficient quantitative growth and inverse-square summability.
-  Complex-spectrum formalization remains an optional separate goal.
-- **Still open:** quantitative eigenvalue comparison and inverse-square
-  summability for the **full interacting** operator, a general positive
-  real spectral gap under the desired hypotheses, the canonical-product
-  instantiation, and an explicit aperiodic tiling. See the [tracked roadmap](#6-roadmap-proof-status-and-next-steps).
+- **Most recent formalized step:** a two-sided quadratic-form estimate
+  compares the full unbounded interacting operator with onsite multiplication
+  using the norm of the **whole bounded correction** (§4.39). It yields a
+  uniform lower bound, and an explicit positive gap when the onsite
+  minimum exceeds that norm, for the **full real bounded-inverse spectrum**.
+- **Next research milestone:** formalize a multiplicity-respecting
+  **min–max or eigenvalue-counting argument** identifying these variational
+  inequalities with the n-th ordered eigenvalue comparison, then establish
+  sufficient growth and inverse-square summability for the interacting spectrum.
+- **Still open:** the **index-wise ordered-eigenvalue comparison**,
+  inverse-square summability for the full interacting operator, the
+  canonical-product instantiation, and a concrete aperiodic tiling. See the [tracked roadmap](#6-roadmap-proof-status-and-next-steps).
 
 **Scope:** all existing infinite-operator results require their stated
 hypotheses. The project does **not** identify its canonical product with the
@@ -80,7 +80,7 @@ Our first goal is to prove properties that hold for general classes of geometric
 
 For infinitely many tiles, a natural state space is the space of square-summable amplitudes `ℓ²(T)`. We must rigorously define the operator domains, the convergence of interaction and perturbation terms, and conditions for self-adjointness. Unlike a finite symmetric matrix, an infinite operator can have continuous spectrum.
 
-For the abstract matching-family operator, we have formalized self-adjointness and compact resolvent under explicit hypotheses, finite-dimensional eigenspaces, isolation and local finiteness of genuine real eigenvalues, an unordered countable real point-spectrum listing, real bounded-inverse spectral mapping, and an unordered multiplicity-tagged listing, exact real spectral coverage, totality of the real spectral eigenspaces, and a global ordered infinite-spectrum tagged enumeration diverging to +∞ under explicit lower-bound and infinitude hypotheses (§§4.20–4.38). The stronger goal is a **positive, ordered spectrum with multiplicities** and controlled growth, for example:
+For the abstract matching-family operator, we have formalized self-adjointness and compact resolvent under explicit hypotheses, finite-dimensional eigenspaces, isolation and local finiteness of genuine real eigenvalues, an unordered countable real point-spectrum listing, real bounded-inverse spectral mapping, and an unordered multiplicity-tagged listing, exact real spectral coverage, totality of the real spectral eigenspaces, and a global ordered infinite-spectrum tagged enumeration diverging to +∞ and an explicit full-operator quadratic-form comparison and real spectral gap under stated hypotheses (§§4.20–4.39). The stronger goal is a **positive, ordered spectrum with multiplicities** and controlled growth, for example:
 
 ```math
 0<\lambda_0(\varepsilon)\le\lambda_1(\varepsilon)\le\cdots,
@@ -135,7 +135,7 @@ For `c=1/2` and `d=i`, its zeros lie on the prescribed critical line, at heights
 s=\frac12\pm i\lambda_n(\varepsilon).
 ```
 
-**The line is imposed by the construction of the product, not derived from any property of the Riemann zeta function.** The formalized abstract matching-family results extend through §4.38, including real spectral exhaustion, exact multiplicity-tagged coverage, dense span of real spectral eigenspaces, and a global ordered infinite tagged-eigenvalue sequence with **λₙ → +∞ conditional on explicit infinitude and lower-bound assumptions**. Quantitative lower growth rates and inverse-square summability remain unproved. We have not instantiated a particular aperiodic tiling, proved positive **ordered** eigenvalues with their multiplicities and inverse-square summability for the full interacting operator, or connected that spectrum to the canonical product in Lean. This project does not prove the Riemann hypothesis and does not identify `D_\varepsilon` with the zeta function.
+**The line is imposed by the construction of the product, not derived from any property of the Riemann zeta function.** The formalized abstract matching-family results extend through §4.39, including real spectral exhaustion, exact multiplicity-tagged coverage, dense span of real spectral eigenspaces, a global ordered infinite tagged-eigenvalue sequence with **λₙ → +∞ under explicit assumptions**, and norm-controlled quadratic-form and real spectral-gap estimates. The multiplicity-aware **n-th eigenvalue comparison**, quantitative lower growth rates, and full-spectrum inverse-square summability remain unproved. We have not instantiated a particular aperiodic tiling, proved positive **ordered** eigenvalues with their multiplicities and inverse-square summability for the full interacting operator, or connected that spectrum to the canonical product in Lean. This project does not prove the Riemann hypothesis and does not identify `D_\varepsilon` with the zeta function.
 
 ## 3. Finite-dimensional geometric operators
 
@@ -1042,9 +1042,28 @@ equivalently, `λₙ → +∞`. It also proves an existence theorem combining a 
 
 **Scope:** the assumptions that the tagged spectrum is infinite and the real eigenvalues are bounded below are explicit and are **not** established here for every geometric potential. A limit of `+∞` is a **qualitative** result: it does not imply a polynomial growth rate, a positive spectral gap, or `∑ₙ λₙ⁻² < ∞`. Proving sufficient quantitative comparison and summability conditions for the full operator remains open (§6.2); no claim about the unformalized complex spectrum or a concrete aperiodic model is made.
 
+### 4.39. Variational comparison and uniform real spectral gap for the full operator
+
+The Lean module **[`SpectralGeometry/InfiniteLocalFullVariationalComparison.lean`](SpectralGeometry/InfiniteLocalFullVariationalComparison.lean)** begins the quantitative P2 comparison program using the actual **full interacting operator** `H = M_V + B`, where `B=L_w+\varepsilon P+mI` is bounded and the possibly unbounded multiplication operator `M_V` retains its natural domain `D(V)`.
+
+**Quadratic-form comparison.** For every state `ψ ∈ D(V)`, the full quadratic energy differs from the onsite quadratic energy by at most
+
+```math
+\big|\langle\psi,H\psi\rangle-\langle\psi,M_V\psi\rangle\big|
+\le \|B\|\,\|\psi\|^2.
+```
+
+In particular, `\langle\psi,M_V\psi\rangle-\|B\|\|\psi\|^2
+\le\langle\psi,H\psi\rangle
+\le\langle\psi,M_V\psi\rangle+\|B\|\|\psi\|^2`. This uses the **norm of the total correction**, not only the norm of `P`. It holds on the common domain **without** symmetry or positivity assumptions on `B`.
+
+**Full real spectrum, not just point eigenvalues.** If `V(t)\ge c` for every tile, the onsite quadratic form is at least `c\|\psi\|^2`. Hence every genuine real eigenvalue of `H` satisfies `\lambda\ge c-\|B\|`. Under the previously verified compact-resolvent/real spectral-exhaustion hypotheses (§4.32), this bound extends to the **entire real bounded-inverse spectrum**, not only eigenvectors selected in advance. In particular, the sufficient condition `c>\|B\|` yields the **uniform positive real spectral gap** `\lambda\ge c-\|B\|>0`.
+
+**What is *not* yet proved:** this is the variational **form inequality** required for min–max; Lean has **not yet derived** the desired index-wise comparison `\lambda_n(H)\ge\lambda_n(M_V)-\|B\|` between the two ordered spectra. Such a theorem still requires a multiplicity-aware min–max principle or counting argument on the unbounded self-adjoint domain, with an explicit bridge to the §4.37 eigenvalue enumeration. Nor does this lemma imply a polynomial growth rate, inverse-square summability, a complex spectrum theorem, or the existence of a concrete geometric tiling. See §6.2 for these remaining tasks.
+
 ## 5. Building and verification
 
-The canonical import list is maintained in [`SpectralGeometry.lean`](SpectralGeometry.lean). It currently imports **44 Lean modules**: one analytic core, four finite-dimensional modules, and thirty-nine infinite-dimensional modules.
+The canonical import list is maintained in [`SpectralGeometry.lean`](SpectralGeometry.lean). It currently imports **45 Lean modules**: one analytic core, four finite-dimensional modules, and forty infinite-dimensional modules.
 
 - **Analytic core (1):** [`CanonicalProduct.lean`](SpectralGeometry/CanonicalProduct.lean)
 - **Finite-dimensional geometry (4):**
@@ -1075,7 +1094,7 @@ The canonical import list is maintained in [`SpectralGeometry.lean`](SpectralGeo
   - [`InfiniteOnsiteFiniteLowEnergy.lean`](SpectralGeometry/InfiniteOnsiteFiniteLowEnergy.lean)
   - [`InfiniteOnsiteCompactResolvent.lean`](SpectralGeometry/InfiniteOnsiteCompactResolvent.lean)
   - [`InfiniteOnsiteResolventIdentity.lean`](SpectralGeometry/InfiniteOnsiteResolventIdentity.lean)
-- **Interacting resolvents and spectral results (19):**
+- **Interacting resolvents and spectral results (20):**
   - [`InfiniteLocalCompactResolvent.lean`](SpectralGeometry/InfiniteLocalCompactResolvent.lean)
   - [`InfiniteLocalCompactResolventBounds.lean`](SpectralGeometry/InfiniteLocalCompactResolventBounds.lean)
   - [`InfiniteLocalSelfAdjointPMap.lean`](SpectralGeometry/InfiniteLocalSelfAdjointPMap.lean)
@@ -1095,6 +1114,7 @@ The canonical import list is maintained in [`SpectralGeometry.lean`](SpectralGeo
   - [`InfiniteLocalFullOrderedMultiplicityWindows.lean`](SpectralGeometry/InfiniteLocalFullOrderedMultiplicityWindows.lean)
   - [`InfiniteLocalFullGlobalOrderedEnumeration.lean`](SpectralGeometry/InfiniteLocalFullGlobalOrderedEnumeration.lean)
   - [`InfiniteLocalFullOrderedEigenvalueDivergence.lean`](SpectralGeometry/InfiniteLocalFullOrderedEigenvalueDivergence.lean)
+  - [`InfiniteLocalFullVariationalComparison.lean`](SpectralGeometry/InfiniteLocalFullVariationalComparison.lean)
 
 The project uses Lean 4 `v4.35.0` with its corresponding Mathlib version. Every module listed above is imported by the root entry point.
 
@@ -1193,10 +1213,12 @@ whole phase. An unchecked item is an **open goal**, not an established theorem.
 
 ### 6.2. P2 — Positivity, comparison, and summability
 
-**NEXT P2 quantitative target:** prove the ordered full-operator eigenvalue
-comparison/min–max bound below, then transfer sufficient onsite growth to
-inverse-square summability. The independent positive-gap milestone may be
-developed alongside it. §4.38 proves only qualitative divergence.
+**NEXT P2 quantitative target:** extend the verified **quadratic-form
+comparison** from §4.39 to an **n-th eigenvalue min–max or counting theorem
+respecting multiplicities**, then transfer sufficient onsite growth to
+inverse-square summability. The independent positive real-spectrum gap
+milestone is now proved under explicit conditions in §4.39; §4.38
+proved qualitative divergence only.
 
 
 **Formalized prerequisites (not the final full-spectrum estimates)**
@@ -1210,17 +1232,24 @@ developed alongside it. §4.38 proves only qualitative divergence.
   (exponent `α > 1/2`) for the **diagonal onsite levels**, not for the
   full interacting spectrum (§§4.4–4.5).
 
+**Verified form comparison and real spectral gap**
+
+- [x] **Full real-spectrum positive gap (§4.39).** If `V(t) ≥ c` for
+  every tile and `c > ‖B‖`, prove `λ ≥ c - ‖B‖ > 0` for **every
+  real bounded-inverse spectral point** under the compact-resolvent
+  hypotheses. The corresponding all-domain form comparison needs no
+  symmetry of `B`; real spectral exhaustion relies on its own explicit
+  conditions. This is stronger than the earlier point-eigenvalue bounds.
+
 **Open milestones**
 
-- [ ] **Full real-spectrum positive gap.** Package a uniform
-  `λ ≥ c > 0` theorem for the full **real bounded-inverse spectrum** under
-  explicit hypotheses on onsite lower bounds and a bounded symmetric
-  correction `B = L_w + εP + mI`. Distinguish this stronger, general
-  formulation from the already proved special point-eigenvalue estimates.
-- [ ] **Comparison of ordered eigenvalues.** Develop the required min–max or
-  eigenvalue-counting argument, respecting multiplicities, to transfer a
-  bound such as `λₙ(M_V+B) ≥ λₙ(M_V) - ‖B‖` from ordered onsite levels to
-  the fully interacting operator.
+- [ ] **NEXT — Comparison of ordered eigenvalues.** Build a genuine
+  multiplicity-respecting min–max or eigenvalue-counting argument for
+  the natural domain and the previously formalized ordered spectrum,
+  and derive `λₙ(M_V+B) ≥ λₙ(M_V)-‖B‖` when onsite levels are
+  enumerated in matching order. The sharp **quadratic-form sandwich**
+  needed for this argument is already proved in §4.39; the indexed
+  spectral step itself remains open.
 - [ ] **Inverse-square summability for the full operator.** Transfer suitable
   lower growth of ordered onsite levels (e.g. `Vₙ ≳ (n+1)^α` for
   `α > 1/2`) through the comparison theorem, and prove
