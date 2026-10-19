@@ -197,7 +197,8 @@ theorem infiniteLocalMatching_full_infinite_tags_exists_strictMono_enumeration
   refine ⟨fun n => (e n).1, ?_, ?_⟩
   · intro i j hij
     exact hmono hij
-  · ext p
+  · rw [← hT_eq]
+    ext p
     constructor
     · rintro ⟨n, rfl⟩
       exact (e n).property
