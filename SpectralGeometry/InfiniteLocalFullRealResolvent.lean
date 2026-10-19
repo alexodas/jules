@@ -133,4 +133,92 @@ theorem infiniteBoundedOnsite_realRegular_of_notMem_resolventSpectrum
   exact infiniteBoundedOnsite_realRegular_of_unit V a b hgap B hsmall
     (by simpa only [ht] using hfactor)
 
+
+/-- With compact resolvent Rₐ, the actual bounded-inverse condition
+for the full unbounded shift H-bI is equivalent to exclusion of the
+reciprocal spectral parameter from the bounded spectrum of Rₐ.
+No self-adjointness is needed for this real spectral mapping theorem. -/
+theorem infiniteBoundedOnsite_realRegular_iff_resolventSpectrum_compl
+    (V : Tile → ℝ) (a b : ℝ) (hgap : ∀ t, 1 ≤ V t - a)
+    (hproper : ∀ R : ℝ, (infiniteOnsiteLowEnergyTiles V R).Finite)
+    (B : ShiftEnd Tile)
+    (hsmall : ‖B.comp (infiniteOnsiteResolventCLM V a hgap)‖ < 1)
+    (hb : b ≠ a) :
+    infiniteBoundedOnsiteRealRegular V B b ↔
+      (b - a)⁻¹ ∉ spectrum ℝ
+        (infiniteBoundedOnsiteResolvent V a hgap B hsmall) := by
+  let R := infiniteBoundedOnsiteResolvent V a hgap B hsmall
+  constructor
+  · rintro ⟨Q, _, hleft⟩ hspec
+    have hcompact : IsCompactOperator R :=
+      infiniteBoundedOnsiteResolvent_compact V a hgap hproper B hsmall
+    have hμ : (b - a)⁻¹ ≠ 0 :=
+      inv_ne_zero (sub_ne_zero.mpr hb)
+    have heig : Module.End.HasEigenvalue R.toLinearMap (b - a)⁻¹ :=
+      (IsCompactOperator.hasEigenvalue_iff_mem_spectrum hcompact hμ).mpr hspec
+    obtain ⟨f, hf⟩ := Module.End.HasEigenvalue.exists_hasEigenvector heig
+    have hRf : R f = (b - a)⁻¹ • f :=
+      Module.End.mem_eigenspace_iff.mp hf.1
+    obtain ⟨ψ, hψ, hshift⟩ :=
+      (infiniteBoundedOnsiteResolvent_eigenpair_iff
+        V a hgap B hsmall (b - a)⁻¹ hμ f).mp hRf
+    have hshiftb : infiniteBoundedOnsiteShift V b B ψ = 0 := by
+      have hshift' : infiniteBoundedOnsiteShift V a B ψ =
+          (b - a) • f := by
+        simpa only [inv_inv] using hshift
+      change infiniteOnsiteOperator V ψ -
+          b • (ψ.1 : TileHilbert Tile) + B ψ.1 = 0
+      change infiniteOnsiteOperator V ψ -
+          a • (ψ.1 : TileHilbert Tile) + B ψ.1 = (b - a) • f at hshift'
+      rw [hψ] at hshift' ⊢
+      rw [show b = a + (b - a) by ring, add_smul]
+      calc
+        infiniteOnsiteOperator V ψ - (a • f + (b - a) • f) + B f =
+          (infiniteOnsiteOperator V ψ - a • f + B f) -
+            (b - a) • f := by abel
+        _ = 0 := by rw [hshift']; exact sub_self _
+    have hzero := hleft ψ
+    rw [hshiftb, map_zero] at hzero
+    apply hf.2
+    rw [← hψ]
+    exact hzero.symm
+  · exact infiniteBoundedOnsite_realRegular_of_notMem_resolventSpectrum
+      V a b hgap B hsmall hb
+
+/-- The real spectrum of the unbounded operator, defined intrinsically
+as the complement of the set of shifts possessing a bounded two-sided
+inverse on its natural domain. This is *not* the point spectrum. -/
+def infiniteBoundedOnsiteRealSpectrum (V : Tile → ℝ)
+    (B : ShiftEnd Tile) : Set ℝ :=
+  {b | ¬ infiniteBoundedOnsiteRealRegular V B b}
+
+/-- Spectral mapping for the entire **real bounded-inverse spectrum**
+of the unbounded natural-domain operator, away from the known shift a:
+b belongs to this spectrum exactly when (b-a)⁻¹ belongs to the
+bounded-operator spectrum of Rₐ. -/
+theorem infiniteBoundedOnsite_realSpectrum_iff_resolventSpectrum
+    (V : Tile → ℝ) (a b : ℝ) (hgap : ∀ t, 1 ≤ V t - a)
+    (hproper : ∀ R : ℝ, (infiniteOnsiteLowEnergyTiles V R).Finite)
+    (B : ShiftEnd Tile)
+    (hsmall : ‖B.comp (infiniteOnsiteResolventCLM V a hgap)‖ < 1)
+    (hb : b ≠ a) :
+    b ∈ infiniteBoundedOnsiteRealSpectrum V B ↔
+      (b - a)⁻¹ ∈ spectrum ℝ
+        (infiniteBoundedOnsiteResolvent V a hgap B hsmall) := by
+  exact not_iff_not.mpr
+    (infiniteBoundedOnsite_realRegular_iff_resolventSpectrum_compl
+      V a b hgap hproper B hsmall hb)
+
+/-- The shift a with the already constructed resolvent belongs to the
+regular set, hence is excluded from the full real spectrum. -/
+theorem infiniteBoundedOnsite_shift_not_mem_realSpectrum
+    (V : Tile → ℝ) (a : ℝ) (hgap : ∀ t, 1 ≤ V t - a)
+    (B : ShiftEnd Tile)
+    (hsmall : ‖B.comp (infiniteOnsiteResolventCLM V a hgap)‖ < 1) :
+    a ∉ infiniteBoundedOnsiteRealSpectrum V B := by
+  intro ha
+  apply ha
+  apply infiniteBoundedOnsite_realRegular_of_unit V a a hgap B hsmall
+  simp
+
 end SpectralGeometry
