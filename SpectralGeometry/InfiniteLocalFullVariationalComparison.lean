@@ -97,9 +97,11 @@ theorem infiniteOnsiteOperator_energy_ge_lower
     have hterm :
         0 ≤ (V t - c) * ((ψ.1 t) ^ 2) :=
       mul_nonneg (sub_nonneg.mpr (hV t)) (sq_nonneg _)
-    simp only [RCLike.inner_apply, lp.coeFn_sub, lp.coeFn_smul,
-      Pi.sub_apply, Pi.smul_apply, smul_eq_mul]
-    nlinarith [hterm]
+    have hpoint :
+        0 ≤ (ψ.1 t) * (V t * ψ.1 t - c * ψ.1 t) := by
+      nlinarith [hterm]
+    simpa [RCLike.inner_apply, infiniteOnsiteOperator_apply,
+      mul_comm, mul_left_comm, mul_assoc] using hpoint
   rw [inner_sub_right, real_inner_smul_right,
     real_inner_self_eq_norm_sq] at hh
   linarith
