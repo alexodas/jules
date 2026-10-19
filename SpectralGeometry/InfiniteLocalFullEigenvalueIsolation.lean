@@ -25,7 +25,7 @@ private abbrev FullIsolationEnd (Tile : Type*) :=
 
 /-- A genuine eigenvalue of the full matching-family operator is a
 real number admitting a nonzero eigenvector in the natural onsite domain. -/
-private def HasFullLocalEigenvalue
+def infiniteLocalMatchingHasFullEigenvalue
     (D : ℕ) (V : Tile → ℝ) (σ : Fin D → Tile ≃ Tile)
     (w : Fin D → ℝ) (P : FullIsolationEnd Tile)
     (ε shift λ : ℝ) : Prop :=
@@ -42,7 +42,7 @@ private theorem full_local_eigenvalue_ne_resolvent_shift
     (ε shift a : ℝ) (hgap : ∀ t, 1 ≤ V t - a)
     (hsmall : ‖(infiniteLocalBoundedCorrection D σ w P ε shift).comp
       (infiniteOnsiteResolventCLM V a hgap)‖ < 1)
-    (λ : ℝ) (hλ : HasFullLocalEigenvalue D V σ w P ε shift λ) :
+    (λ : ℝ) (hλ : infiniteLocalMatchingHasFullEigenvalue D V σ w P ε shift λ) :
     λ ≠ a := by
   intro heq
   rcases hλ with ⟨ψ, hψne, hψ⟩
@@ -66,10 +66,10 @@ theorem infiniteLocalMatching_full_eigenvalue_isolated
     (hσ : ∀ i t, σ i (σ i t) = t)
     (hP : ∀ ψ φ : TileHilbert Tile,
       inner ℝ ψ (P φ) = inner ℝ (P ψ) φ)
-    (λ : ℝ) (hλ : HasFullLocalEigenvalue D V σ w P ε shift λ) :
+    (λ : ℝ) (hλ : infiniteLocalMatchingHasFullEigenvalue D V σ w P ε shift λ) :
     ∃ r : ℝ, 0 < r ∧
       ∀ ν : ℝ,
-        HasFullLocalEigenvalue D V σ w P ε shift ν →
+        infiniteLocalMatchingHasFullEigenvalue D V σ w P ε shift ν →
         dist ν λ < r → ν = λ := by
   let B := infiniteLocalBoundedCorrection D σ w P ε shift
   let R := infiniteBoundedOnsiteResolvent V a hgap B hsmall
@@ -99,7 +99,7 @@ theorem infiniteLocalMatching_full_eigenvalue_isolated
         (fun x : ℝ => (x - a)⁻¹) ⁻¹'
           Metric.ball ((λ - a)⁻¹) r ∈ 𝓝 λ :=
       hcont.tendsto (Metric.ball_mem_nhds hr)
-    simpa only [Set.preimage, Set.mem_setOf_eq, Metric.mem_ball] using hball
+    change ((fun x : ℝ => (x - a)⁻¹) ⁻¹'\n      Metric.ball ((λ - a)⁻¹) r) ∈ 𝓝 λ\n    exact hball
   obtain ⟨δ, hδ, hsubset⟩ := Metric.mem_nhds_iff.mp hneigh
   refine ⟨δ, hδ, ?_⟩
   intro ν hν hclose
