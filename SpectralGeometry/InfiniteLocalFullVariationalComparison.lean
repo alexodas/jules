@@ -107,7 +107,7 @@ theorem infiniteOnsiteOperator_energy_ge_lower
       change V t * ψ.1 t - c * ψ.1 t =
         V t * ψ.1 t - c * ψ.1 t
       rfl
-    simpa only [RCLike.inner_apply, hcoord] using hpoint
+    simpa [RCLike.inner_apply, hcoord, starRingEnd_apply, mul_comm] using hpoint
   rw [inner_sub_right, real_inner_smul_right,
     real_inner_self_eq_norm_sq] at hh
   linarith
