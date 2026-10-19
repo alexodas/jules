@@ -78,11 +78,11 @@ theorem infiniteBoundedOnsite_realRegular_of_unit
   have hmul (f : TileHilbert Tile) :
       (U : ShiftEnd Tile) ((↑(U⁻¹) : ShiftEnd Tile) f) = f := by
     have hh := congrArg (fun T : ShiftEnd Tile => T f) (Units.mul_inv U)
-    simpa [ContinuousLinearMap.mul_apply, ContinuousLinearMap.one_apply] using hh
+    simpa only [ContinuousLinearMap.mul_apply, ContinuousLinearMap.one_apply] using hh
   have hinvmul (f : TileHilbert Tile) :
       (↑(U⁻¹) : ShiftEnd Tile) ((U : ShiftEnd Tile) f) = f := by
     have hh := congrArg (fun T : ShiftEnd Tile => T f) (Units.inv_mul U)
-    simpa [ContinuousLinearMap.mul_apply, ContinuousLinearMap.one_apply] using hh
+    simpa only [ContinuousLinearMap.mul_apply, ContinuousLinearMap.one_apply] using hh
   refine ⟨Q, ?_, ?_⟩
   · intro f
     let g : TileHilbert Tile := (↑(U⁻¹) : ShiftEnd Tile) f
