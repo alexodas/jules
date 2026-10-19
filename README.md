@@ -880,6 +880,16 @@ b\in\sigma_{\mathrm{real}}(H)
 
 The known shift `a` itself lies in the regular set. Unlike §4.26, the left-hand notion concerns **failure of a bounded inverse for the entire shifted unbounded operator**, including surjectivity and the original domain condition; it is not limited to a nonzero eigenpair test.
 
+For the **actual matching-family operator** `H=M_V+L_w+εP+mI`, combining this mapping with the earlier compact-operator Fredholm theorem (§4.26) also proves **real spectral exhaustion**:
+
+```math
+b\in\sigma_{\mathrm{real}}(H)
+\quad\Longleftrightarrow\quad
+\exists\,\psi\in D(V)\setminus\{0\}:H\psi=b\psi.
+```
+
+This includes `b=a`, excluded from both sides by the previously checked inverse. The statement requires compactness of the shifted resolvent, but **not self-adjointness**: it rules out additional real bounded-inverse spectral points that are not eigenvalues under these hypotheses.
+
 **Precise scope:** this is a complete **real bounded-inverse spectral mapping** theorem for the natural-domain operator, under the explicit compact-resolvent assumptions. The project has not yet formalized the analogous full **complex** spectrum or a Mathlib-native spectrum API for unbounded `LinearPMap` operators. Ordering spectral values **with eigenspace multiplicities**, quantitative growth, positivity, and inverse-square summability remain separate P2 goals (§6).
 
 ## 5. Building and verification
