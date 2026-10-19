@@ -9,14 +9,14 @@
   are isolated, locally finite and countable, and its real bounded-inverse
   spectrum is characterized by eigenvectors under the stated hypotheses
   (§§4.20–4.32).
-- **Most recent formalized step:** positive geometric multiplicity exactly
-  characterizes genuine real eigenvalues, and projection of the multiplicity
-  tags covers the complete real point spectrum (§4.34), extending the
-  countable unordered tagged-spectrum construction (§4.33).
-- **Next research milestone:** extend the real spectral framework to the
-  appropriate complex spectrum (or establish the needed self-adjoint real
-  spectral completeness), then construct an ordered multiplicity-aware
-  enumeration. Neither has yet been formalized.
+- **Most recent formalized step:** the real bounded-inverse spectrum is
+  characterized by strictly positive geometric multiplicity, equals the
+  projection of the multiplicity-tagged spectrum, and its genuine full
+  eigenspaces have dense linear span under the compact self-adjoint
+  resolvent hypotheses (§4.35). This combines §§4.27, 4.32 and 4.34.
+- **Next research milestone:** construct an **ordered, multiplicity-aware
+  enumeration** of the full real spectral levels. A separate complex-spectrum
+  formalization remains open; it is not implied by real completeness.
 - **Still open:** ordered enumeration respecting multiplicities, quantitative
   eigenvalue growth and inverse-square summability for the **full interacting**
   operator, the bridge to the canonical product, and an instantiated
@@ -80,7 +80,7 @@ Our first goal is to prove properties that hold for general classes of geometric
 
 For infinitely many tiles, a natural state space is the space of square-summable amplitudes `ℓ²(T)`. We must rigorously define the operator domains, the convergence of interaction and perturbation terms, and conditions for self-adjointness. Unlike a finite symmetric matrix, an infinite operator can have continuous spectrum.
 
-For the abstract matching-family operator, we have formalized self-adjointness and compact resolvent under explicit hypotheses, finite-dimensional eigenspaces, isolation and local finiteness of genuine real eigenvalues, an unordered countable real point-spectrum listing, real bounded-inverse spectral mapping, and an unordered multiplicity-tagged listing and exact real point-spectrum coverage (§§4.20–4.34). The stronger goal is a **positive, ordered spectrum with multiplicities** and controlled growth, for example:
+For the abstract matching-family operator, we have formalized self-adjointness and compact resolvent under explicit hypotheses, finite-dimensional eigenspaces, isolation and local finiteness of genuine real eigenvalues, an unordered countable real point-spectrum listing, real bounded-inverse spectral mapping, and an unordered multiplicity-tagged listing, exact real spectral coverage, and totality of the real spectral eigenspaces (§§4.20–4.35). The stronger goal is a **positive, ordered spectrum with multiplicities** and controlled growth, for example:
 
 ```math
 0<\lambda_0(\varepsilon)\le\lambda_1(\varepsilon)\le\cdots,
@@ -135,7 +135,7 @@ For `c=1/2` and `d=i`, its zeros lie on the prescribed critical line, at heights
 s=\frac12\pm i\lambda_n(\varepsilon).
 ```
 
-**The line is imposed by the construction of the product, not derived from any property of the Riemann zeta function.** The formalized abstract matching-family results extend through §4.34, including real spectral exhaustion under compact-resolvent hypotheses and exact coverage by a countable, unordered multiplicity-tagged point spectrum. We have not instantiated a particular aperiodic tiling, proved positive **ordered** eigenvalues with their multiplicities and inverse-square summability for the full interacting operator, or connected that spectrum to the canonical product in Lean. This project does not prove the Riemann hypothesis and does not identify `D_\varepsilon` with the zeta function.
+**The line is imposed by the construction of the product, not derived from any property of the Riemann zeta function.** The formalized abstract matching-family results extend through §4.35, including real spectral exhaustion, exact coverage by a countable unordered multiplicity-tagged point spectrum, and dense span of eigenspaces indexed by the real bounded-inverse spectrum under compact self-adjoint resolvent hypotheses. We have not instantiated a particular aperiodic tiling, proved positive **ordered** eigenvalues with their multiplicities and inverse-square summability for the full interacting operator, or connected that spectrum to the canonical product in Lean. This project does not prove the Riemann hypothesis and does not identify `D_\varepsilon` with the zeta function.
 
 ## 3. Finite-dimensional geometric operators
 
@@ -950,9 +950,35 @@ These are **unconditional in spectrum nonemptiness**: they also hold when both s
 
 **Scope:** these theorems concern the real point spectrum and its finite geometric eigenspace dimensions. They do **not** yet build an injective, increasing, multiplicity-aware eigenvalue sequence; no new result about the complex unbounded spectrum, growth, full-operator inverse-square summability or a concrete aperiodic tiling is claimed.
 
+### 4.35. Completeness indexed by the full real bounded-inverse spectrum
+
+The Lean module **[`SpectralGeometry/InfiniteLocalFullRealSpectralCompleteness.lean`](SpectralGeometry/InfiniteLocalFullRealSpectralCompleteness.lean)** closes the **real self-adjoint completeness alternative** in the P2 spectral-notion/completeness milestone, combining the earlier eigenspace totality (§4.27), intrinsic real bounded-inverse spectrum (§4.32), and positive geometric multiplicity (§4.34).
+
+With the previously defined complete real bounded-inverse spectrum `σ_real(H)` and geometric multiplicity `m(λ)`, it proves
+
+```math
+\lambda\in\sigma_{\mathrm{real}}(H)\quad\Longleftrightarrow\quad m(\lambda)>0,
+\qquad
+\sigma_{\mathrm{real}}(H)
+=\operatorname{fst}(\operatorname{Tags}(H)).
+```
+
+These two exact spectral identities require the same onsite-gap, properness and resolvent-smallness hypotheses as the preceding real spectral-exhaustion and multiplicity results, but **not** self-adjointness.
+
+For the full matching-family operator with an **additional symmetric bounded correction** (involutive matchings and a symmetric `P`), Mathlib's compact self-adjoint resolvent theorem also yields a **spectrally indexed completeness statement**. If `E_\lambda` denotes the genuine full eigenspace at `λ`, then
+
+```math
+\left(\bigvee_{\lambda\in\sigma_{\mathrm{real}}(H)}E_\lambda\right)^\perp
+=\{0\}.
+```
+
+The Lean version explicitly excludes the designated resolvent shift `a` in its index type; the previously proved two-sided inverse shows `a\notin\sigma_{\mathrm{real}}(H)`, so **no real spectral point is discarded**. The proof removes regular parameters from the dense family of §4.27 by showing their full eigenspaces are trivial; it then transfers density to the family indexed solely by actual real spectral points. This is **density of the linear span**, not a claim that the algebraic span is closed.
+
+**Limitations:** these are results for the **real** bounded-inverse spectrum of the actual natural-domain operator, not a formal complex spectral theorem or a naturally indexed eigenbasis. Ordering eigenvalues **with exact multiplicities**, proving `λₙ→+∞` and deriving inverse-square summability for the interacting operator remain the next P2 goals. Complex-spectrum formalization is still a separate possible extension.
+
 ## 5. Building and verification
 
-The canonical import list is maintained in [`SpectralGeometry.lean`](SpectralGeometry.lean). It currently imports **40 Lean modules**: one analytic core, four finite-dimensional modules, and thirty-five infinite-dimensional modules.
+The canonical import list is maintained in [`SpectralGeometry.lean`](SpectralGeometry.lean). It currently imports **41 Lean modules**: one analytic core, four finite-dimensional modules, and thirty-six infinite-dimensional modules.
 
 - **Analytic core (1):** [`CanonicalProduct.lean`](SpectralGeometry/CanonicalProduct.lean)
 - **Finite-dimensional geometry (4):**
@@ -983,7 +1009,7 @@ The canonical import list is maintained in [`SpectralGeometry.lean`](SpectralGeo
   - [`InfiniteOnsiteFiniteLowEnergy.lean`](SpectralGeometry/InfiniteOnsiteFiniteLowEnergy.lean)
   - [`InfiniteOnsiteCompactResolvent.lean`](SpectralGeometry/InfiniteOnsiteCompactResolvent.lean)
   - [`InfiniteOnsiteResolventIdentity.lean`](SpectralGeometry/InfiniteOnsiteResolventIdentity.lean)
-- **Interacting resolvents and spectral results (15):**
+- **Interacting resolvents and spectral results (16):**
   - [`InfiniteLocalCompactResolvent.lean`](SpectralGeometry/InfiniteLocalCompactResolvent.lean)
   - [`InfiniteLocalCompactResolventBounds.lean`](SpectralGeometry/InfiniteLocalCompactResolventBounds.lean)
   - [`InfiniteLocalSelfAdjointPMap.lean`](SpectralGeometry/InfiniteLocalSelfAdjointPMap.lean)
@@ -999,6 +1025,7 @@ The canonical import list is maintained in [`SpectralGeometry.lean`](SpectralGeo
   - [`InfiniteLocalFullRealResolvent.lean`](SpectralGeometry/InfiniteLocalFullRealResolvent.lean)
   - [`InfiniteLocalFullEigenvalueMultiplicity.lean`](SpectralGeometry/InfiniteLocalFullEigenvalueMultiplicity.lean)
   - [`InfiniteLocalFullEigenvalueMultiplicityCoverage.lean`](SpectralGeometry/InfiniteLocalFullEigenvalueMultiplicityCoverage.lean)
+  - [`InfiniteLocalFullRealSpectralCompleteness.lean`](SpectralGeometry/InfiniteLocalFullRealSpectralCompleteness.lean)
 
 The project uses Lean 4 `v4.35.0` with its corresponding Mathlib version. Every module listed above is imported by the root entry point.
 
@@ -1047,14 +1074,19 @@ whole phase. An unchecked item is an **open goal**, not an established theorem.
   first coordinate now equals **exactly** the full real point spectrum.
   These results need no symmetry beyond the stated resolvent hypotheses.
 
+**Formalized real-spectrum completeness**
+
+- [x] **Real spectral notion and completeness (§4.35).** Under the existing
+  compact-resolvent assumptions the real bounded-inverse spectrum consists
+  precisely of the positive-geometric-multiplicity levels and equals the
+  projection of the multiplicity tags. With additional self-adjointness
+  assumptions, eigenspaces indexed **only by the actual real spectral levels**
+  have dense linear span. This completes the **real alternative** in the
+  original completeness milestone, **not** a complex-spectrum theorem.
+
 **Open milestones — in dependency order**
 
-- [ ] **NEXT — Spectral notion/completeness.** Relate the formalized real
-  bounded-inverse spectrum to a suitable complex spectrum of the unbounded
-  operator, **or** establish precisely the real self-adjoint spectral
-  completeness needed for the next results. Do not infer a complex theorem
-  from the current real one.
-- [ ] **Ordered enumeration with multiplicities.** Construct an ordered,
+- [ ] **NEXT — Ordered enumeration with multiplicities.** Construct an ordered,
   multiplicity-aware list of the genuine full-operator eigenvalues. Treat
   finite tile sets and finite spectra with finite sequences; for infinite
   lower-bounded spectra, prove each value occurs exactly its eigenspace
@@ -1063,6 +1095,10 @@ whole phase. An unchecked item is an **open goal**, not an established theorem.
   an infinite lower-bounded ordered spectrum, prove
   `λₙ → +∞`. Local finiteness of distinct eigenvalues alone does not supply
   an ordered, multiplicity-aware sequence.
+- [ ] **Optional complex-spectrum extension.** If needed for later analytic
+  goals, formalize the complexification and appropriate unbounded-operator
+  spectral notion and connect it to the real one. Real self-adjoint
+  completeness from §4.35 alone does not constitute such a theorem.
 
 ### 6.2. P2 — Positivity, comparison, and summability
 
