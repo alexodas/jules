@@ -224,4 +224,40 @@ theorem infiniteBoundedOnsite_shift_not_mem_realSpectrum
   apply infiniteBoundedOnsite_realRegular_of_unit V a a hgap B hsmall
   simp
 
+
+/-- Under compact-resolvent hypotheses, the *entire real bounded-inverse
+spectrum* of the full natural-domain matching-family operator consists
+precisely of its genuine real point eigenvalues. The spectral definition
+involves surjectivity, injectivity, and a bounded inverse; it is not
+defined in terms of eigenvectors. The proof needs no symmetry assumptions:
+compactness and the Fredholm alternative suffice over the reals. -/
+theorem infiniteLocalMatching_fullRealSpectrum_iff_hasFullEigenvalue
+    (D : ℕ) (V : Tile → ℝ) (σ : Fin D → Tile ≃ Tile)
+    (w : Fin D → ℝ) (P : ShiftEnd Tile)
+    (ε shift a : ℝ) (hgap : ∀ t, 1 ≤ V t - a)
+    (hproper : ∀ R : ℝ, (infiniteOnsiteLowEnergyTiles V R).Finite)
+    (hsmall : ‖(infiniteLocalBoundedCorrection D σ w P ε shift).comp
+      (infiniteOnsiteResolventCLM V a hgap)‖ < 1)
+    (b : ℝ) :
+    b ∈ infiniteBoundedOnsiteRealSpectrum V
+      (infiniteLocalBoundedCorrection D σ w P ε shift) ↔
+    infiniteLocalMatchingHasFullEigenvalue D V σ w P ε shift b := by
+  let B := infiniteLocalBoundedCorrection D σ w P ε shift
+  change b ∈ infiniteBoundedOnsiteRealSpectrum V B ↔
+    infiniteLocalMatchingHasFullEigenvalue D V σ w P ε shift b
+  by_cases hb : b = a
+  · subst b
+    have hreg : a ∉ infiniteBoundedOnsiteRealSpectrum V B :=
+      infiniteBoundedOnsite_shift_not_mem_realSpectrum V a hgap B hsmall
+    have hnone :
+        ¬ infiniteLocalMatchingHasFullEigenvalue D V σ w P ε shift a := by
+      rintro ⟨ψ, hψne, hψ⟩
+      exact hψne (infiniteLocalMatching_no_eigenvector_at_shift
+        D V σ w P ε shift a hgap hsmall ψ hψ)
+    exact ⟨fun h => False.elim (hreg h), fun h => False.elim (hnone h)⟩
+  · rw [infiniteBoundedOnsite_realSpectrum_iff_resolventSpectrum
+      V a b hgap hproper B hsmall hb]
+    exact infiniteLocalMatching_full_eigenpair_iff_resolvent_spectrum
+      D V σ w P ε shift a hgap hproper hsmall b hb
+
 end SpectralGeometry
