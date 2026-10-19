@@ -100,9 +100,14 @@ theorem infiniteOnsiteOperator_energy_ge_lower
     have hpoint :
         0 ≤ (ψ.1 t) * (V t * ψ.1 t - c * ψ.1 t) := by
       nlinarith [hterm]
-    simpa [RCLike.inner_apply, infiniteOnsiteOperator_apply,
-      lp.coeFn_sub, lp.coeFn_smul, Pi.sub_apply, Pi.smul_apply,
-      smul_eq_mul, mul_comm, mul_left_comm, mul_assoc] using hpoint
+    have hcoord :
+        (infiniteOnsiteOperator V ψ -
+          c • (ψ.1 : TileHilbert Tile)) t =
+        V t * ψ.1 t - c * ψ.1 t := by
+      change V t * ψ.1 t - c * ψ.1 t =
+        V t * ψ.1 t - c * ψ.1 t
+      rfl
+    simpa only [RCLike.inner_apply, hcoord] using hpoint
   rw [inner_sub_right, real_inner_smul_right,
     real_inner_self_eq_norm_sq] at hh
   linarith
