@@ -89,7 +89,7 @@ theorem infiniteLocalMatching_fullRealSpectralEigenspaces_dense
     (hσ : ∀ i t, σ i (σ i t) = t)
     (hP : ∀ ψ φ : TileHilbert Tile,
       inner ℝ ψ (P φ) = inner ℝ (P ψ) φ) :
-    (⨆ b : {b : ℝ |
+    (⨆ b : {b : ℝ //
       b ≠ a ∧ b ∈ infiniteBoundedOnsiteRealSpectrum V
         (infiniteLocalBoundedCorrection D σ w P ε shift)},
       infiniteLocalMatchingFullEigenspace
