@@ -800,9 +800,33 @@ The module also formalizes the contrapositive: whenever `λ≠a` and `|(λ-a)⁻
 
 **Precise scope:** the result isolates the selected resolvent shift from point eigenvalues with an explicit norm test. It does **not** prove that each full-operator eigenvalue is isolated from other eigenvalues, that the entire unbounded spectrum is exhausted by eigenvalues, that the spectrum can be ordered, or that inverse-square summability holds. Those stronger P2 targets remain open.
 
+### 4.29. Isolation of nonzero points in the compact resolvent spectrum
+
+The Lean module **[`SpectralGeometry/InfiniteLocalResolventSpectralIsolation.lean`](SpectralGeometry/InfiniteLocalResolventSpectralIsolation.lean)** addresses the first open P2 isolation target for the **bounded compact resolvent**. Assume the onsite gap, finite onsite sublevel sets, and Neumann-smallness condition already used for `R_a=(H-aI)⁻¹`. Assume also that the bounded correction is symmetric, making `R_a` self-adjoint.
+
+The key intermediate result says that for each `δ>0` there are **only finitely many distinct real spectral values** satisfying `|μ|≥δ`:
+
+```math
+\#\{\mu\in\sigma_{\mathbb R}(R_a):|\mu|\ge\delta\}<\infty
+\qquad(\delta>0).
+```
+
+The proof uses compactness: an infinite family of distinct eigenvalues bounded away from zero would produce infinitely many orthogonal unit eigenvectors, whose images under the compact operator remain uniformly separated, contradicting sequential compactness. Fredholm's alternative turns the eigenvalue statement into one about the full **real bounded-operator spectrum**.
+
+Consequently, **every nonzero real spectral point is isolated**. More precisely, if `μ≠0` and `μ∈σ_ℝ(R_a)`, there exists `r>0` such that
+
+```math
+\nu\in\sigma_{\mathbb R}(R_a),\quad |\nu-\mu|<r
+\quad\Longrightarrow\quad \nu=\mu.
+```
+
+In particular, **zero is the only possible accumulation point** of the real spectrum of the compact resolvent. The module does not require a nonempty tile type or an infinite-dimensional Hilbert space.
+
+**Scope:** this finishes the bounded-resolvent isolation milestone, not the corresponding statement about the **entire unbounded operator spectrum**. Transferring isolation through `λ=a+μ⁻¹`, proving full spectral mapping and ordering eigenvalues with multiplicities remain the next open steps (§6).
+
 ## 5. Building and verification
 
-The canonical import list is maintained in [`SpectralGeometry.lean`](SpectralGeometry.lean). It currently imports **34 Lean modules**: one analytic core, four finite-dimensional modules, and twenty-nine infinite-dimensional modules.
+The canonical import list is maintained in [`SpectralGeometry.lean`](SpectralGeometry.lean). It currently imports **35 Lean modules**: one analytic core, four finite-dimensional modules, and thirty infinite-dimensional modules.
 
 - **Analytic core (1):** [`CanonicalProduct.lean`](SpectralGeometry/CanonicalProduct.lean)
 - **Finite-dimensional geometry (4):**
@@ -833,7 +857,7 @@ The canonical import list is maintained in [`SpectralGeometry.lean`](SpectralGeo
   - [`InfiniteOnsiteFiniteLowEnergy.lean`](SpectralGeometry/InfiniteOnsiteFiniteLowEnergy.lean)
   - [`InfiniteOnsiteCompactResolvent.lean`](SpectralGeometry/InfiniteOnsiteCompactResolvent.lean)
   - [`InfiniteOnsiteResolventIdentity.lean`](SpectralGeometry/InfiniteOnsiteResolventIdentity.lean)
-- **Interacting resolvents and spectral results (9):**
+- **Interacting resolvents and spectral results (10):**
   - [`InfiniteLocalCompactResolvent.lean`](SpectralGeometry/InfiniteLocalCompactResolvent.lean)
   - [`InfiniteLocalCompactResolventBounds.lean`](SpectralGeometry/InfiniteLocalCompactResolventBounds.lean)
   - [`InfiniteLocalSelfAdjointPMap.lean`](SpectralGeometry/InfiniteLocalSelfAdjointPMap.lean)
@@ -843,6 +867,7 @@ The canonical import list is maintained in [`SpectralGeometry.lean`](SpectralGeo
   - [`InfiniteLocalFredholmSpectralExhaustion.lean`](SpectralGeometry/InfiniteLocalFredholmSpectralExhaustion.lean)
   - [`InfiniteLocalFullEigenvectorsComplete.lean`](SpectralGeometry/InfiniteLocalFullEigenvectorsComplete.lean)
   - [`InfiniteLocalResolventNormGap.lean`](SpectralGeometry/InfiniteLocalResolventNormGap.lean)
+  - [`InfiniteLocalResolventSpectralIsolation.lean`](SpectralGeometry/InfiniteLocalResolventSpectralIsolation.lean)
 
 The project uses Lean 4 `v4.35.0` with its corresponding Mathlib version. Every module listed above is imported by the root entry point.
 
@@ -863,15 +888,11 @@ passes.
 
 ### 6.1. P2 — Discrete spectrum and eigenvalue enumeration
 
-1. **Isolate the nonzero resolvent spectrum.** For the compact resolvent
-   `R_a=(H-aI)⁻¹`, prove that every nonzero spectral point is isolated and
-   that zero is its only possible accumulation point. Use the existing
-   finite-multiplicity results rather than reproving them.
-2. **Transfer isolation to the full operator.** Via
+1. **Transfer isolation to the full operator.** Via
    `λ=a+μ⁻¹`, show that genuine full-operator eigenvalues are isolated
    and have no finite accumulation point. This is stronger than excluding
    eigenvalues near the single shift `a`.
-3. **Exhaust and enumerate the full spectrum.** Establish the appropriate
+2. **Exhaust and enumerate the full spectrum.** Establish the appropriate
    spectral-mapping statement for the unbounded operator on its natural
    domain, beyond the existing eigenpair correspondence. Enumerate
    eigenvalues **with multiplicities**; handle finite tile sets separately
@@ -880,14 +901,14 @@ passes.
 
 ### 6.2. P2 — Positivity, comparison, and summability
 
-4. **Prove a uniform positive spectral gap.** Give explicit hypotheses on
+3. **Prove a uniform positive spectral gap.** Give explicit hypotheses on
    the onsite potential `V` and bounded symmetric correction
    `B=L_w+εP+mI` ensuring every full eigenvalue satisfies
    `λ≥c>0`; for example, a lower onsite bound greater than `‖B‖`.
-5. **Compare ordered eigenvalues.** Develop a min–max or eigenvalue-counting
+4. **Compare ordered eigenvalues.** Develop a min–max or eigenvalue-counting
    argument, respecting multiplicities, to prove a bound of the form
    `λₙ(M_V+B) ≥ λₙ(M_V)-‖B‖` against the ordered onsite levels.
-6. **Prove inverse-square summability.** Transfer a sufficiently strong
+5. **Prove inverse-square summability.** Transfer a sufficiently strong
    lower growth bound on the **ordered onsite levels** (for example,
    `Vₙ ≳ (n+1)^α` with `α>1/2`) to the full interacting spectrum,
    then prove `∑ₙ 1/λₙ² < ∞`. Compact resolvent alone does not
@@ -895,7 +916,7 @@ passes.
 
 ### 6.3. P3 — Connect the spectrum to the canonical product
 
-7. **Instantiate the analytic theory.** Package the positive, enumerated,
+6. **Instantiate the analytic theory.** Package the positive, enumerated,
    inverse-square-summable eigenvalues of the **full perturbed operator**
    as an `Admissible` sequence, then apply the canonical-product and
    zero-localization theorems from §2. A smaller onsite-only end-to-end
@@ -904,7 +925,7 @@ passes.
 
 ### 6.4. P4 — Verify a concrete geometric model
 
-8. **Construct a genuine tiling example.** Select an aperiodic tiling,
+7. **Construct a genuine tiling example.** Select an aperiodic tiling,
    formalize its tiles, weights, potential and perturbation, and check
    the hypotheses needed above. In particular, verify a bounded local
    interaction model and the required potential growth; do not assume
