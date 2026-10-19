@@ -121,8 +121,17 @@ theorem infiniteLocalMatching_full_tags_finite_lex_predecessors
       Prod.Lex.monotone_fst q.1 p.1 hqp.le
     have hlo' : -|lower| ≤ lower := neg_abs_le lower
     have hhi' : (ofLex p.1).1 ≤ |(ofLex p.1).1| := le_abs_self _
-    have hbound : |(ofLex q.1).1| ≤ M :=
-      abs_le.mpr ⟨by dsimp [M]; linarith, by dsimp [M]; linarith⟩
+    have hleft : -M ≤ (ofLex q.1).1 := by
+      calc
+        -M ≤ -|lower| := by dsimp [M]; linarith [abs_nonneg (ofLex p.1).1]
+        _ ≤ lower := hlo'
+        _ ≤ (ofLex q.1).1 := hlo
+    have hright : (ofLex q.1).1 ≤ M := by
+      calc
+        (ofLex q.1).1 ≤ (ofLex p.1).1 := hhi
+        _ ≤ |(ofLex p.1).1| := hhi'
+        _ ≤ M := by dsimp [M]; linarith [abs_nonneg lower]
+    have hbound : |(ofLex q.1).1| ≤ M := abs_le.mpr ⟨hleft, hright⟩
     exact ⟨htag, by simpa only [Real.norm_eq_abs] using hbound⟩
   have hinj :
       Set.InjOn
@@ -130,8 +139,8 @@ theorem infiniteLocalMatching_full_tags_finite_lex_predecessors
         {q : {p : ℝ ×ₗ ℕ | (ofLex p) ∈ tags} | q < p} := by
     intro x _ y _ h
     apply Subtype.ext
-    have hh := congrArg ofLex h
-    simpa using hh
+    change x.1 = y.1 at h
+    exact h
   exact Set.Finite.of_injOn hmaps hinj hfinite
 
 /-- An infinite lower-bounded interacting real point spectrum has
@@ -162,8 +171,18 @@ theorem infiniteLocalMatching_full_infinite_tags_exists_strictMono_enumeration
   classical
   let tags := infiniteLocalMatchingFullMultiplicityTags
     D V σ w P ε shift a hgap hproper hsmall
-  let T : Set (ℝ ×ₗ ℕ) := toLex '' tags
+  let T : Set (ℝ ×ₗ ℕ) := {p | ofLex p ∈ tags}
+  have hT_eq : T = toLex '' tags := by
+    ext p
+    constructor
+    · intro hp
+      exact ⟨ofLex p, hp, rfl⟩
+    · rintro ⟨q, hq, hqeq⟩
+      change toLex q = p at hqeq
+      rw [← hqeq]
+      exact hq
   have hT : T.Infinite := by
+    rw [hT_eq]
     apply hinfinite.image
     intro x _ y _ hxy
     have hh := congrArg ofLex hxy
@@ -176,7 +195,8 @@ theorem infiniteLocalMatching_full_infinite_tags_exists_strictMono_enumeration
   obtain ⟨e, hmono, hsurj⟩ :=
     exists_strictMono_surjective_of_finite_predecessors hpred
   refine ⟨fun n => (e n).1, ?_, ?_⟩
-  · exact Subtype.strictMono_coe.comp hmono
+  · intro i j hij
+    exact hmono hij
   · ext p
     constructor
     · rintro ⟨n, rfl⟩
