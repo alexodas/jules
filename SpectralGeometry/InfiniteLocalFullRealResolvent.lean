@@ -127,6 +127,10 @@ theorem infiniteBoundedOnsite_realRegular_of_notMem_resolventSpectrum
       (spectrum.notMem_iff.mp hnot)
   have htunit : IsUnit ((t⁻¹) • (1 : ShiftEnd Tile) - R) := by
     simpa only [Units.smul_def, htinv] using hunitR
+  letI : IsScalarTower ℝˣ (ShiftEnd Tile) (ShiftEnd Tile) :=
+    ⟨fun r x y => by
+      change ((r : ℝ) • x) * y = (r : ℝ) • (x * y)
+      exact smul_mul_assoc _ _ _⟩
   have hfactor : IsUnit (1 - (t : ℝ) • R) := by
     have hu := (IsUnit.smul_sub_iff_sub_inv_smul (t⁻¹) R).mp htunit
     simpa only [inv_inv, Units.smul_def] using hu
@@ -222,7 +226,8 @@ theorem infiniteBoundedOnsite_shift_not_mem_realSpectrum
   intro ha
   apply ha
   apply infiniteBoundedOnsite_realRegular_of_unit V a a hgap B hsmall
-  simp
+  have h1 : IsUnit (1 : ShiftEnd Tile) := isUnit_one
+  simpa only [sub_self, zero_smul, sub_zero] using h1
 
 
 /-- Under compact-resolvent hypotheses, the *entire real bounded-inverse
