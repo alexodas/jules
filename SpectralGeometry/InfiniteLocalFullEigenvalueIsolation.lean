@@ -98,7 +98,7 @@ theorem infiniteLocalMatching_full_eigenvalue_isolated
     have hball :
         (fun x : ℝ => (x - a)⁻¹) ⁻¹'
           Metric.ball ((eigenvalue - a)⁻¹) r ∈ 𝓝 eigenvalue :=
-      hcont.tendsto (Metric.ball_mem_nhds hr)
+      hcont.tendsto (Metric.ball_mem_nhds ((eigenvalue - a)⁻¹) hr)
     change ((fun x : ℝ => (x - a)⁻¹) ⁻¹'
       Metric.ball ((eigenvalue - a)⁻¹) r) ∈ 𝓝 eigenvalue
     exact hball
@@ -167,6 +167,7 @@ theorem infiniteLocalMatching_full_eigenvalues_bounded_finite
       (norm_pos_iff).mpr (sub_ne_zero.mpr hne)
     have hle : ‖eigenvalue - a‖ ≤ d := by
       have htri := norm_sub_le eigenvalue a
+      simp only [Real.norm_eq_abs] at htri hsize
       dsimp [d]
       linarith
     have hrecip : δ ≤ ‖(eigenvalue - a)⁻¹‖ := by
