@@ -12,10 +12,10 @@ The Fredholm/eigenpair correspondence shows that a genuine full
 eigenvalue λ ≠ a gives a spectral value (λ-a)⁻¹ of Rₐ. The standard
 norm bound on the spectrum of a bounded operator yields
 
-  ‖(λ-a)⁻¹‖ ≤ ‖Rₐ‖.
+  ‖(λ-a)⁻¹‖ ≤ ‖Rₐ‖ · ‖I‖.
 
 Consequently, no full-operator eigenvector can exist at a parameter
-for which ‖(λ-a)⁻¹‖ > ‖Rₐ‖. This is an explicit exclusion zone
+for which ‖(λ-a)⁻¹‖ > ‖Rₐ‖ · ‖I‖. This is an explicit exclusion zone
 around the chosen *resolvent shift*, not isolation of every
 full-operator eigenvalue or spectral enumeration.
 -/
@@ -28,7 +28,10 @@ private abbrev GapEnd (Tile : Type*) :=
   TileHilbert Tile →L[ℝ] TileHilbert Tile
 
 /-- A genuine full-operator eigenvalue at λ ≠ a has inverse
-distance to the resolvent shift bounded by the resolvent norm.
+distance to the resolvent shift bounded by the resolvent norm
+multiplied by the norm of the identity endomorphism. The norm-one
+factor cannot be simplified uniformly when the Hilbert space may
+be zero-dimensional.
 This uses neither involutive matching colors nor symmetry of P. -/
 theorem infiniteLocalMatching_full_eigenvalue_inverse_shift_bound
     (D : ℕ) (V : Tile → ℝ) (σ : Fin D → Tile ≃ Tile)
@@ -44,7 +47,8 @@ theorem infiniteLocalMatching_full_eigenvalue_inverse_shift_bound
       eigenvalue • (ψ.1 : TileHilbert Tile)) :
     ‖(eigenvalue - a)⁻¹‖ ≤
       ‖infiniteBoundedOnsiteResolvent V a hgap
-        (infiniteLocalBoundedCorrection D σ w P ε shift) hsmall‖ := by
+        (infiniteLocalBoundedCorrection D σ w P ε shift) hsmall‖ *
+      ‖(1 : GapEnd Tile)‖ := by
   have hspec :
       (eigenvalue - a)⁻¹ ∈ spectrum ℝ
         (infiniteBoundedOnsiteResolvent V a hgap
@@ -52,10 +56,11 @@ theorem infiniteLocalMatching_full_eigenvalue_inverse_shift_bound
     (infiniteLocalMatching_full_eigenpair_iff_resolvent_spectrum
       D V σ w P ε shift a hgap hproper hsmall eigenvalue hne).mpr
         ⟨ψ, hψ, heigen⟩
-  exact spectrum.norm_le_norm_of_mem hspec
+  exact spectrum.norm_le_norm_mul_of_mem hspec
 
 /-- If the reciprocal distance from λ to the chosen resolvent
-shift exceeds the resolvent norm, every natural-domain solution
+shift exceeds the resolvent-norm times the identity norm,
+every natural-domain solution
 of Hψ = λψ is zero. This does not claim that other eigenvalues
 are isolated. -/
 theorem infiniteLocalMatching_no_eigenvector_in_resolvent_norm_zone
@@ -68,8 +73,8 @@ theorem infiniteLocalMatching_no_eigenvector_in_resolvent_norm_zone
     (eigenvalue : ℝ) (hne : eigenvalue ≠ a)
     (hclose :
       ‖infiniteBoundedOnsiteResolvent V a hgap
-        (infiniteLocalBoundedCorrection D σ w P ε shift) hsmall‖ <
-      ‖(eigenvalue - a)⁻¹‖)
+        (infiniteLocalBoundedCorrection D σ w P ε shift) hsmall‖ *
+      ‖(1 : GapEnd Tile)‖ < ‖(eigenvalue - a)⁻¹‖)
     (ψ : infiniteOnsiteDomain V)
     (heigen : infiniteLocalShiftedPerturbedOperator D V σ w P ε shift ψ =
       eigenvalue • (ψ.1 : TileHilbert Tile)) :
