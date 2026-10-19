@@ -119,7 +119,9 @@ theorem infiniteLocalMatching_full_multiplicity_tags_exists_enumeration
     ∃ seq : ℕ → ℝ × ℕ,
       Set.range seq = infiniteLocalMatchingFullMultiplicityTags
         D V σ w P ε shift a hgap hproper hsmall := by
-  exact (infiniteLocalMatching_full_multiplicity_tags_countable
-    D V σ w P ε shift a hgap hproper hsmall hσ hP).exists_eq_range hexists
+  obtain ⟨seq, hseq⟩ :=
+    (infiniteLocalMatching_full_multiplicity_tags_countable
+      D V σ w P ε shift a hgap hproper hsmall hσ hP).exists_eq_range hexists
+  exact ⟨seq, hseq.symm⟩
 
 end SpectralGeometry
