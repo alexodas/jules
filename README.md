@@ -709,7 +709,7 @@ H_{\varepsilon,m}=M_V+L_w+\varepsilon P+mI
 
 the same argument proves `IsSelfAdjoint` for its `LinearPMap` representation when each matching permutation is involutive and the bounded perturbation `P` is symmetric. A reusable graph-and-pairing lemma identifies the adjoint graph with the original graph, using Mathlib's `LinearPMap.adjoint_graph_eq_graph_adjoint`. **The actual domain remains `D(V)`; it is not silently replaced by all of `ℓ²(T)`.**
 
-**Scope:** this establishes the operator-theoretic interface needed before applying later spectral results. It requires the stated symmetry assumptions for the full local operator and makes no claim about compactness without the properness/gap hypotheses of §§4.20–4.21. The later §4.25 proves finite-dimensional full-operator eigenspaces under compact-resolvent hypotheses. Spectral isolation, exhaustive eigenvalue enumeration, eigenvalue growth, and inverse-square summability remain P2 goals.
+**Scope:** this establishes the operator-theoretic interface needed before applying later spectral results. It requires the stated symmetry assumptions for the full local operator and makes no claim about compactness without the properness/gap hypotheses of §§4.20–4.21. The later §4.25 proves finite-dimensional full-operator eigenspaces under compact-resolvent hypotheses, while §4.29 proves isolation of nonzero real spectral points of the compact bounded resolvent. Isolation of the full unbounded-operator spectrum, exhaustive eigenvalue enumeration, eigenvalue growth, and inverse-square summability remain P2 goals.
 
 ### 4.23. Compact self-adjoint resolvents and their eigenspaces
 
@@ -721,7 +721,7 @@ The new module proves that `R_a` is self-adjoint as a continuous linear map, usi
 - **Spectral totality:** the orthogonal complement of the supremum of all eigenspaces of `R_a` is zero. Equivalently, their linear span is dense in the real Hilbert space.
 - **Local matching specialization:** if each matching permutation is involutive and the bounded perturbation `P` is symmetric, the corrected geometric resolvent is self-adjoint whenever the explicit Neumann condition is satisfied. The gap bounds of §4.21 provide sufficient conditions for its existence.
 
-**Important distinction:** these are formalized properties of the **compact bounded resolvent**. Section 4.24 separately transfers nonzero resolvent eigenpairs to eigenpairs of the unbounded operator `H` via `λ=a+μ⁻¹`. Spectral enumeration, isolation properties, and quantitative growth remain open. No inverse-square eigenvalue summability is established here.
+**Important distinction:** these are formalized properties of the **compact bounded resolvent**. Section 4.24 separately transfers nonzero resolvent eigenpairs to eigenpairs of the unbounded operator `H` via `λ=a+μ⁻¹`; §4.29 subsequently proves isolation of nonzero real spectral points of the compact resolvent. Isolation of the full unbounded-operator spectrum, spectral enumeration, and quantitative growth remain open. No inverse-square eigenvalue summability is established here.
 
 ### 4.24. Eigenpair correspondence between the compact resolvent and the full operator
 
@@ -772,7 +772,7 @@ H\psi=(a+\mu^{-1})\psi.
 
 Equivalently, for a real parameter `λ≠a`, the transformed value `(λ-a)⁻¹` belongs to the resolvent spectrum **if and only if** `λ` admits a nonzero eigenvector of the unbounded full local operator. The forward implication uses Fredholm's alternative; the reverse implication uses the two-sided inverse and the eigenpair correspondence from §4.24. **No symmetry hypothesis is needed** for this compact-operator spectral-point/eigenpair equivalence.
 
-**Precise scope:** the proof exhausts the **nonzero spectrum of the compact bounded resolvent**, not the full spectrum of the unbounded `LinearPMap` by a separate spectral-mapping theorem. The special point `0` of the compact resolvent spectrum is deliberately excluded. Isolation of nonzero spectral points, their possible accumulation only at zero, isolation of finite full-operator eigenvalues, and ordered eigenvalue enumeration remain further P2 goals.
+**Precise scope:** the proof exhausts the **nonzero spectrum of the compact bounded resolvent**, not the full spectrum of the unbounded `LinearPMap` by a separate spectral-mapping theorem. The special point `0` of the compact resolvent spectrum is deliberately excluded from this correspondence. Section 4.29 subsequently proves that the nonzero real spectral points of the compact resolvent are isolated and that zero is their only possible accumulation point. Isolation of the entire unbounded-operator spectrum, its spectral-mapping theorem, and ordered eigenvalue enumeration remain further P2 goals.
 
 ### 4.27. Completeness of genuine eigenvectors of the full infinite local operator
 
