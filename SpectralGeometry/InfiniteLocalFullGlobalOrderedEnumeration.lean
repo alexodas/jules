@@ -129,7 +129,8 @@ theorem infiniteLocalMatching_full_tags_finite_lex_predecessors
         {q : {p : ℝ ×ₗ ℕ | (ofLex p) ∈ tags} | q < p} := by
     intro x _ y _ h
     apply Subtype.ext
-    exact toLex_injective h
+    have hh := congrArg ofLex h
+    simpa using hh
   exact Set.Finite.of_injOn hmaps hinj hfinite
 
 /-- An infinite lower-bounded interacting real point spectrum has
@@ -161,7 +162,11 @@ theorem infiniteLocalMatching_full_infinite_tags_exists_strictMono_enumeration
   let tags := infiniteLocalMatchingFullMultiplicityTags
     D V σ w P ε shift a hgap hproper hsmall
   let T : Set (ℝ ×ₗ ℕ) := toLex '' tags
-  have hT : T.Infinite := hinfinite.image (fun x y h => toLex_injective h)
+  have hT : T.Infinite := by
+    apply hinfinite.image
+    intro x _ y _ hxy
+    have hh := congrArg ofLex hxy
+    simpa using hh
   letI : Infinite T := hT.to_subtype
   have hpred : ∀ p : T, {q : T | q < p}.Finite := by
     intro p
