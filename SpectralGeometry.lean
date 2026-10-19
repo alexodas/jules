@@ -40,6 +40,7 @@ import SpectralGeometry.InfiniteLocalFullEigenvalueMultiplicity
 import SpectralGeometry.InfiniteLocalFullEigenvalueMultiplicityCoverage
 import SpectralGeometry.InfiniteLocalFullRealSpectralCompleteness
 import SpectralGeometry.InfiniteLocalFullOrderedMultiplicityWindows
+import SpectralGeometry.InfiniteLocalFullGlobalOrderedEnumeration
 
 /-!
 # Spectral Geometry
