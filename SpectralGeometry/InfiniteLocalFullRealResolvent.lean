@@ -205,9 +205,12 @@ theorem infiniteBoundedOnsite_realSpectrum_iff_resolventSpectrum
     b ∈ infiniteBoundedOnsiteRealSpectrum V B ↔
       (b - a)⁻¹ ∈ spectrum ℝ
         (infiniteBoundedOnsiteResolvent V a hgap B hsmall) := by
-  exact not_iff_not.mpr
-    (infiniteBoundedOnsite_realRegular_iff_resolventSpectrum_compl
-      V a b hgap hproper B hsmall hb)
+  change ¬ infiniteBoundedOnsiteRealRegular V B b ↔
+    (b - a)⁻¹ ∈ spectrum ℝ
+      (infiniteBoundedOnsiteResolvent V a hgap B hsmall)
+  rw [infiniteBoundedOnsite_realRegular_iff_resolventSpectrum_compl
+    V a b hgap hproper B hsmall hb]
+  simp
 
 /-- The shift a with the already constructed resolvent belongs to the
 regular set, hence is excluded from the full real spectrum. -/
