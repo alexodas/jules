@@ -56,7 +56,7 @@ Our first goal is to prove properties that hold for general classes of geometric
 
 For infinitely many tiles, a natural state space is the space of square-summable amplitudes `ℓ²(T)`. We must rigorously define the operator domains, the convergence of interaction and perturbation terms, and conditions for self-adjointness. Unlike a finite symmetric matrix, an infinite operator can have continuous spectrum.
 
-We will investigate hypotheses yielding a positive, discrete spectrum with finite multiplicities, for example through a positive self-adjoint operator with compact resolvent:
+For the abstract matching-family operator, we have already formalized self-adjointness and a compact resolvent under explicit hypotheses, finite-dimensional eigenspaces, and isolation and local finiteness of genuine real eigenvalues (§§4.20–4.30). The stronger goal is a **positive, completely enumerated spectrum** with controlled growth, for example:
 
 ```math
 0<\lambda_0(\varepsilon)\le\lambda_1(\varepsilon)\le\cdots,
@@ -111,7 +111,7 @@ For `c=1/2` and `d=i`, its zeros lie on the prescribed critical line, at heights
 s=\frac12\pm i\lambda_n(\varepsilon).
 ```
 
-**The line is imposed by the construction of the product, not derived from any property of the Riemann zeta function.** We have formalized an abstract infinite matching-family operator and proved conditional spectral properties (§§4.20–4.25), but have not instantiated it on a particular aperiodic tiling, proved the required positive enumerated spectrum with inverse-square summability, or connected its spectrum to the product in Lean. This project does not prove the Riemann hypothesis and does not identify `D_\varepsilon` with the zeta function.
+**The line is imposed by the construction of the product, not derived from any property of the Riemann zeta function.** We have formalized an abstract infinite matching-family operator and proved conditional spectral properties through §4.30, including isolation and local finiteness of its genuine real eigenvalues. We have not instantiated it on a particular aperiodic tiling, established the required positive enumeration with multiplicities and inverse-square summability, or connected its spectrum to the product in Lean. This project does not prove the Riemann hypothesis and does not identify `D_\varepsilon` with the zeta function.
 
 ## 3. Finite-dimensional geometric operators
 
@@ -130,7 +130,7 @@ w(t,u)=w(u,t),\quad P_{tu}=P_{ut}
 
 The file also proves that setting `ε=0` recovers exactly the unperturbed geometric matrix. This is useful because real symmetric finite matrices have real eigenvalues, so changing a symmetric perturbation cannot destroy that structural feature.
 
-**Scope of the proof:** the verified theorem concerns a *finite* matrix. It does not yet establish positive eigenvalues, self-adjointness of the infinite tiling operator, discrete infinite spectrum, or inverse-square summability. Those are separate questions for later files.
+**Scope of this module:** the verified theorem concerns a *finite* matrix; symmetry alone does not imply positive eigenvalues or any infinite-dimensional spectral conclusions. Later §§4.20–4.30 establish conditional self-adjointness, compact resolvent, and isolation and local finiteness of genuine real eigenvalues for the abstract infinite matching-family operator. Full-spectrum enumeration, uniform positivity, and inverse-square summability remain open.
 
 ### 3.2. Positivity under controlled perturbations
 
@@ -155,7 +155,7 @@ Q_{H_\varepsilon}(\psi)=Q_{H_0}(\psi)+\varepsilon Q_P(\psi).
 
 The Lean file also proves that **strictly positive** base energy on every nonzero configuration stays strictly positive under the same assumptions. These results concern all tile-amplitude configurations, not a selection of eigenfunctions.
 
-**Scope of the second result:** this theorem proves *stability* of positivity, assuming positivity of the original and perturbation energies. The following section derives a sufficient condition for the original energy from the geometric inputs themselves. At this stage of the finite-dimensional development, the infinite-operator theorems have not yet been introduced; §§4.20–4.25 describe the subsequent results. Full-spectrum enumeration and inverse-square summability remain unproved.
+**Scope of the second result:** this finite-dimensional theorem proves *stability* of positivity, assuming positivity of the original and perturbation energies. The following section derives a sufficient condition for the original energy from the geometric inputs themselves. The distinct infinite-operator results, including conditional self-adjointness, compact resolvent and locally finite real point spectrum, are proved later in §§4.20–4.30. Full-spectrum enumeration and inverse-square summability remain unproved.
 
 ### 3.3. Nonnegative energy from geometry
 
@@ -224,7 +224,7 @@ D(V)=\left\{\psi\in\ell^2(T):t\mapsto V(t)\psi(t)\in\ell^2(T)\right\},
 
 The new Lean file proves that `D(V)` is a real **linear subspace**, constructs `M_V:D(V)\to\ell^2(T)` as a linear map, checks its value on each tile, and proves that when `V(t)\ge0`, each local energy contribution `\psi(t)(M_V\psi)(t)` is nonnegative. These facts require neither a finite number of tiles nor a bounded potential.
 
-**Scope of this first infinite result:** only the individual-energy contribution is built here. The pair-interaction Laplacian `L_w` and the perturbation `\varepsilon P` are not yet included **in this first module**; §§4.6–4.9 subsequently construct infinite interactions. The density of `D(V)` is addressed in §4.2, and §§4.20–4.25 establish conditional self-adjointness, compact resolvent and finite multiplicity. These later theorems require additional hypotheses and do not follow merely from defining the domain; full-spectrum enumeration and inverse-square summability remain open.
+**Scope of this first infinite result:** only the individual-energy contribution is built here. The pair-interaction Laplacian `L_w` and the perturbation `\varepsilon P` are not yet included **in this first module**; §§4.6–4.9 subsequently construct infinite interactions. The density of `D(V)` is addressed in §4.2; §§4.20–4.30 establish conditional self-adjointness, compact resolvent, finite eigenspace dimension, and isolation and local finiteness of the full operator's genuine real eigenvalues. These later theorems require additional hypotheses and do not follow merely from defining the domain; full-spectrum enumeration and inverse-square summability remain open.
 
 ### 4.2. Density of the natural operator domain
 
@@ -259,7 +259,7 @@ The file formalizes this support restriction and two consequences:
 - If every onsite energy satisfies `V(t)>0`, then **every eigenvalue with a nonzero eigenstate is strictly positive**: `λ>0`.
 - If all energies satisfy the uniform lower bound `V(t)\ge c`, then every such eigenvalue satisfies `λ\ge c`.
 
-**Scope and important limitation:** these are results about the *point spectrum* of the infinite onsite multiplication operator. They do not prove that the operator is self-adjoint, that every `V(t)` occurs as an eigenvalue, that the entire spectrum is positive or discrete, or that the inverse-square eigenvalue series converges. The subsequent §§4.6–4.9 construct interactions and bounded perturbations, while §§4.20–4.25 prove further conditional results for the full geometric operator `H_\varepsilon`.
+**Scope and important limitation:** these are results about the *point spectrum* of the infinite onsite multiplication operator. They do not prove that the operator is self-adjoint, that every `V(t)` occurs as an eigenvalue, that the entire spectrum is positive or discrete, or that the inverse-square eigenvalue series converges. The subsequent §§4.6–4.9 construct interactions and bounded perturbations, while §§4.20–4.30 prove further conditional results for the full geometric operator `H_\varepsilon`, culminating in isolation and local finiteness of genuine real eigenvalues.
 
 ### 4.4. A sufficient growth condition for summable spectral levels
 
@@ -398,7 +398,7 @@ H_\varepsilon\psi=\lambda\psi,\ \psi\ne0
 
 Indeed, the onsite and interaction quadratic energies are nonnegative, so `(λ-ε)‖ψ‖²≥0`. If `ε>0`, every point eigenvalue is **strictly positive**. This bound holds without absolute summability of all edge weights and without bounding `V` from above.
 
-**Scope:** these theorems constrain eigenvalues *if nonzero eigenvectors exist*. They neither show that point eigenvalues exist nor rule out continuous spectrum. The full operator's self-adjointness, compact resolvent, discreteness, inverse-square summability, and connection to the canonical product remain open formalization goals.
+**Scope:** these theorems constrain eigenvalues *if nonzero eigenvectors exist*; they do not by themselves establish spectral completeness or exclude continuous spectrum. Subsequent §§4.20–4.30 prove conditional self-adjointness and compact resolvent, density of genuine eigenvectors, and isolation and bounded-interval finiteness of distinct real eigenvalues. A full spectral-mapping theorem for the unbounded operator, inverse-square summability, and a connection to the canonical product remain open.
 
 ### 4.11. Stable spectral lower bounds under signed bounded perturbations
 
@@ -541,7 +541,7 @@ the graph `G(H_{\varepsilon,m})` is also **closed**. The proof is explicit: subt
 
 No nonnegativity of `V`, matching weights or `P` is needed for closedness, and no symmetry of `P` is assumed. The matching-family representation remains the same special class of infinite local interactions as in §4.9.
 
-**Scope:** closedness is **not the same as self-adjointness**. In particular, this result alone does not show that the operator equals its adjoint, has a resolvent at any given point, has compact resolvent, possesses a purely discrete spectrum, or satisfies inverse-square spectral summability. These remain separate formalization goals.
+**Scope:** closedness is **not the same as self-adjointness**. This module alone does not establish an adjoint equality, a bounded or compact resolvent, spectral discreteness, or inverse-square summability. Self-adjointness is subsequently proved in §4.22, compact resolvent under explicit hypotheses in §§4.20–4.21, and isolation and local finiteness of genuine real eigenvalues in §§4.29–4.30. Full unbounded-spectrum exhaustion and inverse-square summability remain open.
 
 ### 4.15. Explicit adjoint characterization and self-adjointness criterion
 
@@ -596,7 +596,7 @@ The proof shows that the coordinatewise inverse gives a square-summable state be
 
 **What this establishes:** the shifted **onsite** operator `M_V-aI : D(V)→ℓ²(T)` is a bijection under the explicit unit-gap assumption, with a concrete coordinate formula for its inverse. This is a genuine solvability statement, stronger than merely excluding real point eigenvalues.
 
-**Relation to subsequent results:** this module establishes bijectivity and the coordinate formula, but does not itself package the inverse as a continuous linear map. That construction and the compactness proof under a finite-sublevel hypothesis are established in §4.18. Bijectivity of the **interacting** operator's shift, compactness of its resolvent, discreteness and inverse-square summability of its full spectrum, and any specialized aperiodic-tiling model remain open formalization goals. The one-unit condition is a convenient sufficient hypothesis, not a necessary one.
+**Relation to subsequent results:** this module establishes bijectivity and the coordinate formula, but does not itself package the inverse as a continuous linear map. The bounded inverse and its compactness are established in §§4.18–4.19. Sections 4.20–4.21 subsequently prove two-sided invertibility of a shifted **interacting** operator and compactness of its resolvent under explicit hypotheses; §§4.29–4.30 establish isolation and local finiteness of genuine real eigenvalues. Full-spectrum identification, inverse-square summability, and a specialized aperiodic-tiling model remain open. The one-unit condition is a convenient sufficient hypothesis, not a necessary one.
 
 ### 4.17. Finite low-energy sectors under a proper onsite potential
 
@@ -606,7 +606,7 @@ Lean proves two consequences on the natural onsite domain: any genuine point eig
 
 The hypothesis of finite low-energy sublevel sets is a precise form of *onsite potential growth at infinity*. It is additional to previous results and is **not claimed for an arbitrary potential or automatically for a particular geometric tiling**.
 
-**Important scope:** these results concern `M_V`, **not the fully interacting operator** `H=M_V+L_w+εP+mI`. On their own they do not prove compact resolvent, spectral discreteness, inverse-square summability, or eigenvalue existence for an arbitrary potential. The finite-rank approximation and compact onsite resolvent are proved in §4.18 under the additional unit-gap assumption. Establishing a compact resolvent and the required spectral growth for the interacting and perturbed operator remains a separate goal.
+**Important scope:** these results concern `M_V`, **not the fully interacting operator** `H=M_V+L_w+εP+mI`. On their own they do not prove compact resolvent, spectral discreteness, inverse-square summability, or eigenvalue existence for an arbitrary potential. The finite-rank approximation and compact onsite resolvent are proved in §4.18 under the additional unit-gap assumption. A compact resolvent for the **interacting** operator is subsequently proved in §§4.20–4.21, and local finiteness of genuine real eigenvalues in §4.30. Quantitative growth and inverse-square summability for the interacting spectrum remain open.
 
 ### 4.18. Compact resolvent of a proper onsite potential
 
@@ -646,7 +646,7 @@ R_a\bigl((M_V-aI)\psi\bigr)=\psi.
 
 Thus the bounded continuous map is explicitly shown to be the **two-sided inverse of the shifted onsite operator on its actual natural domain**, rather than merely a map with the expected coordinate formula. Combined with §4.18, proper onsite potential growth makes this genuine inverse compact.
 
-**Scope:** this closes the onsite inverse-identification milestone P0 from §6 without introducing any new potential-growth hypothesis. It does **not** prove that the full interacting operator `H=M_V+L_w+εP+mI` is invertible or has compact resolvent; that remains P1.
+**Scope:** this completes the onsite inverse-identification argument without introducing any new potential-growth hypothesis. By itself it does **not** establish invertibility or compact resolvent of the full interacting operator `H=M_V+L_w+εP+mI`; those conditional results are subsequently proved in §§4.20–4.21.
 
 ### 4.20. Compact resolvent under small bounded interactions and perturbations
 
@@ -665,7 +665,7 @@ Assume the unit gap `V(t)-a≥1`, finite onsite sublevel sets as in §4.18, and 
 
 The module constructs this expression as a continuous linear map, shows that its outputs belong to `D(V)`, proves both inverse identities for the **full** shifted operator, and proves its compactness by composition with the compact onsite resolvent.
 
-The result applies to any bounded correction satisfying the stated condition, in particular to the finite-color matching-family interaction with a bounded controlled perturbation encoded by `B=L_w+εP+mI`. It does **not** claim that `‖B R_a‖<1` holds automatically for arbitrary coupling strengths or at an arbitrary spectral shift. No spectral discreteness or inverse-square eigenvalue summability follows merely from this result; those remain separate goals.
+The result applies to any bounded correction satisfying the stated condition, in particular to the finite-color matching-family interaction with a bounded controlled perturbation encoded by `B=L_w+εP+mI`. It does **not** claim that `‖B R_a‖<1` holds automatically for arbitrary coupling strengths or at an arbitrary spectral shift. Compactness alone does not imply the quantitative inverse-square eigenvalue estimate. The subsequent §§4.23–4.30 derive spectral completeness, finite-dimensional eigenspaces, and isolation and local finiteness of genuine real eigenvalues under additional hypotheses; full spectral mapping and inverse-square summability remain open.
 
 ### 4.21. Quantitative compact-resolvent bounds and sufficiently negative shifts
 
@@ -686,7 +686,7 @@ For the finite-color matching-family model from §4.9, with `D` matching colors 
  \le 2DW+|\varepsilon|\,\|P\|+|m|.
 ```
 
-Thus `V(t)-a≥δ≥1` and `δ>2DW+|ε|‖P‖+|m|` suffice for the compact shifted inverse of the actual local matching operator via its already-proved bounded-correction identity. Neither symmetry of `P` nor a fixed small coupling is required for this existence result. Self-adjoint spectral decomposition, discrete eigenvalues, and inverse-square summability remain separate P1/P2 milestones.
+Thus `V(t)-a≥δ≥1` and `δ>2DW+|ε|‖P‖+|m|` suffice for the compact shifted inverse of the actual local matching operator via its already-proved bounded-correction identity. Neither symmetry of `P` nor a fixed small coupling is required for this existence result. With the additional symmetry assumptions, §4.22 proves self-adjointness, §4.27 proves density of genuine eigenvectors, and §§4.29–4.30 establish isolation and local finiteness of distinct real eigenvalues. Full-spectrum identification and ordered enumeration with multiplicities, quantitative growth, and inverse-square summability remain open P2 objectives.
 
 ### 4.22. Self-adjoint onsite and infinite local operators in Mathlib's partial-operator API
 
@@ -802,7 +802,7 @@ The module also formalizes the contrapositive: whenever `λ≠a` and `|(λ-a)⁻
 
 ### 4.29. Isolation of nonzero points in the compact resolvent spectrum
 
-The Lean module **[`SpectralGeometry/InfiniteLocalResolventSpectralIsolation.lean`](SpectralGeometry/InfiniteLocalResolventSpectralIsolation.lean)** addresses the first open P2 isolation target for the **bounded compact resolvent**. Assume the onsite gap, finite onsite sublevel sets, and Neumann-smallness condition already used for `R_a=(H-aI)⁻¹`. Assume also that the bounded correction is symmetric, making `R_a` self-adjoint.
+The Lean module **[`SpectralGeometry/InfiniteLocalResolventSpectralIsolation.lean`](SpectralGeometry/InfiniteLocalResolventSpectralIsolation.lean)** establishes the P2 isolation result for the **bounded compact resolvent**. Assume the onsite gap, finite onsite sublevel sets, and Neumann-smallness condition already used for `R_a=(H-aI)⁻¹`. Assume also that the bounded correction is symmetric, making `R_a` self-adjoint.
 
 The key intermediate result says that for each `δ>0` there are **only finitely many distinct real spectral values** satisfying `|μ|≥δ`:
 
