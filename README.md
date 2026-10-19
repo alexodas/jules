@@ -835,11 +835,26 @@ Write `Eig(H)` for the set of real parameters `λ` for which there is a **nonzer
 
 The transfer uses the existing equivalence `λ∈Eig(H) ↔ (λ−a)⁻¹∈σ_ℝ(R_a)` for `λ≠a` (§4.26). The already-checked two-sided inverse excludes `a` as an eigenvalue (§4.25). Continuity and injectivity of `λ↦(λ−a)⁻¹` yield isolation, while bounded `|λ|` ensures the corresponding resolvent spectral parameters remain uniformly away from zero, so §4.29 gives finiteness.
 
-**Precise scope:** these results identify properties of the **real point spectrum**, not the entire spectrum of the unbounded `LinearPMap` (whose full spectral-mapping theorem is not yet formalized). Local finiteness counts **distinct eigenvalues**, not multiplicities. An ordered enumeration with multiplicities, eigenvalue growth, and inverse-square summability remain open (§6).
+**Precise scope:** these results identify properties of the **real point spectrum**, not the entire spectrum of the unbounded `LinearPMap` (whose full spectral-mapping theorem is not yet formalized). Local finiteness counts **distinct eigenvalues**, not multiplicities. The next §4.31 proves countability and constructs a complete, possibly repeating listing of these real eigenvalues when nonempty. Ordered enumeration **with multiplicities**, eigenvalue growth, and inverse-square summability remain open (§6).
+
+### 4.31. Countability and a complete (unordered) listing of full-operator eigenvalues
+
+The Lean module **[`SpectralGeometry/InfiniteLocalFullEigenvalueEnumeration.lean`](SpectralGeometry/InfiniteLocalFullEigenvalueEnumeration.lean)** builds on the bounded-interval finiteness theorem from §4.30. Under the same explicit compact self-adjoint resolvent hypotheses (onsite gap, finite onsite sublevel sets, Neumann-small correction, involutive matchings, and symmetric perturbation), the set `Eig(H)` of **genuine real eigenvalues of the full operator on `D(V)`** is **countable**:
+
+```math
+\operatorname{Eig}(H)=\bigcup_{n\in\mathbb N}
+\{\lambda\in\operatorname{Eig}(H):|\lambda|\le n\},
+\qquad
+\#\{\lambda\in\operatorname{Eig}(H):|\lambda|\le n\}<\infty.
+```
+
+If `Eig(H)` is **nonempty**, Lean also constructs a sequence `e : ℕ → ℝ` whose range is **exactly** `Eig(H)`. This works whether the underlying tile type or the point spectrum is finite or infinite: **repetitions are allowed** in the sequence, so a finite nonempty point spectrum is handled correctly. No eigenvalue-existence assertion is made for arbitrary tile types; an empty point spectrum is countable but has no real-valued sequence with exactly that range.
+
+**Scope:** this is a full *set-theoretic listing* of the real **point spectrum**, not a classification of the whole unbounded `LinearPMap` spectrum. The sequence is not asserted increasing or injective and **does not record eigenspace multiplicities**. The project has already proved finite-dimensional eigenspaces (§4.25), but a separate multiplicity-aware ordered eigenvalue enumeration and a full unbounded spectral-mapping theorem remain open (§6). No eigenvalue growth or inverse-square summability follows from countability alone.
 
 ## 5. Building and verification
 
-The canonical import list is maintained in [`SpectralGeometry.lean`](SpectralGeometry.lean). It currently imports **36 Lean modules**: one analytic core, four finite-dimensional modules, and thirty-one infinite-dimensional modules.
+The canonical import list is maintained in [`SpectralGeometry.lean`](SpectralGeometry.lean). It currently imports **37 Lean modules**: one analytic core, four finite-dimensional modules, and thirty-two infinite-dimensional modules.
 
 - **Analytic core (1):** [`CanonicalProduct.lean`](SpectralGeometry/CanonicalProduct.lean)
 - **Finite-dimensional geometry (4):**
@@ -870,7 +885,7 @@ The canonical import list is maintained in [`SpectralGeometry.lean`](SpectralGeo
   - [`InfiniteOnsiteFiniteLowEnergy.lean`](SpectralGeometry/InfiniteOnsiteFiniteLowEnergy.lean)
   - [`InfiniteOnsiteCompactResolvent.lean`](SpectralGeometry/InfiniteOnsiteCompactResolvent.lean)
   - [`InfiniteOnsiteResolventIdentity.lean`](SpectralGeometry/InfiniteOnsiteResolventIdentity.lean)
-- **Interacting resolvents and spectral results (11):**
+- **Interacting resolvents and spectral results (12):**
   - [`InfiniteLocalCompactResolvent.lean`](SpectralGeometry/InfiniteLocalCompactResolvent.lean)
   - [`InfiniteLocalCompactResolventBounds.lean`](SpectralGeometry/InfiniteLocalCompactResolventBounds.lean)
   - [`InfiniteLocalSelfAdjointPMap.lean`](SpectralGeometry/InfiniteLocalSelfAdjointPMap.lean)
@@ -882,6 +897,7 @@ The canonical import list is maintained in [`SpectralGeometry.lean`](SpectralGeo
   - [`InfiniteLocalResolventNormGap.lean`](SpectralGeometry/InfiniteLocalResolventNormGap.lean)
   - [`InfiniteLocalResolventSpectralIsolation.lean`](SpectralGeometry/InfiniteLocalResolventSpectralIsolation.lean)
   - [`InfiniteLocalFullEigenvalueIsolation.lean`](SpectralGeometry/InfiniteLocalFullEigenvalueIsolation.lean)
+  - [`InfiniteLocalFullEigenvalueEnumeration.lean`](SpectralGeometry/InfiniteLocalFullEigenvalueEnumeration.lean)
 
 The project uses Lean 4 `v4.35.0` with its corresponding Mathlib version. Every module listed above is imported by the root entry point.
 
@@ -902,12 +918,14 @@ passes.
 
 ### 6.1. P2 — Discrete spectrum and eigenvalue enumeration
 
-1. **Exhaust and enumerate the full spectrum.** Establish the appropriate
-   spectral-mapping statement for the unbounded operator on its natural
-   domain, beyond the existing eigenpair correspondence. Enumerate
-   eigenvalues **with multiplicities**; handle finite tile sets separately
-   from countably infinite ones. In the infinite, lower-bounded case,
-   target an ordered sequence `λₙ → +∞`.
+1. **Exhaust the entire unbounded spectrum and enumerate with multiplicities.**
+   Section 4.31 already gives a countable, unordered and possibly repeating
+   listing of **genuine real point eigenvalues**. Next, establish the
+   appropriate spectral-mapping theorem for the unbounded operator on
+   its original natural domain, beyond the eigenpair correspondence.
+   Then develop an **ordered, multiplicity-aware** enumeration, treating
+   finite tile sets separately from countably infinite ones; in the
+   infinite lower-bounded case, target `λₙ → +∞`.
 
 ### 6.2. P2 — Positivity, comparison, and summability
 
