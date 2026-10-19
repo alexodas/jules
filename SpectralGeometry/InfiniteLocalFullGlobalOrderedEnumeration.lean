@@ -184,4 +184,65 @@ theorem infiniteLocalMatching_full_infinite_tags_exists_strictMono_enumeration
       obtain ⟨n, hn⟩ := hsurj ⟨p, hp⟩
       exact ⟨n, congrArg Subtype.val hn⟩
 
+
+/-- Projecting the globally ordered tag enumeration to the real coordinate
+gives a nondecreasing sequence of full-operator eigenvalues. Every
+admissible pair (eigenvalue, copy index) occurs at exactly one position,
+so the sequence repeats a given level exactly its geometric
+multiplicity many times, with no spurious copies. -/
+theorem infiniteLocalMatching_full_infinite_exists_ordered_sequence_exact_multiplicities
+    (D : ℕ) (V : Tile → ℝ) (σ : Fin D → Tile ≃ Tile)
+    (w : Fin D → ℝ) (P : GlobalOrderedEnd Tile)
+    (ε shift a : ℝ) (hgap : ∀ t, 1 ≤ V t - a)
+    (hproper : ∀ R : ℝ, (infiniteOnsiteLowEnergyTiles V R).Finite)
+    (hsmall : ‖(infiniteLocalBoundedCorrection D σ w P ε shift).comp
+      (infiniteOnsiteResolventCLM V a hgap)‖ < 1)
+    (hσ : ∀ i t, σ i (σ i t) = t)
+    (hP : ∀ ψ φ : TileHilbert Tile,
+      inner ℝ ψ (P φ) = inner ℝ (P ψ) φ)
+    (lower : ℝ)
+    (hbelow : ∀ eigenvalue : ℝ,
+      infiniteLocalMatchingHasFullEigenvalue D V σ w P ε shift eigenvalue →
+      lower ≤ eigenvalue)
+    (hinfinite : (infiniteLocalMatchingFullMultiplicityTags
+      D V σ w P ε shift a hgap hproper hsmall).Infinite) :
+    ∃ seq : ℕ → ℝ ×ₗ ℕ,
+      StrictMono seq ∧
+      Monotone (fun n : ℕ => (ofLex (seq n)).1) ∧
+      (∀ eigenvalue : ℝ, ∀ k : ℕ,
+        (∃! n : ℕ, seq n = toLex (eigenvalue, k)) ↔
+          infiniteLocalMatchingHasFullEigenvalue
+            D V σ w P ε shift eigenvalue ∧
+          k < infiniteLocalMatchingFullMultiplicity
+            D V σ w P ε shift a hgap hproper hsmall eigenvalue) := by
+  obtain ⟨seq, hmono, hrange⟩ :=
+    infiniteLocalMatching_full_infinite_tags_exists_strictMono_enumeration
+      D V σ w P ε shift a hgap hproper hsmall hσ hP
+      lower hbelow hinfinite
+  refine ⟨seq, hmono, ?_, ?_⟩
+  · intro i j hij
+    exact Prod.Lex.monotone_fst _ _ (hmono.monotone hij)
+  · intro eigenvalue k
+    constructor
+    · rintro ⟨n, hn, _⟩
+      have htag : toLex (eigenvalue, k) ∈
+          toLex '' (infiniteLocalMatchingFullMultiplicityTags
+            D V σ w P ε shift a hgap hproper hsmall) := by
+        rw [← hrange]
+        exact ⟨n, hn⟩
+      obtain ⟨q, hq, hqeq⟩ := htag
+      have heq : q = (eigenvalue, k) := by
+        have hh := congrArg ofLex hqeq
+        simpa using hh
+      subst q
+      exact hq
+    · intro htag
+      have hmem : toLex (eigenvalue, k) ∈ Set.range seq := by
+        rw [hrange]
+        exact ⟨(eigenvalue, k), htag, rfl⟩
+      obtain ⟨n, hn⟩ := hmem
+      refine ⟨n, hn, ?_⟩
+      intro j hj
+      exact hmono.injective (hj.trans hn.symm)
+
 end SpectralGeometry
