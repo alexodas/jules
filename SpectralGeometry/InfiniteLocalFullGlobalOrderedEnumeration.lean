@@ -41,7 +41,8 @@ theorem exists_strictMono_surjective_of_finite_predecessors
     change (hpred x).toFinset.card < (hpred y).toFinset.card
     apply Finset.card_lt_card
     apply (Set.Finite.toFinset_ssubset_toFinset).mpr
-    refine ⟨?_, ?_⟩
+    apply (ssubset_iff_subset_ne).mpr
+    constructor
     · intro z hz
       exact lt_trans hz hxy
     · intro heq
