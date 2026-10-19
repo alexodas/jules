@@ -65,16 +65,16 @@ private theorem compact_no_orthonormal_eigenvectors_with_large_eigenvalues
       simp [real_inner_smul_left, real_inner_smul_right, hinner]
     have hp := norm_sub_sq_eq_norm_sq_add_norm_sq_real hz
     have hm : ‖y m‖ = ‖μ m‖ := by
-      rw [show y m = μ m • e m from heigen m]
-      simp [he.norm_eq_one m]
+      rw [show y m = μ m • e m from heigen m, norm_smul,
+        he.norm_eq_one m, mul_one]
     have hn : ‖y n‖ = ‖μ n‖ := by
-      rw [show y n = μ n • e n from heigen n]
-      simp [he.norm_eq_one n]
+      rw [show y n = μ n • e n from heigen n, norm_smul,
+        he.norm_eq_one n, mul_one]
     have hp' :
         ‖y m - y n‖ * ‖y m - y n‖ =
           ‖y m‖ * ‖y m‖ + ‖y n‖ * ‖y n‖ := by
       simpa [y, heigen m, heigen n] using hp
-    change δ ≤ ‖y m - y n‖
+    rw [dist_eq_norm]
     have hmn' : δ ≤ ‖y m‖ := hm.symm ▸ hbound m
     nlinarith [norm_nonneg (y m - y n), norm_nonneg (y n)]
   have hcauchy : CauchySeq (y ∘ φ) := hlim.cauchySeq
