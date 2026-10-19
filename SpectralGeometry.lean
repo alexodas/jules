@@ -30,6 +30,7 @@ import SpectralGeometry.InfiniteLocalResolventSpectrum
 import SpectralGeometry.InfiniteLocalEigenpairCorrespondence
 import SpectralGeometry.InfiniteLocalFullEigenspaces
 import SpectralGeometry.InfiniteLocalFredholmSpectralExhaustion
+import SpectralGeometry.InfiniteLocalFullEigenvectorsComplete
 
 /-!
 # Spectral Geometry
