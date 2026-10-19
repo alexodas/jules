@@ -37,6 +37,7 @@ import SpectralGeometry.InfiniteLocalFullEigenvalueIsolation
 import SpectralGeometry.InfiniteLocalFullEigenvalueEnumeration
 import SpectralGeometry.InfiniteLocalFullRealResolvent
 import SpectralGeometry.InfiniteLocalFullEigenvalueMultiplicity
+import SpectralGeometry.InfiniteLocalFullEigenvalueMultiplicityCoverage
 
 /-!
 # Spectral Geometry
