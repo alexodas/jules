@@ -29,6 +29,7 @@ import SpectralGeometry.InfiniteLocalSelfAdjointPMap
 import SpectralGeometry.InfiniteLocalResolventSpectrum
 import SpectralGeometry.InfiniteLocalEigenpairCorrespondence
 import SpectralGeometry.InfiniteLocalFullEigenspaces
+import SpectralGeometry.InfiniteLocalFredholmSpectralExhaustion
 
 /-!
 # Spectral Geometry
