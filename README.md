@@ -856,105 +856,63 @@ GitHub Actions automatically checks compilation on every change to `main` and on
 
 ## 6. Roadmap: next formally checked theorems
 
-This section records the **remaining formalization milestones** and marks
-completed work explicitly. Priorities follow mathematical dependencies:
-first connect the onsite compact map to the genuine inverse (P0, now complete),
-then transfer compactness to the interacting operator, and only then build a
-spectral sequence for the canonical product. Each milestone counts as
-completed only after the corresponding Lean file is imported by
-`SpectralGeometry.lean` and the full `lake build` passes.
+This roadmap lists **only open goals**, in dependency order. Sections 2–4
+document the results already proved. A milestone is complete only when its
+Lean proof is imported by `SpectralGeometry.lean` and the full `lake build`
+passes.
 
-| Priority | Milestone | Mathematical target | Status |
-| --- | --- | --- | --- |
-| **P0 — completed** | Onsite inverse identity | The bounded map `infiniteOnsiteResolventCLM` takes values in the natural domain and is a two-sided inverse of the shifted onsite operator (§4.19) | **Formalized and Lean-checked** |
-| **P1 — completed (compact inverse)** | Compact resolvent for the full local operator | Compact inverse of `M_V+B-aI` for bounded `B` under `‖B R_a‖<1`, with both inverse identities (§4.20) | **Formalized and Lean-checked; quantitative and matching-family corollaries in §4.21** |
-| **P1 — completed (quantitative)** | Quantitative compact resolvent bounds | Bounds `‖R_a‖≤1/δ`, obtains compact inverse from `‖B‖<δ`, proves existence of a sufficiently negative real shift for any bounded `B`, and gives geometric bounds for matching families (§4.21) | **Formalized and Lean-checked; self-adjointness interface completed in §4.22** |
-| **P1 — completed (self-adjointness)** | Self-adjointness in Mathlib's partial-operator API | Package onsite and local matching operators as `LinearPMap` on the natural domain, and prove `IsSelfAdjoint` from adjoint-pair characterization and density (§4.22) | **Formalized and Lean-checked; discrete-spectrum work continues in P2** |
-| **P2 — in progress (spectral exclusion near the resolvent shift)** | Discrete spectrum | The nonzero resolvent spectral points correspond to genuine full eigenpairs (§4.26), their natural-domain eigenvectors span densely under symmetry (§4.27), and a quantitative resolvent-norm test excludes full eigenvalues near the chosen shift (§4.28) | **Quantitative shift exclusion formalized; isolation of individual eigenvalues, full-spectrum identification and ordered enumeration pending** |
-| **P2 — high** | Eigenvalue growth and summability | Transfer quantitative onsite growth to the eigenvalues of the interacting operator, then prove summability of inverse squares under sufficiently strong growth | Planned |
-| **P3 — integration** | Spectrally defined canonical product | Instantiate the existing admissibility and zero-localization results with the full operator's positive, summable eigenvalues | Planned |
-| **P4 — geometric applications** | Specific aperiodic tiling | Check the operator hypotheses for a concrete tiling model rather than assuming them abstractly | Planned |
+### 6.1. P2 — Discrete spectrum and eigenvalue enumeration
 
-### 6.1. P0 — Completed: identify the bounded onsite map with the actual inverse
+1. **Isolate the nonzero resolvent spectrum.** For the compact resolvent
+   `R_a=(H-aI)⁻¹`, prove that every nonzero spectral point is isolated and
+   that zero is its only possible accumulation point. Use the existing
+   finite-multiplicity results rather than reproving them.
+2. **Transfer isolation to the full operator.** Via
+   `λ=a+μ⁻¹`, show that genuine full-operator eigenvalues are isolated
+   and have no finite accumulation point. This is stronger than excluding
+   eigenvalues near the single shift `a`.
+3. **Exhaust and enumerate the full spectrum.** Establish the appropriate
+   spectral-mapping statement for the unbounded operator on its natural
+   domain, beyond the existing eigenpair correspondence. Enumerate
+   eigenvalues **with multiplicities**; handle finite tile sets separately
+   from countably infinite ones. In the infinite, lower-bounded case,
+   target an ordered sequence `λₙ → +∞`.
 
-Use the natural onsite domain `D(V)` and the unit-gap assumption
-`1 ≤ V(t)-a` from §§4.16 and 4.18. Let `R_a` be the already constructed
-continuous linear map, acting coordinatewise by
-`(R_a f)(t)=(V(t)-a)⁻¹ f(t)`. Prove explicitly that
+### 6.2. P2 — Positivity, comparison, and summability
 
-```math
-R_a f\in D(V),\qquad (M_V-aI)R_a f=f
-\quad\text{for every }f\in\ell^2(T),
-```
+4. **Prove a uniform positive spectral gap.** Give explicit hypotheses on
+   the onsite potential `V` and bounded symmetric correction
+   `B=L_w+εP+mI` ensuring every full eigenvalue satisfies
+   `λ≥c>0`; for example, a lower onsite bound greater than `‖B‖`.
+5. **Compare ordered eigenvalues.** Develop a min–max or eigenvalue-counting
+   argument, respecting multiplicities, to prove a bound of the form
+   `λₙ(M_V+B) ≥ λₙ(M_V)-‖B‖` against the ordered onsite levels.
+6. **Prove inverse-square summability.** Transfer a sufficiently strong
+   lower growth bound on the **ordered onsite levels** (for example,
+   `Vₙ ≳ (n+1)^α` with `α>1/2`) to the full interacting spectrum,
+   then prove `∑ₙ 1/λₙ² < ∞`. Compact resolvent alone does not
+   imply this estimate.
 
-and, for each `ψ∈D(V)`, that
+### 6.3. P3 — Connect the spectrum to the canonical product
 
-```math
-R_a\bigl((M_V-aI)\psi\bigr)=\psi.
-```
+7. **Instantiate the analytic theory.** Package the positive, enumerated,
+   inverse-square-summable eigenvalues of the **full perturbed operator**
+   as an `Admissible` sequence, then apply the canonical-product and
+   zero-localization theorems from §2. A smaller onsite-only end-to-end
+   example can be developed earlier to test the Lean interfaces, but
+   must not be presented as a result for the interacting operator.
 
-The pointwise formula, bijectivity, and compactness were previously available;
-**the two inverse identities and domain membership are now formalized** in
-`SpectralGeometry/InfiniteOnsiteResolventIdentity.lean`, which imports the
-existing compact-resolvent module. No new growth hypothesis is needed.
-P1 has since been formalized in §§4.20–4.22; the current unfinished
-milestones concern **P2**, beginning with spectral isolation, exhaustion and enumeration.
+### 6.4. P4 — Verify a concrete geometric model
 
-### 6.2. P1 — Completed: interacting compact resolvent and self-adjointness
+8. **Construct a genuine tiling example.** Select an aperiodic tiling,
+   formalize its tiles, weights, potential and perturbation, and check
+   the hypotheses needed above. In particular, verify a bounded local
+   interaction model and the required potential growth; do not assume
+   these properties merely from a tiling's aperiodicity. If the existing
+   finite-color involutive-matching framework is too restrictive,
+   extend the operator framework with separately proved bounds.
 
-Write `H=M_V+B` on `D(V)`, where the interaction and perturbation
-correction `B=L_w+εP+mI` is bounded. Establish a sufficiently strong
-onsite gap `V(t)-a≥δ>0` and the quantitative estimate
-`‖R_a‖≤1/δ`. If `‖B R_a‖<1`, the formalized Neumann-series argument yields
-
-```math
-(H-aI)^{-1}=R_a\,(I+B R_a)^{-1}.
-```
-
-**The small-correction case is proved** in §4.20: the inverse maps to the natural domain, both inverse identities hold, and the bounded resolvent is compact. The hypothesis there is explicitly `‖B R_a‖<1`. The subsequent §4.21 supplies quantitative norm bounds, sufficiently negative shifts and a dedicated local-matching corollary. No conclusion is asserted for arbitrary unbounded interactions.
-
-**Quantitative milestone (P1, §4.21):** The formalized theorem establishes a general norm estimate
-`‖R_a‖≤1/δ` when `V(t)-a≥δ≥1`. Since
-`‖B R_a‖≤‖B‖‖R_a‖`, the explicit sufficient condition `‖B‖<δ`
-then gives the compact inverse constructed in §4.20. If `V(t)≥v₀`
-for all tiles, choose `δ=‖B‖+1` and `a=v₀-δ` to find a real
-spectral shift with compact inverse for **every fixed bounded B**,
-without assuming B itself is small. This says *some* sufficiently
-negative shift works; it makes no claim about resolvents at all
-spectral parameters.
-
-**Geometric specialization:** instantiate `B=L_w+εP+mI` with
-the already formalized matching-family norm estimate
-`‖L_w‖≤2DW` (for nonnegative matching weights bounded by `W`).
-The sufficient explicit gap is
-`δ>2DW+|ε|‖P‖+|m|`. The §4.21 module formalizes this bound, the existence
-of a sufficiently negative shift, and the named local-matching corollary.
-The required self-adjointness interface was subsequently formalized in §4.22.
-
-**Self-adjointness integration (P1, §4.22):** The onsite and symmetric local matching operators are now represented by Mathlib's `LinearPMap` with their unchanged natural domain. The earlier adjoint-pair equivalences give genuine `IsSelfAdjoint` theorems in this API. This satisfies the operator-interface milestone; the next priority is the **P2 spectral stage** (discreteness, finite multiplicities, and growth) under appropriate compact-resolvent and symmetry hypotheses.
-
-### 6.3. P2 — Discreteness, multiplicity, and quantitative growth
-
-**First P2 step (§4.23):** The compact bounded resolvent of the symmetric local operator has been shown to be self-adjoint. Its nonzero eigenspaces are finite-dimensional and the supremum of all its eigenspaces is dense, using Mathlib's compact self-adjoint spectral theorem. **Second P2 step (§4.24):** the nonzero resolvent eigenpair equation is now equivalent to the eigenpair equation for the unbounded local operator on its natural domain, with eigenvalue `λ=a+μ⁻¹`. **Third P2 step (§4.25):** the full unbounded operator's eigenspaces are now finite-dimensional, the chosen resolvent shift is not an eigenvalue, and symmetric local eigenvectors at distinct eigenvalues are orthogonal. **Fourth P2 step (§4.26):** Fredholm's alternative now identifies every nonzero spectral point of the compact bounded resolvent with an actual nonzero eigenpair of the full operator on `D(V)`, in both directions. **Fifth P2 step (§4.27):** the full local operator's genuine natural-domain eigenvectors now have dense linear span. The compact resolvent's zero eigenspace is trivial, so the earlier spectral totality is exhausted by eigenvectors with nonzero resolvent eigenvalue. **Sixth P2 step (§4.28):** the standard spectral norm inequality bounds the reciprocal distance `|(λ-a)⁻¹|` of any genuine full eigenvalue `λ≠a` by `‖R_a‖‖I‖` (equal to `‖R_a‖` on a nonzero Hilbert space); its contrapositive excludes all full eigenvectors sufficiently close to the chosen shift. This is not the isolation of each nonzero resolvent spectral point. Next, establish isolation of those individual spectral points, transfer it to the full operator eigenvalues, and formalize spectral enumeration. The identification of the entire unbounded `LinearPMap` spectrum remains separate; finite multiplicity alone does not imply these conclusions. A lower spectral bound and exclusion of zero are necessary for inverse powers.
-
-Next, prove an eigenvalue comparison under bounded symmetric
-perturbations, of the form
-`λₙ(M_V+B) ≥ λₙ(M_V)-‖B‖`, using an appropriately ordered
-eigenvalue enumeration and suitable multiplicity conventions. The
-power-law onsite assumptions of §4.5 are intended inputs; the
-inverse-square summability of the **full** operator's eigenvalues is a
-separate theorem, not a consequence of compact resolvent alone.
-
-### 6.4. P3–P4 — Analytic integration and concrete geometry
-
-With positive eigenvalues `λₙ` of the full operator and a checked
-summability hypothesis `∑ₙ λₙ⁻²<∞`, instantiate the existing
-`Admissible` and canonical-product theorems from §2. A smaller,
-independent end-to-end onsite example may be formalized earlier as an
-integration test, but must not be represented as a theorem about the
-interacting system.
-
-Only after the abstract spectral chain is complete should a specific
-Penrose, Ammann–Beenker, Pinwheel, Spectre, or other aperiodic geometry
-be used to **verify** the required potential growth and interaction
-hypotheses. No link to the Riemann zeta function is asserted or implied.
+The geometric construction may advance in parallel with P2–P3, but
+the final spectral and canonical-product claims must depend on
+verified hypotheses. **No identification with the Riemann zeta function
+or proof of the Riemann hypothesis is claimed.**
