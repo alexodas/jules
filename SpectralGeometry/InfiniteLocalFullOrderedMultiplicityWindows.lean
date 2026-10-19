@@ -121,7 +121,7 @@ theorem spectralTags_exists_lex_sorted_list
     have h : ofLex p = q := by
       rw [← heq]
       rfl
-    exact h ▸ hq
+    simpa only [h] using hq
   · intro hp
     exact ⟨ofLex p, hp, by simp⟩
 
