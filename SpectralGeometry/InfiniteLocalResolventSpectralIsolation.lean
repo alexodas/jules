@@ -180,4 +180,54 @@ theorem infiniteBoundedOnsiteResolvent_finite_spectrum_away_zero
     linarith
   exact ⟨hlarge, (IsCompactOperator.hasEigenvalue_iff_mem_spectrum hc hμ).mpr hspec⟩
 
+
+/-- Every nonzero real spectral point of the bounded compact interacting
+resolvent is isolated in its full real spectrum. The radius depends on
+the chosen spectral point, and the assertion includes exclusion of zero
+from the chosen ball. Symmetry is needed for spectral finiteness. -/
+theorem infiniteBoundedOnsiteResolvent_nonzero_spectrum_isolated
+    (V : Tile → ℝ) (a : ℝ) (hgap : ∀ t, 1 ≤ V t - a)
+    (hproper : ∀ R : ℝ, (infiniteOnsiteLowEnergyTiles V R).Finite)
+    (B : IsolationEnd Tile)
+    (hB : ∀ ψ φ : TileHilbert Tile,
+      inner ℝ (B ψ) φ = inner ℝ ψ (B φ))
+    (hsmall : ‖B.comp (infiniteOnsiteResolventCLM V a hgap)‖ < 1)
+    (μ : ℝ) (hμ : μ ≠ 0)
+    (_hmem : μ ∈ spectrum ℝ (infiniteBoundedOnsiteResolvent
+      V a hgap B hsmall)) :
+    ∃ r : ℝ, 0 < r ∧
+      ∀ ν : ℝ, ν ∈ spectrum ℝ
+          (infiniteBoundedOnsiteResolvent V a hgap B hsmall) →
+        dist ν μ < r → ν = μ := by
+  let R := infiniteBoundedOnsiteResolvent V a hgap B hsmall
+  let δ : ℝ := ‖μ‖ / 2
+  have hδ : 0 < δ := half_pos ((norm_pos_iff).mpr hμ)
+  let s : Set ℝ := {ν : ℝ | δ ≤ ‖ν‖ ∧ ν ∈ spectrum ℝ R}
+  have hsfin : s.Finite :=
+    infiniteBoundedOnsiteResolvent_finite_spectrum_away_zero
+      V a hgap hproper B hB hsmall δ hδ
+  have hclosed : IsClosed (s \ {μ}) :=
+    (hsfin.subset Set.diff_subset).isClosed
+  have hopen : IsOpen (s \ {μ})ᶜ := hclosed.isOpen_compl
+  have hμopen : μ ∈ (s \ {μ})ᶜ := by simp
+  obtain ⟨r, hr, hrball⟩ := Metric.isOpen_iff.mp hopen μ hμopen
+  refine ⟨min r δ, lt_min hr hδ, ?_⟩
+  intro ν hνspec hclose
+  have hdist : dist ν μ < δ :=
+    lt_of_lt_of_le hclose (min_le_right _ _)
+  have htri : ‖μ‖ ≤ ‖μ - ν‖ + ‖ν‖ := by
+    simpa [sub_eq_add_neg, add_assoc] using (norm_add_le (μ - ν) ν)
+  have hsub : ‖μ - ν‖ < δ := by
+    simpa [dist_eq_norm, norm_sub_rev] using hdist
+  have hnorm : δ ≤ ‖ν‖ := by
+    dsimp [δ] at *
+    linarith
+  have hνs : ν ∈ s := ⟨hnorm, hνspec⟩
+  have hball : ν ∈ Metric.ball μ r := by
+    apply Metric.mem_ball.mpr
+    simpa [dist_comm] using lt_of_lt_of_le hclose (min_le_left _ _)
+  have hnot : ν ∈ (s \ {μ})ᶜ := hrball hball
+  by_contra hne
+  exact hnot ⟨hνs, by simpa using hne⟩
+
 end SpectralGeometry
