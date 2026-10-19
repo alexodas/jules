@@ -892,9 +892,17 @@ This includes `b=a`, excluded from both sides by the previously checked inverse.
 
 **Precise scope:** this is a complete **real bounded-inverse spectral mapping** theorem for the natural-domain operator, under the explicit compact-resolvent assumptions. The project has not yet formalized the analogous full **complex** spectrum or a Mathlib-native spectrum API for unbounded `LinearPMap` operators. Ordering spectral values **with eigenspace multiplicities**, quantitative growth, positivity, and inverse-square summability remain separate P2 goals (§6).
 
+### 4.33. Countable eigenvalue enumeration with eigenspace multiplicity tags
+
+The new Lean module **[`SpectralGeometry/InfiniteLocalFullEigenvalueMultiplicity.lean`](SpectralGeometry/InfiniteLocalFullEigenvalueMultiplicity.lean)** extends the unordered real point-spectrum listing in §4.31. For every real spectral level other than the chosen resolvent shift, it defines the **geometric multiplicity** as the finite dimension of the genuine full-operator eigenspace from §4.25. The regular shift is assigned multiplicity zero.
+
+Instead of choosing an arbitrary number of copies of each eigenvalue, the module constructs a set of pairs `(λ, k)` with `0 ≤ k < multiplicity(λ)`, and proves that this **multiplicity-tagged point spectrum is countable** under the existing compactness and symmetry assumptions. When that set is nonempty, there is a sequence whose range is exactly this tagged set.
+
+This is an intermediate P2 result: the pairs are **not sorted**, their projection to real eigenvalues is not yet proved to be an ordered multiplicity-aware listing, and no positive spectral gap, growth bound, complex spectrum, or inverse-square summability is claimed. Such properties still require further formalization.
+
 ## 5. Building and verification
 
-The canonical import list is maintained in [`SpectralGeometry.lean`](SpectralGeometry.lean). It currently imports **38 Lean modules**: one analytic core, four finite-dimensional modules, and thirty-three infinite-dimensional modules.
+The canonical import list is maintained in [`SpectralGeometry.lean`](SpectralGeometry.lean). It currently imports **39 Lean modules**: one analytic core, four finite-dimensional modules, and thirty-four infinite-dimensional modules.
 
 - **Analytic core (1):** [`CanonicalProduct.lean`](SpectralGeometry/CanonicalProduct.lean)
 - **Finite-dimensional geometry (4):**
@@ -925,7 +933,7 @@ The canonical import list is maintained in [`SpectralGeometry.lean`](SpectralGeo
   - [`InfiniteOnsiteFiniteLowEnergy.lean`](SpectralGeometry/InfiniteOnsiteFiniteLowEnergy.lean)
   - [`InfiniteOnsiteCompactResolvent.lean`](SpectralGeometry/InfiniteOnsiteCompactResolvent.lean)
   - [`InfiniteOnsiteResolventIdentity.lean`](SpectralGeometry/InfiniteOnsiteResolventIdentity.lean)
-- **Interacting resolvents and spectral results (13):**
+- **Interacting resolvents and spectral results (14):**
   - [`InfiniteLocalCompactResolvent.lean`](SpectralGeometry/InfiniteLocalCompactResolvent.lean)
   - [`InfiniteLocalCompactResolventBounds.lean`](SpectralGeometry/InfiniteLocalCompactResolventBounds.lean)
   - [`InfiniteLocalSelfAdjointPMap.lean`](SpectralGeometry/InfiniteLocalSelfAdjointPMap.lean)
@@ -939,6 +947,7 @@ The canonical import list is maintained in [`SpectralGeometry.lean`](SpectralGeo
   - [`InfiniteLocalFullEigenvalueIsolation.lean`](SpectralGeometry/InfiniteLocalFullEigenvalueIsolation.lean)
   - [`InfiniteLocalFullEigenvalueEnumeration.lean`](SpectralGeometry/InfiniteLocalFullEigenvalueEnumeration.lean)
   - [`InfiniteLocalFullRealResolvent.lean`](SpectralGeometry/InfiniteLocalFullRealResolvent.lean)
+  - [`InfiniteLocalFullEigenvalueMultiplicity.lean`](SpectralGeometry/InfiniteLocalFullEigenvalueMultiplicity.lean)
 
 The project uses Lean 4 `v4.35.0` with its corresponding Mathlib version. Every module listed above is imported by the root entry point.
 
@@ -960,13 +969,15 @@ passes.
 ### 6.1. P2 — Discrete spectrum and eigenvalue enumeration
 
 1. **Extend and enumerate the spectrum with multiplicities.**
-   Section 4.31 gives a countable, unordered and possibly repeating
-   list of genuine real eigenvalues; §4.32 proves **real bounded-inverse
-   spectral mapping** on the original natural domain. Next, connect this
-   precise real spectral notion to a suitable **complex** unbounded
-   spectrum (or formally establish the corresponding real-spectrum
-   completeness under self-adjointness), and develop an **ordered,
-   multiplicity-aware** enumeration. Treat finite tile sets separately
+   Section 4.31 gives a countable unordered listing of genuine real eigenvalues;
+   §4.32 proves **real bounded-inverse spectral mapping** on the natural domain.
+   Section 4.33 now equips eigenvalues with their finite eigenspace dimensions
+   and proves that the multiplicity-tagged real point spectrum is countable
+   and admits an unordered listing when nonempty. Next, prove that each
+   genuine eigenvalue has **positive geometric multiplicity**, then connect
+   the precise real spectrum to a suitable **complex** unbounded spectrum
+   (or establish real-spectrum completeness under self-adjointness) and
+   develop an **ordered multiplicity-aware** enumeration. Treat finite tile sets separately
    from countably infinite ones; in the infinite lower-bounded case,
    target `λₙ → +∞`.
 
