@@ -234,10 +234,18 @@ theorem infiniteBoundedOnsite_shift_not_mem_realSpectrum
   apply ha
   apply infiniteBoundedOnsite_realRegular_of_unit V a a hgap B hsmall
   have h1 : IsUnit (1 : ShiftEnd Tile) := isUnit_one
+  have hz :
+      (0 : ℝ) • infiniteBoundedOnsiteResolvent V a hgap B hsmall =
+        (0 : ShiftEnd Tile) := by
+    apply ContinuousLinearMap.ext
+    intro f
+    change (0 : ℝ) •
+      infiniteBoundedOnsiteResolvent V a hgap B hsmall f = 0
+    exact zero_smul ℝ _
   have heq :
       (1 - (a - a) • infiniteBoundedOnsiteResolvent V a hgap B hsmall) =
         (1 : ShiftEnd Tile) := by
-    simp
+    rw [sub_self, hz, sub_zero]
   rw [heq]
   exact h1
 
