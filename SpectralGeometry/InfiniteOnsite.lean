@@ -1,4 +1,8 @@
-import SpectralGeometry.FiniteStrictPositivity
+module
+
+public import SpectralGeometry.FiniteStrictPositivity
+
+public section
 
 /-!
 # First infinite-dimensional construction: the onsite operator
