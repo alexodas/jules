@@ -42,6 +42,7 @@ import SpectralGeometry.InfiniteLocalFullRealSpectralCompleteness
 import SpectralGeometry.InfiniteLocalFullOrderedMultiplicityWindows
 import SpectralGeometry.InfiniteLocalFullGlobalOrderedEnumeration
 import SpectralGeometry.InfiniteLocalFullOrderedEigenvalueDivergence
+import SpectralGeometry.InfiniteLocalFullVariationalComparison
 
 /-!
 # Spectral Geometry
