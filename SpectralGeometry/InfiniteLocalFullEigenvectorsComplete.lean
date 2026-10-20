@@ -1,4 +1,8 @@
-import SpectralGeometry.InfiniteLocalFredholmSpectralExhaustion
+module
+
+public import SpectralGeometry.InfiniteLocalFredholmSpectralExhaustion
+
+public section
 
 /-!
 # Completeness of eigenvectors of the full unbounded local operator
