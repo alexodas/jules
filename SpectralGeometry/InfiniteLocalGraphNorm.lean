@@ -1,4 +1,8 @@
-import SpectralGeometry.InfiniteLocalCoerciveGap
+module
+
+public import SpectralGeometry.InfiniteLocalCoerciveGap
+
+public section
 
 /-!
 # Graph-norm estimates for unbounded onsite operators with local interactions
