@@ -1,5 +1,9 @@
-import SpectralGeometry.InfiniteLocalFullOrderedEigenvalueDivergence
-import SpectralGeometry.InfiniteLocalCoerciveGap
+module
+
+public import SpectralGeometry.InfiniteLocalFullOrderedEigenvalueDivergence
+public import SpectralGeometry.InfiniteLocalCoerciveGap
+
+public section
 
 /-!
 # Quadratic-form comparison for the full interacting operator
