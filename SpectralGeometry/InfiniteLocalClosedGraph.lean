@@ -1,4 +1,8 @@
-import SpectralGeometry.InfiniteLocalGraphNorm
+module
+
+public import SpectralGeometry.InfiniteLocalGraphNorm
+
+public section
 
 /-!
 # Closed graphs for infinite onsite and local geometric operators
