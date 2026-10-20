@@ -1,4 +1,8 @@
-import SpectralGeometry.InfiniteOnsite
+module
+
+public import SpectralGeometry.InfiniteOnsite
+
+public section
 
 /-!
 # Density of the natural domain of the infinite onsite operator
