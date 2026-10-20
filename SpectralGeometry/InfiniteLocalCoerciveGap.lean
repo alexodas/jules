@@ -1,4 +1,8 @@
-import SpectralGeometry.InfiniteLocalSignedPerturbationGap
+module
+
+public import SpectralGeometry.InfiniteLocalSignedPerturbationGap
+
+public section
 
 /-!
 # Coercive energy and residual gap for infinite local operators
