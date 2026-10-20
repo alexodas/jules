@@ -9,15 +9,15 @@
   are isolated, locally finite and countable, and its real bounded-inverse
   spectrum is characterized by eigenvectors under the stated hypotheses
   (§§4.20–4.32).
-- **Most recent formalized step:** a two-sided quadratic-form estimate
-  compares the full unbounded interacting operator with onsite multiplication
-  using the norm of the **whole bounded correction** (§4.39). It yields a
-  uniform lower bound, and an explicit positive gap when the onsite
-  minimum exceeds that norm, for the **full real bounded-inverse spectrum**.
-- **Next research milestone:** formalize a multiplicity-respecting
-  **min–max or eigenvalue-counting argument** identifying these variational
-  inequalities with the n-th ordered eigenvalue comparison, then establish
-  sufficient growth and inverse-square summability for the interacting spectrum.
+- **Most recent formalized step:** low-onsite-energy coordinates detect
+  every interacting eigenvector with eigenvalue λ < R−‖B‖, and the finite
+  onsite sector determines the entire geometric eigenspace injectively
+  (§4.40). Thus the geometric multiplicity of any such level is bounded
+  by the number of onsite tiles with V(t) ≤ R.
+- **Next research milestone:** combine these eigenspace-wise dimension
+  bounds across **different spectral levels** using self-adjoint
+  orthogonality and a counting/min–max principle. Only then derive the
+  indexed comparison λₙ(H) ≥ λₙ(M_V)−‖B‖ and transfer growth to summability.
 - **Still open:** the **index-wise ordered-eigenvalue comparison**,
   inverse-square summability for the full interacting operator, the
   canonical-product instantiation, and a concrete aperiodic tiling. See the [tracked roadmap](#6-roadmap-proof-status-and-next-steps).
@@ -135,7 +135,7 @@ For `c=1/2` and `d=i`, its zeros lie on the prescribed critical line, at heights
 s=\frac12\pm i\lambda_n(\varepsilon).
 ```
 
-**The line is imposed by the construction of the product, not derived from any property of the Riemann zeta function.** The formalized abstract matching-family results extend through §4.39, including real spectral exhaustion, exact multiplicity-tagged coverage, dense span of real spectral eigenspaces, a global ordered infinite tagged-eigenvalue sequence with **λₙ → +∞ under explicit assumptions**, and norm-controlled quadratic-form and real spectral-gap estimates. The multiplicity-aware **n-th eigenvalue comparison**, quantitative lower growth rates, and full-spectrum inverse-square summability remain unproved. We have not instantiated a particular aperiodic tiling, proved positive **ordered** eigenvalues with their multiplicities and inverse-square summability for the full interacting operator, or connected that spectrum to the canonical product in Lean. This project does not prove the Riemann hypothesis and does not identify `D_\varepsilon` with the zeta function.
+**The line is imposed by the construction of the product, not derived from any property of the Riemann zeta function.** The formalized abstract matching-family results extend through §4.40, including real spectral exhaustion, exact multiplicity-tagged coverage, dense span of real spectral eigenspaces, an ordered infinite tagged-eigenvalue sequence with **λₙ → +∞ under explicit assumptions**, norm-controlled form bounds, and a geometric-multiplicity bound through finite onsite-sector coordinates. The multiplicity-aware **n-th eigenvalue comparison**, quantitative lower growth rates, and full-spectrum inverse-square summability remain unproved. We have not instantiated a particular aperiodic tiling, proved positive **ordered** eigenvalues with their multiplicities and inverse-square summability for the full interacting operator, or connected that spectrum to the canonical product in Lean. This project does not prove the Riemann hypothesis and does not identify `D_\varepsilon` with the zeta function.
 
 ## 3. Finite-dimensional geometric operators
 
@@ -1061,9 +1061,31 @@ In particular, `\langle\psi,M_V\psi\rangle-\|B\|\|\psi\|^2
 
 **What is *not* yet proved:** this is the variational **form inequality** required for min–max; Lean has **not yet derived** the desired index-wise comparison `\lambda_n(H)\ge\lambda_n(M_V)-\|B\|` between the two ordered spectra. Such a theorem still requires a multiplicity-aware min–max principle or counting argument on the unbounded self-adjoint domain, with an explicit bridge to the §4.37 eigenvalue enumeration. Nor does this lemma imply a polynomial growth rate, inverse-square summability, a complex spectrum theorem, or the existence of a concrete geometric tiling. See §6.2 for these remaining tasks.
 
+### 4.40. Low-energy coordinate injection and eigenspace multiplicity counting
+
+The Lean module **[`SpectralGeometry/InfiniteLocalFullLowEnergyCounting.lean`](SpectralGeometry/InfiniteLocalFullLowEnergyCounting.lean)** advances the P2 min–max/counting program using the **full natural-domain interacting operator** `H=M_V+B` and the sharp variational estimate from §4.39.
+
+For any real threshold `R` and any `ψ∈D(V)` that vanishes on every tile where `V(t)<R`, it proves the high-energy quadratic-form bound
+
+```math
+\langle\psi,H\psi\rangle\ge (R-\|B\|)\,\|\psi\|^2.
+```
+
+Consequently, every **nonzero** eigenvector of `H` with `\lambda<R-\|B\|` must have a **nonzero coordinate** on some tile of onsite energy `V(t)<R`. Under the properness hypothesis, all such tiles belong to the **finite onsite sector** `F_R=\{t:V(t)\le R\}`.
+
+**Stronger eigenspace result:** for a fixed `\lambda<R-\|B\|` distinct from the regular resolvent shift `a`, restriction of vectors in its full finite-dimensional eigenspace `E_\lambda(H)` to the coordinates in `F_R` is an **injective linear map** into `\mathbb{R}^{F_R}`. Thus the geometric multiplicity satisfies
+
+```math
+m_H(\lambda)=\dim E_\lambda(H)\le \#\{t:V(t)\le R\}.
+```
+
+This last theorem controls the **dimension of a complete eigenspace** rather than only detecting one eigenvector. It holds without requiring a global indexed onsite-eigenvalue sequence or a new complex-spectrum construction.
+
+**Precise limitation:** the inequality above applies to *one eigenspace at a time*. It cannot simply be summed over distinct eigenvalues: to prove the desired multiplicity-aware counting inequality or `\lambda_n(H)\ge\lambda_n(M_V)-\|B\|`, the next step must control the **direct sum of all low-energy eigenspaces**, using their orthogonality under the self-adjoint hypotheses (§§4.27, 4.35) and a dimension comparison with the finite onsite sector. The final index-wise comparison, interacting inverse-square summability, and concrete tiling instantiation remain open (§6.2).
+
 ## 5. Building and verification
 
-The canonical import list is maintained in [`SpectralGeometry.lean`](SpectralGeometry.lean). It currently imports **45 Lean modules**: one analytic core, four finite-dimensional modules, and forty infinite-dimensional modules.
+The canonical import list is maintained in [`SpectralGeometry.lean`](SpectralGeometry.lean). It currently imports **46 Lean modules**: one analytic core, four finite-dimensional modules, and forty-one infinite-dimensional modules.
 
 - **Analytic core (1):** [`CanonicalProduct.lean`](SpectralGeometry/CanonicalProduct.lean)
 - **Finite-dimensional geometry (4):**
@@ -1094,7 +1116,7 @@ The canonical import list is maintained in [`SpectralGeometry.lean`](SpectralGeo
   - [`InfiniteOnsiteFiniteLowEnergy.lean`](SpectralGeometry/InfiniteOnsiteFiniteLowEnergy.lean)
   - [`InfiniteOnsiteCompactResolvent.lean`](SpectralGeometry/InfiniteOnsiteCompactResolvent.lean)
   - [`InfiniteOnsiteResolventIdentity.lean`](SpectralGeometry/InfiniteOnsiteResolventIdentity.lean)
-- **Interacting resolvents and spectral results (20):**
+- **Interacting resolvents and spectral results (21):**
   - [`InfiniteLocalCompactResolvent.lean`](SpectralGeometry/InfiniteLocalCompactResolvent.lean)
   - [`InfiniteLocalCompactResolventBounds.lean`](SpectralGeometry/InfiniteLocalCompactResolventBounds.lean)
   - [`InfiniteLocalSelfAdjointPMap.lean`](SpectralGeometry/InfiniteLocalSelfAdjointPMap.lean)
@@ -1115,6 +1137,7 @@ The canonical import list is maintained in [`SpectralGeometry.lean`](SpectralGeo
   - [`InfiniteLocalFullGlobalOrderedEnumeration.lean`](SpectralGeometry/InfiniteLocalFullGlobalOrderedEnumeration.lean)
   - [`InfiniteLocalFullOrderedEigenvalueDivergence.lean`](SpectralGeometry/InfiniteLocalFullOrderedEigenvalueDivergence.lean)
   - [`InfiniteLocalFullVariationalComparison.lean`](SpectralGeometry/InfiniteLocalFullVariationalComparison.lean)
+  - [`InfiniteLocalFullLowEnergyCounting.lean`](SpectralGeometry/InfiniteLocalFullLowEnergyCounting.lean)
 
 The project uses Lean 4 `v4.35.0` with its corresponding Mathlib version. Every module listed above is imported by the root entry point.
 
@@ -1213,12 +1236,12 @@ whole phase. An unchecked item is an **open goal**, not an established theorem.
 
 ### 6.2. P2 — Positivity, comparison, and summability
 
-**NEXT P2 quantitative target:** extend the verified **quadratic-form
-comparison** from §4.39 to an **n-th eigenvalue min–max or counting theorem
-respecting multiplicities**, then transfer sufficient onsite growth to
-inverse-square summability. The independent positive real-spectrum gap
-milestone is now proved under explicit conditions in §4.39; §4.38
-proved qualitative divergence only.
+**NEXT P2 quantitative target:** combine the verified full-operator form
+comparison (§4.39) and the low-energy eigenspace injection/rank bound
+(§4.40) into a **multi-eigenspace counting/min–max theorem** respecting
+multiplicities. This should lead to the n-th ordered-eigenvalue comparison
+and then inverse-square summability. The independent positive real-spectrum
+gap is already proved in §4.39; §4.38 proves qualitative divergence.
 
 
 **Formalized prerequisites (not the final full-spectrum estimates)**
@@ -1241,6 +1264,16 @@ proved qualitative divergence only.
   symmetry of `B`; real spectral exhaustion relies on its own explicit
   conditions. This is stronger than the earlier point-eigenvalue bounds.
 
+**Formalized low-energy counting prerequisites**
+
+- [x] **Finite-coordinate detection and per-eigenspace rank bound (§4.40).**
+  Every full eigenvector below `R−‖B‖` has a nonzero coordinate among
+  tiles with `V(t)<R`. Moreover the *entire* eigenspace injects into
+  the finite-coordinate space on `{t:V(t)≤R}`, proving
+  `m_H(λ)≤#{t:V(t)≤R}` for each `λ<R−‖B‖` distinct from the
+  resolvent shift. This does **not** yet bound the sum of multiplicities
+  across all such levels.
+
 **Open milestones**
 
 - [ ] **NEXT — Comparison of ordered eigenvalues.** Build a genuine
@@ -1249,7 +1282,9 @@ proved qualitative divergence only.
   and derive `λₙ(M_V+B) ≥ λₙ(M_V)-‖B‖` when onsite levels are
   enumerated in matching order. The sharp **quadratic-form sandwich**
   needed for this argument is already proved in §4.39; the indexed
-  spectral step itself remains open.
+  spectral step itself remains open. First control the span/direct sum
+  of all eigenspaces below a threshold via orthogonality and injectivity
+  of restriction to the finite onsite sector (§4.40).
 - [ ] **Inverse-square summability for the full operator.** Transfer suitable
   lower growth of ordered onsite levels (e.g. `Vₙ ≳ (n+1)^α` for
   `α > 1/2`) through the comparison theorem, and prove
