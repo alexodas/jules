@@ -1,4 +1,8 @@
-import SpectralGeometry.InfiniteLocalClosedGraph
+module
+
+public import SpectralGeometry.InfiniteLocalClosedGraph
+
+public section
 
 /-!
 # Adjoint-pair characterization for onsite and infinite local operators
