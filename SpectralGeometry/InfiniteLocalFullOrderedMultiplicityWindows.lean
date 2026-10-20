@@ -1,6 +1,10 @@
-import SpectralGeometry.InfiniteLocalFullRealSpectralCompleteness
-import Mathlib.Data.Finset.Sort
-import Mathlib.Order.Prod.Lex.Basic
+module
+
+public import SpectralGeometry.InfiniteLocalFullRealSpectralCompleteness
+public import Mathlib.Data.Finset.Sort
+public import Mathlib.Order.Prod.Lex.Basic
+
+public section
 
 /-!
 # Finite ordered spectral windows with geometric multiplicity
