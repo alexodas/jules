@@ -7,7 +7,9 @@ on:
 
 jobs:
   lean-and-comparator:
-    runs-on: ubuntu-latest
+    # Ubuntu 24.04's AppArmor policy blocks Bubblewrap user-namespace setup.
+    # Use Ubuntu 22.04 to run Comparator in its intended sandbox.
+    runs-on: ubuntu-22.04
     timeout-minutes: 90
     steps:
       - uses: actions/checkout@v4
