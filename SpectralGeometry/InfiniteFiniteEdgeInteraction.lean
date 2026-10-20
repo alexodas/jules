@@ -1,5 +1,9 @@
-import SpectralGeometry.InfiniteOnsiteDensity
-import Mathlib.Analysis.InnerProductSpace.l2Space
+module
+
+public import SpectralGeometry.InfiniteOnsiteDensity
+public import Mathlib.Analysis.InnerProductSpace.l2Space
+
+public section
 
 /-!
 # Finite edge interactions on an infinite square-summable state space
