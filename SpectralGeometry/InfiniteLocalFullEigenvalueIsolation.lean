@@ -1,4 +1,8 @@
-import SpectralGeometry.InfiniteLocalResolventSpectralIsolation
+module
+
+public import SpectralGeometry.InfiniteLocalResolventSpectralIsolation
+
+public section
 
 /-!
 # Isolation of genuine real eigenvalues of the full local operator
