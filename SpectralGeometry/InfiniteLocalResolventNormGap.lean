@@ -1,5 +1,9 @@
-import SpectralGeometry.InfiniteLocalFullEigenvectorsComplete
-import Mathlib.Analysis.Normed.Algebra.Spectrum
+module
+
+public import SpectralGeometry.InfiniteLocalFullEigenvectorsComplete
+public import Mathlib.Analysis.Normed.Algebra.Spectrum
+
+public section
 
 /-!
 # A quantitative spectral exclusion zone around the resolvent shift
