@@ -66,7 +66,7 @@ theorem infiniteOnsiteDiagonalContraction_apply
     (f : TileHilbert Tile) (t : Tile) :
     infiniteOnsiteDiagonalContraction c hc f t = c t * f t := rfl
 
-private theorem onsiteUnitGap_inverse_norm_le_one
+theorem onsiteUnitGap_inverse_norm_le_one
     (V : Tile → ℝ) (a : ℝ) (hgap : ∀ t, 1 ≤ V t - a)
     (t : Tile) : ‖(V t - a)⁻¹‖ ≤ 1 := by
   have hp : 0 < V t - a := lt_of_lt_of_le (by norm_num) (hgap t)
