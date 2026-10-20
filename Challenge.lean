@@ -58,7 +58,7 @@ theorem product_uniform_on_compact
     (h : Admissible q center direction)
     (K : Set ℂ) (hK : IsCompact K) :
     HasProdUniformlyOn (fun n s => factor q center direction n s)
-      (canonicalProduct q center direction) K  := by
+      (canonicalProduct q center direction) K := by
   sorry
 
 theorem factor_zero_on_line
@@ -67,7 +67,7 @@ theorem factor_zero_on_line
     (hd : direction ≠ 0)
     (n : ℕ)
     (hz : factor q center direction n s = 0) :
-    ∃ t : ℝ, s = center + direction * (t : ℂ)  := by
+    ∃ t : ℝ, s = center + direction * (t : ℂ) := by
   sorry
 
 theorem theoremC_zero_localization
@@ -75,13 +75,13 @@ theorem theoremC_zero_localization
     (h : Admissible q center direction)
     (hd : direction ≠ 0)
     (hz : canonicalProduct q center direction s = 0) :
-    ∃ t : ℝ, s = center + direction * (t : ℂ)  := by
+    ∃ t : ℝ, s = center + direction * (t : ℂ) := by
   sorry
 
 theorem admissible_of_inv_sq_summable
     {q : ℕ → ℝ} (hq : ∀ n, 0 < q n)
     (hsum : Summable (fun n => 1 / (q n) ^ 2))
-    (center direction : ℂ) : Admissible q center direction  := by
+    (center direction : ℂ) : Admissible q center direction := by
   sorry
 
 theorem factor_zero_at_positive_level
@@ -89,14 +89,14 @@ theorem factor_zero_at_positive_level
     (hq : q n ≠ 0)
     (center direction : ℂ) (hd : direction ≠ 0) :
     factor q center direction n
-      (center + direction * (q n : ℂ)) = 0  := by
+      (center + direction * (q n : ℂ)) = 0 := by
   sorry
 
 theorem canonicalProduct_zero_at_positive_level
     (q : ℕ → ℝ) (n : ℕ) (hq : q n ≠ 0)
     (center direction : ℂ) (hd : direction ≠ 0) :
     canonicalProduct q center direction
-      (center + direction * (q n : ℂ)) = 0  := by
+      (center + direction * (q n : ℂ)) = 0 := by
   sorry
 
 end
