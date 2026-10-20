@@ -1,5 +1,9 @@
-import SpectralGeometry.InfiniteLocalFullGlobalOrderedEnumeration
-import Mathlib.Order.Filter.Cofinite
+module
+
+public import SpectralGeometry.InfiniteLocalFullGlobalOrderedEnumeration
+public import Mathlib.Order.Filter.Cofinite
+
+public section
 
 /-!
 # Divergence to positive infinity of the globally ordered real spectrum
