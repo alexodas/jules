@@ -1,4 +1,8 @@
-import SpectralGeometry.InfiniteLocalFullVariationalComparison
+module
+
+public import SpectralGeometry.InfiniteLocalFullVariationalComparison
+
+public section
 
 /-!
 # Low-energy coordinate control of interacting eigenspaces
