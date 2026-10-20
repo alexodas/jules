@@ -1,5 +1,9 @@
-import SpectralGeometry.InfiniteOnsiteResolvent
-import SpectralGeometry.InfiniteOnsiteFiniteLowEnergy
+module
+
+public import SpectralGeometry.InfiniteOnsiteResolvent
+public import SpectralGeometry.InfiniteOnsiteFiniteLowEnergy
+
+public section
 
 /-!
 # The bounded and compact onsite resolvent
