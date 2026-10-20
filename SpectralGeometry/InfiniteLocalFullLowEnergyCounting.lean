@@ -133,7 +133,7 @@ theorem infiniteLocalShiftedPerturbed_lowEigenvector_observed_on_finite_sector
   obtain ⟨t, ht, hψt⟩ :=
     infiniteLocalShiftedPerturbed_eigenvector_exists_lowEnergy_coordinate
       D V σ w P ε shift R eigenvalue heigenvalue ψ heigen hψ
-  exact ⟨⟨t, Set.Finite.mem_toFinset.mpr (le_of_lt ht)⟩, hψt⟩
+  exact ⟨⟨t, (Set.Finite.mem_toFinset hfinite).2 (le_of_lt ht)⟩, hψt⟩
 
 /-- The entire real eigenspace at a spectral level below R - ‖B‖
 injects into the coordinates on the finite onsite sector V(t) ≤ R.
@@ -204,7 +204,7 @@ theorem infiniteLocalMatching_full_eigenspace_finrank_le_lowEnergyTiles
           D V σ w P ε shift R eigenvalue heigenvalue
           ψ heigen' hψne
       have htF : t ∈ F :=
-        Set.Finite.mem_toFinset.mpr (le_of_lt htlow)
+        (Set.Finite.mem_toFinset (hproper R)).2 (le_of_lt htlow)
       have htzero : coord z ⟨t, htF⟩ = 0 := by
         have hfun : coord z = 0 := hz
         exact congrArg (fun f : F → ℝ => f ⟨t, htF⟩) hfun
