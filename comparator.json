@@ -1,0 +1,22 @@
+{
+  "challenge_module": "Challenge",
+  "solution_module": "Solution",
+  "theorem_names": [
+    "SpectralGeometry.product_uniform_on_compact",
+    "SpectralGeometry.factor_zero_on_line",
+    "SpectralGeometry.theoremC_zero_localization",
+    "SpectralGeometry.admissible_of_inv_sq_summable",
+    "SpectralGeometry.factor_zero_at_positive_level",
+    "SpectralGeometry.canonicalProduct_zero_at_positive_level"
+  ],
+  "definition_names": [
+    "SpectralGeometry.perturb",
+    "SpectralGeometry.factor",
+    "SpectralGeometry.canonicalProduct"
+  ],
+  "permitted_axioms": [
+    "propext",
+    "Quot.sound",
+    "Classical.choice"
+  ]
+}
