@@ -1,5 +1,9 @@
-import SpectralGeometry.InfiniteLocalCompactResolvent
-import SpectralGeometry.InfiniteLocalClosedGraph
+module
+
+public import SpectralGeometry.InfiniteLocalCompactResolvent
+public import SpectralGeometry.InfiniteLocalClosedGraph
+
+public section
 
 /-!
 # Quantitative bounds and negative shifts for compact local resolvents
