@@ -28,7 +28,7 @@ variable {Tile : Type*}
 
 /-- The input-output graph of the unbounded onsite multiplication on its
 natural domain. Its ambient space is a product of two copies of ℓ². -/
-def infiniteOnsiteGraph (V : Tile → ℝ) :
+@[expose] def infiniteOnsiteGraph (V : Tile → ℝ) :
     Set (TileHilbert Tile × TileHilbert Tile) :=
   Set.range (fun ψ : infiniteOnsiteDomain V =>
     ((ψ.1 : TileHilbert Tile), infiniteOnsiteOperator V ψ))
@@ -90,7 +90,7 @@ theorem infiniteOnsiteGraph_isClosed (V : Tile → ℝ) :
 variable [DecidableEq Tile]
 
 /-- The bounded part added to the onsite multiplication operator. -/
-noncomputable def infiniteLocalBoundedCorrection
+@[expose] noncomputable def infiniteLocalBoundedCorrection
     (D : ℕ) (σ : Fin D → Tile ≃ Tile) (w : Fin D → ℝ)
     (P : TileHilbert Tile →L[ℝ] TileHilbert Tile)
     (ε shift : ℝ) :

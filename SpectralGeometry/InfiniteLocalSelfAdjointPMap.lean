@@ -59,7 +59,7 @@ private theorem selfAdjoint_of_pairing_iff_graph
     exact sub_eq_zero.mpr hp
 
 /-- The diagonal onsite operator in Mathlib's partial-operator API. -/
-noncomputable def infiniteOnsitePMap (V : Tile → ℝ) :
+@[expose] noncomputable def infiniteOnsitePMap (V : Tile → ℝ) :
     TileHilbert Tile →ₗ.[ℝ] TileHilbert Tile where
   domain := infiniteOnsiteDomain V
   toFun := infiniteOnsiteOperator V
@@ -98,7 +98,7 @@ theorem infiniteOnsitePMap_isSelfAdjoint (V : Tile → ℝ) :
 
 /-- The full infinite local operator on the original onsite domain,
 packaged as a Mathlib partially defined linear map. -/
-noncomputable def infiniteLocalShiftedPerturbedPMap
+@[expose] noncomputable def infiniteLocalShiftedPerturbedPMap
     (D : ℕ) (V : Tile → ℝ) (σ : Fin D → Tile ≃ Tile)
     (w : Fin D → ℝ)
     (P : TileHilbert Tile →L[ℝ] TileHilbert Tile)

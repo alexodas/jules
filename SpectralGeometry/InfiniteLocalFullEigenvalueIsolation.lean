@@ -29,7 +29,7 @@ private abbrev FullIsolationEnd (Tile : Type*) :=
 
 /-- A genuine eigenvalue of the full matching-family operator is a
 real number admitting a nonzero eigenvector in the natural onsite domain. -/
-def infiniteLocalMatchingHasFullEigenvalue
+@[expose] def infiniteLocalMatchingHasFullEigenvalue
     (D : ℕ) (V : Tile → ℝ) (σ : Fin D → Tile ≃ Tile)
     (w : Fin D → ℝ) (P : FullIsolationEnd Tile)
     (ε shift eigenvalue : ℝ) : Prop :=

@@ -47,7 +47,7 @@ theorem infiniteEdgeVector_norm_le_two (a b : Tile) :
     _ = 2 := by rw [hsingle a, hsingle b]; norm_num
 
 /-- The continuous contribution of an indexed geometric edge. -/
-noncomputable def infiniteIndexedEdgeOperator
+@[expose] noncomputable def infiniteIndexedEdgeOperator
     (ends : ℕ → Tile × Tile) (w : ℕ → ℝ) (n : ℕ) :
     TileHilbert Tile →L[ℝ] TileHilbert Tile :=
   w n • InnerProductSpace.rankOne ℝ
@@ -84,7 +84,7 @@ theorem infiniteIndexedEdgeOperators_summable
 
 /-- A true countably infinite-edge interaction operator on ℓ²(Tile).
 The edge list may repeat endpoints; no finiteness of Tile is required. -/
-noncomputable def infiniteSummableEdgeLaplacian
+@[expose] noncomputable def infiniteSummableEdgeLaplacian
     (ends : ℕ → Tile × Tile) (w : ℕ → ℝ)
     (_hw : Summable (fun n => ‖w n‖)) :
     TileHilbert Tile →L[ℝ] TileHilbert Tile :=
@@ -169,7 +169,7 @@ theorem infiniteSummableEdgeLaplacian_symmetric
 
 /-- The full (onsite + infinitely many summable edges + bounded
 perturbation) operator, on the original dense onsite domain. -/
-noncomputable def infiniteSummableEdgePerturbedOperator
+@[expose] noncomputable def infiniteSummableEdgePerturbedOperator
     (V : Tile → ℝ) (ends : ℕ → Tile × Tile) (w : ℕ → ℝ)
     (hw : Summable (fun n => ‖w n‖))
     (P : TileHilbert Tile →L[ℝ] TileHilbert Tile) (ε : ℝ) :

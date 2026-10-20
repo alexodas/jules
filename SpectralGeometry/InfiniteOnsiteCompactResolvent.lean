@@ -25,7 +25,7 @@ variable {Tile : Type*}
 
 /-- Coordinatewise multiplication by a real family bounded in absolute value
 by one is a bounded linear operator on square-summable states. -/
-noncomputable def infiniteOnsiteDiagonalContraction
+@[expose] noncomputable def infiniteOnsiteDiagonalContraction
     (c : Tile → ℝ) (hc : ∀ t : Tile, ‖c t‖ ≤ 1) :
     TileHilbert Tile →L[ℝ] TileHilbert Tile := by
   let F : TileHilbert Tile →ₗ[ℝ] TileHilbert Tile :=
@@ -76,7 +76,7 @@ private theorem onsiteUnitGap_inverse_norm_le_one
 
 /-- The onsite resolvent constructed by the coordinatewise inverse,
 with operator norm at most one. -/
-noncomputable def infiniteOnsiteResolventCLM
+@[expose] noncomputable def infiniteOnsiteResolventCLM
     (V : Tile → ℝ) (a : ℝ) (hgap : ∀ t, 1 ≤ V t - a) :
     TileHilbert Tile →L[ℝ] TileHilbert Tile :=
   infiniteOnsiteDiagonalContraction

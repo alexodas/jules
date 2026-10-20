@@ -26,7 +26,7 @@ namespace SpectralGeometry
 variable {Tile : Type*}
 
 /-- Tiles whose individual onsite energies are at most R. -/
-def infiniteOnsiteLowEnergyTiles (V : Tile → ℝ) (R : ℝ) :
+@[expose] def infiniteOnsiteLowEnergyTiles (V : Tile → ℝ) (R : ℝ) :
     Set Tile := {t | V t ≤ R}
 
 /-- An onsite eigenstate with eigenvalue at most R can only be

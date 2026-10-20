@@ -31,7 +31,7 @@ private abbrev FullEnd (Tile : Type*) :=
 `eigenvalue ≠ a`, realized by its equivalent compact-resolvent
 eigenspace. The membership theorem below identifies it with the
 actual natural-domain eigenvalue equation for the full operator. -/
-noncomputable def infiniteLocalMatchingFullEigenspace
+@[expose] noncomputable def infiniteLocalMatchingFullEigenspace
     (D : ℕ) (V : Tile → ℝ) (σ : Fin D → Tile ≃ Tile)
     (w : Fin D → ℝ) (P : FullEnd Tile)
     (ε shift a : ℝ) (hgap : ∀ t, 1 ≤ V t - a)

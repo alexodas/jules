@@ -27,13 +27,13 @@ namespace SpectralGeometry
 variable {Tile : Type*} [DecidableEq Tile]
 
 /-- The real ℓ² vector of a geometric edge (a,b). -/
-noncomputable def infiniteEdgeVector (a b : Tile) : TileHilbert Tile :=
+@[expose] noncomputable def infiniteEdgeVector (a b : Tile) : TileHilbert Tile :=
   lp.single (2 : ENNReal) a (1 : ℝ) -
     lp.single (2 : ENNReal) b (1 : ℝ)
 
 /-- A geometric edge Laplacian on the infinite Hilbert space.
 It sends ψ to w(ψ(a)-ψ(b))(δₐ-δᵦ). -/
-noncomputable def infiniteEdgeLaplacian (a b : Tile) (w : ℝ) :
+@[expose] noncomputable def infiniteEdgeLaplacian (a b : Tile) (w : ℝ) :
     TileHilbert Tile →ₗ[ℝ] TileHilbert Tile where
   toFun := fun ψ => (w * (ψ a - ψ b)) • infiniteEdgeVector a b
   map_add' := by
@@ -89,7 +89,7 @@ theorem infiniteEdgeLaplacian_energy_nonneg
 
 /-- A finite collection of weighted edges, possibly in an infinite
 tile set, acts as a linear map ℓ²(Tile) → ℓ²(Tile). -/
-noncomputable def infiniteFiniteEdgeLaplacian
+@[expose] noncomputable def infiniteFiniteEdgeLaplacian
     (edges : Finset (Tile × Tile)) (w : Tile × Tile → ℝ) :
     TileHilbert Tile →ₗ[ℝ] TileHilbert Tile :=
   ∑ e ∈ edges, infiniteEdgeLaplacian e.1 e.2 (w e)

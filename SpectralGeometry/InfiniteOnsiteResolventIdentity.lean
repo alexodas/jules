@@ -60,7 +60,7 @@ theorem infiniteOnsiteResolventCLM_mem_domain
 
 /-- The canonical domain-valued solution furnished by the bounded
 coordinatewise resolvent. -/
-noncomputable def infiniteOnsiteResolventSolution
+@[expose] noncomputable def infiniteOnsiteResolventSolution
     (V : Tile → ℝ) (a : ℝ) (hgap : ∀ t, 1 ≤ V t - a)
     (f : TileHilbert Tile) : infiniteOnsiteDomain V :=
   ⟨infiniteOnsiteResolventCLM V a hgap f,

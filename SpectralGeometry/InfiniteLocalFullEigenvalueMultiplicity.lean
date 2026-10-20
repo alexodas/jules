@@ -30,7 +30,7 @@ private abbrev MultiplicityEnd (Tile : Type*) :=
 finite dimension of its genuine eigenspace (identified with the compact
 resolvent eigenspace). The regular resolvent shift has multiplicity zero.
 This definition uses the compactness hypotheses to justify finrank. -/
-noncomputable def infiniteLocalMatchingFullMultiplicity
+@[expose] noncomputable def infiniteLocalMatchingFullMultiplicity
     (D : ℕ) (V : Tile → ℝ) (σ : Fin D → Tile ≃ Tile)
     (w : Fin D → ℝ) (P : MultiplicityEnd Tile)
     (ε shift a : ℝ) (hgap : ∀ t, 1 ≤ V t - a)
@@ -61,7 +61,7 @@ theorem infiniteLocalMatchingFullMultiplicity_at_shift
 
 /-- A multiplicity tag is a real eigenvalue together with a natural
 number strictly smaller than its finite eigenspace dimension. -/
-def infiniteLocalMatchingFullMultiplicityTags
+@[expose] def infiniteLocalMatchingFullMultiplicityTags
     (D : ℕ) (V : Tile → ℝ) (σ : Fin D → Tile ≃ Tile)
     (w : Fin D → ℝ) (P : MultiplicityEnd Tile)
     (ε shift a : ℝ) (hgap : ∀ t, 1 ≤ V t - a)
