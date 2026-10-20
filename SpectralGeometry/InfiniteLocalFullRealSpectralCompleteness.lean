@@ -1,4 +1,8 @@
-import SpectralGeometry.InfiniteLocalFullEigenvalueMultiplicityCoverage
+module
+
+public import SpectralGeometry.InfiniteLocalFullEigenvalueMultiplicityCoverage
+
+public section
 
 /-!
 # Real spectral completeness for the interacting matching-family operator
