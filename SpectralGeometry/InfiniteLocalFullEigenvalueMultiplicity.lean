@@ -1,5 +1,9 @@
-import SpectralGeometry.InfiniteLocalFullRealResolvent
-import Mathlib.Data.Set.Countable
+module
+
+public import SpectralGeometry.InfiniteLocalFullRealResolvent
+public import Mathlib.Data.Set.Countable
+
+public section
 
 /-!
 # Countable spectral enumeration with eigenspace multiplicity tags
