@@ -1,5 +1,9 @@
-import SpectralGeometry.InfiniteLocalCompactResolventBounds
-import Mathlib.Analysis.InnerProductSpace.LinearPMap
+module
+
+public import SpectralGeometry.InfiniteLocalCompactResolventBounds
+public import Mathlib.Analysis.InnerProductSpace.LinearPMap
+
+public section
 
 /-!
 # Genuine self-adjoint unbounded operators in Mathlib's LinearPMap API
