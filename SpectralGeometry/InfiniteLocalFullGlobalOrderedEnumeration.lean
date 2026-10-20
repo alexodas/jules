@@ -1,5 +1,9 @@
-import SpectralGeometry.InfiniteLocalFullOrderedMultiplicityWindows
-import Mathlib.Order.OrderIsoNat
+module
+
+public import SpectralGeometry.InfiniteLocalFullOrderedMultiplicityWindows
+public import Mathlib.Order.OrderIsoNat
+
+public section
 
 /-!
 # Globally ordered infinite real eigenvalue enumeration with geometric multiplicities
