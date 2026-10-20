@@ -1,7 +1,11 @@
-import SpectralGeometry.InfiniteBoundedPerturbation
-import Mathlib.Analysis.InnerProductSpace.LinearMap
-import Mathlib.Analysis.Normed.Operator.Bilinear
-import Mathlib.Topology.Algebra.InfiniteSum.ContinuousEval
+module
+
+public import SpectralGeometry.InfiniteBoundedPerturbation
+public import Mathlib.Analysis.InnerProductSpace.LinearMap
+public import Mathlib.Analysis.Normed.Operator.Bilinear
+public import Mathlib.Topology.Algebra.InfiniteSum.ContinuousEval
+
+public section
 
 /-!
 # Countably many summable geometric interactions on an infinite Hilbert space
