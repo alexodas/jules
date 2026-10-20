@@ -1,0 +1,111 @@
+{
+  "version": "v0.4",
+  "project": {
+    "name": "Jules Spectral Geometry — canonical-product zero localization",
+    "description": "The Jules Lean 4 project studies conditional spectral properties of geometric operators and a related family of regularized canonical products. This Palomar Comparator entry selects only the self-contained canonical-product strand: for explicitly paired quadratic factors, a compact-wise summable majorant gives uniform product convergence; all zeros of the constructed product lie on a prescribed affine real line in the complex plane. Summability of inverse-square positive levels suffices for admissibility, and each nonzero level produces a zero. The zero line is built into the factors and is not a statement about Riemann zeta. Connecting levels to a specific geometric operator's spectrum and proving required eigenvalue summability remain open. No historical novelty or Riemann hypothesis result is claimed.",
+    "authors": [
+      "Alessandro Odasso"
+    ],
+    "license": "Apache-2.0",
+    "responsible_maintainers": [
+      "Alessandro Odasso"
+    ]
+  },
+  "repository": {
+    "role": "substantive-development"
+  },
+  "classification": {
+    "arxiv": [
+      "math.CV",
+      "math.SP"
+    ],
+    "msc2020": [
+      "30D20",
+      "47A10"
+    ]
+  },
+  "sources": [
+    {
+      "title": "Mathlib4 analytic infinite-product library",
+      "id": "https://github.com/leanprover-community/mathlib4",
+      "type": "other",
+      "relationship": "adapts",
+      "note": "The formalization specializes general Mathlib infinite-product, summability and compact-uniform convergence lemmas to explicitly paired factors. These results are classical; this source describes the formal library dependencies rather than claiming research priority."
+    }
+  ],
+  "status": {
+    "scope": "Six selected canonical-product theorems and three explicit definitions in SpectralGeometry/CanonicalProduct.lean; the remaining spectral-geometry development is not included in this one Comparator selection. Existing source proofs precede this packaging, but the Palomar port and Comparator have not yet been mechanically verified.",
+    "sorry_count": 0,
+    "sorry_in_definitions": 0,
+    "axioms": [
+      "propext",
+      "Quot.sound",
+      "Classical.choice"
+    ]
+  },
+  "automation": {
+    "methods": [
+      {
+        "method": "agent",
+        "models": [
+          "OpenAI ChatGPT GPT-6"
+        ],
+        "framework": "ChatGPT",
+        "tool_setup": "AI-assisted preparation of Palomar metadata, independent theorem statements, module migration and Comparator configuration using the GitHub connector.",
+        "prompting_notes": "The maintainer requested submission packaging for an existing Lean development; this note does not attribute all earlier proof construction to this assistant."
+      }
+    ],
+    "spend_usd": "not tracked",
+    "notes": "Existing development provenance and review status require maintainer confirmation. The independent Challenge contains intentional sorry placeholders that are not admitted proofs in the Solution."
+  },
+  "fidelity": {
+    "divergences": "The selected theorem statements and three definitions mirror the source canonical-product module. The product zeros lie on a chosen line by construction, not as a discovery about an unrelated analytic function. The spectral results elsewhere in the repository are outside this Comparator configuration."
+  },
+  "review": {
+    "status": "submission preparation, not independently peer-reviewed",
+    "reviewers": [],
+    "notes": "Local Lean and Comparator checks have not yet been recorded for this branch. Scientific originality and research interest have not been independently established."
+  },
+  "alignment": {
+    "namespace": "SpectralGeometry",
+    "statements": [
+      {
+        "source": "Summable compact majorants yield locally uniform convergence of the canonical product.",
+        "lean": "SpectralGeometry.product_uniform_on_compact",
+        "module": "SpectralGeometry.CanonicalProduct",
+        "status": "existing source proof; Palomar comparator validation pending"
+      },
+      {
+        "source": "Zero of an individual factor lies on the prescribed complex affine real line.",
+        "lean": "SpectralGeometry.factor_zero_on_line",
+        "module": "SpectralGeometry.CanonicalProduct",
+        "status": "existing source proof; Palomar comparator validation pending"
+      },
+      {
+        "source": "Every zero of the infinite product lies on the prescribed affine real line.",
+        "lean": "SpectralGeometry.theoremC_zero_localization",
+        "module": "SpectralGeometry.CanonicalProduct",
+        "status": "existing source proof; Palomar comparator validation pending"
+      },
+      {
+        "source": "Positive levels with summable inverse squares satisfy the compact-majorant criterion.",
+        "lean": "SpectralGeometry.admissible_of_inv_sq_summable",
+        "module": "SpectralGeometry.CanonicalProduct",
+        "status": "existing source proof; Palomar comparator validation pending"
+      },
+      {
+        "source": "A nonzero prescribed level is a zero of its paired quadratic factor.",
+        "lean": "SpectralGeometry.factor_zero_at_positive_level",
+        "module": "SpectralGeometry.CanonicalProduct",
+        "status": "existing source proof; Palomar comparator validation pending"
+      },
+      {
+        "source": "A nonzero prescribed level is a zero of the infinite canonical product.",
+        "lean": "SpectralGeometry.canonicalProduct_zero_at_positive_level",
+        "module": "SpectralGeometry.CanonicalProduct",
+        "status": "existing source proof; Palomar comparator validation pending"
+      }
+    ]
+  },
+  "acknowledgements": "Lean, Mathlib and PalomarTemplate. Their maintainers do not endorse this submission."
+}
