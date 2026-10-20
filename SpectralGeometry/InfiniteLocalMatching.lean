@@ -1,5 +1,9 @@
-import SpectralGeometry.InfiniteBoundedPerturbation
-import Mathlib.Analysis.InnerProductSpace.l2Space
+module
+
+public import SpectralGeometry.InfiniteBoundedPerturbation
+public import Mathlib.Analysis.InnerProductSpace.l2Space
+
+public section
 
 /-!
 # Infinite local matching interactions on ℓ²
