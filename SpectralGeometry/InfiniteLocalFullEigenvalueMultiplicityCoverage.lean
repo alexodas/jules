@@ -1,4 +1,8 @@
-import SpectralGeometry.InfiniteLocalFullEigenvalueMultiplicity
+module
+
+public import SpectralGeometry.InfiniteLocalFullEigenvalueMultiplicity
+
+public section
 
 /-!
 # Positive geometric multiplicity and exact coverage by multiplicity tags
