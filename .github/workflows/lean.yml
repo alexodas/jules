@@ -16,9 +16,15 @@ jobs:
         run: |
           curl -sSf https://raw.githubusercontent.com/leanprover/elan/master/elan-init.sh | sh -s -- -y
           echo "$HOME/.elan/bin" >> "$GITHUB_PATH"
-      - name: Generate manifest and download Mathlib
+      - name: Ensure pinned Lean toolchain (retry transient downloads)
         run: |
-          lake update
-          lake exe cache get
+          for attempt in 1 2 3 4 5; do
+            if lake --version; then exit 0; fi
+            echo "Lean download failed; retry $attempt/5"
+            sleep $((5 * attempt))
+          done
+          exit 1
+      - name: Download pinned Mathlib cache
+        run: lake exe cache get
       - name: Compile and kernel-check Lean proof
         run: lake build
