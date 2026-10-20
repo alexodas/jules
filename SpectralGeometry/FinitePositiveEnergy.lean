@@ -1,4 +1,8 @@
-import SpectralGeometry.FinitePerturbation
+module
+
+public import SpectralGeometry.FinitePerturbation
+
+public section
 
 /-!
 # Nonnegative quadratic energy under controlled perturbations
