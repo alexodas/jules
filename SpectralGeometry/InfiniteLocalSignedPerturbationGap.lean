@@ -1,4 +1,8 @@
-import SpectralGeometry.InfiniteLocalEigenvalueBounds
+module
+
+public import SpectralGeometry.InfiniteLocalEigenvalueBounds
+
+public section
 
 /-!
 # Stability of the point-spectrum lower bound under signed bounded perturbations
