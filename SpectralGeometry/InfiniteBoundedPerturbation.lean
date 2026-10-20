@@ -1,4 +1,8 @@
-import SpectralGeometry.InfiniteFiniteEdgeInteraction
+module
+
+public import SpectralGeometry.InfiniteFiniteEdgeInteraction
+
+public section
 
 /-!
 # A common infinite domain for onsite, edge, and bounded perturbation terms
