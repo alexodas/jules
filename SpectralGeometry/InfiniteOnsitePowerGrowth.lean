@@ -1,4 +1,8 @@
-import SpectralGeometry.InfiniteOnsiteSummability
+module
+
+public import SpectralGeometry.InfiniteOnsiteSummability
+
+public section
 
 /-!
 # Power-law onsite energies: the inverse-square threshold
