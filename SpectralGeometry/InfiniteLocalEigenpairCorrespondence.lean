@@ -24,7 +24,7 @@ namespace SpectralGeometry
 
 variable {Tile : Type*} [DecidableEq Tile]
 
-private abbrev CorrespondenceEnd (Tile : Type*) :=
+abbrev CorrespondenceEnd (Tile : Type*) :=
   TileHilbert Tile →L[ℝ] TileHilbert Tile
 
 /-- A nonzero eigenvalue μ of the bounded resolvent corresponds to

@@ -28,7 +28,7 @@ namespace SpectralGeometry
 
 variable {Tile : Type*}
 
-private abbrev OnsiteEnd (Tile : Type*) :=
+abbrev OnsiteEnd (Tile : Type*) :=
   TileHilbert Tile →L[ℝ] TileHilbert Tile
 
 /-- The bounded shift of onsite multiplication by a continuous correction,

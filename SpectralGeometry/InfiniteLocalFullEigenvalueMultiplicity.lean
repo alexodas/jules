@@ -23,7 +23,7 @@ namespace SpectralGeometry
 
 variable {Tile : Type*} [DecidableEq Tile]
 
-private abbrev MultiplicityEnd (Tile : Type*) :=
+abbrev MultiplicityEnd (Tile : Type*) :=
   TileHilbert Tile →L[ℝ] TileHilbert Tile
 
 /-- The geometric multiplicity of a real full-operator eigenvalue is the

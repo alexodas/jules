@@ -34,7 +34,7 @@ namespace SpectralGeometry
 
 variable {Tile : Type*} [DecidableEq Tile]
 
-private abbrev ComparisonEnd (Tile : Type*) :=
+abbrev ComparisonEnd (Tile : Type*) :=
   TileHilbert Tile →L[ℝ] TileHilbert Tile
 
 /-- The bounded correction changes the full quadratic form by at most

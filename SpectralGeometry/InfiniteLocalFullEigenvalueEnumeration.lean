@@ -22,7 +22,7 @@ namespace SpectralGeometry
 
 variable {Tile : Type*} [DecidableEq Tile]
 
-private abbrev EnumerationEnd (Tile : Type*) :=
+abbrev EnumerationEnd (Tile : Type*) :=
   TileHilbert Tile →L[ℝ] TileHilbert Tile
 
 /-- Under the compact self-adjoint resolvent assumptions, the set of

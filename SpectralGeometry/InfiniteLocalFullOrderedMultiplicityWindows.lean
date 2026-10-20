@@ -31,7 +31,7 @@ namespace SpectralGeometry
 
 variable {Tile : Type*} [DecidableEq Tile]
 
-private abbrev OrderedWindowEnd (Tile : Type*) :=
+abbrev OrderedWindowEnd (Tile : Type*) :=
   TileHilbert Tile →L[ℝ] TileHilbert Tile
 
 /-- The finite eigenspace dimensions imply that a finite set of genuine

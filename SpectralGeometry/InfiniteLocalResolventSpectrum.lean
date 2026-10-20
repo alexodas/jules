@@ -27,7 +27,7 @@ namespace SpectralGeometry
 
 variable {Tile : Type*} [DecidableEq Tile]
 
-private abbrev SpectralEnd (Tile : Type*) :=
+abbrev SpectralEnd (Tile : Type*) :=
   TileHilbert Tile →L[ℝ] TileHilbert Tile
 
 /-- Adding any bounded symmetric correction to the shifted

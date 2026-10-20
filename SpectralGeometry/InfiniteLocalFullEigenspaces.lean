@@ -24,7 +24,7 @@ namespace SpectralGeometry
 
 variable {Tile : Type*} [DecidableEq Tile]
 
-private abbrev FullEnd (Tile : Type*) :=
+abbrev FullEnd (Tile : Type*) :=
   TileHilbert Tile →L[ℝ] TileHilbert Tile
 
 /-- The eigenspace of the full unbounded matching operator at

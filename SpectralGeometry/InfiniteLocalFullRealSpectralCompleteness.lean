@@ -29,7 +29,7 @@ namespace SpectralGeometry
 
 variable {Tile : Type*} [DecidableEq Tile]
 
-private abbrev RealCompleteEnd (Tile : Type*) :=
+abbrev RealCompleteEnd (Tile : Type*) :=
   TileHilbert Tile →L[ℝ] TileHilbert Tile
 
 /-- Full real bounded-inverse spectral membership is equivalent to

@@ -28,7 +28,7 @@ namespace SpectralGeometry
 
 variable {Tile : Type*} [DecidableEq Tile]
 
-private abbrev GapEnd (Tile : Type*) :=
+abbrev GapEnd (Tile : Type*) :=
   TileHilbert Tile →L[ℝ] TileHilbert Tile
 
 /-- A genuine full-operator eigenvalue at λ ≠ a has inverse

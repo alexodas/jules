@@ -24,7 +24,7 @@ open Filter Topology Metric
 
 variable {Tile : Type*} [DecidableEq Tile]
 
-private abbrev FullIsolationEnd (Tile : Type*) :=
+abbrev FullIsolationEnd (Tile : Type*) :=
   TileHilbert Tile →L[ℝ] TileHilbert Tile
 
 /-- A genuine eigenvalue of the full matching-family operator is a

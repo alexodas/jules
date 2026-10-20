@@ -32,7 +32,7 @@ open Filter Topology Metric
 
 variable {Tile : Type*} [DecidableEq Tile]
 
-private abbrev IsolationEnd (Tile : Type*) :=
+abbrev IsolationEnd (Tile : Type*) :=
   TileHilbert Tile →L[ℝ] TileHilbert Tile
 
 /-- A compact operator cannot have infinitely many orthonormal eigenvectors

@@ -77,7 +77,7 @@ theorem exists_strictMono_surjective_of_finite_predecessors
 
 variable {Tile : Type*} [DecidableEq Tile]
 
-private abbrev GlobalOrderedEnd (Tile : Type*) :=
+abbrev GlobalOrderedEnd (Tile : Type*) :=
   TileHilbert Tile →L[ℝ] TileHilbert Tile
 
 /-- If every genuine real eigenvalue is ≥ the specified real bound,

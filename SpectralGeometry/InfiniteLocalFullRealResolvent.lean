@@ -25,7 +25,7 @@ namespace SpectralGeometry
 
 variable {Tile : Type*} [DecidableEq Tile]
 
-private abbrev ShiftEnd (Tile : Type*) :=
+abbrev ShiftEnd (Tile : Type*) :=
   TileHilbert Tile →L[ℝ] TileHilbert Tile
 
 /-- A real parameter belongs to the bounded-resolvent set of the full

@@ -27,7 +27,7 @@ namespace SpectralGeometry
 
 variable {Tile : Type*} [DecidableEq Tile]
 
-private abbrev FredholmEnd (Tile : Type*) :=
+abbrev FredholmEnd (Tile : Type*) :=
   TileHilbert Tile →L[ℝ] TileHilbert Tile
 
 /-- A nonzero point μ of the compact full local resolvent's spectrum

@@ -26,7 +26,7 @@ namespace SpectralGeometry
 
 variable {Tile : Type*} [DecidableEq Tile]
 
-private abbrev QuantEnd (Tile : Type*) :=
+abbrev QuantEnd (Tile : Type*) :=
   TileHilbert Tile →L[ℝ] TileHilbert Tile
 
 /-- The onsite resolvent norm improves from one to the reciprocal of

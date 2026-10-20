@@ -40,7 +40,7 @@ theorem real_tendsto_atTop_of_finite_sublevel_indices
 
 variable {Tile : Type*} [DecidableEq Tile]
 
-private abbrev DivergenceEnd (Tile : Type*) :=
+abbrev DivergenceEnd (Tile : Type*) :=
   TileHilbert Tile →L[ℝ] TileHilbert Tile
 
 /-- For any *injective* global tagged enumeration of the full real

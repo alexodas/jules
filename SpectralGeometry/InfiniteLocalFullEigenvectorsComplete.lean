@@ -26,7 +26,7 @@ namespace SpectralGeometry
 
 variable {Tile : Type*} [DecidableEq Tile]
 
-private abbrev CompleteEnd (Tile : Type*) :=
+abbrev CompleteEnd (Tile : Type*) :=
   TileHilbert Tile →L[ℝ] TileHilbert Tile
 
 /-- The compact interacting resolvent has trivial kernel because its
