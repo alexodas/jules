@@ -1,5 +1,9 @@
-import SpectralGeometry.InfiniteLocalFullEigenvalueIsolation
-import Mathlib.Data.Set.Countable
+module
+
+public import SpectralGeometry.InfiniteLocalFullEigenvalueIsolation
+public import Mathlib.Data.Set.Countable
+
+public section
 
 /-!
 # Countable enumeration of the real point spectrum of the full local operator
