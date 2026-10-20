@@ -1,5 +1,9 @@
-import SpectralGeometry.InfiniteLocalFullEigenspaces
-import Mathlib.Analysis.Normed.Operator.Compact.FredholmAlternative
+module
+
+public import SpectralGeometry.InfiniteLocalFullEigenspaces
+public import Mathlib.Analysis.Normed.Operator.Compact.FredholmAlternative
+
+public section
 
 /-!
 # Fredholm spectral exhaustion for the full infinite local matching operator
