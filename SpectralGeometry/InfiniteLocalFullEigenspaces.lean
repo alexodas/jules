@@ -1,4 +1,8 @@
-import SpectralGeometry.InfiniteLocalEigenpairCorrespondence
+module
+
+public import SpectralGeometry.InfiniteLocalEigenpairCorrespondence
+
+public section
 
 /-!
 # Finite multiplicity and orthogonality of full infinite local eigenvectors
