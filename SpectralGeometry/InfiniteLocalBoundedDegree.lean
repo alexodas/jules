@@ -1,4 +1,8 @@
-import SpectralGeometry.InfiniteLocalMatching
+module
+
+public import SpectralGeometry.InfiniteLocalMatching
+
+public section
 
 /-!
 # Uniformly bounded local degree via finitely many infinite matchings
