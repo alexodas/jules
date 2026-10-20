@@ -1,4 +1,8 @@
-import SpectralGeometry.InfiniteLocalResolventSpectrum
+module
+
+public import SpectralGeometry.InfiniteLocalResolventSpectrum
+
+public section
 
 /-!
 # Eigenpair correspondence between the compact resolvent and the full local operator
