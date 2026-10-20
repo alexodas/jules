@@ -1,5 +1,9 @@
-import SpectralGeometry.InfiniteLocalSelfAdjointPMap
-import Mathlib.Analysis.InnerProductSpace.Spectrum
+module
+
+public import SpectralGeometry.InfiniteLocalSelfAdjointPMap
+public import Mathlib.Analysis.InnerProductSpace.Spectrum
+
+public section
 
 /-!
 # First spectral consequences of compact self-adjoint local resolvents
