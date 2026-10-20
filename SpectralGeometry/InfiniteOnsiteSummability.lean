@@ -1,5 +1,9 @@
-import SpectralGeometry.CanonicalProduct
-import SpectralGeometry.InfiniteOnsiteEigenvalues
+module
+
+public import SpectralGeometry.CanonicalProduct
+public import SpectralGeometry.InfiniteOnsiteEigenvalues
+
+public section
 
 /-!
 # Linear growth of infinite onsite energies and inverse-square summability
