@@ -1,4 +1,8 @@
-import SpectralGeometry.InfiniteOnsiteCompactResolvent
+module
+
+public import SpectralGeometry.InfiniteOnsiteCompactResolvent
+
+public section
 
 /-!
 # The bounded onsite resolvent is the inverse on the natural domain
