@@ -1,4 +1,8 @@
-import SpectralGeometry.FiniteGeometricEnergy
+module
+
+public import SpectralGeometry.FiniteGeometricEnergy
+
+public section
 
 /-!
 # Strictly positive finite geometric energy and eigenvalues
