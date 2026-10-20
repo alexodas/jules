@@ -1,4 +1,8 @@
-import SpectralGeometry.InfiniteOnsiteResolventIdentity
+module
+
+public import SpectralGeometry.InfiniteOnsiteResolventIdentity
+
+public section
 
 /-!
 # Compact resolvent for bounded perturbations of proper onsite multiplication
