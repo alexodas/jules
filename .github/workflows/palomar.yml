@@ -1,0 +1,28 @@
+name: Palomar preparation checks
+on:
+  push:
+    branches: [main, "palomar/**"]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  lean-and-comparator:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install elan and Lean
+        run: |
+          curl -sSf https://raw.githubusercontent.com/leanprover/elan/master/elan-init.sh | sh -s -- -y
+          echo "$HOME/.elan/bin" >> "$GITHUB_PATH"
+      - name: Static packaging checks
+        run: python3 scripts/check-palomar-layout.py
+      - name: Fetch Mathlib cache
+        run: lake exe cache get
+      - name: Build proofs and statement modules
+        run: lake build
+      - name: Run Comparator (bundled kernels)
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y bubblewrap
+          bash scripts/verify-comparator.sh
