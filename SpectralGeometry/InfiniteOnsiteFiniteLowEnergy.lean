@@ -1,5 +1,9 @@
-import SpectralGeometry.InfiniteLocalAdjointCharacterization
-import SpectralGeometry.InfiniteOnsiteEigenvalues
+module
+
+public import SpectralGeometry.InfiniteLocalAdjointCharacterization
+public import SpectralGeometry.InfiniteOnsiteEigenvalues
+
+public section
 
 /-!
 # Finite low-energy sectors of the infinite onsite operator
