@@ -1,4 +1,8 @@
-import SpectralGeometry.InfiniteLocalFullEigenvalueEnumeration
+module
+
+public import SpectralGeometry.InfiniteLocalFullEigenvalueEnumeration
+
+public section
 
 /-!
 # Bounded inverses for new real shifts of the full unbounded local operator
