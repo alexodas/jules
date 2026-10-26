@@ -1,8 +1,12 @@
-import SpectralGeometry.InfiniteLocalResolventNormGap
-import Mathlib.Analysis.Normed.Module.FiniteDimension
-import Mathlib.Analysis.InnerProductSpace.Orthonormal
-import Mathlib.Data.Set.Finite.Basic
-import Mathlib.Data.Finset.Max
+module
+
+public import SpectralGeometry.InfiniteLocalResolventNormGap
+public import Mathlib.Analysis.Normed.Module.FiniteDimension
+public import Mathlib.Analysis.InnerProductSpace.Orthonormal
+public import Mathlib.Data.Set.Finite.Basic
+public import Mathlib.Data.Finset.Max
+
+public section
 
 /-!
 # Isolation of nonzero spectral points of compact local resolvents
@@ -28,7 +32,7 @@ open Filter Topology Metric
 
 variable {Tile : Type*} [DecidableEq Tile]
 
-private abbrev IsolationEnd (Tile : Type*) :=
+abbrev IsolationEnd (Tile : Type*) :=
   TileHilbert Tile →L[ℝ] TileHilbert Tile
 
 /-- A compact operator cannot have infinitely many orthonormal eigenvectors

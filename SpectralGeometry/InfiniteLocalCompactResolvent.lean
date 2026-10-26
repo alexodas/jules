@@ -1,4 +1,8 @@
-import SpectralGeometry.InfiniteOnsiteResolventIdentity
+module
+
+public import SpectralGeometry.InfiniteOnsiteResolventIdentity
+
+public section
 
 /-!
 # Compact resolvent for bounded perturbations of proper onsite multiplication
@@ -24,19 +28,19 @@ namespace SpectralGeometry
 
 variable {Tile : Type*}
 
-private abbrev OnsiteEnd (Tile : Type*) :=
+abbrev OnsiteEnd (Tile : Type*) :=
   TileHilbert Tile →L[ℝ] TileHilbert Tile
 
 /-- The bounded shift of onsite multiplication by a continuous correction,
 defined on the unchanged natural onsite domain. -/
-noncomputable def infiniteBoundedOnsiteShift
+@[expose] noncomputable def infiniteBoundedOnsiteShift
     (V : Tile → ℝ) (a : ℝ) (B : OnsiteEnd Tile)
     (ψ : infiniteOnsiteDomain V) : TileHilbert Tile :=
   infiniteOnsiteOperator V ψ - a • (ψ.1 : TileHilbert Tile) + B ψ.1
 
 /-- A Neumann-series unit for the bounded correction to the onsite
 resolvent under the quantitative smallness hypothesis. -/
-noncomputable def infiniteBoundedOnsiteCorrectionUnit
+@[expose] noncomputable def infiniteBoundedOnsiteCorrectionUnit
     (V : Tile → ℝ) (a : ℝ) (hgap : ∀ t, 1 ≤ V t - a)
     (B : OnsiteEnd Tile)
     (hsmall : ‖B.comp (infiniteOnsiteResolventCLM V a hgap)‖ < 1) :
@@ -76,7 +80,7 @@ private theorem inverse_one_plus_apply_left
 
 /-- The full bounded resolvent obtained by composing the compact onsite
 resolvent with the inverse of the Neumann-series correction. -/
-noncomputable def infiniteBoundedOnsiteResolvent
+@[expose] noncomputable def infiniteBoundedOnsiteResolvent
     (V : Tile → ℝ) (a : ℝ) (hgap : ∀ t, 1 ≤ V t - a)
     (B : OnsiteEnd Tile)
     (hsmall : ‖B.comp (infiniteOnsiteResolventCLM V a hgap)‖ < 1) :
@@ -87,7 +91,7 @@ noncomputable def infiniteBoundedOnsiteResolvent
 
 /-- The corrected resolvent takes values in the unbounded onsite
 domain, so the full shifted equation makes sense. -/
-noncomputable def infiniteBoundedOnsiteResolventSolution
+@[expose] noncomputable def infiniteBoundedOnsiteResolventSolution
     (V : Tile → ℝ) (a : ℝ) (hgap : ∀ t, 1 ≤ V t - a)
     (B : OnsiteEnd Tile)
     (hsmall : ‖B.comp (infiniteOnsiteResolventCLM V a hgap)‖ < 1)

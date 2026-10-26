@@ -1,4 +1,8 @@
-import SpectralGeometry.InfiniteOnsiteDensity
+module
+
+public import SpectralGeometry.InfiniteOnsiteDensity
+
+public section
 
 /-!
 # Point spectrum of the infinite onsite operator

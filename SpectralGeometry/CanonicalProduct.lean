@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+public section
 
 /-!
 # Canonical product: zeros on a prescribed line
@@ -20,15 +24,15 @@ namespace SpectralGeometry
 noncomputable section
 
 /-- The perturbation of 1 in the paired canonical factor. -/
-def perturb (q : ℕ → ℝ) (center direction : ℂ) (n : ℕ) (s : ℂ) : ℂ :=
+@[expose] def perturb (q : ℕ → ℝ) (center direction : ℂ) (n : ℕ) (s : ℂ) : ℂ :=
   -(((s - center) / direction) ^ 2 / ((q n : ℂ) ^ 2))
 
 /-- A factor corresponding to the symmetric geometric levels `±q n`. -/
-def factor (q : ℕ → ℝ) (center direction : ℂ) (n : ℕ) (s : ℂ) : ℂ :=
+@[expose] def factor (q : ℕ → ℝ) (center direction : ℂ) (n : ℕ) (s : ℂ) : ℂ :=
   1 + perturb q center direction n s
 
 /-- The infinite paired (regularized) product. -/
-def canonicalProduct (q : ℕ → ℝ) (center direction : ℂ) (s : ℂ) : ℂ :=
+@[expose] def canonicalProduct (q : ℕ → ℝ) (center direction : ℂ) (s : ℂ) : ℂ :=
   ∏' n : ℕ, factor q center direction n s
 
 /--

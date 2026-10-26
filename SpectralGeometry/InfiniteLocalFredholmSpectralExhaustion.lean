@@ -1,5 +1,9 @@
-import SpectralGeometry.InfiniteLocalFullEigenspaces
-import Mathlib.Analysis.Normed.Operator.Compact.FredholmAlternative
+module
+
+public import SpectralGeometry.InfiniteLocalFullEigenspaces
+public import Mathlib.Analysis.Normed.Operator.Compact.FredholmAlternative
+
+public section
 
 /-!
 # Fredholm spectral exhaustion for the full infinite local matching operator
@@ -23,7 +27,7 @@ namespace SpectralGeometry
 
 variable {Tile : Type*} [DecidableEq Tile]
 
-private abbrev FredholmEnd (Tile : Type*) :=
+abbrev FredholmEnd (Tile : Type*) :=
   TileHilbert Tile →L[ℝ] TileHilbert Tile
 
 /-- A nonzero point μ of the compact full local resolvent's spectrum

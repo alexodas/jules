@@ -1,4 +1,8 @@
-import SpectralGeometry.InfiniteLocalFredholmSpectralExhaustion
+module
+
+public import SpectralGeometry.InfiniteLocalFredholmSpectralExhaustion
+
+public section
 
 /-!
 # Completeness of eigenvectors of the full unbounded local operator
@@ -22,7 +26,7 @@ namespace SpectralGeometry
 
 variable {Tile : Type*} [DecidableEq Tile]
 
-private abbrev CompleteEnd (Tile : Type*) :=
+abbrev CompleteEnd (Tile : Type*) :=
   TileHilbert Tile →L[ℝ] TileHilbert Tile
 
 /-- The compact interacting resolvent has trivial kernel because its

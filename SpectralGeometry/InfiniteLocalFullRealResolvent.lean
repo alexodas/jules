@@ -1,4 +1,8 @@
-import SpectralGeometry.InfiniteLocalFullEigenvalueEnumeration
+module
+
+public import SpectralGeometry.InfiniteLocalFullEigenvalueEnumeration
+
+public section
 
 /-!
 # Bounded inverses for new real shifts of the full unbounded local operator
@@ -21,7 +25,7 @@ namespace SpectralGeometry
 
 variable {Tile : Type*} [DecidableEq Tile]
 
-private abbrev ShiftEnd (Tile : Type*) :=
+abbrev ShiftEnd (Tile : Type*) :=
   TileHilbert Tile →L[ℝ] TileHilbert Tile
 
 /-- A real parameter belongs to the bounded-resolvent set of the full
@@ -29,7 +33,7 @@ unbounded onsite-plus-bounded operator on D(V) if a continuous linear
 inverse exists, takes values in the natural domain, and obeys both
 inverse equations. The existence is nontrivial: the inverse is bounded
 even when M_V is not. -/
-def infiniteBoundedOnsiteRealRegular
+@[expose] def infiniteBoundedOnsiteRealRegular
     (V : Tile → ℝ) (B : ShiftEnd Tile) (b : ℝ) : Prop :=
   ∃ Q : ShiftEnd Tile,
     (∀ f : TileHilbert Tile,
@@ -199,7 +203,7 @@ theorem infiniteBoundedOnsite_realRegular_iff_resolventSpectrum_compl
 /-- The real spectrum of the unbounded operator, defined intrinsically
 as the complement of the set of shifts possessing a bounded two-sided
 inverse on its natural domain. This is *not* the point spectrum. -/
-def infiniteBoundedOnsiteRealSpectrum (V : Tile → ℝ)
+@[expose] def infiniteBoundedOnsiteRealSpectrum (V : Tile → ℝ)
     (B : ShiftEnd Tile) : Set ℝ :=
   {b | ¬ infiniteBoundedOnsiteRealRegular V B b}
 

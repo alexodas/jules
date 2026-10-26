@@ -1,5 +1,9 @@
-import SpectralGeometry.InfiniteLocalFullRealResolvent
-import Mathlib.Data.Set.Countable
+module
+
+public import SpectralGeometry.InfiniteLocalFullRealResolvent
+public import Mathlib.Data.Set.Countable
+
+public section
 
 /-!
 # Countable spectral enumeration with eigenspace multiplicity tags
@@ -19,14 +23,14 @@ namespace SpectralGeometry
 
 variable {Tile : Type*} [DecidableEq Tile]
 
-private abbrev MultiplicityEnd (Tile : Type*) :=
+abbrev MultiplicityEnd (Tile : Type*) :=
   TileHilbert Tile →L[ℝ] TileHilbert Tile
 
 /-- The geometric multiplicity of a real full-operator eigenvalue is the
 finite dimension of its genuine eigenspace (identified with the compact
 resolvent eigenspace). The regular resolvent shift has multiplicity zero.
 This definition uses the compactness hypotheses to justify finrank. -/
-noncomputable def infiniteLocalMatchingFullMultiplicity
+@[expose] noncomputable def infiniteLocalMatchingFullMultiplicity
     (D : ℕ) (V : Tile → ℝ) (σ : Fin D → Tile ≃ Tile)
     (w : Fin D → ℝ) (P : MultiplicityEnd Tile)
     (ε shift a : ℝ) (hgap : ∀ t, 1 ≤ V t - a)
@@ -57,7 +61,7 @@ theorem infiniteLocalMatchingFullMultiplicity_at_shift
 
 /-- A multiplicity tag is a real eigenvalue together with a natural
 number strictly smaller than its finite eigenspace dimension. -/
-def infiniteLocalMatchingFullMultiplicityTags
+@[expose] def infiniteLocalMatchingFullMultiplicityTags
     (D : ℕ) (V : Tile → ℝ) (σ : Fin D → Tile ≃ Tile)
     (w : Fin D → ℝ) (P : MultiplicityEnd Tile)
     (ε shift a : ℝ) (hgap : ∀ t, 1 ≤ V t - a)

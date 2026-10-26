@@ -1,4 +1,8 @@
-import SpectralGeometry.InfiniteLocalEigenpairCorrespondence
+module
+
+public import SpectralGeometry.InfiniteLocalEigenpairCorrespondence
+
+public section
 
 /-!
 # Finite multiplicity and orthogonality of full infinite local eigenvectors
@@ -20,14 +24,14 @@ namespace SpectralGeometry
 
 variable {Tile : Type*} [DecidableEq Tile]
 
-private abbrev FullEnd (Tile : Type*) :=
+abbrev FullEnd (Tile : Type*) :=
   TileHilbert Tile →L[ℝ] TileHilbert Tile
 
 /-- The eigenspace of the full unbounded matching operator at
 `eigenvalue ≠ a`, realized by its equivalent compact-resolvent
 eigenspace. The membership theorem below identifies it with the
 actual natural-domain eigenvalue equation for the full operator. -/
-noncomputable def infiniteLocalMatchingFullEigenspace
+@[expose] noncomputable def infiniteLocalMatchingFullEigenspace
     (D : ℕ) (V : Tile → ℝ) (σ : Fin D → Tile ≃ Tile)
     (w : Fin D → ℝ) (P : FullEnd Tile)
     (ε shift a : ℝ) (hgap : ∀ t, 1 ≤ V t - a)

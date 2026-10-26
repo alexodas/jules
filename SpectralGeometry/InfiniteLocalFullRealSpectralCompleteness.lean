@@ -1,4 +1,8 @@
-import SpectralGeometry.InfiniteLocalFullEigenvalueMultiplicityCoverage
+module
+
+public import SpectralGeometry.InfiniteLocalFullEigenvalueMultiplicityCoverage
+
+public section
 
 /-!
 # Real spectral completeness for the interacting matching-family operator
@@ -25,7 +29,7 @@ namespace SpectralGeometry
 
 variable {Tile : Type*} [DecidableEq Tile]
 
-private abbrev RealCompleteEnd (Tile : Type*) :=
+abbrev RealCompleteEnd (Tile : Type*) :=
   TileHilbert Tile →L[ℝ] TileHilbert Tile
 
 /-- Full real bounded-inverse spectral membership is equivalent to

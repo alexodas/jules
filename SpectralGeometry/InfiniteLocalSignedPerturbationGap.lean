@@ -1,4 +1,8 @@
-import SpectralGeometry.InfiniteLocalEigenvalueBounds
+module
+
+public import SpectralGeometry.InfiniteLocalEigenvalueBounds
+
+public section
 
 /-!
 # Stability of the point-spectrum lower bound under signed bounded perturbations
@@ -100,7 +104,7 @@ theorem infiniteLocalMatchingSignedPerturbation_eigenvalue_ge
 
 /-- An independently controlled identity shift adds a constant to
 the full local operator without changing the natural onsite domain. -/
-noncomputable def infiniteLocalShiftedPerturbedOperator
+@[expose] noncomputable def infiniteLocalShiftedPerturbedOperator
     (D : ℕ) (V : Tile → ℝ) (σ : Fin D → Tile ≃ Tile)
     (w : Fin D → ℝ)
     (P : TileHilbert Tile →L[ℝ] TileHilbert Tile)

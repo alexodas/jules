@@ -1,5 +1,9 @@
-import SpectralGeometry.InfiniteLocalCompactResolvent
-import SpectralGeometry.InfiniteLocalClosedGraph
+module
+
+public import SpectralGeometry.InfiniteLocalCompactResolvent
+public import SpectralGeometry.InfiniteLocalClosedGraph
+
+public section
 
 /-!
 # Quantitative bounds and negative shifts for compact local resolvents
@@ -22,7 +26,7 @@ namespace SpectralGeometry
 
 variable {Tile : Type*} [DecidableEq Tile]
 
-private abbrev QuantEnd (Tile : Type*) :=
+abbrev QuantEnd (Tile : Type*) :=
   TileHilbert Tile →L[ℝ] TileHilbert Tile
 
 /-- The onsite resolvent norm improves from one to the reciprocal of

@@ -1,4 +1,8 @@
-import SpectralGeometry.InfiniteLocalFullVariationalComparison
+module
+
+public import SpectralGeometry.InfiniteLocalFullVariationalComparison
+
+public section
 
 /-!
 # Low-energy coordinate control of interacting eigenspaces
@@ -24,7 +28,7 @@ namespace SpectralGeometry
 
 variable {Tile : Type*} [DecidableEq Tile]
 
-private abbrev CountEnd (Tile : Type*) :=
+abbrev CountEnd (Tile : Type*) :=
   TileHilbert Tile →L[ℝ] TileHilbert Tile
 
 /-- The quadratic form of onsite multiplication is bounded below by

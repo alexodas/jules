@@ -1,6 +1,10 @@
-import SpectralGeometry.InfiniteLocalFullRealSpectralCompleteness
-import Mathlib.Data.Finset.Sort
-import Mathlib.Order.Prod.Lex.Basic
+module
+
+public import SpectralGeometry.InfiniteLocalFullRealSpectralCompleteness
+public import Mathlib.Data.Finset.Sort
+public import Mathlib.Order.Prod.Lex.Basic
+
+public section
 
 /-!
 # Finite ordered spectral windows with geometric multiplicity
@@ -27,7 +31,7 @@ namespace SpectralGeometry
 
 variable {Tile : Type*} [DecidableEq Tile]
 
-private abbrev OrderedWindowEnd (Tile : Type*) :=
+abbrev OrderedWindowEnd (Tile : Type*) :=
   TileHilbert Tile →L[ℝ] TileHilbert Tile
 
 /-- The finite eigenspace dimensions imply that a finite set of genuine

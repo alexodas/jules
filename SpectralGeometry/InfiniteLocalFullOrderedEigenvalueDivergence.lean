@@ -1,5 +1,9 @@
-import SpectralGeometry.InfiniteLocalFullGlobalOrderedEnumeration
-import Mathlib.Order.Filter.Cofinite
+module
+
+public import SpectralGeometry.InfiniteLocalFullGlobalOrderedEnumeration
+public import Mathlib.Order.Filter.Cofinite
+
+public section
 
 /-!
 # Divergence to positive infinity of the globally ordered real spectrum
@@ -36,7 +40,7 @@ theorem real_tendsto_atTop_of_finite_sublevel_indices
 
 variable {Tile : Type*} [DecidableEq Tile]
 
-private abbrev DivergenceEnd (Tile : Type*) :=
+abbrev DivergenceEnd (Tile : Type*) :=
   TileHilbert Tile →L[ℝ] TileHilbert Tile
 
 /-- For any *injective* global tagged enumeration of the full real

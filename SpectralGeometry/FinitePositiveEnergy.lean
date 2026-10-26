@@ -1,4 +1,8 @@
-import SpectralGeometry.FinitePerturbation
+module
+
+public import SpectralGeometry.FinitePerturbation
+
+public section
 
 /-!
 # Nonnegative quadratic energy under controlled perturbations
@@ -17,7 +21,7 @@ namespace SpectralGeometry
 variable {Tile : Type*} [Fintype Tile] [DecidableEq Tile]
 
 /-- The quadratic energy of a finite real matrix on a tile configuration. -/
-noncomputable def finiteQuadraticEnergy
+@[expose] noncomputable def finiteQuadraticEnergy
     (M : Matrix Tile Tile ℝ) (ψ : Tile → ℝ) : ℝ :=
   ∑ t : Tile, ∑ u : Tile, ψ t * (M t u * ψ u)
 

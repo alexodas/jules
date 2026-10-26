@@ -1,4 +1,8 @@
-import SpectralGeometry.InfiniteLocalResolventSpectrum
+module
+
+public import SpectralGeometry.InfiniteLocalResolventSpectrum
+
+public section
 
 /-!
 # Eigenpair correspondence between the compact resolvent and the full local operator
@@ -20,7 +24,7 @@ namespace SpectralGeometry
 
 variable {Tile : Type*} [DecidableEq Tile]
 
-private abbrev CorrespondenceEnd (Tile : Type*) :=
+abbrev CorrespondenceEnd (Tile : Type*) :=
   TileHilbert Tile →L[ℝ] TileHilbert Tile
 
 /-- A nonzero eigenvalue μ of the bounded resolvent corresponds to

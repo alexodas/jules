@@ -1,5 +1,9 @@
-import SpectralGeometry.InfiniteBoundedPerturbation
-import Mathlib.Analysis.InnerProductSpace.l2Space
+module
+
+public import SpectralGeometry.InfiniteBoundedPerturbation
+public import Mathlib.Analysis.InnerProductSpace.l2Space
+
+public section
 
 /-!
 # Infinite local matching interactions on ℓ²
@@ -27,7 +31,7 @@ variable {Tile : Type*} [DecidableEq Tile]
 
 /-- Reindexing amplitudes by a bijection preserves square summability
 and their Hilbert-space norm, for any (possibly infinite) set of tiles. -/
-noncomputable def infiniteTileReindex (σ : Tile ≃ Tile) :
+@[expose] noncomputable def infiniteTileReindex (σ : Tile ≃ Tile) :
     TileHilbert Tile →ₗᵢ[ℝ] TileHilbert Tile where
   toFun := fun ψ => by
     refine ⟨(fun t => ψ (σ t) : PreLp (fun _ : Tile => ℝ)), ?_⟩
@@ -102,7 +106,7 @@ theorem infiniteTileReindex_symmetric (σ : Tile ≃ Tile)
       rw [hσ]
 
 /-- The bounded Laplacian of one infinite matching: L = I - U. -/
-noncomputable def infiniteMatchingLaplacian (σ : Tile ≃ Tile) :
+@[expose] noncomputable def infiniteMatchingLaplacian (σ : Tile ≃ Tile) :
     TileHilbert Tile →L[ℝ] TileHilbert Tile :=
   ContinuousLinearMap.id ℝ (TileHilbert Tile) -
     (infiniteTileReindex σ).toContinuousLinearMap

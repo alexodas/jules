@@ -1,4 +1,8 @@
-import SpectralGeometry.InfiniteLocalFullEigenvalueMultiplicity
+module
+
+public import SpectralGeometry.InfiniteLocalFullEigenvalueMultiplicity
+
+public section
 
 /-!
 # Positive geometric multiplicity and exact coverage by multiplicity tags
@@ -20,7 +24,7 @@ namespace SpectralGeometry
 
 variable {Tile : Type*} [DecidableEq Tile]
 
-private abbrev CoverageEnd (Tile : Type*) :=
+abbrev CoverageEnd (Tile : Type*) :=
   TileHilbert Tile →L[ℝ] TileHilbert Tile
 
 /-- Under the compact-resolvent hypotheses, being a genuine eigenvalue

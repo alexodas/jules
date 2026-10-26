@@ -1,4 +1,8 @@
-import SpectralGeometry.FinitePositiveEnergy
+module
+
+public import SpectralGeometry.FinitePositiveEnergy
+
+public section
 
 /-!
 # Geometric positivity from onsite energies and interactions

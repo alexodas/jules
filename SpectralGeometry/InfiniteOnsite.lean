@@ -1,4 +1,8 @@
-import SpectralGeometry.FiniteStrictPositivity
+module
+
+public import SpectralGeometry.FiniteStrictPositivity
+
+public section
 
 /-!
 # First infinite-dimensional construction: the onsite operator
@@ -22,14 +26,14 @@ of the infinite operator are NOT claimed in this file.
 namespace SpectralGeometry
 
 /-- Real square-summable amplitudes on an arbitrary set of tile labels. -/
-abbrev TileHilbert (Tile : Type*) : Type _ :=
+@[expose] abbrev TileHilbert (Tile : Type*) : Type _ :=
   lp (fun _ : Tile => ℝ) 2
 
 variable {Tile : Type*}
 
 /-- Natural domain of multiplication by a possibly unbounded potential.
 Both the original state and the onsite-multiplied state must lie in ℓ². -/
-noncomputable def infiniteOnsiteDomain
+@[expose] noncomputable def infiniteOnsiteDomain
     (V : Tile → ℝ) : Submodule ℝ (TileHilbert Tile) where
   carrier := {ψ | Memℓp (fun t : Tile => V t * ψ t) 2}
   zero_mem' := by
@@ -64,7 +68,7 @@ noncomputable def infiniteOnsiteDomain
 
 /-- The diagonal multiplication operator with its natural ℓ² domain.
 It is a linear map into ℓ², even if the potential is unbounded. -/
-noncomputable def infiniteOnsiteOperator
+@[expose] noncomputable def infiniteOnsiteOperator
     (V : Tile → ℝ) :
     (infiniteOnsiteDomain V) →ₗ[ℝ] TileHilbert Tile where
   toFun := fun ψ =>

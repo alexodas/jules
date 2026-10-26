@@ -1,4 +1,8 @@
-import SpectralGeometry.InfiniteLocalResolventSpectralIsolation
+module
+
+public import SpectralGeometry.InfiniteLocalResolventSpectralIsolation
+
+public section
 
 /-!
 # Isolation of genuine real eigenvalues of the full local operator
@@ -20,12 +24,12 @@ open Filter Topology Metric
 
 variable {Tile : Type*} [DecidableEq Tile]
 
-private abbrev FullIsolationEnd (Tile : Type*) :=
+abbrev FullIsolationEnd (Tile : Type*) :=
   TileHilbert Tile →L[ℝ] TileHilbert Tile
 
 /-- A genuine eigenvalue of the full matching-family operator is a
 real number admitting a nonzero eigenvector in the natural onsite domain. -/
-def infiniteLocalMatchingHasFullEigenvalue
+@[expose] def infiniteLocalMatchingHasFullEigenvalue
     (D : ℕ) (V : Tile → ℝ) (σ : Fin D → Tile ≃ Tile)
     (w : Fin D → ℝ) (P : FullIsolationEnd Tile)
     (ε shift eigenvalue : ℝ) : Prop :=

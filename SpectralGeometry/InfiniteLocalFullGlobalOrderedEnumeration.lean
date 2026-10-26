@@ -1,5 +1,9 @@
-import SpectralGeometry.InfiniteLocalFullOrderedMultiplicityWindows
-import Mathlib.Order.OrderIsoNat
+module
+
+public import SpectralGeometry.InfiniteLocalFullOrderedMultiplicityWindows
+public import Mathlib.Order.OrderIsoNat
+
+public section
 
 /-!
 # Globally ordered infinite real eigenvalue enumeration with geometric multiplicities
@@ -73,7 +77,7 @@ theorem exists_strictMono_surjective_of_finite_predecessors
 
 variable {Tile : Type*} [DecidableEq Tile]
 
-private abbrev GlobalOrderedEnd (Tile : Type*) :=
+abbrev GlobalOrderedEnd (Tile : Type*) :=
   TileHilbert Tile →L[ℝ] TileHilbert Tile
 
 /-- If every genuine real eigenvalue is ≥ the specified real bound,

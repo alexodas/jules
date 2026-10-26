@@ -1,4 +1,8 @@
-import SpectralGeometry.InfiniteLocalMatching
+module
+
+public import SpectralGeometry.InfiniteLocalMatching
+
+public section
 
 /-!
 # Uniformly bounded local degree via finitely many infinite matchings
@@ -25,7 +29,7 @@ namespace SpectralGeometry
 variable {Tile : Type*} [DecidableEq Tile]
 
 /-- Candidate neighbors of a tile in a D-color matching graph. -/
-noncomputable def infiniteMatchingNeighbors (D : ℕ)
+@[expose] noncomputable def infiniteMatchingNeighbors (D : ℕ)
     (σ : Fin D → Tile ≃ Tile) (t : Tile) : Finset Tile :=
   Finset.univ.image (fun i : Fin D => σ i t)
 
@@ -39,7 +43,7 @@ theorem infiniteMatchingNeighbors_card_le (D : ℕ)
 
 /-- Infinite local Laplacian made of D matchings with a constant
 weight for each matching color. -/
-noncomputable def infiniteLocalMatchingLaplacian (D : ℕ)
+@[expose] noncomputable def infiniteLocalMatchingLaplacian (D : ℕ)
     (σ : Fin D → Tile ≃ Tile) (w : Fin D → ℝ) :
     TileHilbert Tile →L[ℝ] TileHilbert Tile :=
   ∑ i : Fin D, w i • infiniteMatchingLaplacian (σ i)
@@ -99,7 +103,7 @@ theorem infiniteLocalMatchingLaplacian_symmetric (D : ℕ)
 
 /-- Complete operator with infinite local matching interactions,
 possibly unbounded onsite energies, and bounded perturbations. -/
-noncomputable def infiniteLocalMatchingPerturbedOperator (D : ℕ)
+@[expose] noncomputable def infiniteLocalMatchingPerturbedOperator (D : ℕ)
     (V : Tile → ℝ) (σ : Fin D → Tile ≃ Tile) (w : Fin D → ℝ)
     (P : TileHilbert Tile →L[ℝ] TileHilbert Tile) (ε : ℝ) :
     infiniteOnsiteDomain V →ₗ[ℝ] TileHilbert Tile :=

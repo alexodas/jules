@@ -1,0 +1,45 @@
+name: Palomar preparation checks
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  lean-and-comparator:
+    # Match the PalomarTemplate disposable-runner environment.
+    runs-on: ubuntu-24.04
+    timeout-minutes: 75
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install elan and Lean
+        run: |
+          curl -sSf https://raw.githubusercontent.com/leanprover/elan/master/elan-init.sh | sh -s -- -y
+          echo "$HOME/.elan/bin" >> "$GITHUB_PATH"
+      - name: Ensure pinned Lean toolchain (retry transient downloads)
+        run: |
+          for attempt in 1 2 3 4 5; do
+            if lake --version; then exit 0; fi
+            echo "Lean download failed; retry $attempt/5"
+            sleep $((5 * attempt))
+          done
+          exit 1
+      - name: Static Palomar packaging and metadata checks
+        run: |
+          python3 scripts/check-palomar-layout.py
+          python3 scripts/check-unified-comparator.py
+          python3 scripts/check-lean-sources.py
+          ruby scripts/validate-formalization.rb
+          python3 scripts/check-full-proof-coverage.py
+          python3 scripts/check-no-proof-holes.py
+      - name: Fetch Mathlib cache
+        run: lake exe cache get
+      - name: Build complete mathematical library and Comparator modules
+        run: lake build SpectralGeometry Challenge Solution
+      - name: Compare 48 theorem statements and 14 definitions with bundled kernels
+        run: |
+          sudo apt-get update -qq >/dev/null
+          sudo apt-get install -y -qq bubblewrap >/dev/null
+          # PalomarTemplate's AppArmor adjustment is confined to this disposable runner.
+          sudo sysctl -w kernel.apparmor_restrict_unprivileged_userns=0
+          timeout --signal=TERM --kill-after=30s 1800 bash scripts/verify-comparator.sh

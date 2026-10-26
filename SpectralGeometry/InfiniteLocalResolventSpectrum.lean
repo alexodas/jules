@@ -1,5 +1,9 @@
-import SpectralGeometry.InfiniteLocalSelfAdjointPMap
-import Mathlib.Analysis.InnerProductSpace.Spectrum
+module
+
+public import SpectralGeometry.InfiniteLocalSelfAdjointPMap
+public import Mathlib.Analysis.InnerProductSpace.Spectrum
+
+public section
 
 /-!
 # First spectral consequences of compact self-adjoint local resolvents
@@ -23,7 +27,7 @@ namespace SpectralGeometry
 
 variable {Tile : Type*} [DecidableEq Tile]
 
-private abbrev SpectralEnd (Tile : Type*) :=
+abbrev SpectralEnd (Tile : Type*) :=
   TileHilbert Tile →L[ℝ] TileHilbert Tile
 
 /-- Adding any bounded symmetric correction to the shifted

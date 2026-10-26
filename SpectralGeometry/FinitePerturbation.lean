@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+public section
 
 /-!
 # Finite geometric operators with a controlled perturbation
@@ -25,7 +29,7 @@ variable {Tile : Type*} [Fintype Tile] [DecidableEq Tile]
 /-- Finite geometric matrix: individual energy plus pairwise interactions.
 The off-diagonal entries are `-w t u`; the diagonal sums `w t u`
 over the other tiles `u`. -/
-noncomputable def finiteUnperturbedMatrix
+@[expose] noncomputable def finiteUnperturbedMatrix
     (V : Tile → ℝ) (w : Tile → Tile → ℝ) : Matrix Tile Tile ℝ :=
   fun t u =>
     if t = u then
@@ -35,7 +39,7 @@ noncomputable def finiteUnperturbedMatrix
 
 /-- The finite geometric matrix with an independently chosen perturbation `P`,
 scaled by the real control parameter `ε`. -/
-noncomputable def finitePerturbedMatrix
+@[expose] noncomputable def finitePerturbedMatrix
     (V : Tile → ℝ) (w : Tile → Tile → ℝ)
     (P : Matrix Tile Tile ℝ) (ε : ℝ) : Matrix Tile Tile ℝ :=
   fun t u => finiteUnperturbedMatrix V w t u + ε * P t u

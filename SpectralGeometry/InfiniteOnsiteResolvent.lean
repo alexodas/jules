@@ -1,4 +1,8 @@
-import SpectralGeometry.InfiniteLocalAdjointCharacterization
+module
+
+public import SpectralGeometry.InfiniteLocalAdjointCharacterization
+
+public section
 
 /-!
 # A real resolvent equation for unbounded onsite multiplication

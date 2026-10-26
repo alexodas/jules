@@ -1,4 +1,8 @@
-import SpectralGeometry.InfiniteFiniteEdgeInteraction
+module
+
+public import SpectralGeometry.InfiniteFiniteEdgeInteraction
+
+public section
 
 /-!
 # A common infinite domain for onsite, edge, and bounded perturbation terms
@@ -51,7 +55,7 @@ theorem infiniteOnsiteOperator_energy_nonneg
 /-- The sum of the unbounded onsite operator, a finite-edge Laplacian
 on ℓ²(Tile), and an arbitrary bounded perturbation P. The natural
 onsite domain is shared by all three terms. -/
-noncomputable def infiniteFiniteEdgePerturbedOperator
+@[expose] noncomputable def infiniteFiniteEdgePerturbedOperator
     (V : Tile → ℝ) (edges : Finset (Tile × Tile))
     (w : Tile × Tile → ℝ)
     (P : TileHilbert Tile →L[ℝ] TileHilbert Tile) (ε : ℝ) :

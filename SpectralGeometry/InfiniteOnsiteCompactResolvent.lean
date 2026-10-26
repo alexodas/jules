@@ -1,5 +1,9 @@
-import SpectralGeometry.InfiniteOnsiteResolvent
-import SpectralGeometry.InfiniteOnsiteFiniteLowEnergy
+module
+
+public import SpectralGeometry.InfiniteOnsiteResolvent
+public import SpectralGeometry.InfiniteOnsiteFiniteLowEnergy
+
+public section
 
 /-!
 # The bounded and compact onsite resolvent
@@ -21,7 +25,7 @@ variable {Tile : Type*}
 
 /-- Coordinatewise multiplication by a real family bounded in absolute value
 by one is a bounded linear operator on square-summable states. -/
-noncomputable def infiniteOnsiteDiagonalContraction
+@[expose] noncomputable def infiniteOnsiteDiagonalContraction
     (c : Tile → ℝ) (hc : ∀ t : Tile, ‖c t‖ ≤ 1) :
     TileHilbert Tile →L[ℝ] TileHilbert Tile := by
   let F : TileHilbert Tile →ₗ[ℝ] TileHilbert Tile :=
@@ -62,7 +66,7 @@ theorem infiniteOnsiteDiagonalContraction_apply
     (f : TileHilbert Tile) (t : Tile) :
     infiniteOnsiteDiagonalContraction c hc f t = c t * f t := rfl
 
-private theorem onsiteUnitGap_inverse_norm_le_one
+theorem onsiteUnitGap_inverse_norm_le_one
     (V : Tile → ℝ) (a : ℝ) (hgap : ∀ t, 1 ≤ V t - a)
     (t : Tile) : ‖(V t - a)⁻¹‖ ≤ 1 := by
   have hp : 0 < V t - a := lt_of_lt_of_le (by norm_num) (hgap t)
@@ -72,7 +76,7 @@ private theorem onsiteUnitGap_inverse_norm_le_one
 
 /-- The onsite resolvent constructed by the coordinatewise inverse,
 with operator norm at most one. -/
-noncomputable def infiniteOnsiteResolventCLM
+@[expose] noncomputable def infiniteOnsiteResolventCLM
     (V : Tile → ℝ) (a : ℝ) (hgap : ∀ t, 1 ≤ V t - a) :
     TileHilbert Tile →L[ℝ] TileHilbert Tile :=
   infiniteOnsiteDiagonalContraction

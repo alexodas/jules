@@ -1,4 +1,8 @@
-import SpectralGeometry.InfiniteLocalBoundedDegree
+module
+
+public import SpectralGeometry.InfiniteLocalBoundedDegree
+
+public section
 
 /-!
 # Point-eigenvalue lower bounds for infinite local geometric operators
