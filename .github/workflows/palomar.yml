@@ -9,7 +9,7 @@ jobs:
   lean-and-comparator:
     # Match the PalomarTemplate disposable-runner environment.
     runs-on: ubuntu-24.04
-    timeout-minutes: 90
+    timeout-minutes: 75
     steps:
       - uses: actions/checkout@v4
       - name: Install elan and Lean
@@ -30,14 +30,17 @@ jobs:
           python3 scripts/check-lean-sources.py
           ruby scripts/validate-formalization.rb
           python3 scripts/check-full-proof-coverage.py
+          python3 scripts/check-no-proof-holes.py
       - name: Fetch Mathlib cache
         run: lake exe cache get
       - name: Build complete mathematical library and Comparator modules
-        run: lake build SpectralGeometry Challenge Solution
+        run: lake build SpectralGeometry Challenge Solution ChallengeFinite SolutionFinite
       - name: Run Comparator (bundled kernels)
         run: |
           sudo apt-get update -qq >/dev/null
           sudo apt-get install -y -qq bubblewrap >/dev/null
           # PalomarTemplate's AppArmor adjustment is confined to this disposable runner.
           sudo sysctl -w kernel.apparmor_restrict_unprivileged_userns=0
-          bash scripts/verify-comparator.sh
+          timeout --signal=TERM --kill-after=30s 1800 bash scripts/verify-comparator.sh
+      - name: Compare 13 finite-geometry theorem statements independently
+        run: timeout --signal=TERM --kill-after=30s 1800 bash scripts/verify-comparator.sh comparator-finite.json

@@ -31,6 +31,7 @@ python3 scripts/check-palomar-layout.py
 lake exe cache get
 lake build
 bash scripts/verify-comparator.sh
+bash scripts/verify-comparator.sh comparator-finite.json
 ```
 
 The shell script needs Bubblewrap and the independent kernels bundled with
@@ -73,3 +74,25 @@ A genuinely independent statement comparison for each theorem would require
 substantially more audited Challenge material and cannot be inferred from a
 green `lake check` result. The project must not claim that Palomar Comparator
 has compared the statements of every theorem.
+
+## Additional independent statement suite: finite geometry
+
+CI independently compares the original six canonical-product theorems and
+three definitions through the Palomar root `comparator.json`, as before.
+
+The separate `comparator-finite.json` additionally compares **13 theorems**
+and **three definitions** from the four finite-geometry source modules
+(`FinitePerturbation`, `FinitePositiveEnergy`, `FiniteGeometricEnergy`,
+`FiniteStrictPositivity`). `ChallengeFinite.lean` imports **only Mathlib**
+and spells out these statements independently of the proof development.
+`SolutionFinite.lean` imports the original, unmodified proofs.
+Both suites use the toolchain-bundled Lean, NanoDa and con-ron checks.
+
+The new suite is a **local/CI verification**, not an automatic expansion of
+the root Palomar registry entry; the canonical-product `comparator.json`
+and its `formalization.yaml` remain unchanged. Independent comparisons of
+infinite spectral-operator statements are future work.
+
+The CI also runs `scripts/check-no-proof-holes.py` to reject textual
+`sorry`, `admit` or `axiom` tokens in substantive project proof files.
+This supplemental scan is not a replacement for Lean's proof checking.

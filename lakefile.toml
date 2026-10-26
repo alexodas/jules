@@ -17,3 +17,11 @@ roots = ["Challenge"]
 [[lean_lib]]
 name = "Solution"
 roots = ["Solution"]
+
+[[lean_lib]]
+name = "ChallengeFinite"
+roots = ["ChallengeFinite"]
+
+[[lean_lib]]
+name = "SolutionFinite"
+roots = ["SolutionFinite"]
