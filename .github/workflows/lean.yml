@@ -27,4 +27,4 @@ jobs:
       - name: Download pinned Mathlib cache
         run: lake exe cache get
       - name: Compile and kernel-check Lean proof
-        run: lake build SpectralGeometry Challenge Solution ChallengeFinite SolutionFinite
+        run: lake build SpectralGeometry Challenge Solution ChallengeFinite SolutionFinite ChallengeOnsite SolutionOnsite

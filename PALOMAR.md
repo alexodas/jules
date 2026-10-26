@@ -67,7 +67,7 @@ under `SpectralGeometry/` is not imported by `SpectralGeometry.lean`.
 
 The default Lake target intentionally excludes `Challenge`, because the six
 `sorry` placeholders are a trusted statement surface and must not be treated
-as proved declarations. Ordinary CI compiles all three targets explicitly;
+as proved declarations. Ordinary CI compiles the mathematical root and all Challenge/Solution pairs explicitly;
 Comparator judges Challenge separately. This whole-project check is **not**
 identical to comparing every theorem against a separately authored statement.
 A genuinely independent statement comparison for each theorem would require
@@ -90,9 +90,32 @@ Both suites use the toolchain-bundled Lean, NanoDa and con-ron checks.
 
 The new suite is a **local/CI verification**, not an automatic expansion of
 the root Palomar registry entry; the canonical-product `comparator.json`
-and its `formalization.yaml` remain unchanged. Independent comparisons of
-infinite spectral-operator statements are future work.
+and its `formalization.yaml` remain unchanged. Independent comparisons of the full interacting
+infinite-operator spectrum remain future work.
 
 The CI also runs `scripts/check-no-proof-holes.py` to reject textual
 `sorry`, `admit` or `axiom` tokens in substantive project proof files.
 This supplemental scan is not a replacement for Lean's proof checking.
+
+## Independent infinite-onsite spectral Comparator suite
+
+The third local/CI suite, `comparator-onsite.json`, independently checks
+**14 theorems and three definitions** on the (possibly unbounded) real ℓ²
+onsite multiplication operator. These cover the natural domain and its
+density, point eigenvalue localization and positivity, and growth hypotheses
+for inverse-square summability.
+
+`ChallengeOnsite.lean` imports Mathlib only, with separate statement
+signatures and deliberate `sorry` placeholders. `SolutionOnsite.lean`
+imports the existing unchanged proofs. Lean, NanoDa and con-ron verify
+this suite independently of the canonical-product and finite-geometry ones.
+
+The preliminary isolated run
+[40403327946](https://github.com/alexodas/jules/actions/runs/40403327946)
+passed. Its separate Comparator step has a 15-minute timeout, so the
+full Mathlib-wide `lake check` is not reintroduced.
+
+Altogether CI compares **33 theorem statements and nine definitions**
+across three suites; the root Palomar submission still advertises only
+the canonical-product suite. Statements for the full interacting
+unbounded operator require further independent formalization.

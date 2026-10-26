@@ -1,0 +1,30 @@
+{
+  "challenge_module": "ChallengeOnsite",
+  "solution_module": "SolutionOnsite",
+  "theorem_names": [
+    "SpectralGeometry.infiniteOnsiteOperator_apply",
+    "SpectralGeometry.infiniteOnsiteOperator_local_nonneg",
+    "SpectralGeometry.infiniteOnsiteDomain_single",
+    "SpectralGeometry.infiniteOnsiteDomain_finset_sum",
+    "SpectralGeometry.infiniteOnsiteDomain_dense",
+    "SpectralGeometry.infiniteOnsiteEigenvalue_eq_at_nonzero",
+    "SpectralGeometry.infiniteOnsiteEigenvector_zero_of_potential_ne",
+    "SpectralGeometry.infiniteOnsiteEigenvalue_lower_bound",
+    "SpectralGeometry.infiniteOnsiteEigenvalue_pos",
+    "SpectralGeometry.infiniteOnsiteLinearGrowth_positive",
+    "SpectralGeometry.infiniteOnsiteLinearGrowth_invSq_summable",
+    "SpectralGeometry.infiniteOnsitePowerGrowth_invSq_summable",
+    "SpectralGeometry.infiniteOnsitePowerGrowth_positive",
+    "SpectralGeometry.infiniteOnsiteExactPower_not_invSq_summable"
+  ],
+  "definition_names": [
+    "SpectralGeometry.TileHilbert",
+    "SpectralGeometry.infiniteOnsiteDomain",
+    "SpectralGeometry.infiniteOnsiteOperator"
+  ],
+  "permitted_axioms": [
+    "propext",
+    "Quot.sound",
+    "Classical.choice"
+  ]
+}

@@ -13,7 +13,7 @@ for f in sorted(root.rglob("*.lean")):
         errors.append(str(f.relative_to(root))+": missing module header")
     if len(content.splitlines())>10000:
         errors.append(str(f.relative_to(root))+": exceeds 10,000 lines")
-for name in ("formalization.yaml","comparator.json","comparator-finite.json","lake-manifest.json"):
+for name in ("formalization.yaml","comparator.json","comparator-finite.json","comparator-onsite.json","lake-manifest.json"):
     try: json.loads((root/name).read_text(encoding="utf-8"))
     except (ValueError,OSError) as e: errors.append(name+": "+str(e))
 for error in errors: print("ERROR:",error,file=sys.stderr)

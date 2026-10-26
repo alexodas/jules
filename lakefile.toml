@@ -25,3 +25,11 @@ roots = ["ChallengeFinite"]
 [[lean_lib]]
 name = "SolutionFinite"
 roots = ["SolutionFinite"]
+
+[[lean_lib]]
+name = "ChallengeOnsite"
+roots = ["ChallengeOnsite"]
+
+[[lean_lib]]
+name = "SolutionOnsite"
+roots = ["SolutionOnsite"]
