@@ -42,8 +42,8 @@ alone does not establish Comparator equivalence.
 1. This branch proposes **Apache-2.0** as a repository licence, which must
    be explicitly reviewed before merging or publishing. No licence was
    present on `main` when this branch was created.
-2. `alexodas/jules` is currently PRIVATE. Palomar requires a PUBLIC
-   repository at the full submitted SHA. This branch does not change visibility.
+2. Confirm that `alexodas/jules` is PUBLIC at the submitted SHA; this
+   branch does not change repository visibility.
 3. Verify the metadata authors, credits, source provenance and research
    interest; no novelty or independent scientific review is claimed.
 4. No Palomar submission, release, or merge is performed automatically.
@@ -55,13 +55,12 @@ statements (and three definitions) from the standalone Mathlib-only
 `Challenge.lean` with their proofs imported by `Solution.lean`. That is a
 **statement-fidelity check**, not an enumeration of every theorem in Jules.
 
-For **all** existing mathematical modules, CI separately runs
-`lake check` (without `--paranoid`) against the default Lake target
-`SpectralGeometry`, which imports every mathematical source module. This
-additional whole-project check deliberately avoids the resource-intensive
-paranoid replay of the entire Mathlib dependency closure. It must complete
-successfully in CI before its result can be claimed; it does not by itself
-establish independent-kernel verification of every theorem.
+CI compiles **all** existing mathematical modules with `lake build`.
+The expensive global `lake check` was removed: both with and without
+`--paranoid` it replayed hundreds of thousands of imported Mathlib declarations
+for hours, although project compilation and Palomar Comparator had passed.
+Independent statement comparison still runs via `comparator.json`; this is
+not the same as independently checking every theorem in the project.
 The `scripts/check-full-proof-coverage.py` gate fails if any Lean source
 under `SpectralGeometry/` is not imported by `SpectralGeometry.lean`.
 
