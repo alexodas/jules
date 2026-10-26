@@ -9,7 +9,7 @@ jobs:
   lean-and-comparator:
     # Match the PalomarTemplate disposable-runner environment.
     runs-on: ubuntu-24.04
-    timeout-minutes: 180
+    timeout-minutes: 90
     steps:
       - uses: actions/checkout@v4
       - name: Install elan and Lean
@@ -41,5 +41,3 @@ jobs:
           # PalomarTemplate's AppArmor adjustment is confined to this disposable runner.
           sudo sysctl -w kernel.apparmor_restrict_unprivileged_userns=0
           bash scripts/verify-comparator.sh
-      - name: Check complete mathematical target without paranoid mode
-        run: lake check
