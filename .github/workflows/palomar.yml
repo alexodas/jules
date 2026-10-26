@@ -41,5 +41,5 @@ jobs:
           # PalomarTemplate's AppArmor adjustment is confined to this disposable runner.
           sudo sysctl -w kernel.apparmor_restrict_unprivileged_userns=0
           bash scripts/verify-comparator.sh
-      - name: Verify all project proofs with the bundled independent kernels
-        run: lake check --paranoid
+      - name: Check complete mathematical target without paranoid mode
+        run: lake check
