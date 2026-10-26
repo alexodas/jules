@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
-"""Ensure the whole mathematical tree is included in lake check's root target.
+"""Ensure all mathematical source modules are imported by the Lake root.
 
-The Comparator checks independently written headline statements separately.
-This script checks only module reachability, not proofs or theorem equivalence.
+The standard CI build compiles this root with Lean. Comparator separately
+compares 48 independently written theorem statements and 14 definitions.
+This static script checks module reachability, not proof correctness.
 """
 from pathlib import Path
 import re
@@ -26,10 +27,10 @@ if surplus:
     issues.append("Unknown imported modules: " + ", ".join(surplus))
 lakefile = (root / "lakefile.toml").read_text(encoding="utf-8")
 if not re.search(r'^defaultTargets\s*=\s*\["SpectralGeometry"\]\s*$', lakefile, re.MULTILINE):
-    issues.append('For whole-project lake check, defaultTargets must be ["SpectralGeometry"] (exclude the intentional Challenge sorry).')
+    issues.append('For whole-project Lean compilation, defaultTargets must be ["SpectralGeometry"] (exclude the intentional Challenge sorry).')
 if issues:
     for issue in issues:
         print("COVERAGE ERROR:", issue, file=sys.stderr)
     sys.exit(1)
 print(f"Whole-project audit covers {len(source_files)} mathematical Lean files via the SpectralGeometry default target.")
-print("This is a reachability audit; full proof checking requires: lake check --paranoid")
+print("This is a reachability audit; proof checking uses lake build SpectralGeometry Challenge Solution and Comparator.")

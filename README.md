@@ -1142,12 +1142,39 @@ The canonical import list is maintained in [`SpectralGeometry.lean`](SpectralGeo
 The project uses Lean 4 `v4.35.0` with its corresponding Mathlib version. Every module listed above is imported by the root entry point.
 
 ```bash
-lake update
 lake exe cache get
-lake build
+lake build SpectralGeometry Challenge Solution
 ```
 
-GitHub Actions automatically checks compilation on every change to `main` and on every pull request.
+The Lean and Mathlib versions are pinned by `lean-toolchain` and
+`lake-manifest.json`. Run `lake update` only when intentionally updating
+dependencies, not as part of routine verification. `Challenge.lean`
+contains deliberate statement placeholders (`sorry`), and is judged
+against the original proof modules by Comparator rather than being
+treated as an independently proved library.
+
+**Palomar / independent statement verification:** the repository has
+one [`comparator.json`](comparator.json), one
+[`Challenge.lean`](Challenge.lean) and one [`Solution.lean`](Solution.lean).
+Comparator checks **48 selected theorems and 14 definitions** with Lean
+and the toolchain's independent NanoDa and con-ron kernels. The separate
+Lean build still covers **all 46 mathematical source modules**. The
+Comparator selection does *not* include the later full interacting
+compact-resolvent, spectral-completeness or ordered-eigenvalue theorems:
+those are compiled by Lean under their stated hypotheses, not compared
+against independent Challenge statements in this submission. See
+[`PALOMAR.md`](PALOMAR.md) for exact scope, checks, provenance and limits.
+
+To run the independent statement comparison on a supported Linux runner
+with Bubblewrap configured, execute:
+
+```bash
+python3 scripts/check-unified-comparator.py
+bash scripts/verify-comparator.sh
+```
+
+GitHub Actions checks compilation and the unified Comparator on pull
+requests and changes to `main`. Both must be green before merging.
 
 ## 6. Roadmap: proof status and next steps
 

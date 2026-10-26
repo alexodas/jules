@@ -67,15 +67,19 @@ independently audited statement boundary without invoking the expensive
 `lake check` that recursively replayed hundreds of thousands of Mathlib
 declarations for hours. The static audits are not kernel checks.
 
-The isolated unified proof test passed on
+The unified proof test passed on
 [GitHub Actions run 40406964723](https://github.com/alexodas/jules/actions/runs/40406964723)
-in under five minutes for all 48 theorems. The final PR commit must
-independently pass its own CI before it can be considered verified.
+in under five minutes. The integrated PR passed both
+[Lean / Mathlib](https://github.com/alexodas/jules/actions/runs/40408338783)
+and [Palomar Comparator](https://github.com/alexodas/jules/actions/runs/40408338779)
+on commit `c93b69e`. Subsequent commits must also pass their own CI
+before merging.
 
 ## Maintainer decisions before publication
 
-1. Review the proposed **Apache-2.0** root license; none was present on
-   `main` when this PR was prepared.
+1. Confirm the proposed **Apache-2.0** root license is appropriate for
+   publishing the repository; no license was present on `main` when
+   the submission-preparation PR began.
 2. Confirm the repository is public at the precise submitted commit SHA,
    as required by Palomar; no visibility change is performed here.
 3. Review authorship, source provenance, automation credits, research

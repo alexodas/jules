@@ -59,12 +59,12 @@
     "notes": "Existing development provenance and review status require maintainer confirmation. The independent Challenge contains intentional sorry placeholders that are not admitted proofs in the Solution."
   },
   "fidelity": {
-    "divergences": "The selected theorem statements, their implicit parameters and 14 definitions have been checked against existing source declarations. Statements are conditional as encoded in Lean: finite-edge interactions are finite even when the tile Hilbert space is infinite, and positivity of perturbation energy is a hypothesis. The paired-product zero line is built into the factors, not a claim about unrelated analytic zeros; a bridge from canonical-product levels to the full interacting spectral theory is not established."
+    "divergences": "The selected theorem statements, their implicit parameters and 14 definitions have been checked against existing source declarations. Statements are conditional as encoded in Lean: finite-edge interactions are finite even when the tile Hilbert space is infinite, and positivity of perturbation energy is a hypothesis. The paired-product zero line is built into the factors, not a claim about unrelated analytic zeros; a bridge from canonical-product levels to the full interacting spectral theory is not established. The formalization alignment list highlights representative statements; comparator.json is the exhaustive machine-readable list of 48 selected theorems."
   },
   "review": {
     "status": "submission preparation, not independently peer-reviewed",
     "reviewers": [],
-    "notes": "The single 48-theorem/14-definition Comparator passed isolated Lean, con-ron and NanoDa checks in GitHub Actions run 40406964723. Final PR CI must be checked on its exact commit. Authorship, provenance, research originality and scientific significance still require responsible maintainer review."
+    "notes": "The unified Comparator covering 48 theorems and 14 definitions passed with Lean, con-ron and NanoDa in isolated run 40406964723, and the integrated PR passed Lean in run 40408338783 and Palomar Comparator in run 40408338779 on commit c93b69e. Every subsequent documentation or packaging commit must pass fresh CI. Authorship, provenance, originality, licensing and research significance still require responsible maintainer review before submission."
   },
   "alignment": {
     "namespace": "SpectralGeometry",
