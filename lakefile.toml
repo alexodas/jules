@@ -1,6 +1,6 @@
 name = "SpectralGeometry"
 version = "0.1.0"
-defaultTargets = ["SpectralGeometry", "Challenge", "Solution"]
+defaultTargets = ["SpectralGeometry"]
 
 [[require]]
 name = "mathlib"

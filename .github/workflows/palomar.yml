@@ -1,7 +1,7 @@
 name: Palomar preparation checks
 on:
   push:
-    branches: [main, "palomar/**"]
+    branches: [main]
   pull_request:
   workflow_dispatch:
 
@@ -9,7 +9,7 @@ jobs:
   lean-and-comparator:
     # Match the PalomarTemplate disposable-runner environment.
     runs-on: ubuntu-24.04
-    timeout-minutes: 90
+    timeout-minutes: 180
     steps:
       - uses: actions/checkout@v4
       - name: Install elan and Lean
@@ -29,10 +29,11 @@ jobs:
           python3 scripts/check-palomar-layout.py
           python3 scripts/check-lean-sources.py
           ruby scripts/validate-formalization.rb
+          python3 scripts/check-full-proof-coverage.py
       - name: Fetch Mathlib cache
         run: lake exe cache get
-      - name: Build proofs and statement modules
-        run: lake build
+      - name: Build complete mathematical library and Comparator modules
+        run: lake build SpectralGeometry Challenge Solution
       - name: Run Comparator (bundled kernels)
         run: |
           sudo apt-get update -qq >/dev/null
@@ -40,3 +41,5 @@ jobs:
           # PalomarTemplate's AppArmor adjustment is confined to this disposable runner.
           sudo sysctl -w kernel.apparmor_restrict_unprivileged_userns=0
           bash scripts/verify-comparator.sh
+      - name: Verify all project proofs with the bundled independent kernels
+        run: lake check --paranoid

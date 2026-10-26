@@ -47,3 +47,27 @@ alone does not establish Comparator equivalence.
 3. Verify the metadata authors, credits, source provenance and research
    interest; no novelty or independent scientific review is claimed.
 4. No Palomar submission, release, or merge is performed automatically.
+
+## Coverage: two different verification guarantees
+
+The Palomar `comparator.json` still compares six independent canonical-product
+statements (and three definitions) from the standalone Mathlib-only
+`Challenge.lean` with their proofs imported by `Solution.lean`. That is a
+**statement-fidelity check**, not an enumeration of every theorem in Jules.
+
+For **all** existing mathematical modules, CI separately executes
+`lake check --paranoid`, which sandbox-builds and exports the default Lake
+target `SpectralGeometry`, including every source module it imports, and
+replays its declarations using the built-in and bundled independent kernels.
+The `scripts/check-full-proof-coverage.py` gate fails if any Lean source
+under `SpectralGeometry/` is not imported by `SpectralGeometry.lean`.
+
+The default Lake target intentionally excludes `Challenge`, because the six
+`sorry` placeholders are a trusted statement surface and must not be treated
+as proved declarations. Ordinary CI compiles all three targets explicitly;
+Comparator judges Challenge separately. This whole-project check is **not**
+identical to comparing every theorem against a separately authored statement.
+A genuinely independent statement comparison for each theorem would require
+substantially more audited Challenge material and cannot be inferred from a
+green `lake check` result. The project must not claim that Palomar Comparator
+has compared the statements of every theorem.
