@@ -7,9 +7,8 @@ on:
 
 jobs:
   lean-and-comparator:
-    # Ubuntu 24.04's AppArmor policy blocks Bubblewrap user-namespace setup.
-    # Use Ubuntu 22.04 to run Comparator in its intended sandbox.
-    runs-on: ubuntu-22.04
+    # Match the PalomarTemplate disposable-runner environment.
+    runs-on: ubuntu-24.04
     timeout-minutes: 90
     steps:
       - uses: actions/checkout@v4
@@ -25,14 +24,19 @@ jobs:
             sleep $((5 * attempt))
           done
           exit 1
-      - name: Static packaging checks
-        run: python3 scripts/check-palomar-layout.py
+      - name: Static Palomar packaging and metadata checks
+        run: |
+          python3 scripts/check-palomar-layout.py
+          python3 scripts/check-lean-sources.py
+          ruby scripts/validate-formalization.rb
       - name: Fetch Mathlib cache
         run: lake exe cache get
       - name: Build proofs and statement modules
         run: lake build
       - name: Run Comparator (bundled kernels)
         run: |
-          sudo apt-get update
-          sudo apt-get install -y bubblewrap
+          sudo apt-get update -qq >/dev/null
+          sudo apt-get install -y -qq bubblewrap >/dev/null
+          # PalomarTemplate's AppArmor adjustment is confined to this disposable runner.
+          sudo sysctl -w kernel.apparmor_restrict_unprivileged_userns=0
           bash scripts/verify-comparator.sh
