@@ -27,6 +27,7 @@ jobs:
       - name: Static Palomar packaging and metadata checks
         run: |
           python3 scripts/check-palomar-layout.py
+          python3 scripts/check-unified-comparator.py
           python3 scripts/check-lean-sources.py
           ruby scripts/validate-formalization.rb
           python3 scripts/check-full-proof-coverage.py
@@ -34,15 +35,11 @@ jobs:
       - name: Fetch Mathlib cache
         run: lake exe cache get
       - name: Build complete mathematical library and Comparator modules
-        run: lake build SpectralGeometry Challenge Solution ChallengeFinite SolutionFinite ChallengeOnsite SolutionOnsite
-      - name: Run Comparator (bundled kernels)
+        run: lake build SpectralGeometry Challenge Solution
+      - name: Compare 48 theorem statements and 14 definitions with bundled kernels
         run: |
           sudo apt-get update -qq >/dev/null
           sudo apt-get install -y -qq bubblewrap >/dev/null
           # PalomarTemplate's AppArmor adjustment is confined to this disposable runner.
           sudo sysctl -w kernel.apparmor_restrict_unprivileged_userns=0
           timeout --signal=TERM --kill-after=30s 1800 bash scripts/verify-comparator.sh
-      - name: Compare 13 finite-geometry theorem statements independently
-        run: timeout --signal=TERM --kill-after=30s 1800 bash scripts/verify-comparator.sh comparator-finite.json
-      - name: Compare 14 infinite-onsite spectral theorem statements independently
-        run: timeout --signal=TERM --kill-after=30s 900 bash scripts/verify-comparator.sh comparator-onsite.json

@@ -1,8 +1,8 @@
 {
   "version": "v0.4",
   "project": {
-    "name": "Jules Spectral Geometry — canonical-product zero localization",
-    "description": "The Jules Lean 4 project studies conditional spectral properties of geometric operators and a related family of regularized canonical products. This Palomar Comparator entry selects only the self-contained canonical-product strand: for explicitly paired quadratic factors, a compact-wise summable majorant gives uniform product convergence; all zeros of the constructed product lie on a prescribed affine real line in the complex plane. Summability of inverse-square positive levels suffices for admissibility, and each nonzero level produces a zero. The zero line is built into the factors and is not a statement about Riemann zeta. Connecting levels to a specific geometric operator's spectrum and proving required eigenvalue summability remain open. No historical novelty or Riemann hypothesis result is claimed.",
+    "name": "Jules Spectral Geometry — canonical products and finite/infinite geometric operators",
+    "description": "This Lean 4 formalization studies conditional spectral and energy properties of geometric operators alongside regularized paired canonical products. A single independent Comparator challenge selects 48 theorems and 14 definitions: prescribed-line zeros and locally uniform convergence of the constructed product; symmetry, positivity and eigenvalues for finite geometric matrices; natural domains, density, point eigenvalues and energy-growth summability for infinite diagonal multiplication on real ℓ²; finiteness of point eigenvalues below a cutoff under a finite-sublevel assumption; and nonnegative symmetric finite-edge interactions and bounded perturbations on an infinite tile set. These theorems retain their explicit assumptions. The finite-edge component does not assert spectral completeness for a general infinitely interacting operator. Canonical-product zero localization is a property of the chosen factors, not a result about Riemann zeta zeros, and no link between the product's prescribed levels and eigenvalues of a particular geometric operator is established. Novelty and scientific peer review are not claimed.",
     "authors": [
       "Alessandro Odasso"
     ],
@@ -26,15 +26,15 @@
   },
   "sources": [
     {
-      "title": "Mathlib4 analytic infinite-product library",
+      "title": "Mathlib4 foundations for summability, infinite products and Hilbert-space analysis",
       "id": "https://github.com/leanprover-community/mathlib4",
       "type": "other",
       "relationship": "adapts",
-      "note": "The formalization specializes general Mathlib infinite-product, summability and compact-uniform convergence lemmas to explicitly paired factors. These results are classical; this source describes the formal library dependencies rather than claiming research priority."
+      "note": "The formalization uses and specializes general Mathlib lemmas for infinite products, real ℓ² Hilbert spaces, symmetric operators, summability and norm inequalities. This is a software/formal-library dependency citation, not an assertion of research priority."
     }
   ],
   "status": {
-    "scope": "Six selected canonical-product theorems and three explicit definitions in SpectralGeometry/CanonicalProduct.lean; the remaining spectral-geometry development is not included in this one Comparator selection. Existing source proofs precede this packaging, but the Palomar port and Comparator have not yet been mechanically verified.",
+    "scope": "One Comparator configuration, 48 selected theorem statements and 14 definitions: six canonical-product theorems, thirteen finite-dimensional geometric theorems, fourteen infinite-onsite spectral theorems, four finite-low-energy onsite theorems, five finite-edge interaction theorems on ℓ², and six combined finite-edge/bounded-perturbation theorems. The remaining larger interacting compact-resolvent and spectral-completeness theory is Lean-compiled but not compared against independent Challenge statements in this submission.",
     "sorry_count": 0,
     "sorry_in_definitions": 0,
     "axioms": [
@@ -59,12 +59,12 @@
     "notes": "Existing development provenance and review status require maintainer confirmation. The independent Challenge contains intentional sorry placeholders that are not admitted proofs in the Solution."
   },
   "fidelity": {
-    "divergences": "The selected theorem statements and three definitions mirror the source canonical-product module. The product zeros lie on a chosen line by construction, not as a discovery about an unrelated analytic function. The spectral results elsewhere in the repository are outside this Comparator configuration."
+    "divergences": "The selected theorem statements, their implicit parameters and 14 definitions have been checked against existing source declarations. Statements are conditional as encoded in Lean: finite-edge interactions are finite even when the tile Hilbert space is infinite, and positivity of perturbation energy is a hypothesis. The paired-product zero line is built into the factors, not a claim about unrelated analytic zeros; a bridge from canonical-product levels to the full interacting spectral theory is not established."
   },
   "review": {
     "status": "submission preparation, not independently peer-reviewed",
     "reviewers": [],
-    "notes": "Local Lean and Comparator checks have not yet been recorded for this branch. Scientific originality and research interest have not been independently established."
+    "notes": "The single 48-theorem/14-definition Comparator passed isolated Lean, con-ron and NanoDa checks in GitHub Actions run 40406964723. Final PR CI must be checked on its exact commit. Authorship, provenance, research originality and scientific significance still require responsible maintainer review."
   },
   "alignment": {
     "namespace": "SpectralGeometry",
@@ -73,37 +73,85 @@
         "source": "Summable compact majorants yield locally uniform convergence of the canonical product.",
         "lean": "SpectralGeometry.product_uniform_on_compact",
         "module": "SpectralGeometry.CanonicalProduct",
-        "status": "existing source proof; Palomar comparator validation pending"
+        "status": "existing source proof; matched by unified Comparator in isolated CI (run 40406964723)"
       },
       {
         "source": "Zero of an individual factor lies on the prescribed complex affine real line.",
         "lean": "SpectralGeometry.factor_zero_on_line",
         "module": "SpectralGeometry.CanonicalProduct",
-        "status": "existing source proof; Palomar comparator validation pending"
+        "status": "existing source proof; matched by unified Comparator in isolated CI (run 40406964723)"
       },
       {
         "source": "Every zero of the infinite product lies on the prescribed affine real line.",
         "lean": "SpectralGeometry.theoremC_zero_localization",
         "module": "SpectralGeometry.CanonicalProduct",
-        "status": "existing source proof; Palomar comparator validation pending"
+        "status": "existing source proof; matched by unified Comparator in isolated CI (run 40406964723)"
       },
       {
         "source": "Positive levels with summable inverse squares satisfy the compact-majorant criterion.",
         "lean": "SpectralGeometry.admissible_of_inv_sq_summable",
         "module": "SpectralGeometry.CanonicalProduct",
-        "status": "existing source proof; Palomar comparator validation pending"
+        "status": "existing source proof; matched by unified Comparator in isolated CI (run 40406964723)"
       },
       {
         "source": "A nonzero prescribed level is a zero of its paired quadratic factor.",
         "lean": "SpectralGeometry.factor_zero_at_positive_level",
         "module": "SpectralGeometry.CanonicalProduct",
-        "status": "existing source proof; Palomar comparator validation pending"
+        "status": "existing source proof; matched by unified Comparator in isolated CI (run 40406964723)"
       },
       {
         "source": "A nonzero prescribed level is a zero of the infinite canonical product.",
         "lean": "SpectralGeometry.canonicalProduct_zero_at_positive_level",
         "module": "SpectralGeometry.CanonicalProduct",
-        "status": "existing source proof; Palomar comparator validation pending"
+        "status": "existing source proof; matched by unified Comparator in isolated CI (run 40406964723)"
+      },
+      {
+        "source": "Finite symmetric weights and perturbations yield a symmetric perturbed matrix.",
+        "lean": "SpectralGeometry.finitePerturbedMatrix_symmetric",
+        "module": "SpectralGeometry.FinitePerturbation",
+        "status": "existing source proof; matched by unified Comparator in isolated CI (run 40406964723)"
+      },
+      {
+        "source": "Symmetric nonnegative edge weights admit a finite geometric energy sum-of-squares identity.",
+        "lean": "SpectralGeometry.finiteGeometricEnergy_sum_squares",
+        "module": "SpectralGeometry.FiniteGeometricEnergy",
+        "status": "existing source proof; matched by unified Comparator in isolated CI (run 40406964723)"
+      },
+      {
+        "source": "Strictly positive finite geometric energy forces positive eigenvalues.",
+        "lean": "SpectralGeometry.finiteGeometricEigenvalue_pos",
+        "module": "SpectralGeometry.FiniteStrictPositivity",
+        "status": "existing source proof; matched by unified Comparator in isolated CI (run 40406964723)"
+      },
+      {
+        "source": "The natural domain of an unbounded real ℓ² multiplication operator is dense.",
+        "lean": "SpectralGeometry.infiniteOnsiteDomain_dense",
+        "module": "SpectralGeometry.InfiniteOnsiteDensity",
+        "status": "existing source proof; matched by unified Comparator in isolated CI (run 40406964723)"
+      },
+      {
+        "source": "Positive diagonal potential forces existing infinite-onsite point eigenvalues to be positive.",
+        "lean": "SpectralGeometry.infiniteOnsiteEigenvalue_pos",
+        "module": "SpectralGeometry.InfiniteOnsiteEigenvalues",
+        "status": "existing source proof; matched by unified Comparator in isolated CI (run 40406964723)"
+      },
+      {
+        "source": "A proper onsite potential has only finitely many distinct point eigenvalues below a fixed threshold.",
+        "lean": "SpectralGeometry.infiniteOnsitePointEigenvalues_below_finite",
+        "module": "SpectralGeometry.InfiniteOnsiteFiniteLowEnergy",
+        "status": "existing source proof; matched by unified Comparator in isolated CI (run 40406964723)"
+      },
+      {
+        "source": "A finite set of nonnegative weighted edges has nonnegative interaction energy on ℓ².",
+        "lean": "SpectralGeometry.infiniteFiniteEdgeLaplacian_energy_nonneg",
+        "module": "SpectralGeometry.InfiniteFiniteEdgeInteraction",
+        "status": "existing source proof; matched by unified Comparator in isolated CI (run 40406964723)"
+      },
+      {
+        "source": "Onsite, finite-edge and bounded positive perturbation energies yield a nonnegative combined quadratic form.",
+        "lean": "SpectralGeometry.infiniteFiniteEdgePerturbedOperator_energy_nonneg",
+        "module": "SpectralGeometry.InfiniteBoundedPerturbation",
+        "status": "existing source proof; matched by unified Comparator in isolated CI (run 40406964723)"
       }
     ]
   },

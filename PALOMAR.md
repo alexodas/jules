@@ -1,121 +1,85 @@
-# Palomar submission preparation (draft)
+# Palomar submission preparation — unified Comparator (draft)
 
-This branch stages a comparator-ready **canonical-product** slice of the
-Jules Spectral Geometry project. It does not yet establish successful
-Palomar verification or an independently assessed research contribution.
+This branch prepares **one Palomar submission candidate** for the Jules
+SpectralGeometry Lean 4 development. One root `comparator.json` compares
+**48 theorem statements and 14 definitions** between `Challenge.lean` and
+`Solution.lean`, including canonical products, finite geometric energy,
+infinite onsite operators, finite low-energy sectors, and finite-edge
+interactions in an infinite Hilbert space.
 
-## Statement and proof boundary
+## One independent statement boundary
 
-- `Challenge.lean` imports only Mathlib and independently declares three
-  paired-product definitions, an admissibility structure and six theorem
-  statements; its `sorry` terms are intentional statement placeholders.
-- `Solution.lean` imports the existing substantive canonical-product proofs.
-- `comparator.json` compares six theorems and three explicit definitions.
-- `formalization.yaml` records provenance and the narrow scope.
-- `lake-manifest.json` pins Mathlib and transitive dependencies to commits.
-- This branch includes a module-system port of existing Lean files, which
-  must pass a fresh Lake build and Comparator check before it is usable.
+- `Challenge.lean` imports **Mathlib only**. Its explicit definitions,
+  structure and 48 theorem statements are independent of the project proofs.
+  The 48 `sorry` terms deliberately mark the proposed theorem statements;
+  they are not part of the proved library.
+- `Solution.lean` imports existing, unchanged substantive source modules.
+  No theorem body is copied into it.
+- `comparator.json` is the **only Comparator configuration** and lists all
+  48 theorems and 14 definition names. A single Palomar submission can point
+  to this file, after maintainer approval and registry review.
+- `formalization.yaml` describes the full selected scope and provenance.
+- `lake-manifest.json` and `lean-toolchain` pin the verifier environment.
+- The Challenge contains approximately **614 physical lines** (under the
+  Palomar limits of 1,000 lines / 100 KiB).
 
-## Limitations
+### Scope of the checked results
 
-The canonical product's prescribed zero line is a consequence of its paired
-factors, not a theorem about the zeros of the Riemann zeta function.
-The spectral-operator results elsewhere in this repository are NOT audited
-by this Comparator configuration. Connecting eigenvalues from the concrete
-geometric model with these product levels remains a separate goal.
+| Mathematical topic | Theorems |
+|---|---:|
+| Canonical paired products and prescribed-line zeros | 6 |
+| Finite geometric matrices, energy and eigenvalues | 13 |
+| Infinite onsite multiplication, domain, eigenvalues and growth | 14 |
+| Finite low-energy onsite sectors and point-eigenvalue bounds | 4 |
+| Finite-edge interactions on an infinite Hilbert space | 5 |
+| Onsite + finite-edge + bounded perturbation | 6 |
+| **Total** | **48** |
 
-## Required checks
+These results have **conditional hypotheses** as stated in Lean. In
+particular, the infinite interaction suite handles *finitely many active
+edges* in an arbitrary (possibly infinite) tile space. It does **not**
+verify the spectral completeness or compact-resolvent results for the full
+infinite matching-family operator against independently authored statements.
+The canonical product's zero line is fixed **by construction**; no theorem
+about the zeros of the Riemann zeta function follows. A mathematical reader
+must still review the statements, research significance and fidelity.
+
+## Reproducible checks
+
+From the repository root, with the pinned Lean toolchain, Linux Bubblewrap,
+and pinned Mathlib dependencies:
 
 ```sh
 python3 scripts/check-palomar-layout.py
+python3 scripts/check-lean-sources.py
+python3 scripts/check-unified-comparator.py
+python3 scripts/check-full-proof-coverage.py
+python3 scripts/check-no-proof-holes.py
+ruby scripts/validate-formalization.rb
 lake exe cache get
-lake build
+lake build SpectralGeometry Challenge Solution
 bash scripts/verify-comparator.sh
-bash scripts/verify-comparator.sh comparator-finite.json
 ```
 
-The shell script needs Bubblewrap and the independent kernels bundled with
-an appropriate Lean toolchain. Inspect actual CI conclusions: compilation
-alone does not establish Comparator equivalence.
+CI builds all existing mathematical modules and then runs **one Comparator**
+with Lean, NanoDa and con-ron from the toolchain. This preserves the
+independently audited statement boundary without invoking the expensive
+`lake check` that recursively replayed hundreds of thousands of Mathlib
+declarations for hours. The static audits are not kernel checks.
 
-## Publication decisions the maintainer must make
+The isolated unified proof test passed on
+[GitHub Actions run 40406964723](https://github.com/alexodas/jules/actions/runs/40406964723)
+in under five minutes for all 48 theorems. The final PR commit must
+independently pass its own CI before it can be considered verified.
 
-1. This branch proposes **Apache-2.0** as a repository licence, which must
-   be explicitly reviewed before merging or publishing. No licence was
-   present on `main` when this branch was created.
-2. Confirm that `alexodas/jules` is PUBLIC at the submitted SHA; this
-   branch does not change repository visibility.
-3. Verify the metadata authors, credits, source provenance and research
-   interest; no novelty or independent scientific review is claimed.
-4. No Palomar submission, release, or merge is performed automatically.
+## Maintainer decisions before publication
 
-## Coverage: two different verification guarantees
-
-The Palomar `comparator.json` still compares six independent canonical-product
-statements (and three definitions) from the standalone Mathlib-only
-`Challenge.lean` with their proofs imported by `Solution.lean`. That is a
-**statement-fidelity check**, not an enumeration of every theorem in Jules.
-
-CI compiles **all** existing mathematical modules with `lake build`.
-The expensive global `lake check` was removed: both with and without
-`--paranoid` it replayed hundreds of thousands of imported Mathlib declarations
-for hours, although project compilation and Palomar Comparator had passed.
-Independent statement comparison still runs via `comparator.json`; this is
-not the same as independently checking every theorem in the project.
-The `scripts/check-full-proof-coverage.py` gate fails if any Lean source
-under `SpectralGeometry/` is not imported by `SpectralGeometry.lean`.
-
-The default Lake target intentionally excludes `Challenge`, because the six
-`sorry` placeholders are a trusted statement surface and must not be treated
-as proved declarations. Ordinary CI compiles the mathematical root and all Challenge/Solution pairs explicitly;
-Comparator judges Challenge separately. This whole-project check is **not**
-identical to comparing every theorem against a separately authored statement.
-A genuinely independent statement comparison for each theorem would require
-substantially more audited Challenge material and cannot be inferred from a
-green `lake check` result. The project must not claim that Palomar Comparator
-has compared the statements of every theorem.
-
-## Additional independent statement suite: finite geometry
-
-CI independently compares the original six canonical-product theorems and
-three definitions through the Palomar root `comparator.json`, as before.
-
-The separate `comparator-finite.json` additionally compares **13 theorems**
-and **three definitions** from the four finite-geometry source modules
-(`FinitePerturbation`, `FinitePositiveEnergy`, `FiniteGeometricEnergy`,
-`FiniteStrictPositivity`). `ChallengeFinite.lean` imports **only Mathlib**
-and spells out these statements independently of the proof development.
-`SolutionFinite.lean` imports the original, unmodified proofs.
-Both suites use the toolchain-bundled Lean, NanoDa and con-ron checks.
-
-The new suite is a **local/CI verification**, not an automatic expansion of
-the root Palomar registry entry; the canonical-product `comparator.json`
-and its `formalization.yaml` remain unchanged. Independent comparisons of the full interacting
-infinite-operator spectrum remain future work.
-
-The CI also runs `scripts/check-no-proof-holes.py` to reject textual
-`sorry`, `admit` or `axiom` tokens in substantive project proof files.
-This supplemental scan is not a replacement for Lean's proof checking.
-
-## Independent infinite-onsite spectral Comparator suite
-
-The third local/CI suite, `comparator-onsite.json`, independently checks
-**14 theorems and three definitions** on the (possibly unbounded) real ℓ²
-onsite multiplication operator. These cover the natural domain and its
-density, point eigenvalue localization and positivity, and growth hypotheses
-for inverse-square summability.
-
-`ChallengeOnsite.lean` imports Mathlib only, with separate statement
-signatures and deliberate `sorry` placeholders. `SolutionOnsite.lean`
-imports the existing unchanged proofs. Lean, NanoDa and con-ron verify
-this suite independently of the canonical-product and finite-geometry ones.
-
-The preliminary isolated run
-[40403327946](https://github.com/alexodas/jules/actions/runs/40403327946)
-passed. Its separate Comparator step has a 15-minute timeout, so the
-full Mathlib-wide `lake check` is not reintroduced.
-
-Altogether CI compares **33 theorem statements and nine definitions**
-across three suites; the root Palomar submission still advertises only
-the canonical-product suite. Statements for the full interacting
-unbounded operator require further independent formalization.
+1. Review the proposed **Apache-2.0** root license; none was present on
+   `main` when this PR was prepared.
+2. Confirm the repository is public at the precise submitted commit SHA,
+   as required by Palomar; no visibility change is performed here.
+3. Review authorship, source provenance, automation credits, research
+   classification, conditional hypotheses and claimed mathematical scope.
+   Passing Comparator is not a novelty assessment or peer review.
+4. Submit only after a responsible maintainer authorizes it. This draft
+   branch is not automatically merged, published, or submitted.

@@ -7,12 +7,6 @@ set -euo pipefail
 # (NanoDa and con-ron). Nothing is built from a pin; everything that judges
 # comes from `lean-toolchain`, which Palomar requires to be v4.35.0-rc2 or
 # later.
-# Optional extra comparator configuration, defaulting to official Palomar config.
-if [ "$#" -gt 1 ]; then
-  echo "usage: $0 [comparator-config.json]" >&2
-  exit 2
-fi
-config_source=${1:-comparator.json}
 repository_root=$(cd "$(dirname "$0")/.." && pwd)
 cd "$repository_root"
 
@@ -38,7 +32,7 @@ done
 # generated copy does the same, so the local check judges as the registry does.
 config=$(mktemp "${TMPDIR:-/tmp}/palomar-comparator.XXXXXX")
 trap 'rm -f "$config"' EXIT
-python3 - "$config_source" "$config" "$prefix" <<'PY'
+python3 - comparator.json "$config" "$prefix" <<'PY'
 import json
 import pathlib
 import sys
