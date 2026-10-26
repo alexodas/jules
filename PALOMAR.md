@@ -55,10 +55,13 @@ statements (and three definitions) from the standalone Mathlib-only
 `Challenge.lean` with their proofs imported by `Solution.lean`. That is a
 **statement-fidelity check**, not an enumeration of every theorem in Jules.
 
-For **all** existing mathematical modules, CI separately executes
-`lake check --paranoid`, which sandbox-builds and exports the default Lake
-target `SpectralGeometry`, including every source module it imports, and
-replays its declarations using the built-in and bundled independent kernels.
+For **all** existing mathematical modules, CI separately runs
+`lake check` (without `--paranoid`) against the default Lake target
+`SpectralGeometry`, which imports every mathematical source module. This
+additional whole-project check deliberately avoids the resource-intensive
+paranoid replay of the entire Mathlib dependency closure. It must complete
+successfully in CI before its result can be claimed; it does not by itself
+establish independent-kernel verification of every theorem.
 The `scripts/check-full-proof-coverage.py` gate fails if any Lean source
 under `SpectralGeometry/` is not imported by `SpectralGeometry.lean`.
 
