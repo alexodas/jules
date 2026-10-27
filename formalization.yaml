@@ -1,8 +1,8 @@
 {
   "version": "v0.4",
   "project": {
-    "name": "Jules Spectral Geometry — canonical products and finite/infinite geometric operators",
-    "description": "This Lean 4 formalization studies conditional spectral and energy properties of geometric operators alongside regularized paired canonical products. A single independent Comparator challenge selects 48 theorems and 14 definitions: prescribed-line zeros and locally uniform convergence of the constructed product; symmetry, positivity and eigenvalues for finite geometric matrices; natural domains, density, point eigenvalues and energy-growth summability for infinite diagonal multiplication on real ℓ²; finiteness of point eigenvalues below a cutoff under a finite-sublevel assumption; and nonnegative symmetric finite-edge interactions and bounded perturbations on an infinite tile set. These theorems retain their explicit assumptions. The finite-edge component does not assert spectral completeness for a general infinitely interacting operator. Canonical-product zero localization is a property of the chosen factors, not a result about Riemann zeta zeros, and no link between the product's prescribed levels and eigenvalues of a particular geometric operator is established. Novelty and scientific peer review are not claimed.",
+    "name": "Jules Spectral Geometry — low-energy eigenspace multiplicity bound",
+    "description": "A Lean 4/Mathlib formalization of a per-eigenvalue low-energy multiplicity bound for an infinite real Hilbert-space operator H = M_V + B, with potentially unbounded onsite multiplication and a bounded finite-color matching interaction plus perturbation. Under properness of the onsite potential, an explicit regular resolvent shift, a Neumann-series smallness hypothesis, and λ < R - ‖B‖ with λ unequal to the regular shift, the geometric multiplicity of λ is at most the number of tiles with onsite energy ≤ R. Comparator selects exactly this one theorem, not the lemmas used to prove it. The inequality is per eigenspace and does NOT bound the sum of multiplicities across distinct eigenvalues or imply an indexed min–max estimate, inverse-square spectral summability, an explicit aperiodic-tiling model, or any result about Riemann zeta zeros. Novelty is unknown; this is a targeted resubmission experiment after a mechanically successful earlier submission was rejected for misleading Mathlib provenance and insufficient research interest.",
     "authors": [
       "Alessandro Odasso"
     ],
@@ -26,15 +26,35 @@
   },
   "sources": [
     {
-      "title": "Mathlib4 foundations for summability, infinite products and Hilbert-space analysis",
-      "id": "https://github.com/leanprover-community/mathlib4",
+      "title": "Low-energy eigenspace multiplicity bound for bounded corrections of proper onsite multiplication (statement first recorded in the Jules Lean development)",
+      "authors": [
+        "Alessandro Odasso"
+      ],
+      "type": "original-proof",
+      "relationship": "other",
+      "id": "https://github.com/alexodas/jules/blob/main/SpectralGeometry/InfiniteLocalFullLowEnergyCounting.lean",
+      "note": "Origin of this exact selected statement in the substantive Jules formalization. 'original-proof' records first presentation of this particular formulated result in this development, not a claim of novelty, priority or paper-worthiness. An identical earlier literary statement has not been identified; novelty remains unestablished."
+    },
+    {
+      "title": "Perturbation Theory for Linear Operators",
+      "authors": [
+        "Tosio Kato"
+      ],
+      "type": "book",
+      "id": "https://doi.org/10.1007/978-3-642-66282-9",
+      "relationship": "background",
+      "note": "General theory of bounded perturbations and spectral comparison; not cited as the source of this exact coordinate-injection or multiplicity statement."
+    },
+    {
+      "title": "Mathlib4 — Lean mathematical library",
       "type": "other",
-      "relationship": "adapts",
-      "note": "The formalization uses and specializes general Mathlib lemmas for infinite products, real ℓ² Hilbert spaces, symmetric operators, summability and norm inequalities. This is a software/formal-library dependency citation, not an assertion of research priority."
+      "id": "https://github.com/leanprover-community/mathlib4",
+      "relationship": "background",
+      "note": "Pinned Lean library used for lp Hilbert spaces, bounded maps, finite-dimensionality and basic functional analysis; not a source from which the selected theorem is adapted."
     }
   ],
   "status": {
-    "scope": "One Comparator configuration, 48 selected theorem statements and 14 definitions: six canonical-product theorems, thirteen finite-dimensional geometric theorems, fourteen infinite-onsite spectral theorems, four finite-low-energy onsite theorems, five finite-edge interaction theorems on ℓ², and six combined finite-edge/bounded-perturbation theorems. The remaining larger interacting compact-resolvent and spectral-completeness theory is Lean-compiled but not compared against independent Challenge statements in this submission.",
+    "scope": "One Comparator-selected theorem, SpectralGeometry.infiniteLocalMatching_full_eigenspace_finrank_le_lowEnergyTiles, plus the independently reproduced definitions needed for its statement. The full 46-module mathematical library remains built by Lean. The selected result bounds geometric multiplicity of ONE eigenvalue below R - ‖B‖ by #{t : V(t) ≤ R}, assuming a finite-sublevel onsite potential, a unit-gap regular shift, a small resolvent correction and λ ≠ a. It does not bound total low-energy eigenvalue counts, compare nth interacting and onsite eigenvalues, establish full-spectrum inverse-square summability, supply a named aperiodic tiling or prove any claim about zeta.",
     "sorry_count": 0,
     "sorry_in_definitions": 0,
     "axioms": [
@@ -51,109 +71,32 @@
           "OpenAI ChatGPT GPT-6"
         ],
         "framework": "ChatGPT",
-        "tool_setup": "AI-assisted preparation of Palomar metadata, independent theorem statements, module migration and Comparator configuration using the GitHub connector.",
-        "prompting_notes": "The maintainer requested submission packaging for an existing Lean development; this note does not attribute all earlier proof construction to this assistant."
+        "tool_setup": "AI-assisted construction of a reduced independent Comparator Challenge and provenance metadata via the connected GitHub API; existing mathematical proofs are imported unchanged from the project.",
+        "prompting_notes": "The maintainer requested a controlled resubmission experiment focused on one existing theorem and correction of a prior source-provenance rejection. This records packaging assistance, not authorship or the process that created the previous 46 mathematical source modules."
       }
     ],
     "spend_usd": "not tracked",
-    "notes": "Existing development provenance and review status require maintainer confirmation. The independent Challenge contains intentional sorry placeholders that are not admitted proofs in the Solution."
+    "notes": "The mathematical source library predates this packaging change. Costs and earlier human/AI contributions have not been independently audited. Challenge placeholders are never treated as proofs in Solution."
   },
   "fidelity": {
-    "divergences": "The selected theorem statements, their implicit parameters and 14 definitions have been checked against existing source declarations. Statements are conditional as encoded in Lean: finite-edge interactions are finite even when the tile Hilbert space is infinite, and positivity of perturbation energy is a hypothesis. The paired-product zero line is built into the factors, not a claim about unrelated analytic zeros; a bridge from canonical-product levels to the full interacting spectral theory is not established. The formalization alignment list highlights representative statements; comparator.json is the exhaustive machine-readable list of 48 selected theorems."
+    "divergences": "No change to the source theorem signature is intended. Selected statement concerns one eigenvalue λ with λ ≠ a and λ < R - ‖B‖; B is the full bounded correction including geometric interactions and perturbations. Its conclusion bounds the full eigenspace finrank by the number of tiles satisfying V(t) ≤ R. Natural-domain, properness, unit-gap and Neumann-series-smallness hypotheses must all be retained. Comparator's Challenge may contain deliberate sorry witnesses for the statement boundary; the source library/ Solution has no proof holes. The result is neither a sum over eigenspaces nor a spectral-counting/min–max theorem. No literature priority is claimed."
   },
   "review": {
-    "status": "submission preparation, not independently peer-reviewed",
+    "status": "AI-assisted packaging; mathematically not peer-reviewed; prior Palomar attempt declined",
     "reviewers": [],
-    "notes": "The unified Comparator covering 48 theorems and 14 definitions passed with Lean, con-ron and NanoDa in isolated run 40406964723, and the integrated PR passed Lean in run 40408338783 and Palomar Comparator in run 40408338779 on commit c93b69e. Every subsequent documentation or packaging commit must pass fresh CI. Authorship, provenance, originality, licensing and research significance still require responsible maintainer review before submission."
+    "notes": "Previous submission mechanically passed but Palomar editorial review objected to Mathlib being labelled 'adapts' and to the limited research significance of the 48 selected elementary results. This revision corrects the Mathlib classification to 'background', records the project as the origin of the precisely selected statement (without claiming mathematical novelty), and narrows Comparator to a per-eigenspace theorem from §4.40. New Comparator and CI checks are required before any resubmission. A separate editorial rejection for insufficient research interest remains possible. No independent expert novelty assessment is claimed."
   },
   "alignment": {
     "namespace": "SpectralGeometry",
     "statements": [
       {
-        "source": "Summable compact majorants yield locally uniform convergence of the canonical product.",
-        "lean": "SpectralGeometry.product_uniform_on_compact",
-        "module": "SpectralGeometry.CanonicalProduct",
-        "status": "existing source proof; matched by unified Comparator in isolated CI (run 40406964723)"
-      },
-      {
-        "source": "Zero of an individual factor lies on the prescribed complex affine real line.",
-        "lean": "SpectralGeometry.factor_zero_on_line",
-        "module": "SpectralGeometry.CanonicalProduct",
-        "status": "existing source proof; matched by unified Comparator in isolated CI (run 40406964723)"
-      },
-      {
-        "source": "Every zero of the infinite product lies on the prescribed affine real line.",
-        "lean": "SpectralGeometry.theoremC_zero_localization",
-        "module": "SpectralGeometry.CanonicalProduct",
-        "status": "existing source proof; matched by unified Comparator in isolated CI (run 40406964723)"
-      },
-      {
-        "source": "Positive levels with summable inverse squares satisfy the compact-majorant criterion.",
-        "lean": "SpectralGeometry.admissible_of_inv_sq_summable",
-        "module": "SpectralGeometry.CanonicalProduct",
-        "status": "existing source proof; matched by unified Comparator in isolated CI (run 40406964723)"
-      },
-      {
-        "source": "A nonzero prescribed level is a zero of its paired quadratic factor.",
-        "lean": "SpectralGeometry.factor_zero_at_positive_level",
-        "module": "SpectralGeometry.CanonicalProduct",
-        "status": "existing source proof; matched by unified Comparator in isolated CI (run 40406964723)"
-      },
-      {
-        "source": "A nonzero prescribed level is a zero of the infinite canonical product.",
-        "lean": "SpectralGeometry.canonicalProduct_zero_at_positive_level",
-        "module": "SpectralGeometry.CanonicalProduct",
-        "status": "existing source proof; matched by unified Comparator in isolated CI (run 40406964723)"
-      },
-      {
-        "source": "Finite symmetric weights and perturbations yield a symmetric perturbed matrix.",
-        "lean": "SpectralGeometry.finitePerturbedMatrix_symmetric",
-        "module": "SpectralGeometry.FinitePerturbation",
-        "status": "existing source proof; matched by unified Comparator in isolated CI (run 40406964723)"
-      },
-      {
-        "source": "Symmetric nonnegative edge weights admit a finite geometric energy sum-of-squares identity.",
-        "lean": "SpectralGeometry.finiteGeometricEnergy_sum_squares",
-        "module": "SpectralGeometry.FiniteGeometricEnergy",
-        "status": "existing source proof; matched by unified Comparator in isolated CI (run 40406964723)"
-      },
-      {
-        "source": "Strictly positive finite geometric energy forces positive eigenvalues.",
-        "lean": "SpectralGeometry.finiteGeometricEigenvalue_pos",
-        "module": "SpectralGeometry.FiniteStrictPositivity",
-        "status": "existing source proof; matched by unified Comparator in isolated CI (run 40406964723)"
-      },
-      {
-        "source": "The natural domain of an unbounded real ℓ² multiplication operator is dense.",
-        "lean": "SpectralGeometry.infiniteOnsiteDomain_dense",
-        "module": "SpectralGeometry.InfiniteOnsiteDensity",
-        "status": "existing source proof; matched by unified Comparator in isolated CI (run 40406964723)"
-      },
-      {
-        "source": "Positive diagonal potential forces existing infinite-onsite point eigenvalues to be positive.",
-        "lean": "SpectralGeometry.infiniteOnsiteEigenvalue_pos",
-        "module": "SpectralGeometry.InfiniteOnsiteEigenvalues",
-        "status": "existing source proof; matched by unified Comparator in isolated CI (run 40406964723)"
-      },
-      {
-        "source": "A proper onsite potential has only finitely many distinct point eigenvalues below a fixed threshold.",
-        "lean": "SpectralGeometry.infiniteOnsitePointEigenvalues_below_finite",
-        "module": "SpectralGeometry.InfiniteOnsiteFiniteLowEnergy",
-        "status": "existing source proof; matched by unified Comparator in isolated CI (run 40406964723)"
-      },
-      {
-        "source": "A finite set of nonnegative weighted edges has nonnegative interaction energy on ℓ².",
-        "lean": "SpectralGeometry.infiniteFiniteEdgeLaplacian_energy_nonneg",
-        "module": "SpectralGeometry.InfiniteFiniteEdgeInteraction",
-        "status": "existing source proof; matched by unified Comparator in isolated CI (run 40406964723)"
-      },
-      {
-        "source": "Onsite, finite-edge and bounded positive perturbation energies yield a nonnegative combined quadratic form.",
-        "lean": "SpectralGeometry.infiniteFiniteEdgePerturbedOperator_energy_nonneg",
-        "module": "SpectralGeometry.InfiniteBoundedPerturbation",
-        "status": "existing source proof; matched by unified Comparator in isolated CI (run 40406964723)"
+        "source": "Per-eigenvalue coordinate-injection dimension bound in the Jules formalization, section 4.40",
+        "lean": "SpectralGeometry.infiniteLocalMatching_full_eigenspace_finrank_le_lowEnergyTiles",
+        "module": "SpectralGeometry.InfiniteLocalFullLowEnergyCounting",
+        "status": "existing proved source theorem; separately selected for reduced Comparator, pending re-verification",
+        "note": "Only one eigenspace is bounded; the theorem does not imply a multiplicity-summed low-energy counting function bound. Assumes natural onsite regular-shift, properness, smallness and low-energy threshold hypotheses."
       }
     ]
   },
-  "acknowledgements": "Lean, Mathlib and PalomarTemplate. Their maintainers do not endorse this submission."
+  "acknowledgements": "Mathlib, Lean and PalomarTemplate provide background infrastructure; these projects and Tosio Kato do not endorse this submission."
 }
