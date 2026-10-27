@@ -1166,8 +1166,15 @@ compared in this submission. The metadata records the first identified
 source of the precise formalized statement, while Mathlib and relevant
 operator-theory literature are explicitly identified as background.
 Mathematical priority and novelty are not asserted.
-See [`PALOMAR.md`](PALOMAR.md) for the exact selected statement, assumptions,
-provenance and limits.
+
+**Human/AI development provenance:** Alessandro Odasso originated the initial
+non-formal research idea and directs the project. He does not identify as a
+mathematician; his motivation is exploring LLMs in scientific research. By his
+account, he used **OpenAI GPT-6 throughout the GitHub/Lean development**. This
+acknowledges the technical AI assistance without assigning mathematical
+novelty to it or suggesting that Odasso independently wrote all Lean proofs.
+See [`PALOMAR.md`](PALOMAR.md) for the selected statement, contributor roles,
+source provenance and limits.
 
 To run the independent statement comparison on a supported Linux runner
 with Bubblewrap configured, execute:
