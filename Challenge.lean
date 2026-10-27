@@ -206,6 +206,9 @@ abbrev MultiplicityEnd (Tile : Type*) :=
         D V σ w P ε shift a hgap hsmall eigenvalue hne)
   · exact 0
 
+abbrev CountEnd (Tile : Type*) :=
+  TileHilbert Tile →L[ℝ] TileHilbert Tile
+
 set_option maxHeartbeats 4000000
 
 /-- Multiplicity of one low-energy full-operator real eigenspace is bounded
