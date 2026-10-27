@@ -1393,20 +1393,26 @@ hypothesis is claimed.**
 
 **Verification status (distinct from P2–P4 mathematics):**
 
-- [ ] **Current focused submission candidate (§4.40).** Independently
-  compare one per-eigenspace low-energy multiplicity theorem with its
-  required definitions, using the existing proved Lean module. The result
-  is conditional and only controls one eigenspace; it does **not** bound
-  the sum of multiplicities across distinct low-energy eigenvalues.
-  Pass all static, Lean and independent Comparator checks on an immutable
-  commit before submitting.
-- [ ] **Provenance and scientific assessment.** Distinguish the recorded origin
-  of the exact formalized statement from Kato's general perturbation theory
-  and Mathlib's software foundations. Mathematical priority/novelty remains
-  unknown; mechanical success alone does not establish research interest.
-- [ ] **Future research.** Prove the multi-eigenspace counting estimate of
-  §6.2 and eventual interacting spectral-product instantiation, before
-  treating either as a new Comparator-checkable mathematical result.
+- [x] **Focused Comparator result (§4.40).** The current independent
+  Challenge selects the per-eigenspace low-energy multiplicity bound for
+  the full infinite interacting operator, together with 16 supporting
+  definitions and type abbreviations. The source theorem remains unchanged
+  and proved in Lean; its independent statement comparison has passed
+  Lean, NanoDa and con-ron. This controls **one** eigenspace, not the
+  sum of multiplicities across distinct low-energy eigenvalues.
+- [x] **Source-record correction.** The metadata records the first identified
+  source of this precise formalized statement as the Jules development
+  (`original-proof`, `other`); Kato, related spectral-counting literature
+  and Mathlib are distinguished as `background`, not `adapts`.
+  The classification does **not** establish mathematical priority.
+- [ ] **Research-interest assessment and possible Palomar submission.**
+  Mathematical novelty and the likelihood of editorial acceptance remain
+  unverified. If submitted, use a public immutable 40-character commit SHA
+  whose complete Lean and Comparator checks have passed; the prior
+  selection's mechanical success did not prevent editorial rejection.
+- [ ] **Future mathematics.** Prove the multi-eigenspace counting inequality
+  of §6.2 and the eventual interacting spectral-product instantiation
+  before claiming either as a new verified result.
 
 **Maintenance rule:** when adding a new result, update its §4 explanation,
 its corresponding roadmap checkbox and the canonical §5 module list together.
