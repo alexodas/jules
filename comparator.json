@@ -16,7 +16,11 @@
     "SpectralGeometry.infiniteBoundedOnsiteCorrectionUnit",
     "SpectralGeometry.infiniteBoundedOnsiteResolvent",
     "SpectralGeometry.infiniteLocalMatchingFullEigenspace",
-    "SpectralGeometry.infiniteLocalMatchingFullMultiplicity"
+    "SpectralGeometry.infiniteLocalMatchingFullMultiplicity",
+    "SpectralGeometry.OnsiteEnd",
+    "SpectralGeometry.FullEnd",
+    "SpectralGeometry.MultiplicityEnd",
+    "SpectralGeometry.CountEnd"
   ],
   "permitted_axioms": [
     "propext",
