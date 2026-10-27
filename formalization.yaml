@@ -32,7 +32,7 @@
       "type": "original-proof",
       "relationship": "other",
       "id": "https://github.com/alexodas/jules/blob/main/SpectralGeometry/InfiniteLocalFullLowEnergyCounting.lean",
-      "note": "The Jules Lean development is the first identified documentation of this precise selected formal statement. This declaration records source origin, NOT established priority or mathematical novelty. A focused, non-exhaustive search on 27 October 2026 did not find the exact bound with all these hypotheses; the proof uses a standard quadratic-form and finite-coordinate restriction argument. Equivalent earlier results may exist. If one is identified, replace this original-proof source with the actual mathematical source and an accurate relationship."
+      "note": "The Jules Lean development is the first identified documentation of this precise selected formal statement. The initial informal project idea and scientific direction came from Alessandro Odasso, who reports using GPT-6 throughout the GitHub development and Lean formalization. The `authors` entry names the responsible human project initiator/maintainer; it does not claim that all Lean proofs were personally written without AI assistance. This `original-proof` classification records the first identified presentation of the specific statement, NOT verified mathematical priority or novelty. A focused non-exhaustive literature search on 27 October 2026 did not identify the exact bound with all these hypotheses; equivalent earlier results may exist and would require correcting the source record."
     },
     {
       "title": "Perturbation Theory for Linear Operators",
@@ -82,12 +82,12 @@
           "OpenAI ChatGPT GPT-6"
         ],
         "framework": "ChatGPT",
-        "tool_setup": "AI-assisted construction of a reduced independent Comparator Challenge and provenance metadata via the connected GitHub API; existing mathematical proofs are imported unchanged from the project.",
-        "prompting_notes": "The maintainer requested focused Palomar packaging of one already proved theorem, including explicit source provenance and background literature. This records AI assistance with packaging, not authorship of the earlier mathematical Lean development."
+        "tool_setup": "OpenAI GPT-6 was used, under Alessandro Odasso's direction, throughout the GitHub development of Jules, including Lean mathematical formalization, proof development and related repository/documentation work, as reported by the responsible maintainer. This method record is not limited to the later Palomar packaging.",
+        "prompting_notes": "Alessandro Odasso supplied the initial non-formal research idea and directed the project. He describes himself as not being a mathematician and as being interested in the use of LLMs for scientific research. He states that he used OpenAI GPT-6 throughout the GitHub development. The exact historical prompts and model contributions were not independently audited; this declaration reports the maintainer's account and does not assert mathematical priority."
       }
     ],
     "spend_usd": "not tracked",
-    "notes": "The mathematical source library predates this packaging change. Costs and earlier human/AI contributions have not been independently audited. Challenge placeholders are never treated as proofs in Solution."
+    "notes": "The initial non-formal research idea and the direction of the Jules project originated with Alessandro Odasso. Odasso does not identify as a mathematician; his stated motivation is to investigate how large language models can be used in scientific work. According to the responsible maintainer, he used OpenAI GPT-6 throughout development of the GitHub repository, including the Lean formalization and its associated repository work. The human originated the informal idea and directed the project; GPT-6 was the AI assistant used for technical development. This is a disclosure of the human/AI workflow, not proof of mathematical originality, not a claim that the human independently wrote all Lean proofs, and not independent evidence that every historical interaction is recoverable. The checked mathematical statements are verified by Lean/Comparator, not by the AI's authority. Costs were not tracked. Challenge-only sorry placeholders are never treated as proofs in Solution."
   },
   "fidelity": {
     "divergences": "The selected Lean theorem retains its precise per-eigenspace conclusion: λ ≠ a and λ < R − ‖B‖ imply geometric multiplicity at λ is at most #{t : V(t) ≤ R}. The full bounded correction B includes matching-family interactions, a bounded perturbation and scalar shift. The natural domain, properness, unit-gap and small-resolvent-correction assumptions remain explicit; the result does not require B to be self-adjoint. It proves neither a sum of multiplicities over different eigenvalues nor index-wise growth, inverse-square summability or a spectral-product instantiation."
@@ -95,7 +95,7 @@
   "review": {
     "status": "AI-assisted packaging; mathematical originality unconfirmed; no human mathematical peer review",
     "reviewers": [],
-    "notes": "This candidate selects the existing full-interacting-operator low-energy eigenspace multiplicity bound. The recorded origin of the precise formal statement is distinguished from general mathematical literature and Mathlib as a library dependency; citations and bibliographic uncertainty are detailed in `sources`. The research motivation is finite-coordinate observability and a quantitative upper bound on the geometric multiplicity of one real eigenspace, without requiring symmetry of the bounded correction. The proof uses a standard quadratic-form and coordinate-restriction technique; mathematical novelty and research significance have not been independently established. Mechanical verification is commit-specific and must pass on the exact immutable commit used for submission."
+    "notes": "This candidate selects the existing full-interacting-operator low-energy eigenspace multiplicity bound. The recorded origin of the precise formal statement is distinguished from general mathematical literature and Mathlib as a library dependency; citations and bibliographic uncertainty are detailed in `sources`. The research motivation is finite-coordinate observability and a quantitative upper bound on the geometric multiplicity of one real eigenspace, without requiring symmetry of the bounded correction. The proof uses a standard quadratic-form and coordinate-restriction technique; mathematical novelty and research significance have not been independently established. Mechanical verification is commit-specific and must pass on the exact immutable commit used for submission. Human/AI contribution disclosure: Alessandro Odasso originated the informal idea, steered the project and is the responsible maintainer; according to his account, GPT-6 supported the full GitHub/Lean development. This is distinct from mathematical-source provenance and does not establish mathematical novelty or peer-reviewed research significance."
   },
   "alignment": {
     "namespace": "SpectralGeometry",
@@ -109,5 +109,5 @@
       }
     ]
   },
-  "acknowledgements": "Mathlib, Lean and PalomarTemplate provide background infrastructure; these projects and Tosio Kato do not endorse this submission."
+  "acknowledgements": "The project reports use of OpenAI GPT-6 throughout its GitHub/Lean development under Alessandro Odasso's direction. Lean, Mathlib and PalomarTemplate provide the verification and development infrastructure; neither OpenAI nor these projects or the cited mathematical authors endorse this submission."
 }
