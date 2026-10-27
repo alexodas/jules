@@ -36,7 +36,7 @@ jobs:
         run: lake exe cache get
       - name: Build complete mathematical library and Comparator modules
         run: lake build SpectralGeometry Challenge Solution
-      - name: Compare 48 theorem statements and 14 definitions with bundled kernels
+      - name: Compare selected low-energy eigenspace theorem with bundled kernels
         run: |
           sudo apt-get update -qq >/dev/null
           sudo apt-get install -y -qq bubblewrap >/dev/null

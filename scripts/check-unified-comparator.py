@@ -24,12 +24,16 @@ except (OSError, UnicodeError, ValueError) as error:
 
 if config.get("challenge_module") != "Challenge" or config.get("solution_module") != "Solution":
     errors.append("Comparator must use root Challenge and Solution modules")
-for key, minimum in (("theorem_names", 48), ("definition_names", 14)):
+expected = ["SpectralGeometry.infiniteLocalMatching_full_eigenspace_finrank_le_lowEnergyTiles"]
+names = config.get("theorem_names")
+if names != expected:
+    errors.append("This Palomar candidate must select exactly the §4.40 eigenspace theorem")
+for key in ("theorem_names", "definition_names"):
     names = config.get(key)
     if not isinstance(names, list) or not all(isinstance(n, str) for n in names):
         errors.append(f"{key} must be a list of qualified names")
-    elif len(names) != len(set(names)) or len(names) < minimum:
-        errors.append(f"{key} duplicates a name or loses coverage (minimum {minimum})")
+    elif len(names) != len(set(names)) or not names:
+        errors.append(f"{key} has duplicates or an empty selection")
 
 headers = re.findall(r"^\s*(?:public\s+)?import\s+([^\n]+)", statement, re.MULTILINE)
 if headers != ["Mathlib"]:
@@ -60,5 +64,5 @@ if errors:
     sys.exit(1)
 print(f"Single Mathlib-only Challenge: {len(statement.splitlines())} lines, "
       f"{len(statement.encode('utf-8'))} bytes; "
-      f"{len(config['theorem_names'])} theorems and "
-      f"{len(config['definition_names'])} definitions.")
+      f"{len(config['theorem_names'])} selected theorem(s) and "
+      f"{len(config['definition_names'])} selected definitions.")

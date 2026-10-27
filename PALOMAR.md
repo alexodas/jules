@@ -1,53 +1,143 @@
-# Palomar submission preparation — unified Comparator (draft)
+# Palomar candidate — low-energy multiplicity of an infinite interacting operator
 
-This branch prepares **one Palomar submission candidate** for the Jules
-SpectralGeometry Lean 4 development. One root `comparator.json` compares
-**48 theorem statements and 14 definitions** between `Challenge.lean` and
-`Solution.lean`, including canonical products, finite geometric energy,
-infinite onsite operators, finite low-energy sectors, and finite-edge
-interactions in an infinite Hilbert space.
+The candidate **mathematical result** is one theorem from the 46-module
+Lean 4 project, not a count of formalized lemmas. Comparator selects
+`SpectralGeometry.infiniteLocalMatching_full_eigenspace_finrank_le_lowEnergyTiles`
+in [`SpectralGeometry/InfiniteLocalFullLowEnergyCounting.lean`](SpectralGeometry/InfiniteLocalFullLowEnergyCounting.lean).
+The theorem was proved in the source development before this packaging work.
 
-## One independent statement boundary
+## Research question
 
-- `Challenge.lean` imports **Mathlib only**. Its explicit definitions,
-  structure and 48 theorem statements are independent of the project proofs.
-  The 48 `sorry` terms deliberately mark the proposed theorem statements;
-  they are not part of the proved library.
-- `Solution.lean` imports existing, unchanged substantive source modules.
-  No theorem body is copied into it.
-- `comparator.json` is the **only Comparator configuration** and lists all
-  48 theorems and 14 definition names. A single Palomar submission can point
-  to this file, after maintainer approval and registry review.
-- `formalization.yaml` describes the full selected scope and provenance.
-- `lake-manifest.json` and `lean-toolchain` pin the verifier environment.
-- The Challenge contains approximately **614 physical lines** (under the
-  Palomar limits of 1,000 lines / 100 KiB).
+When an infinite collection of geometric sites carries an unbounded onsite
+energy `V` together with bounded interactions, how much of a **complete
+low-energy eigenspace** can be observed in the finitely many sites where
+the onsite potential is small? Can the dimension of that eigenspace be
+bounded even when the ambient Hilbert space has infinitely many coordinates?
 
-### Scope of the checked results
+Let `H = M_V + B` on the natural multiplication domain in the real
+Hilbert space `ℓ²(Tile)`. Here `B` is the full bounded correction: a
+finite-color matching-family interaction on the *infinite* tile space,
+a bounded perturbation and an optional scalar shift.
 
-| Mathematical topic | Theorems |
-|---|---:|
-| Canonical paired products and prescribed-line zeros | 6 |
-| Finite geometric matrices, energy and eigenvalues | 13 |
-| Infinite onsite multiplication, domain, eigenvalues and growth | 14 |
-| Finite low-energy onsite sectors and point-eigenvalue bounds | 4 |
-| Finite-edge interactions on an infinite Hilbert space | 5 |
-| Onsite + finite-edge + bounded perturbation | 6 |
-| **Total** | **48** |
+The compared Lean theorem states the following necessary-condition bound,
+retaining all its explicit hypotheses:
 
-These results have **conditional hypotheses** as stated in Lean. In
-particular, the infinite interaction suite handles *finitely many active
-edges* in an arbitrary (possibly infinite) tile space. It does **not**
-verify the spectral completeness or compact-resolvent results for the full
-infinite matching-family operator against independently authored statements.
-The canonical product's zero line is fixed **by construction**; no theorem
-about the zeros of the Riemann zeta function follows. A mathematical reader
-must still review the statements, research significance and fidelity.
+```math
+\lambda<R-\|B\|,\quad \lambda\ne a
+\quad\Longrightarrow\quad
+\dim E_\lambda(H)\le\#\{t:V(t)\le R\}.
+```
 
-## Reproducible checks
+We assume that every onsite sublevel set is finite, `V(t)-a≥1`
+for every site, and `‖B ∘ R_a‖ < 1` for the onsite resolvent `R_a`.
+These conditions identify a bounded compact shifted inverse and ensure
+that the eigenspace of the full operator on its natural domain has a
+well-defined finite geometric multiplicity. The theorem does **not**
+assume that the bounded correction is symmetric or self-adjoint.
+In the Lean statement `E_λ(H)` is represented by the equivalent
+eigenspace of the compact shifted resolvent, with the equality to
+natural-domain eigenvectors proved in the source development.
 
-From the repository root, with the pinned Lean toolchain, Linux Bubblewrap,
-and pinned Mathlib dependencies:
+## Why this particular result may interest researchers
+
+**Finite-coordinate observability.** Even in an infinite Hilbert space,
+restriction to the finite set `{t : V(t) ≤ R}` is injective on the
+*entire eigenspace at one sufficiently low spectral level*, not just
+nonzero on one eigenvector. Thus its geometric multiplicity has an
+explicit upper bound in terms of a geometric/potential sublevel count.
+
+**Robustness under bounded interactions.** The threshold has an explicit
+perturbation penalty `‖B‖`. The operator includes infinitely many
+geometric interaction edges represented by a finite family of bounded
+matching operators, not only the finitely many active edges treated in
+our earlier Comparator selection. The proof applies without assuming
+the bounded correction is symmetric. Its conclusion concerns geometric
+multiplicity, not orthogonal spectral projections for a non-self-adjoint
+operator.
+
+**Research context.** The relevant audience includes specialists in
+discrete Schrödinger operators, spectral theory of graph operators,
+finite-dimensional detection of low-energy states, and rigorous/formal
+operator theory. The bound can serve as one input toward a
+multiplicity-respecting multi-eigenspace counting theorem. Such a
+stronger theorem is an **open goal** in this repository, not a result
+verified by the present Comparator.
+
+**Scope and difficulty.** The proof uses the quadratic-form inequality
+for vectors vanishing on low-potential coordinates: their Rayleigh
+numerator is at least `(R-‖B‖)‖ψ‖²`. An eigenvector with
+`λ<R-‖B‖` therefore cannot vanish on those coordinates. Applying
+this observation to the kernel of the coordinate restriction on the
+whole fixed-λ eigenspace proves injectivity and the dimension bound.
+This is a transparent standard-style argument, not a claimed new
+analytic technique. Its generality does *not* rely on a named
+aperiodic tiling, tile-dependent interactions, or all bounded-degree
+graphs being represented by matching colors.
+
+The theorem does **not** estimate the total number of eigenvalues
+below a threshold, prove an index-wise min–max comparison or
+inverse-square summability, supply a specific Penrose/Ammann–Beenker
+model, or imply any statement about the zeros of the Riemann zeta
+function.
+
+## Origin, literature and the novelty hypothesis
+
+This exact theorem was first **identified** in the Jules Lean source
+development. A **focused, non-exhaustive literature search** conducted
+for this preparation on 27 October 2026 considered low-energy spectral
+subspaces, onsite potentials, discrete Schrödinger bounds, graph
+operators and eigenvalue/multiplicity counting. It did **not identify an
+earlier publication of the same precise statement and hypotheses**.
+That observation motivates **possible originality**, not verified
+priority or a claim that all related mathematics is new. We welcome
+correction if an earlier equivalent formulation is found.
+
+The background literature includes:
+
+- Tosio Kato, *Perturbation Theory for Linear Operators*, for general
+  principles of bounded perturbations and spectral theory
+  (DOI: https://doi.org/10.1007/978-3-642-66282-9).
+- Sven Bachmann, Richard Froese and Severin Schraven, *Counting
+  eigenvalues of Schrödinger operators using the landscape function*,
+  *Journal of Spectral Theory* **13** (2023), 1445–1472,
+  DOI: https://doi.org/10.4171/JST/488. Their results compare the
+  ranks of spectral projections with sublevel volumes of an effective
+  potential, in a different setting and with different hypotheses.
+  They demonstrate that spectral-counting estimates are an active,
+  developed subject; we do not claim to extend their results.
+- Mathlib4, as **background formal-library infrastructure**, not the
+  publication or mathematical source of the selected bound.
+
+Accordingly, `formalization.yaml` gives the formalization's
+first-identified statement the source classification
+`type: original-proof`, `relationship: other`; the mathematical
+literature and Mathlib receive `relationship: background`.
+An earlier equivalent theorem would require changing that declaration
+and citing the real source with the appropriate relationship.
+There has been **no expert priority review** and no novelty certificate.
+
+## Verification and exact submission scope
+
+The selected theorem is a **per-eigenspace** dimension estimate, rather
+than a global eigenvalue-counting or ordered-spectrum comparison theorem.
+Its motivation is finite-coordinate observability for the full
+interacting operator. The proof uses standard quadratic-form and
+restriction arguments; novelty and research-level significance have
+not been independently established. Passing mechanical checks does
+not, by itself, imply editorial acceptance.
+
+- `Challenge.lean` imports only Mathlib, independently states the
+  theorem and its necessary definitions, and contains deliberate
+  Challenge-only `sorry` placeholders.
+- `Solution.lean` imports the unchanged, fully proved source theorem
+  and its dependency closure.
+- The single root `comparator.json` names **one theorem and 16
+  supporting definitions/type abbreviations**. It does not certify
+  the remaining mathematical modules against independent statements.
+- `lean-toolchain` and `lake-manifest.json` fix the environment;
+  the full substantive source library is still compiled by Lean.
+
+Reproducible checks from repository root:
 
 ```sh
 python3 scripts/check-palomar-layout.py
@@ -61,29 +151,11 @@ lake build SpectralGeometry Challenge Solution
 bash scripts/verify-comparator.sh
 ```
 
-CI builds all existing mathematical modules and then runs **one Comparator**
-with Lean, NanoDa and con-ron from the toolchain. This preserves the
-independently audited statement boundary without invoking the expensive
-`lake check` that recursively replayed hundreds of thousands of Mathlib
-declarations for hours. The static audits are not kernel checks.
-
-The unified proof test passed on
-[GitHub Actions run 40406964723](https://github.com/alexodas/jules/actions/runs/40406964723)
-in under five minutes. The integrated PR passed both
-[Lean / Mathlib](https://github.com/alexodas/jules/actions/runs/40408338783)
-and [Palomar Comparator](https://github.com/alexodas/jules/actions/runs/40408338779)
-on commit `c93b69e`. Subsequent commits must also pass their own CI
-before merging.
-
-## Maintainer decisions before publication
-
-1. Confirm the proposed **Apache-2.0** root license is appropriate for
-   publishing the repository; no license was present on `main` when
-   the submission-preparation PR began.
-2. Confirm the repository is public at the precise submitted commit SHA,
-   as required by Palomar; no visibility change is performed here.
-3. Review authorship, source provenance, automation credits, research
-   classification, conditional hypotheses and claimed mathematical scope.
-   Passing Comparator is not a novelty assessment or peer review.
-4. Submit only after a responsible maintainer authorizes it. This draft
-   branch is not automatically merged, published, or submitted.
+Both Lean/Mathlib and the independent Palomar Comparator must succeed
+on the **exact commit being submitted**. Passing checks on one commit
+does not validate subsequent metadata, Challenge or packaging edits.
+Consult the repository's [GitHub Actions history](https://github.com/alexodas/jules/actions)
+for the status of the chosen commit, rather than relying on a particular
+pull-request number or earlier build.
+A Palomar submission must refer to a public, immutable **40-character
+commit SHA** and is not performed automatically.
