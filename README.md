@@ -1157,7 +1157,7 @@ treated as an independently proved library.
 one [`comparator.json`](comparator.json), one
 [`Challenge.lean`](Challenge.lean) and one [`Solution.lean`](Solution.lean).
 Comparator selects **one theorem**, the per-eigenspace low-energy multiplicity
-bound of §4.40, together with the independent definitions needed to state it.
+bound of §4.40, together with 16 independently reproduced definitions and type abbreviations needed to state it.
 The toolchain's Lean, NanoDa and con-ron kernels verify the selected
 comparison. The separate Lean build still covers **all 46 mathematical
 source modules**; earlier compact-resolvent, real-spectrum and ordered
