@@ -252,4 +252,8 @@ theorem infiniteLocalMatching_full_eigenspace_finrank_le_lowEnergyTiles
       (hproper R).toFinset.card  := by
   sorry -- Independent statement only; Solution imports the original complete Lean proof
 
+-- TEMP DIAGNOSTIC: reveal elaborated theorem helper type
+set_option pp.all true in
+#check @SpectralGeometry.infiniteBoundedOnsiteCorrectionUnit
+
 end SpectralGeometry
