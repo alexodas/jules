@@ -80,6 +80,26 @@ inverse-square summability, supply a specific Penrose/Ammann–Beenker
 model, or imply any statement about the zeros of the Riemann zeta
 function.
 
+## Human origin and AI-assisted development
+
+The **initial informal research idea** came from **Alessandro Odasso**.
+He does not identify as a mathematician; his interest is in exploring
+the use of large language models for scientific research. He initiated
+and directed this project and is the responsible human maintainer.
+
+**Development method (maintainer's account):** Alessandro Odasso used
+**OpenAI GPT-6 throughout the GitHub development of Jules**, including
+the Lean mathematical formalization and associated repository work.
+GPT-6 is credited as an AI development assistant, **not** as a human
+mathematical coauthor. Naming Odasso under `project.authors` and as
+maintainer reflects human project direction and responsibility; it
+does not mean that he independently authored all formal proofs.
+
+This description is reported by the maintainer; it does not imply a
+complete independently audited log of historical prompts. Lean and the
+independent Comparator provide mechanical checking, not a guarantee
+of originality, research significance or human peer review.
+
 ## Origin, literature and the novelty hypothesis
 
 This exact theorem was first **identified** in the Jules Lean source
