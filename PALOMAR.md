@@ -66,8 +66,8 @@ Mathlib provenance. This new candidate deliberately isolates those issues.
 - `Solution.lean` imports
   `SpectralGeometry.InfiniteLocalFullLowEnergyCounting`, containing the
   genuine, previously proved declaration and its full dependency closure.
-- The **only** `comparator.json` selects one theorem and its supporting
-  definitions. The other Lean theorems remain compiled through
+- The **only** `comparator.json` selects one theorem and its 16 supporting
+  definitions and type abbreviations. The other Lean theorems remain compiled through
   `SpectralGeometry.lean`, but are not independently compared here.
 - `lean-toolchain` and `lake-manifest.json` pin the environment; the
   source proof modules remain unchanged.
