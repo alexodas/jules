@@ -137,6 +137,17 @@ s=\frac12\pm i\lambda_n(\varepsilon).
 
 **The line is imposed by the construction of the product, not derived from any property of the Riemann zeta function.** The formalized abstract matching-family results extend through §4.40, including real spectral exhaustion, exact multiplicity-tagged coverage, dense span of real spectral eigenspaces, an ordered infinite tagged-eigenvalue sequence with **λₙ → +∞ under explicit assumptions**, norm-controlled form bounds, and a geometric-multiplicity bound through finite onsite-sector coordinates. The multiplicity-aware **n-th eigenvalue comparison**, quantitative lower growth rates, and full-spectrum inverse-square summability remain unproved. We have not instantiated a particular aperiodic tiling, proved positive **ordered** eigenvalues with their multiplicities and inverse-square summability for the full interacting operator, or connected that spectrum to the canonical product in Lean. This project does not prove the Riemann hypothesis and does not identify `D_\varepsilon` with the zeta function.
 
+**Separate long-term research question (not yet formalized):** Can a tiling or its
+geometric operator define a complex analytic function *independently of any
+preselected zero line*, and can structural properties of that construction
+then force its zeros onto a geometrically determined line? For example, one
+could investigate a genuinely independent spectral-determinant identity or
+symmetry principle. Merely rewriting the present product with chosen
+`center` and `direction` does not count: those parameters already impose
+the line. Self-adjointness makes the relevant operator eigenvalues real,
+but does not by itself single out `Re(s) = 1/2` or identify any function
+with the Riemann zeta function. See the exploratory P3 milestone in §6.3.
+
 ## 3. Finite-dimensional geometric operators
 
 ### 3.1. Symmetry under controlled perturbations
@@ -1370,6 +1381,17 @@ gap under its explicit hypotheses.
   operator** as an `Admissible` sequence, and apply the checked canonical
   product and zero-localization results. State every analytic and geometric
   hypothesis explicitly.
+- [ ] **Exploratory long-term goal — a zero line emerging from geometry.**
+  First define an analytically meaningful function from an independently
+  specified tiling/operator construction, without building the desired line
+  into the canonical factors or a chosen affine change of variable. Then
+  investigate whether a proved geometric, spectral or functional symmetry
+  constrains its zeros to a line determined by that structure. A spectral
+  determinant representation could be one route, but must not simply
+  repackage the already prescribed zero locations. This is a speculative
+  research question, **not** a theorem or a prerequisite for the current
+  spectral-to-product program; no relation to zeta or proof of the Riemann
+  hypothesis is claimed.
 
 ### 6.4. P4 — Verify a concrete geometric model
 
