@@ -1,14 +1,11 @@
 module
 
-public import SpectralGeometry.CanonicalProduct
-public import SpectralGeometry.FiniteStrictPositivity
-public import SpectralGeometry.InfiniteOnsitePowerGrowth
-public import SpectralGeometry.InfiniteOnsiteFiniteLowEnergy
-public import SpectralGeometry.InfiniteBoundedPerturbation
+public import SpectralGeometry.InfiniteLocalFullLowEnergyCounting
 
 /-!
-# One Palomar solution module for all advertised statements
+# Palomar solution: one selected low-energy eigenspace multiplicity bound
 
-Import the original substantive Lean proofs. All independent declarations
-are in Challenge.lean; this file introduces no new theorem or weakened proof.
+The proved declaration and its entire mathematical dependency closure come
+from the original SpectralGeometry modules. This file introduces no theorem
+or replacement proof.
 -/
