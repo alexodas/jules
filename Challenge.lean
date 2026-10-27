@@ -5,270 +5,25 @@ public import Mathlib
 public section
 
 /-!
-# Paired canonical products: convergence and prescribed-line zeros
+# Low-energy geometric multiplicity bound for an infinite interacting operator
 
-The independent statement surface of SpectralGeometry/CanonicalProduct.lean.
-Positive levels q(n) determine paired quadratic factors. Admissibility means
-a summable majorant for deviations from one on every compact set.
+For the genuine full matching-family operator H = M_V + B on real ℓ²(Tile),
+a low-lying eigenspace has dimension at most the number of tiles with onsite
+potential ≤ R. The potential may be unbounded and the tile set infinite.
+B includes bounded infinite matching interactions and a bounded perturbation.
 
-Theorem C proves that zeros of this *constructed* infinite product lie on
-the chosen affine real line; it does not concern zeros of the zeta function
-or identify the levels with any spectral operator. Inverse-square summability
-is a sufficient condition for admissibility. The sorry lines here are
-Comparator's intentional challenge holes; proved declarations are in Solution.
+This statement is *per eigenspace*, not a bound on the sum of multiplicities
+over distinct eigenvalues. It assumes onsite finite sublevel sets, a regular
+resolvent shift with a unit onsite gap and a Neumann-series smallness bound,
+and eigenvalue < R - ‖B‖ away from that shift. It neither establishes
+index-wise min--max comparison nor inverse-square spectral summability.
+
+This independent Challenge deliberately leaves the main theorem as a sorry.
+A proof-irrelevant finite-dimensionality witness inside the multiplicity
+definition is also a Challenge-only placeholder; the proved Solution
+supplies the genuine compact-resolvent theorem. Neither placeholder is
+admitted as part of the substantive source library.
 -/
-
-open Filter
-open scoped BigOperators
-
-namespace SpectralGeometry
-
-noncomputable section
-
-/-- The perturbation of 1 in the paired canonical factor. -/
-@[expose] def perturb (q : ℕ → ℝ) (center direction : ℂ) (n : ℕ) (s : ℂ) : ℂ :=
-  -(((s - center) / direction) ^ 2 / ((q n : ℂ) ^ 2))
-
-/-- A factor corresponding to the symmetric geometric levels `±q n`. -/
-@[expose] def factor (q : ℕ → ℝ) (center direction : ℂ) (n : ℕ) (s : ℂ) : ℂ :=
-  1 + perturb q center direction n s
-
-/-- The infinite paired (regularized) product. -/
-@[expose] def canonicalProduct (q : ℕ → ℝ) (center direction : ℂ) (s : ℂ) : ℂ :=
-  ∏' n : ℕ, factor q center direction n s
-
-/--
-An *admissible* energy family has positive energies and a summable
-majorant for the deviations of the canonical factors from 1 on
-every compact set. This is a checkable normal-convergence condition,
-rather than an assumption that the product already converges.
-
-The sufficient bound `∑ n, (q n)⁻² < ∞` is proved below.
--/
-structure Admissible (q : ℕ → ℝ) (center direction : ℂ) : Prop where
-  positive : ∀ n, 0 < q n
-  compactMajorant :
-    ∀ K : Set ℂ, IsCompact K →
-      ∃ b : ℕ → ℝ, Summable b ∧
-        ∀ n s, s ∈ K → ‖perturb q center direction n s‖ ≤ b n
-
-
-theorem product_uniform_on_compact
-    {q : ℕ → ℝ} {center direction : ℂ}
-    (h : Admissible q center direction)
-    (K : Set ℂ) (hK : IsCompact K) :
-    HasProdUniformlyOn (fun n s => factor q center direction n s)
-      (canonicalProduct q center direction) K := by
-  sorry
-
-theorem factor_zero_on_line
-    {q : ℕ → ℝ} {center direction s : ℂ}
-    (h : Admissible q center direction)
-    (hd : direction ≠ 0)
-    (n : ℕ)
-    (hz : factor q center direction n s = 0) :
-    ∃ t : ℝ, s = center + direction * (t : ℂ) := by
-  sorry
-
-theorem theoremC_zero_localization
-    {q : ℕ → ℝ} {center direction s : ℂ}
-    (h : Admissible q center direction)
-    (hd : direction ≠ 0)
-    (hz : canonicalProduct q center direction s = 0) :
-    ∃ t : ℝ, s = center + direction * (t : ℂ) := by
-  sorry
-
-theorem admissible_of_inv_sq_summable
-    {q : ℕ → ℝ} (hq : ∀ n, 0 < q n)
-    (hsum : Summable (fun n => 1 / (q n) ^ 2))
-    (center direction : ℂ) : Admissible q center direction := by
-  sorry
-
-theorem factor_zero_at_positive_level
-    (q : ℕ → ℝ) (n : ℕ)
-    (hq : q n ≠ 0)
-    (center direction : ℂ) (hd : direction ≠ 0) :
-    factor q center direction n
-      (center + direction * (q n : ℂ)) = 0 := by
-  sorry
-
-theorem canonicalProduct_zero_at_positive_level
-    (q : ℕ → ℝ) (n : ℕ) (hq : q n ≠ 0)
-    (center direction : ℂ) (hd : direction ≠ 0) :
-    canonicalProduct q center direction
-      (center + direction * (q n : ℂ)) = 0 := by
-  sorry
-
-end
-end SpectralGeometry
-
-/-! ## Finite geometric operators -/
-
-namespace SpectralGeometry
-
-variable {Tile : Type*} [Fintype Tile] [DecidableEq Tile]
-
-@[expose] noncomputable def finiteUnperturbedMatrix
-    (V : Tile → ℝ) (w : Tile → Tile → ℝ) : Matrix Tile Tile ℝ :=
-  fun t u =>
-    if t = u then
-      V t + ∑ v : Tile, if v = t then (0 : ℝ) else w t v
-    else
-      -w t u
-
-@[expose] noncomputable def finitePerturbedMatrix
-    (V : Tile → ℝ) (w : Tile → Tile → ℝ)
-    (P : Matrix Tile Tile ℝ) (ε : ℝ) : Matrix Tile Tile ℝ :=
-  fun t u => finiteUnperturbedMatrix V w t u + ε * P t u
-
-@[expose] noncomputable def finiteQuadraticEnergy
-    (M : Matrix Tile Tile ℝ) (ψ : Tile → ℝ) : ℝ :=
-  ∑ t : Tile, ∑ u : Tile, ψ t * (M t u * ψ u)
-
--- Independently reproduced statement signatures from SpectralGeometry/FinitePerturbation.lean
-theorem finiteUnperturbedMatrix_symmetric
-    (V : Tile → ℝ) (w : Tile → Tile → ℝ)
-    (hw : ∀ t u, w t u = w u t) :
-    ∀ t u, finiteUnperturbedMatrix V w t u =
-      finiteUnperturbedMatrix V w u t := by
-  sorry
-
-theorem finitePerturbedMatrix_symmetric
-    (V : Tile → ℝ) (w : Tile → Tile → ℝ)
-    (P : Matrix Tile Tile ℝ) (ε : ℝ)
-    (hw : ∀ t u, w t u = w u t)
-    (hP : ∀ t u, P t u = P u t) :
-    ∀ t u, finitePerturbedMatrix V w P ε t u =
-      finitePerturbedMatrix V w P ε u t := by
-  sorry
-
-theorem finitePerturbedMatrix_zero
-    (V : Tile → ℝ) (w : Tile → Tile → ℝ)
-    (P : Matrix Tile Tile ℝ) :
-    finitePerturbedMatrix V w P 0 = finiteUnperturbedMatrix V w := by
-  sorry
-
--- Independently reproduced statement signatures from SpectralGeometry/FinitePositiveEnergy.lean
-theorem finitePerturbedMatrix_energy_eq
-    (V : Tile → ℝ) (w : Tile → Tile → ℝ)
-    (P : Matrix Tile Tile ℝ) (ε : ℝ) (ψ : Tile → ℝ) :
-    finiteQuadraticEnergy (finitePerturbedMatrix V w P ε) ψ =
-      finiteQuadraticEnergy (finiteUnperturbedMatrix V w) ψ +
-        ε * finiteQuadraticEnergy P ψ := by
-  sorry
-
-theorem finitePerturbedMatrix_energy_nonneg
-    (V : Tile → ℝ) (w : Tile → Tile → ℝ)
-    (P : Matrix Tile Tile ℝ) (ε : ℝ)
-    (hBase : ∀ ψ : Tile → ℝ,
-      0 ≤ finiteQuadraticEnergy (finiteUnperturbedMatrix V w) ψ)
-    (hP : ∀ ψ : Tile → ℝ, 0 ≤ finiteQuadraticEnergy P ψ)
-    (hε : 0 ≤ ε) (ψ : Tile → ℝ) :
-    0 ≤ finiteQuadraticEnergy (finitePerturbedMatrix V w P ε) ψ := by
-  sorry
-
-theorem finitePerturbedMatrix_energy_pos
-    (V : Tile → ℝ) (w : Tile → Tile → ℝ)
-    (P : Matrix Tile Tile ℝ) (ε : ℝ)
-    (hBase : ∀ ψ : Tile → ℝ, (∃ t, ψ t ≠ 0) →
-      0 < finiteQuadraticEnergy (finiteUnperturbedMatrix V w) ψ)
-    (hP : ∀ ψ : Tile → ℝ, 0 ≤ finiteQuadraticEnergy P ψ)
-    (hε : 0 ≤ ε) (ψ : Tile → ℝ)
-    (hψ : ∃ t, ψ t ≠ 0) :
-    0 < finiteQuadraticEnergy (finitePerturbedMatrix V w P ε) ψ := by
-  sorry
-
--- Independently reproduced statement signatures from SpectralGeometry/FiniteGeometricEnergy.lean
-theorem finiteGeometricEnergy_sum_squares
-    (V : Tile → ℝ) (w : Tile → Tile → ℝ)
-    (hw : ∀ t u, w t u = w u t)
-    (hdiag : ∀ t, w t t = 0) (ψ : Tile → ℝ) :
-    finiteQuadraticEnergy (finiteUnperturbedMatrix V w) ψ =
-      (∑ t : Tile, V t * ψ t ^ 2) +
-        (1 / 2 : ℝ) * (∑ t : Tile, ∑ u : Tile,
-          w t u * (ψ t - ψ u) ^ 2) := by
-  sorry
-
-theorem finiteGeometricEnergy_nonneg
-    (V : Tile → ℝ) (w : Tile → Tile → ℝ)
-    (hV : ∀ t, 0 ≤ V t)
-    (hw : ∀ t u, w t u = w u t)
-    (hwpos : ∀ t u, 0 ≤ w t u)
-    (hdiag : ∀ t, w t t = 0)
-    (ψ : Tile → ℝ) :
-    0 ≤ finiteQuadraticEnergy (finiteUnperturbedMatrix V w) ψ := by
-  sorry
-
-theorem finiteGeometricPerturbedEnergy_nonneg
-    (V : Tile → ℝ) (w : Tile → Tile → ℝ)
-    (P : Matrix Tile Tile ℝ) (ε : ℝ)
-    (hV : ∀ t, 0 ≤ V t)
-    (hw : ∀ t u, w t u = w u t)
-    (hwpos : ∀ t u, 0 ≤ w t u)
-    (hdiag : ∀ t, w t t = 0)
-    (hP : ∀ ψ : Tile → ℝ, 0 ≤ finiteQuadraticEnergy P ψ)
-    (hε : 0 ≤ ε) (ψ : Tile → ℝ) :
-    0 ≤ finiteQuadraticEnergy (finitePerturbedMatrix V w P ε) ψ := by
-  sorry
-
--- Independently reproduced statement signatures from SpectralGeometry/FiniteStrictPositivity.lean
-theorem finiteGeometricEnergy_pos
-    (V : Tile → ℝ) (w : Tile → Tile → ℝ)
-    (hV : ∀ t, 0 < V t)
-    (hw : ∀ t u, w t u = w u t)
-    (hwpos : ∀ t u, 0 ≤ w t u)
-    (hdiag : ∀ t, w t t = 0)
-    (ψ : Tile → ℝ) (hψ : ∃ t, ψ t ≠ 0) :
-    0 < finiteQuadraticEnergy (finiteUnperturbedMatrix V w) ψ := by
-  sorry
-
-theorem finiteGeometricPerturbedEnergy_pos
-    (V : Tile → ℝ) (w : Tile → Tile → ℝ)
-    (P : Matrix Tile Tile ℝ) (ε : ℝ)
-    (hV : ∀ t, 0 < V t)
-    (hw : ∀ t u, w t u = w u t)
-    (hwpos : ∀ t u, 0 ≤ w t u)
-    (hdiag : ∀ t, w t t = 0)
-    (hP : ∀ ψ : Tile → ℝ, 0 ≤ finiteQuadraticEnergy P ψ)
-    (hε : 0 ≤ ε)
-    (ψ : Tile → ℝ) (hψ : ∃ t, ψ t ≠ 0) :
-    0 < finiteQuadraticEnergy (finitePerturbedMatrix V w P ε) ψ := by
-  sorry
-
-theorem finiteGeometricEigenvalue_pos
-    (V : Tile → ℝ) (w : Tile → Tile → ℝ)
-    (hV : ∀ t, 0 < V t)
-    (hw : ∀ t u, w t u = w u t)
-    (hwpos : ∀ t u, 0 ≤ w t u)
-    (hdiag : ∀ t, w t t = 0)
-    (ψ : Tile → ℝ) (eigenvalue : ℝ)
-    (hψ : ∃ t, ψ t ≠ 0)
-    (heigen : ∀ t,
-      (∑ u : Tile, finiteUnperturbedMatrix V w t u * ψ u) =
-        eigenvalue * ψ t) :
-    0 < eigenvalue := by
-  sorry
-
-theorem finiteGeometricPerturbedEigenvalue_pos
-    (V : Tile → ℝ) (w : Tile → Tile → ℝ)
-    (P : Matrix Tile Tile ℝ) (ε : ℝ)
-    (hV : ∀ t, 0 < V t)
-    (hw : ∀ t u, w t u = w u t)
-    (hwpos : ∀ t u, 0 ≤ w t u)
-    (hdiag : ∀ t, w t t = 0)
-    (hP : ∀ χ : Tile → ℝ, 0 ≤ finiteQuadraticEnergy P χ)
-    (hε : 0 ≤ ε)
-    (ψ : Tile → ℝ) (eigenvalue : ℝ)
-    (hψ : ∃ t, ψ t ≠ 0)
-    (heigen : ∀ t,
-      (∑ u : Tile, finitePerturbedMatrix V w P ε t u * ψ u) =
-        eigenvalue * ψ t) :
-    0 < eigenvalue := by
-  sorry
-
-end SpectralGeometry
-
-/-! ## Infinite diagonal operators -/
 
 namespace SpectralGeometry
 
@@ -277,338 +32,197 @@ namespace SpectralGeometry
 
 variable {Tile : Type*}
 
-/-- Natural domain of multiplication by a possibly unbounded potential.
-Both the original state and the onsite-multiplied state must lie in ℓ². -/
-@[expose] noncomputable def infiniteOnsiteDomain
-    (V : Tile → ℝ) : Submodule ℝ (TileHilbert Tile) where
-  carrier := {ψ | Memℓp (fun t : Tile => V t * ψ t) 2}
-  zero_mem' := by
-    have hz : Memℓp (fun _ : Tile => (0 : ℝ)) 2 := zero_mem_ℓp'
-    simpa using hz
-  add_mem' := by
-    intro f g hf hg
-    have h : Memℓp
-        ((fun t : Tile => V t * f t) + fun t : Tile => V t * g t) 2 :=
-      hf.add hg
-    change Memℓp (fun t : Tile => V t * (f + g) t) 2
-    have heq :
-        (fun t : Tile => V t * (f + g) t) =
-          ((fun t : Tile => V t * f t) + fun t : Tile => V t * g t) := by
-      funext t
-      simp [mul_add]
-    rw [heq]
-    exact h
-  smul_mem' := by
-    intro a f hf
-    have h : Memℓp (fun t : Tile => a * (V t * f t)) 2 :=
-      hf.const_mul a
-    change Memℓp (fun t : Tile => V t * (a • f) t) 2
-    have heq :
-        (fun t : Tile => V t * (a • f) t) =
-          (fun t : Tile => a * (V t * f t)) := by
-      funext t
-      simp only [lp.coeFn_smul, Pi.smul_apply, smul_eq_mul]
-      ring
-    rw [heq]
-    exact h
-
-/-- The diagonal multiplication operator with its natural ℓ² domain.
-It is a linear map into ℓ², even if the potential is unbounded. -/
-@[expose] noncomputable def infiniteOnsiteOperator
-    (V : Tile → ℝ) :
-    (infiniteOnsiteDomain V) →ₗ[ℝ] TileHilbert Tile where
-  toFun := fun ψ =>
-    ⟨(fun t : Tile => V t * ψ.1 t : PreLp (fun _ : Tile => ℝ)), ψ.2⟩
-  map_add' := by
-    intro f g
-    apply lp.ext
-    funext t
-    change V t * (f.1 t + g.1 t) =
-      V t * f.1 t + V t * g.1 t
-    ring
-  map_smul' := by
-    intro a f
-    apply lp.ext
-    funext t
-    change V t * (a * f.1 t) = a * (V t * f.1 t)
-    ring
-
--- Independently audited signatures from SpectralGeometry/InfiniteOnsite.lean
-theorem infiniteOnsiteOperator_apply
-    (V : Tile → ℝ) (ψ : infiniteOnsiteDomain V) (t : Tile) :
-    infiniteOnsiteOperator V ψ t = V t * ψ.1 t := by
-  sorry
-
-theorem infiniteOnsiteOperator_local_nonneg
-    (V : Tile → ℝ) (hV : ∀ t, 0 ≤ V t)
-    (ψ : infiniteOnsiteDomain V) (t : Tile) :
-    0 ≤ ψ.1 t * infiniteOnsiteOperator V ψ t := by
-  sorry
-
--- Independently audited signatures from SpectralGeometry/InfiniteOnsiteDensity.lean
-section
-variable [DecidableEq Tile]
-
-theorem infiniteOnsiteDomain_single
-    (V : Tile → ℝ) (i : Tile) (a : ℝ) :
-    lp.single (2 : ENNReal) i a ∈ infiniteOnsiteDomain V := by
-  sorry
-
-theorem infiniteOnsiteDomain_finset_sum
-    (V : Tile → ℝ) (ψ : TileHilbert Tile) (s : Finset Tile) :
-    (∑ i ∈ s, lp.single (2 : ENNReal) i (ψ i)) ∈
-      infiniteOnsiteDomain V := by
-  sorry
-
-theorem infiniteOnsiteDomain_dense
-    (V : Tile → ℝ) :
-    Dense (infiniteOnsiteDomain V : Set (TileHilbert Tile)) := by
-  sorry
-
-end
-
--- Independently audited signatures from SpectralGeometry/InfiniteOnsiteEigenvalues.lean
-section
-theorem infiniteOnsiteEigenvalue_eq_at_nonzero
-    (V : Tile → ℝ) (ψ : infiniteOnsiteDomain V) (eigenvalue : ℝ)
-    (heigen : infiniteOnsiteOperator V ψ = eigenvalue • (ψ.1 : TileHilbert Tile))
-    (t : Tile) (hψ : ψ.1 t ≠ 0) :
-    eigenvalue = V t := by
-  sorry
-
-theorem infiniteOnsiteEigenvector_zero_of_potential_ne
-    (V : Tile → ℝ) (ψ : infiniteOnsiteDomain V) (eigenvalue : ℝ)
-    (heigen : infiniteOnsiteOperator V ψ = eigenvalue • (ψ.1 : TileHilbert Tile))
-    (t : Tile) (hV : V t ≠ eigenvalue) :
-    ψ.1 t = 0 := by
-  sorry
-
-theorem infiniteOnsiteEigenvalue_lower_bound
-    (V : Tile → ℝ) (c : ℝ) (hV : ∀ t, c ≤ V t)
-    (ψ : infiniteOnsiteDomain V) (eigenvalue : ℝ)
-    (heigen : infiniteOnsiteOperator V ψ = eigenvalue • (ψ.1 : TileHilbert Tile))
-    (hψ : ∃ t, ψ.1 t ≠ 0) :
-    c ≤ eigenvalue := by
-  sorry
-
-theorem infiniteOnsiteEigenvalue_pos
-    (V : Tile → ℝ) (hV : ∀ t, 0 < V t)
-    (ψ : infiniteOnsiteDomain V) (eigenvalue : ℝ)
-    (heigen : infiniteOnsiteOperator V ψ = eigenvalue • (ψ.1 : TileHilbert Tile))
-    (hψ : ∃ t, ψ.1 t ≠ 0) :
-    0 < eigenvalue := by
-  sorry
-
-end
-
--- Independently audited signatures from SpectralGeometry/InfiniteOnsiteSummability.lean
-theorem infiniteOnsiteLinearGrowth_positive
-    (V : ℕ → ℝ) (hGrowth : ∀ n, ((n + 1 : ℕ) : ℝ) ≤ V n)
-    (n : ℕ) : 0 < V n := by
-  sorry
-
-theorem infiniteOnsiteLinearGrowth_invSq_summable
-    (V : ℕ → ℝ) (hGrowth : ∀ n, ((n + 1 : ℕ) : ℝ) ≤ V n) :
-    Summable (fun n : ℕ => 1 / (V n) ^ 2) := by
-  sorry
-
--- Independently audited signatures from SpectralGeometry/InfiniteOnsitePowerGrowth.lean
-theorem infiniteOnsitePowerGrowth_invSq_summable
-    (V : ℕ → ℝ) (alpha : ℝ) (halpha : (1 / 2 : ℝ) < alpha)
-    (hGrowth : ∀ n, (((n + 1 : ℕ) : ℝ) ^ alpha) ≤ V n) :
-    Summable (fun n : ℕ => 1 / (V n) ^ 2) := by
-  sorry
-
-theorem infiniteOnsitePowerGrowth_positive
-    (V : ℕ → ℝ) (alpha : ℝ)
-    (hGrowth : ∀ n, (((n + 1 : ℕ) : ℝ) ^ alpha) ≤ V n)
-    (n : ℕ) : 0 < V n := by
-  sorry
-
-theorem infiniteOnsiteExactPower_not_invSq_summable
-    (alpha : ℝ) (halpha : alpha ≤ (1 / 2 : ℝ)) :
-    ¬ Summable (fun n : ℕ =>
-      1 / (((((n + 1 : ℕ) : ℝ) ^ alpha) ^ 2))) := by
-  sorry
-
--- Infinite onsite point-spectrum bounds and finite energy sectors.
 @[expose] def infiniteOnsiteLowEnergyTiles (V : Tile → ℝ) (R : ℝ) :
     Set Tile := {t | V t ≤ R}
 
-theorem infiniteOnsiteEigenvector_support_subset_lowEnergy
-    (V : Tile → ℝ) (R eigenvalue : ℝ)
-    (hbound : eigenvalue ≤ R)
-    (ψ : infiniteOnsiteDomain V)
-    (heigen : infiniteOnsiteOperator V ψ =
-      eigenvalue • (ψ.1 : TileHilbert Tile)) :
-    {t : Tile | ψ.1 t ≠ 0} ⊆ infiniteOnsiteLowEnergyTiles V R := by
-  sorry
+@[expose] noncomputable def infiniteOnsiteDiagonalContraction
+    (c : Tile → ℝ) (hc : ∀ t : Tile, ‖c t‖ ≤ 1) :
+    TileHilbert Tile →L[ℝ] TileHilbert Tile := by
+  let F : TileHilbert Tile →ₗ[ℝ] TileHilbert Tile :=
+    { toFun := fun f =>
+        ⟨(fun t : Tile => c t * f t : PreLp (fun _ : Tile => ℝ)),
+          f.property.mono' (fun t => by
+            calc
+              ‖c t * f t‖ = ‖c t‖ * ‖f t‖ := norm_mul _ _
+              _ ≤ 1 * ‖f t‖ :=
+                mul_le_mul_of_nonneg_right (hc t) (norm_nonneg _)
+              _ = ‖f t‖ := one_mul _)⟩
+      map_add' := by
+        intro f g
+        apply lp.ext
+        funext t
+        change c t * (f t + g t) = c t * f t + c t * g t
+        ring
+      map_smul' := by
+        intro r f
+        apply lp.ext
+        funext t
+        change c t * (r * f t) = r * (c t * f t)
+        ring }
+  exact F.mkContinuous 1 (fun f => by
+    calc
+      ‖F f‖ ≤ ‖f‖ := lp.norm_mono (by norm_num : (2 : ENNReal) ≠ 0) (fun t => by
+        change ‖c t * f t‖ ≤ ‖f t‖
+        calc
+          ‖c t * f t‖ = ‖c t‖ * ‖f t‖ := norm_mul _ _
+          _ ≤ 1 * ‖f t‖ :=
+            mul_le_mul_of_nonneg_right (hc t) (norm_nonneg _)
+          _ = ‖f t‖ := one_mul _)
+      _ = 1 * ‖f‖ := (one_mul _).symm)
 
-theorem infiniteOnsiteEigenvector_support_finite
-    (V : Tile → ℝ) (R eigenvalue : ℝ)
-    (hfinite : (infiniteOnsiteLowEnergyTiles V R).Finite)
-    (hbound : eigenvalue ≤ R)
-    (ψ : infiniteOnsiteDomain V)
-    (heigen : infiniteOnsiteOperator V ψ =
-      eigenvalue • (ψ.1 : TileHilbert Tile)) :
-    {t : Tile | ψ.1 t ≠ 0}.Finite := by
-  sorry
+theorem onsiteUnitGap_inverse_norm_le_one
+    (V : Tile → ℝ) (a : ℝ) (hgap : ∀ t, 1 ≤ V t - a)
+    (t : Tile) : ‖(V t - a)⁻¹‖ ≤ 1 := by
+  have hp : 0 < V t - a := lt_of_lt_of_le (by norm_num) (hgap t)
+  rw [Real.norm_eq_abs, abs_of_pos (inv_pos.mpr hp)]
+  have h := one_div_le_one_div_of_le (by norm_num : (0 : ℝ) < 1) (hgap t)
+  simpa [one_div] using h
 
-theorem infiniteOnsitePointEigenvalues_below_subset_image
-    (V : Tile → ℝ) (R : ℝ) :
-    {a | a ≤ R ∧
-      ∃ ψ : infiniteOnsiteDomain V,
-        (∃ t : Tile, ψ.1 t ≠ 0) ∧
-        infiniteOnsiteOperator V ψ =
-          a • (ψ.1 : TileHilbert Tile)} ⊆
-      V '' infiniteOnsiteLowEnergyTiles V R := by
-  sorry
+@[expose] noncomputable def infiniteOnsiteResolventCLM
+    (V : Tile → ℝ) (a : ℝ) (hgap : ∀ t, 1 ≤ V t - a) :
+    TileHilbert Tile →L[ℝ] TileHilbert Tile :=
+  infiniteOnsiteDiagonalContraction
+    (fun t => (V t - a)⁻¹) (onsiteUnitGap_inverse_norm_le_one V a hgap)
 
-theorem infiniteOnsitePointEigenvalues_below_finite
-    (V : Tile → ℝ) (R : ℝ)
-    (hfinite : (infiniteOnsiteLowEnergyTiles V R).Finite) :
-    {a | a ≤ R ∧
-      ∃ ψ : infiniteOnsiteDomain V,
-        (∃ t : Tile, ψ.1 t ≠ 0) ∧
-        infiniteOnsiteOperator V ψ =
-          a • (ψ.1 : TileHilbert Tile)}.Finite := by
-  sorry
-
--- Infinite Hilbert-space operators with finitely many geometric edges.
-section
 variable [DecidableEq Tile]
 
-@[expose] noncomputable def infiniteEdgeVector (a b : Tile) : TileHilbert Tile :=
-  lp.single (2 : ENNReal) a (1 : ℝ) -
-    lp.single (2 : ENNReal) b (1 : ℝ)
-
-@[expose] noncomputable def infiniteEdgeLaplacian (a b : Tile) (w : ℝ) :
-    TileHilbert Tile →ₗ[ℝ] TileHilbert Tile where
-  toFun := fun ψ => (w * (ψ a - ψ b)) • infiniteEdgeVector a b
+@[expose] noncomputable def infiniteTileReindex (σ : Tile ≃ Tile) :
+    TileHilbert Tile →ₗᵢ[ℝ] TileHilbert Tile where
+  toFun := fun ψ => by
+    refine ⟨(fun t => ψ (σ t) : PreLp (fun _ : Tile => ℝ)), ?_⟩
+    have hp : (0 : ℝ) < (2 : ENNReal).toReal := by norm_num
+    have hsum : Summable (fun t : Tile => ‖ψ t‖ ^ (2 : ENNReal).toReal) :=
+      (memℓp_gen_iff hp).mp ψ.property
+    have hsum' :
+        Summable (fun t : Tile => ‖ψ (σ t)‖ ^ (2 : ENNReal).toReal) :=
+      (σ.summable_iff).mpr hsum
+    exact (memℓp_gen_iff hp).mpr hsum'
   map_add' := by
     intro ψ φ
-    change (w * ((ψ + φ) a - (ψ + φ) b)) • infiniteEdgeVector a b =
-      (w * (ψ a - ψ b)) • infiniteEdgeVector a b +
-        (w * (φ a - φ b)) • infiniteEdgeVector a b
-    have h :
-        w * ((ψ + φ) a - (ψ + φ) b) =
-          w * (ψ a - ψ b) + w * (φ a - φ b) := by
-      simp only [lp.coeFn_add, Pi.add_apply]
-      ring
-    rw [h, add_smul]
+    apply lp.ext
+    funext t
+    rfl
   map_smul' := by
-    intro r ψ
-    change (w * ((r • ψ) a - (r • ψ) b)) • infiniteEdgeVector a b =
-      r • ((w * (ψ a - ψ b)) • infiniteEdgeVector a b)
-    have h :
-        w * ((r • ψ) a - (r • ψ) b) =
-          r * (w * (ψ a - ψ b)) := by
-      simp only [lp.coeFn_smul, Pi.smul_apply, smul_eq_mul]
-      ring
-    rw [h, mul_smul]
+    intro c ψ
+    apply lp.ext
+    funext t
+    rfl
+  norm_map' := by
+    intro ψ
+    have hp : (0 : ℝ) < (2 : ENNReal).toReal := by norm_num
+    let φ : TileHilbert Tile :=
+      ⟨(fun t => ψ (σ t) : PreLp (fun _ : Tile => ℝ)),
+        (memℓp_gen_iff hp).mpr
+          ((σ.summable_iff).mpr ((memℓp_gen_iff hp).mp ψ.property))⟩
+    change ‖φ‖ = ‖ψ‖
+    have hsum :
+        (∑' t, ‖φ t‖ ^ (2 : ENNReal).toReal) =
+          (∑' t, ‖ψ t‖ ^ (2 : ENNReal).toReal) := by
+      change (∑' t, ‖ψ (σ t)‖ ^ (2 : ENNReal).toReal) =
+        (∑' t, ‖ψ t‖ ^ (2 : ENNReal).toReal)
+      exact σ.tsum_eq (fun t : Tile => ‖ψ t‖ ^ (2 : ENNReal).toReal)
+    calc
+      ‖φ‖ =
+          (∑' t, ‖φ t‖ ^ (2 : ENNReal).toReal) ^
+            (1 / (2 : ENNReal).toReal) :=
+        lp.norm_eq_tsum_rpow hp φ
+      _ = (∑' t, ‖ψ t‖ ^ (2 : ENNReal).toReal) ^
+            (1 / (2 : ENNReal).toReal) := by rw [hsum]
+      _ = ‖ψ‖ := (lp.norm_eq_tsum_rpow hp ψ).symm
 
-@[expose] noncomputable def infiniteFiniteEdgeLaplacian
-    (edges : Finset (Tile × Tile)) (w : Tile × Tile → ℝ) :
-    TileHilbert Tile →ₗ[ℝ] TileHilbert Tile :=
-  ∑ e ∈ edges, infiniteEdgeLaplacian e.1 e.2 (w e)
+@[expose] noncomputable def infiniteMatchingLaplacian (σ : Tile ≃ Tile) :
+    TileHilbert Tile →L[ℝ] TileHilbert Tile :=
+  ContinuousLinearMap.id ℝ (TileHilbert Tile) -
+    (infiniteTileReindex σ).toContinuousLinearMap
 
-theorem infiniteEdgeLaplacian_inner
-    (a b : Tile) (w : ℝ) (ψ φ : TileHilbert Tile) :
-    (inner ℝ (ψ) (infiniteEdgeLaplacian a b w φ)) =
-      w * (φ a - φ b) * (ψ a - ψ b) := by
-  sorry
+@[expose] noncomputable def infiniteLocalMatchingLaplacian (D : ℕ)
+    (σ : Fin D → Tile ≃ Tile) (w : Fin D → ℝ) :
+    TileHilbert Tile →L[ℝ] TileHilbert Tile :=
+  ∑ i : Fin D, w i • infiniteMatchingLaplacian (σ i)
 
-theorem infiniteEdgeLaplacian_symmetric
-    (a b : Tile) (w : ℝ) (ψ φ : TileHilbert Tile) :
-    (inner ℝ (ψ) (infiniteEdgeLaplacian a b w φ)) =
-      (inner ℝ (infiniteEdgeLaplacian a b w ψ) (φ)) := by
-  sorry
+@[expose] noncomputable def infiniteLocalBoundedCorrection
+    (D : ℕ) (σ : Fin D → Tile ≃ Tile) (w : Fin D → ℝ)
+    (P : TileHilbert Tile →L[ℝ] TileHilbert Tile)
+    (ε shift : ℝ) :
+    TileHilbert Tile →L[ℝ] TileHilbert Tile :=
+  infiniteLocalMatchingLaplacian D σ w + ε • P +
+    shift • ContinuousLinearMap.id ℝ (TileHilbert Tile)
 
-theorem infiniteEdgeLaplacian_energy_nonneg
-    (a b : Tile) (w : ℝ) (hw : 0 ≤ w) (ψ : TileHilbert Tile) :
-    0 ≤ (inner ℝ (ψ) (infiniteEdgeLaplacian a b w ψ)) := by
-  sorry
+abbrev OnsiteEnd (Tile : Type*) :=
+  TileHilbert Tile →L[ℝ] TileHilbert Tile
 
-theorem infiniteFiniteEdgeLaplacian_energy_nonneg
-    (edges : Finset (Tile × Tile)) (w : Tile × Tile → ℝ)
-    (hw : ∀ e ∈ edges, 0 ≤ w e) (ψ : TileHilbert Tile) :
-    0 ≤ (inner ℝ (ψ) (infiniteFiniteEdgeLaplacian edges w ψ)) := by
-  sorry
+@[expose] noncomputable def infiniteBoundedOnsiteCorrectionUnit
+    (V : Tile → ℝ) (a : ℝ) (hgap : ∀ t, 1 ≤ V t - a)
+    (B : OnsiteEnd Tile)
+    (hsmall : ‖B.comp (infiniteOnsiteResolventCLM V a hgap)‖ < 1) :
+    (OnsiteEnd Tile)ˣ :=
+  Units.oneSub (-(B.comp (infiniteOnsiteResolventCLM V a hgap)))
+    (by simpa only [norm_neg] using hsmall)
 
-theorem infiniteFiniteEdgeLaplacian_symmetric
-    (edges : Finset (Tile × Tile)) (w : Tile × Tile → ℝ)
-    (ψ φ : TileHilbert Tile) :
-    (inner ℝ (ψ) (infiniteFiniteEdgeLaplacian edges w φ)) =
-      (inner ℝ (infiniteFiniteEdgeLaplacian edges w ψ) (φ)) := by
-  sorry
+@[expose] noncomputable def infiniteBoundedOnsiteResolvent
+    (V : Tile → ℝ) (a : ℝ) (hgap : ∀ t, 1 ≤ V t - a)
+    (B : OnsiteEnd Tile)
+    (hsmall : ‖B.comp (infiniteOnsiteResolventCLM V a hgap)‖ < 1) :
+    OnsiteEnd Tile :=
+  (infiniteOnsiteResolventCLM V a hgap).comp
+    (↑((infiniteBoundedOnsiteCorrectionUnit V a hgap B hsmall)⁻¹) :
+      OnsiteEnd Tile)
 
--- Nonnegative symmetric interactions plus an independent bounded perturbation.
-@[expose] noncomputable def infiniteFiniteEdgePerturbedOperator
-    (V : Tile → ℝ) (edges : Finset (Tile × Tile))
-    (w : Tile × Tile → ℝ)
-    (P : TileHilbert Tile →L[ℝ] TileHilbert Tile) (ε : ℝ) :
-    (infiniteOnsiteDomain V) →ₗ[ℝ] TileHilbert Tile :=
-  infiniteOnsiteOperator V +
-    (infiniteFiniteEdgeLaplacian edges w).comp
-      (infiniteOnsiteDomain V).subtype +
-    ε • (P.toLinearMap.comp (infiniteOnsiteDomain V).subtype)
+abbrev FullEnd (Tile : Type*) :=
+  TileHilbert Tile →L[ℝ] TileHilbert Tile
 
-theorem infiniteOnsiteOperator_symmetric
-    (V : Tile → ℝ) (ψ φ : infiniteOnsiteDomain V) :
-    (inner ℝ ((ψ.1 : TileHilbert Tile)) (infiniteOnsiteOperator V φ)) =
-      (inner ℝ (infiniteOnsiteOperator V ψ) ((φ.1 : TileHilbert Tile))) := by
-  sorry
+@[expose] noncomputable def infiniteLocalMatchingFullEigenspace
+    (D : ℕ) (V : Tile → ℝ) (σ : Fin D → Tile ≃ Tile)
+    (w : Fin D → ℝ) (P : FullEnd Tile)
+    (ε shift a : ℝ) (hgap : ∀ t, 1 ≤ V t - a)
+    (hsmall : ‖(infiniteLocalBoundedCorrection D σ w P ε shift).comp
+      (infiniteOnsiteResolventCLM V a hgap)‖ < 1)
+    (eigenvalue : ℝ) (_hne : eigenvalue ≠ a) :
+    Submodule ℝ (TileHilbert Tile) :=
+  Module.End.eigenspace
+    (infiniteBoundedOnsiteResolvent V a hgap
+      (infiniteLocalBoundedCorrection D σ w P ε shift) hsmall).toLinearMap
+    (eigenvalue - a)⁻¹
 
-theorem infiniteOnsiteOperator_energy_nonneg
-    (V : Tile → ℝ) (hV : ∀ t, 0 ≤ V t)
-    (ψ : infiniteOnsiteDomain V) :
-    0 ≤ (inner ℝ ((ψ.1 : TileHilbert Tile)) (infiniteOnsiteOperator V ψ)) := by
-  sorry
+abbrev MultiplicityEnd (Tile : Type*) :=
+  TileHilbert Tile →L[ℝ] TileHilbert Tile
 
-theorem infiniteFiniteEdgePerturbedOperator_apply
-    (V : Tile → ℝ) (edges : Finset (Tile × Tile))
-    (w : Tile × Tile → ℝ)
-    (P : TileHilbert Tile →L[ℝ] TileHilbert Tile) (ε : ℝ)
-    (ψ : infiniteOnsiteDomain V) :
-    infiniteFiniteEdgePerturbedOperator V edges w P ε ψ =
-      infiniteOnsiteOperator V ψ +
-        infiniteFiniteEdgeLaplacian edges w (ψ.1 : TileHilbert Tile) +
-        ε • P (ψ.1 : TileHilbert Tile) := by
-  sorry
+@[expose] noncomputable def infiniteLocalMatchingFullMultiplicity
+    (D : ℕ) (V : Tile → ℝ) (σ : Fin D → Tile ≃ Tile)
+    (w : Fin D → ℝ) (P : MultiplicityEnd Tile)
+    (ε shift a : ℝ) (hgap : ∀ t, 1 ≤ V t - a)
+    (hproper : ∀ R : ℝ, (infiniteOnsiteLowEnergyTiles V R).Finite)
+    (hsmall : ‖(infiniteLocalBoundedCorrection D σ w P ε shift).comp
+      (infiniteOnsiteResolventCLM V a hgap)‖ < 1)
+    (eigenvalue : ℝ) : ℕ := by
+  classical
+  by_cases hne : eigenvalue ≠ a
+  · letI : FiniteDimensional ℝ
+      (infiniteLocalMatchingFullEigenspace
+        D V σ w P ε shift a hgap hsmall eigenvalue hne) := by
+      sorry -- Challenge-only proof-irrelevant instance; Solution imports its verified proof
+    exact Module.finrank ℝ
+      (infiniteLocalMatchingFullEigenspace
+        D V σ w P ε shift a hgap hsmall eigenvalue hne)
+  · exact 0
 
-theorem infiniteFiniteEdgePerturbedOperator_energy_eq
-    (V : Tile → ℝ) (edges : Finset (Tile × Tile))
-    (w : Tile × Tile → ℝ)
-    (P : TileHilbert Tile →L[ℝ] TileHilbert Tile) (ε : ℝ)
-    (ψ : infiniteOnsiteDomain V) :
-    (inner ℝ ((ψ.1 : TileHilbert Tile)) (infiniteFiniteEdgePerturbedOperator V edges w P ε ψ)) =
-      (inner ℝ ((ψ.1 : TileHilbert Tile)) (infiniteOnsiteOperator V ψ)) +
-        (inner ℝ ((ψ.1 : TileHilbert Tile)) (infiniteFiniteEdgeLaplacian edges w ψ.1)) +
-        ε * (inner ℝ ((ψ.1 : TileHilbert Tile)) (P ψ.1)) := by
-  sorry
-
-theorem infiniteFiniteEdgePerturbedOperator_energy_nonneg
-    (V : Tile → ℝ) (edges : Finset (Tile × Tile))
-    (w : Tile × Tile → ℝ)
-    (P : TileHilbert Tile →L[ℝ] TileHilbert Tile) (ε : ℝ)
-    (hV : ∀ t, 0 ≤ V t)
-    (hw : ∀ e ∈ edges, 0 ≤ w e)
-    (hP : ∀ ψ : TileHilbert Tile, 0 ≤ (inner ℝ (ψ) (P ψ)))
-    (hε : 0 ≤ ε) (ψ : infiniteOnsiteDomain V) :
-    0 ≤ (inner ℝ ((ψ.1 : TileHilbert Tile)) (infiniteFiniteEdgePerturbedOperator V edges w P ε ψ)) := by
-  sorry
-
-theorem infiniteFiniteEdgePerturbedOperator_symmetric
-    (V : Tile → ℝ) (edges : Finset (Tile × Tile))
-    (w : Tile × Tile → ℝ)
-    (P : TileHilbert Tile →L[ℝ] TileHilbert Tile) (ε : ℝ)
-    (hP : ∀ ψ φ : TileHilbert Tile,
-      (inner ℝ (ψ) (P φ)) = (inner ℝ (P ψ) (φ)))
-    (ψ φ : infiniteOnsiteDomain V) :
-    (inner ℝ ((ψ.1 : TileHilbert Tile)) (infiniteFiniteEdgePerturbedOperator V edges w P ε φ)) =
-      (inner ℝ (infiniteFiniteEdgePerturbedOperator V edges w P ε ψ) ((φ.1 : TileHilbert Tile))) := by
-  sorry
-
-end
+/-- Multiplicity of one low-energy full-operator real eigenspace is bounded
+by the number of onsite tiles below a fixed finite-energy threshold.
+The statement neither counts distinct eigenvalues nor sums over levels. -/
+theorem infiniteLocalMatching_full_eigenspace_finrank_le_lowEnergyTiles
+    (D : ℕ) (V : Tile → ℝ) (σ : Fin D → Tile ≃ Tile)
+    (w : Fin D → ℝ) (P : CountEnd Tile)
+    (ε shift a R eigenvalue : ℝ)
+    (hgap : ∀ t, 1 ≤ V t - a)
+    (hproper : ∀ S : ℝ, (infiniteOnsiteLowEnergyTiles V S).Finite)
+    (hsmall : ‖(infiniteLocalBoundedCorrection D σ w P ε shift).comp
+      (infiniteOnsiteResolventCLM V a hgap)‖ < 1)
+    (hne : eigenvalue ≠ a)
+    (heigenvalue :
+      eigenvalue < R - ‖infiniteLocalBoundedCorrection D σ w P ε shift‖) :
+    infiniteLocalMatchingFullMultiplicity
+        D V σ w P ε shift a hgap hproper hsmall eigenvalue ≤
+      (hproper R).toFinset.card  := by
+  sorry -- Independent statement only; Solution imports the original complete Lean proof
 
 end SpectralGeometry
