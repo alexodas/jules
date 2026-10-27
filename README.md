@@ -1162,10 +1162,10 @@ The toolchain's Lean, NanoDa and con-ron kernels verify the selected
 comparison. The separate Lean build still covers **all 46 mathematical
 source modules**; earlier compact-resolvent, real-spectrum and ordered
 enumeration theorems remain compiled prerequisites but are not individually
-compared in this submission. The prior 48-theorem selection was mechanically
-verified but editorially rejected for research interest and misleading
-Mathlib provenance. The current metadata distinguishes the formalization's
-result origin from Mathlib as a background dependency; novelty is unknown.
+compared in this submission. The metadata records the first identified
+source of the precise formalized statement, while Mathlib and relevant
+operator-theory literature are explicitly identified as background.
+Mathematical priority and novelty are not asserted.
 See [`PALOMAR.md`](PALOMAR.md) for the exact selected statement, assumptions,
 provenance and limits.
 
@@ -1393,11 +1393,6 @@ hypothesis is claimed.**
 
 **Verification status (distinct from P2–P4 mathematics):**
 
-- [x] The original unified Comparator checked 48 preparatory theorems and
-  14 definitions mechanically. Palomar subsequently rejected that
-  **selection** editorially: Mathlib was wrongly labelled an adapted
-  mathematical source, and the selected statements did not establish
-  sufficiently clear research interest.
 - [ ] **Current focused submission candidate (§4.40).** Independently
   compare one per-eigenspace low-energy multiplicity theorem with its
   required definitions, using the existing proved Lean module. The result
@@ -1405,10 +1400,10 @@ hypothesis is claimed.**
   the sum of multiplicities across distinct low-energy eigenvalues.
   Pass all static, Lean and independent Comparator checks on an immutable
   commit before submitting.
-- [ ] **Provenance and editorial review.** Distinguish the recorded origin
+- [ ] **Provenance and scientific assessment.** Distinguish the recorded origin
   of the exact formalized statement from Kato's general perturbation theory
   and Mathlib's software foundations. Mathematical priority/novelty remains
-  unknown; Palomar might still reject the theorem's research interest.
+  unknown; mechanical success alone does not establish research interest.
 - [ ] **Future research.** Prove the multi-eigenspace counting estimate of
   §6.2 and eventual interacting spectral-product instantiation, before
   treating either as a new Comparator-checkable mathematical result.
