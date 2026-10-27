@@ -206,6 +206,8 @@ abbrev MultiplicityEnd (Tile : Type*) :=
         D V σ w P ε shift a hgap hsmall eigenvalue hne)
   · exact 0
 
+set_option maxHeartbeats 4000000
+
 /-- Multiplicity of one low-energy full-operator real eigenspace is bounded
 by the number of onsite tiles below a fixed finite-energy threshold.
 The statement neither counts distinct eigenvalues nor sums over levels. -/
