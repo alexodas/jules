@@ -84,6 +84,8 @@ theorem onsiteUnitGap_inverse_norm_le_one
   infiniteOnsiteDiagonalContraction
     (fun t => (V t - a)⁻¹) (onsiteUnitGap_inverse_norm_le_one V a hgap)
 
+section MatchingOperatorDefinitions
+
 variable [DecidableEq Tile]
 
 @[expose] noncomputable def infiniteTileReindex (σ : Tile ≃ Tile) :
@@ -148,6 +150,11 @@ variable [DecidableEq Tile]
   infiniteLocalMatchingLaplacian D σ w + ε • P +
     shift • ContinuousLinearMap.id ℝ (TileHilbert Tile)
 
+end MatchingOperatorDefinitions
+
+-- Match the source: the general bounded resolvent and its unit require no
+-- decidable equality on Tile; only the matching-specific layers do.
+
 abbrev OnsiteEnd (Tile : Type*) :=
   TileHilbert Tile →L[ℝ] TileHilbert Tile
 
@@ -167,6 +174,8 @@ abbrev OnsiteEnd (Tile : Type*) :=
   (infiniteOnsiteResolventCLM V a hgap).comp
     (↑((infiniteBoundedOnsiteCorrectionUnit V a hgap B hsmall)⁻¹) :
       OnsiteEnd Tile)
+
+variable [DecidableEq Tile]
 
 abbrev FullEnd (Tile : Type*) :=
   TileHilbert Tile →L[ℝ] TileHilbert Tile
