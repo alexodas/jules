@@ -1,78 +1,145 @@
-# Palomar candidate — one low-energy eigenspace multiplicity theorem
+# Palomar candidate — low-energy multiplicity of an infinite interacting operator
 
-This repository develops 46 substantive Lean modules on canonical products and
-finite/infinite spectral geometry. The current **Palomar selection**, distinct
-from the larger proved development, consists of **one** full-interacting-operator
-result and the definitions needed to state it independently.
+The submitted **mathematical result** is one theorem from the 46-module
+Lean 4 project, not a count of formalized lemmas. Comparator selects
+`SpectralGeometry.infiniteLocalMatching_full_eigenspace_finrank_le_lowEnergyTiles`
+in [`SpectralGeometry/InfiniteLocalFullLowEnergyCounting.lean`](SpectralGeometry/InfiniteLocalFullLowEnergyCounting.lean).
+The theorem was proved in the source development before this packaging work.
 
-## Mathematical question and result
+## Research question
 
-For the infinite real Hilbert space of square-summable tile amplitudes,
-consider `H=M_V+B` on the natural (possibly proper) domain of multiplication
-by `V`. The bounded correction `B` comprises the finite-color infinite
-matching-family Laplacian, a bounded perturbation, and an optional scalar shift.
+When an infinite collection of geometric sites carries an unbounded onsite
+energy `V` together with bounded interactions, how much of a **complete
+low-energy eigenspace** can be observed in the finitely many sites where
+the onsite potential is small? Can the dimension of that eigenspace be
+bounded even when the ambient Hilbert space has infinitely many coordinates?
 
-The selected theorem
-[`SpectralGeometry.infiniteLocalMatching_full_eigenspace_finrank_le_lowEnergyTiles`](SpectralGeometry/InfiniteLocalFullLowEnergyCounting.lean)
-shows, under its explicit hypotheses, that
+Let `H = M_V + B` on the natural multiplication domain in the real
+Hilbert space `ℓ²(Tile)`. Here `B` is the full bounded correction: a
+finite-color matching-family interaction on the *infinite* tile space,
+a bounded perturbation and an optional scalar shift.
+
+The compared Lean theorem states the following necessary-condition bound,
+retaining all its explicit hypotheses:
 
 ```math
-\lambda<R-\|B\|,\quad\lambda\ne a
+\lambda<R-\|B\|,\quad \lambda\ne a
 \quad\Longrightarrow\quad
-\dim E_{\lambda}(H)\le\#\{t:V(t)\le R\}.
+\dim E_\lambda(H)\le\#\{t:V(t)\le R\}.
 ```
 
-The assumptions include finite onsite sublevel sets, the unit-gap condition
-`V(t)-a≥1`, and `‖B ∘ R_a‖<1` ensuring the specified shifted inverse.
-The result bounds the multiplicity of **one** real eigenspace, not the total
-number of eigenvalues below `R`. It does not show the index-wise min–max
-comparison, any inverse-square spectral summability, a specific aperiodic
-tiling, or the Riemann hypothesis.
+We assume that every onsite sublevel set is finite, `V(t)-a≥1`
+for every site, and `‖B ∘ R_a‖ < 1` for the onsite resolvent `R_a`.
+These conditions identify a bounded compact shifted inverse and ensure
+that the eigenspace of the full operator on its natural domain has a
+well-defined finite geometric multiplicity. The theorem does **not**
+assume that the bounded correction is symmetric or self-adjoint.
+In the Lean statement `E_λ(H)` is represented by the equivalent
+eigenspace of the compact shifted resolvent, with the equality to
+natural-domain eigenvectors proved in the source development.
 
-**Proof architecture:** the form inequality on vectors supported outside
-the low-onsite sector rules out a nonzero eigenvector below `R-‖B‖` with
-all low-energy coordinates zero. The eigenspace-to-coordinate restriction
-is therefore injective. Its domain is finite-dimensional via the compact
-resolvent proved in earlier Lean modules, and the codomain is a finite
-coordinate space, giving the claimed rank bound.
+## Why this particular result may interest researchers
 
-This is a concrete result about the full interacting operator, unlike the
-finite-edge/onsite-only results previously selected. Nevertheless the
-observation is close to standard variational arguments: **scientific novelty
-and Palomar-level research interest are not asserted or guaranteed.**
+**Finite-coordinate observability.** Even in an infinite Hilbert space,
+restriction to the finite set `{t : V(t) ≤ R}` is injective on the
+*entire eigenspace at one sufficiently low spectral level*, not just
+nonzero on one eigenvector. Thus its geometric multiplicity has an
+explicit upper bound in terms of a geometric/potential sublevel count.
 
-## Source provenance
+**Robustness under bounded interactions.** The threshold has an explicit
+perturbation penalty `‖B‖`. The operator includes infinitely many
+geometric interaction edges represented by a finite family of bounded
+matching operators, not only the finitely many active edges treated in
+our earlier Comparator selection. The proof applies without assuming
+the bounded correction is symmetric. Its conclusion concerns geometric
+multiplicity, not orthogonal spectral projections for a non-self-adjoint
+operator.
 
-`formalization.yaml` records the specific selected statement as
-`type: original-proof`, `relationship: other`: this names the present
-Jules formalization as the first identified presentation of this formulation.
-It does **not** assert that the underlying inequality is new to mathematics.
-T. Kato's *Perturbation Theory for Linear Operators* is identified strictly
-as **background** in operator perturbation theory, and Mathlib is separately
-identified as **background software/formal foundations**, never as the
-source adapted for this result. If a published earlier occurrence of the
-exact statement is identified, provenance must be revised to its actual
-source-based relation before submitting.
+**Research context.** The relevant audience includes specialists in
+discrete Schrödinger operators, spectral theory of graph operators,
+finite-dimensional detection of low-energy states, and rigorous/formal
+operator theory. The bound can serve as one input toward a
+multiplicity-respecting multi-eigenspace counting theorem. Such a
+stronger theorem is an **open goal** in this repository, not a result
+verified by the present Comparator.
 
-The earlier Palomar attempt mechanically passed its independent comparison,
-but editorial review rejected its weak research motivation and inaccurate
-Mathlib provenance. This new candidate deliberately isolates those issues.
+**Scope and difficulty.** The proof uses the quadratic-form inequality
+for vectors vanishing on low-potential coordinates: their Rayleigh
+numerator is at least `(R-‖B‖)‖ψ‖²`. An eigenvector with
+`λ<R-‖B‖` therefore cannot vanish on those coordinates. Applying
+this observation to the kernel of the coordinate restriction on the
+whole fixed-λ eigenspace proves injectivity and the dimension bound.
+This is a transparent standard-style argument, not a claimed new
+analytic technique. Its generality does *not* rely on a named
+aperiodic tiling, tile-dependent interactions, or all bounded-degree
+graphs being represented by matching colors.
 
-## Independent statement and mechanical verification
+The theorem does **not** estimate the total number of eigenvalues
+below a threshold, prove an index-wise min–max comparison or
+inverse-square summability, supply a specific Penrose/Ammann–Beenker
+model, or imply any statement about the zeros of the Riemann zeta
+function.
 
-- `Challenge.lean` imports only Mathlib; it reproduces the selected
-  statement and its necessary definitions without importing project proofs.
-  Deliberate `sorry` terms there are Challenge-only placeholders.
-- `Solution.lean` imports
-  `SpectralGeometry.InfiniteLocalFullLowEnergyCounting`, containing the
-  genuine, previously proved declaration and its full dependency closure.
-- The **only** `comparator.json` selects one theorem and its 16 supporting
-  definitions and type abbreviations. The other Lean theorems remain compiled through
-  `SpectralGeometry.lean`, but are not independently compared here.
-- `lean-toolchain` and `lake-manifest.json` pin the environment; the
-  source proof modules remain unchanged.
+## Origin, literature and the novelty hypothesis
 
-From the repository root:
+This exact theorem was first **identified** in the Jules Lean source
+development. A **focused, non-exhaustive literature search** conducted
+for this preparation on 27 October 2026 considered low-energy spectral
+subspaces, onsite potentials, discrete Schrödinger bounds, graph
+operators and eigenvalue/multiplicity counting. It did **not identify an
+earlier publication of the same precise statement and hypotheses**.
+That observation motivates **possible originality**, not verified
+priority or a claim that all related mathematics is new. We welcome
+correction if an earlier equivalent formulation is found.
+
+The background literature includes:
+
+- Tosio Kato, *Perturbation Theory for Linear Operators*, for general
+  principles of bounded perturbations and spectral theory
+  (DOI: https://doi.org/10.1007/978-3-642-66282-9).
+- Sven Bachmann, Richard Froese and Severin Schraven, *Counting
+  eigenvalues of Schrödinger operators using the landscape function*,
+  *Journal of Spectral Theory* **13** (2023), 1445–1472,
+  DOI: https://doi.org/10.4171/JST/488. Their results compare the
+  ranks of spectral projections with sublevel volumes of an effective
+  potential, in a different setting and with different hypotheses.
+  They demonstrate that spectral-counting estimates are an active,
+  developed subject; we do not claim to extend their results.
+- Mathlib4, as **background formal-library infrastructure**, not the
+  publication or mathematical source of the selected bound.
+
+Accordingly, `formalization.yaml` gives the formalization's
+first-identified statement the source classification
+`type: original-proof`, `relationship: other`; the mathematical
+literature and Mathlib receive `relationship: background`.
+An earlier equivalent theorem would require changing that declaration
+and citing the real source with the appropriate relationship.
+There has been **no expert priority review** and no novelty certificate.
+
+## Verification and prior editorial outcome
+
+The former Palomar selection of 48 mostly preparatory theorems passed
+mechanical verification but was rejected because it did not establish
+research interest and wrongly classified Mathlib as an adapted result
+source. This candidate aims to make the **source origin accurate** and
+to present the selected theorem's *actual mathematical motivation*.
+It may still fail Palomar's independent minimum standard of research
+interest; the present statement is weaker than global eigenvalue
+counting, and passing independent kernels does not guarantee novelty
+or editorial acceptance.
+
+- `Challenge.lean` imports only Mathlib, independently states the
+  theorem and its necessary definitions, and contains deliberate
+  Challenge-only `sorry` placeholders.
+- `Solution.lean` imports the unchanged, fully proved source theorem
+  and its dependency closure.
+- The single root `comparator.json` names **one theorem and 16
+  supporting definitions/type abbreviations**. It does not certify
+  the remaining mathematical modules against independent statements.
+- `lean-toolchain` and `lake-manifest.json` fix the environment;
+  the full substantive source library is still compiled by Lean.
+
+Reproducible checks from repository root:
 
 ```sh
 python3 scripts/check-palomar-layout.py
@@ -86,7 +153,8 @@ lake build SpectralGeometry Challenge Solution
 bash scripts/verify-comparator.sh
 ```
 
-CI runs Lean/Mathlib and one Comparator; a green build is a prerequisite,
-not evidence of novelty or a prediction of acceptance. Never submit a
-moving branch: use the full immutable SHA of a verified public commit
-only after maintainer review and authorization.
+Both Lean/Mathlib and the independent Palomar Comparator passed on
+PR #67 at commit `e4db89f5c28f1d433b9497d84f47c69bfb516667`.
+Any later metadata or Challenge-documentation revision requires fresh CI.
+A Palomar submission must refer to the final public **40-character
+immutable commit SHA**, and is not performed automatically.
