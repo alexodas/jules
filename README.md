@@ -154,7 +154,7 @@ w(t,u)=w(u,t),\quad P_{tu}=P_{ut}
 
 The file also proves that setting `ε=0` recovers exactly the unperturbed geometric matrix. This is useful because real symmetric finite matrices have real eigenvalues, so changing a symmetric perturbation cannot destroy that structural feature.
 
-**Scope of this module:** the verified theorem concerns a *finite* matrix; symmetry alone does not imply positive eigenvalues or any infinite-dimensional spectral conclusions. Later §§4.20–4.30 establish conditional self-adjointness, compact resolvent, and isolation and local finiteness of genuine real eigenvalues for the abstract infinite matching-family operator. Full-spectrum enumeration, uniform positivity, and inverse-square summability remain open.
+**Scope of this module:** the verified theorem concerns a *finite* matrix; symmetry alone does not imply positive eigenvalues or any infinite-dimensional spectral conclusions. Later §§4.20–4.30 establish conditional self-adjointness, compact resolvent, and isolation and local finiteness of genuine real eigenvalues for the abstract infinite matching-family operator. Conditional real-spectrum enumeration with exact geometric multiplicities is established later in §§4.36–4.37, qualitative divergence in §4.38, and a positive real spectral gap under explicit assumptions in §4.39. Quantitative index-wise comparison and inverse-square summability for the full interacting operator remain open.
 
 ### 3.2. Positivity under controlled perturbations
 
@@ -179,7 +179,7 @@ Q_{H_\varepsilon}(\psi)=Q_{H_0}(\psi)+\varepsilon Q_P(\psi).
 
 The Lean file also proves that **strictly positive** base energy on every nonzero configuration stays strictly positive under the same assumptions. These results concern all tile-amplitude configurations, not a selection of eigenfunctions.
 
-**Scope of the second result:** this finite-dimensional theorem proves *stability* of positivity, assuming positivity of the original and perturbation energies. The following section derives a sufficient condition for the original energy from the geometric inputs themselves. The distinct infinite-operator results, including conditional self-adjointness, compact resolvent and locally finite real point spectrum, are proved later in §§4.20–4.30. Full-spectrum enumeration and inverse-square summability remain unproved.
+**Scope of the second result:** this finite-dimensional theorem proves *stability* of positivity, assuming positivity of the original and perturbation energies. The following section derives a sufficient condition for the original energy from the geometric inputs themselves. The distinct infinite-operator results, including conditional self-adjointness, compact resolvent and locally finite real point spectrum, are proved later in §§4.20–4.30. Under additional hypotheses, the full interacting real spectrum is subsequently enumerated with exact geometric multiplicities (§4.37) and its ordered eigenvalues are proved to tend to `+∞` (§4.38). Quantitative growth comparison and inverse-square summability remain open.
 
 ### 3.3. Nonnegative energy from geometry
 
@@ -859,7 +859,7 @@ Write `Eig(H)` for the set of real parameters `λ` for which there is a **nonzer
 
 The transfer uses the existing equivalence `λ∈Eig(H) ↔ (λ−a)⁻¹∈σ_ℝ(R_a)` for `λ≠a` (§4.26). The already-checked two-sided inverse excludes `a` as an eigenvalue (§4.25). Continuity and injectivity of `λ↦(λ−a)⁻¹` yield isolation, while bounded `|λ|` ensures the corresponding resolvent spectral parameters remain uniformly away from zero, so §4.29 gives finiteness.
 
-**Precise scope:** these results by themselves identify properties of the **real point spectrum**; the subsequent §4.32 defines and characterizes the full **real bounded-inverse spectrum** on the same natural domain. Local finiteness counts **distinct eigenvalues**, not multiplicities. The next §4.31 proves countability and constructs a complete, possibly repeating listing of these real eigenvalues when nonempty. Ordered enumeration **with multiplicities**, eigenvalue growth, and inverse-square summability remain open (§6).
+**Precise scope:** these results by themselves identify properties of the **real point spectrum**; the subsequent §4.32 defines and characterizes the full **real bounded-inverse spectrum** on the same natural domain. Local finiteness counts **distinct eigenvalues**, not multiplicities. The next §4.31 proves countability and constructs a complete, possibly repeating listing of these real eigenvalues when nonempty. Ordered enumeration **with exact geometric multiplicities** and qualitative divergence are proved separately in §§4.36–4.38. Quantitative eigenvalue comparison and inverse-square summability remain open (§6.2).
 
 ### 4.31. Countability and a complete (unordered) listing of full-operator eigenvalues
 
@@ -874,7 +874,7 @@ The Lean module **[`SpectralGeometry/InfiniteLocalFullEigenvalueEnumeration.lean
 
 If `Eig(H)` is **nonempty**, Lean also constructs a sequence `e : ℕ → ℝ` whose range is **exactly** `Eig(H)`. This works whether the underlying tile type or the point spectrum is finite or infinite: **repetitions are allowed** in the sequence, so a finite nonempty point spectrum is handled correctly. No eigenvalue-existence assertion is made for arbitrary tile types; an empty point spectrum is countable but has no real-valued sequence with exactly that range.
 
-**Scope:** this is a full *set-theoretic listing* of the real **point spectrum**, not a classification of the whole unbounded `LinearPMap` spectrum. The sequence is not asserted increasing or injective and **does not record eigenspace multiplicities**. The project has already proved finite-dimensional eigenspaces (§4.25). The following §4.32 formalizes the **full real bounded-inverse spectral mapping** on the natural domain; an ordered enumeration **with multiplicities**, and any complex-spectrum extension, remain open (§6). No eigenvalue growth or inverse-square summability follows from countability alone.
+**Scope:** this is a full *set-theoretic listing* of the real **point spectrum**, not a classification of the whole unbounded `LinearPMap` spectrum. The sequence is not asserted increasing or injective and **does not record eigenspace multiplicities**. The project has already proved finite-dimensional eigenspaces (§4.25). The following §4.32 formalizes the **full real bounded-inverse spectral mapping** on the natural domain; conditional ordering **with exact geometric multiplicities** and qualitative divergence are proved later in §§4.36–4.38, while the complex-spectrum extension remains open (§6.1). Quantitative eigenvalue growth and inverse-square summability do not follow from countability alone and remain open (§6.2).
 
 ### 4.32. The full real bounded-inverse spectrum on the natural domain
 
