@@ -54,7 +54,7 @@
     }
   ],
   "status": {
-    "scope": "One Comparator-selected theorem, SpectralGeometry.infiniteLocalMatching_full_eigenspace_finrank_le_lowEnergyTiles, plus the independently reproduced definitions needed for its statement. The full 46-module mathematical library remains built by Lean. The selected result bounds geometric multiplicity of ONE eigenvalue below R - ‖B‖ by #{t : V(t) ≤ R}, assuming a finite-sublevel onsite potential, a unit-gap regular shift, a small resolvent correction and λ ≠ a. It does not bound total low-energy eigenvalue counts, compare nth interacting and onsite eigenvalues, establish full-spectrum inverse-square summability, supply a named aperiodic tiling or prove any claim about zeta.",
+    "scope": "One Comparator-selected theorem, SpectralGeometry.infiniteLocalMatching_full_eigenspace_finrank_le_lowEnergyTiles, plus 16 independently reproduced definitions and abbreviations needed for its statement. The full 46-module mathematical library remains built by Lean. The selected result bounds geometric multiplicity of ONE eigenvalue below R - ‖B‖ by #{t : V(t) ≤ R}, assuming a finite-sublevel onsite potential, a unit-gap regular shift, a small resolvent correction and λ ≠ a. It does not bound total low-energy eigenvalue counts, compare nth interacting and onsite eigenvalues, establish full-spectrum inverse-square summability, supply a named aperiodic tiling or prove any claim about zeta.",
     "sorry_count": 0,
     "sorry_in_definitions": 0,
     "axioms": [
