@@ -221,11 +221,13 @@ theorem infiniteLocalMatchingFullEigenspace_finiteDimensional
     (eigenvalue : ℝ) : ℕ := by
   classical
   by_cases hne : eigenvalue ≠ a
-  · letI := infiniteLocalMatchingFullEigenspace_finiteDimensional
-      D V σ w P ε shift a hgap hproper hsmall eigenvalue hne
-    exact Module.finrank ℝ
-      (infiniteLocalMatchingFullEigenspace
-        D V σ w P ε shift a hgap hsmall eigenvalue hne)
+  · let E : Submodule ℝ (TileHilbert Tile) :=
+      infiniteLocalMatchingFullEigenspace
+        D V σ w P ε shift a hgap hsmall eigenvalue hne
+    haveI : FiniteDimensional ℝ E :=
+      infiniteLocalMatchingFullEigenspace_finiteDimensional
+        D V σ w P ε shift a hgap hproper hsmall eigenvalue hne
+    exact Module.finrank ℝ E
   · exact 0
 
 abbrev CountEnd (Tile : Type*) :=
