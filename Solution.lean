@@ -9,3 +9,7 @@ The proved declaration and its entire mathematical dependency closure come
 from the original SpectralGeometry modules. This file introduces no theorem
 or replacement proof.
 -/
+
+-- TEMP DIAGNOSTIC: compare source helper type
+set_option pp.all true in
+#check @SpectralGeometry.infiniteBoundedOnsiteCorrectionUnit
