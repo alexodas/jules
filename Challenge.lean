@@ -12,11 +12,27 @@ a low-lying eigenspace has dimension at most the number of tiles with onsite
 potential ≤ R. The potential may be unbounded and the tile set infinite.
 B includes bounded infinite matching interactions and a bounded perturbation.
 
+Research motivation: an infinite geometric operator may possess low-energy
+eigenvectors spread over infinitely many coordinates. Nevertheless, a whole
+fixed-eigenvalue eigenspace can be recovered injectively from the finite set
+of sites with V(t) ≤ R when λ < R - ‖B‖. Thus its geometric multiplicity
+has a quantitative upper bound determined by a finite onsite sublevel set.
+The bounded interaction need not be self-adjoint for this particular claim.
+
 This statement is *per eigenspace*, not a bound on the sum of multiplicities
 over distinct eigenvalues. It assumes onsite finite sublevel sets, a regular
 resolvent shift with a unit onsite gap and a Neumann-series smallness bound,
 and eigenvalue < R - ‖B‖ away from that shift. It neither establishes
 index-wise min--max comparison nor inverse-square spectral summability.
+
+Provenance and significance: a focused, non-exhaustive literature search
+did not locate the exact statement under these hypotheses. Possible
+originality is a hypothesis, not verified mathematical priority.
+Related Schrödinger spectral-counting research and Kato's perturbation
+theory are background; the proof uses a standard quadratic-form idea.
+The intended research audience is discrete/operator spectral theory and
+formal methods in infinite-dimensional analysis. No particular aperiodic
+tiling is instantiated.
 
 This independent Challenge deliberately leaves the main theorem as a sorry.
 A proof-irrelevant finite-dimensionality witness inside the multiplicity
