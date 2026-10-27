@@ -1156,14 +1156,18 @@ treated as an independently proved library.
 **Palomar / independent statement verification:** the repository has
 one [`comparator.json`](comparator.json), one
 [`Challenge.lean`](Challenge.lean) and one [`Solution.lean`](Solution.lean).
-Comparator checks **48 selected theorems and 14 definitions** with Lean
-and the toolchain's independent NanoDa and con-ron kernels. The separate
-Lean build still covers **all 46 mathematical source modules**. The
-Comparator selection does *not* include the later full interacting
-compact-resolvent, spectral-completeness or ordered-eigenvalue theorems:
-those are compiled by Lean under their stated hypotheses, not compared
-against independent Challenge statements in this submission. See
-[`PALOMAR.md`](PALOMAR.md) for exact scope, checks, provenance and limits.
+Comparator selects **one theorem**, the per-eigenspace low-energy multiplicity
+bound of §4.40, together with the independent definitions needed to state it.
+The toolchain's Lean, NanoDa and con-ron kernels verify the selected
+comparison. The separate Lean build still covers **all 46 mathematical
+source modules**; earlier compact-resolvent, real-spectrum and ordered
+enumeration theorems remain compiled prerequisites but are not individually
+compared in this submission. The prior 48-theorem selection was mechanically
+verified but editorially rejected for research interest and misleading
+Mathlib provenance. The current metadata distinguishes the formalization's
+result origin from Mathlib as a background dependency; novelty is unknown.
+See [`PALOMAR.md`](PALOMAR.md) for the exact selected statement, assumptions,
+provenance and limits.
 
 To run the independent statement comparison on a supported Linux runner
 with Bubblewrap configured, execute:
@@ -1387,23 +1391,27 @@ hypothesis is claimed.**
 
 ### 6.5. Independent statement verification — Comparator roadmap
 
-**Verification status (separate from the mathematical P2–P4 milestones):**
+**Verification status (distinct from P2–P4 mathematics):**
 
-- [x] Compile all 46 substantive mathematical modules with the pinned Lean
-  toolchain; run the single root `comparator.json` against a Mathlib-only
-  `Challenge.lean` and the original proof imports in `Solution.lean`.
-  The current Comparator checks **48 selected theorems and 14 definitions**,
-  using Lean, NanoDa and con-ron (§5 and `PALOMAR.md`).
-- [ ] **NEXT — Extend independent statement coverage** to selected already
-  Lean-proved results about compact resolvents, eigenpair correspondence,
-  real-spectrum completeness and multiplicity-aware enumeration of the full
-  interacting operator. Extend the *same* Challenge/Solution and comparator
-  configuration, testing statement identity, Palomar size limits and CI
-  runtime before considering the additional entries verified.
-- [ ] After the P2 counting/comparison and P3 spectral-product goals are
-  genuinely proved in Lean, add their exact, hypothesis-preserving
-  statements to Comparator. Expanding the Comparator does **not itself**
-  prove a new mathematical result.
+- [x] The original unified Comparator checked 48 preparatory theorems and
+  14 definitions mechanically. Palomar subsequently rejected that
+  **selection** editorially: Mathlib was wrongly labelled an adapted
+  mathematical source, and the selected statements did not establish
+  sufficiently clear research interest.
+- [ ] **Current focused submission candidate (§4.40).** Independently
+  compare one per-eigenspace low-energy multiplicity theorem with its
+  required definitions, using the existing proved Lean module. The result
+  is conditional and only controls one eigenspace; it does **not** bound
+  the sum of multiplicities across distinct low-energy eigenvalues.
+  Pass all static, Lean and independent Comparator checks on an immutable
+  commit before submitting.
+- [ ] **Provenance and editorial review.** Distinguish the recorded origin
+  of the exact formalized statement from Kato's general perturbation theory
+  and Mathlib's software foundations. Mathematical priority/novelty remains
+  unknown; Palomar might still reject the theorem's research interest.
+- [ ] **Future research.** Prove the multi-eigenspace counting estimate of
+  §6.2 and eventual interacting spectral-product instantiation, before
+  treating either as a new Comparator-checkable mathematical result.
 
 **Maintenance rule:** when adding a new result, update its §4 explanation,
 its corresponding roadmap checkbox and the canonical §5 module list together.
