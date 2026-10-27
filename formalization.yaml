@@ -2,7 +2,7 @@
   "version": "v0.4",
   "project": {
     "name": "Jules Spectral Geometry — low-energy eigenspace multiplicity bound",
-    "description": "A Lean 4/Mathlib formalization of a per-eigenvalue low-energy multiplicity bound for an infinite real Hilbert-space operator H = M_V + B, with potentially unbounded onsite multiplication and a bounded finite-color matching interaction plus perturbation. Under properness of the onsite potential, an explicit regular resolvent shift, a Neumann-series smallness hypothesis, and λ < R - ‖B‖ with λ unequal to the regular shift, the geometric multiplicity of λ is at most the number of tiles with onsite energy ≤ R. Comparator selects exactly this one theorem, not the lemmas used to prove it. The inequality is per eigenspace and does NOT bound the sum of multiplicities across distinct eigenvalues or imply an indexed min–max estimate, inverse-square spectral summability, an explicit aperiodic-tiling model, or any result about Riemann zeta zeros. Novelty is unknown; this is a targeted resubmission experiment after a mechanically successful earlier submission was rejected for misleading Mathlib provenance and insufficient research interest.",
+    "description": "An independently Comparator-checked Lean 4 theorem on the geometric multiplicity of low-energy real eigenvalues of an infinite onsite-plus-bounded-interaction operator H = M_V + B on real ℓ²(Tile). Under finite onsite sublevel sets, a unit-gap regular resolvent shift a, a small resolvent correction, λ ≠ a and λ < R − ‖B‖, the full eigenspace at λ has dimension at most #{t : V(t) ≤ R}. This gives finite-coordinate detection of an entire interacting eigenspace, for arbitrary (possibly infinite) tile sets and bounded finite-color matching interactions, without requiring B to be symmetric. The specific statement was first identified in this formalization; a focused, non-exhaustive literature search did not locate the same inequality in this exact formulation, so originality is considered possible, not established. This result is an individual-eigenspace bound, not a bound on the total number of low-lying eigenvalues, an indexed min–max inequality, or an application to a concrete aperiodic tiling.",
     "authors": [
       "Alessandro Odasso"
     ],
@@ -16,11 +16,10 @@
   },
   "classification": {
     "arxiv": [
-      "math.CV",
-      "math.SP"
+      "math.SP",
+      "math.FA"
     ],
     "msc2020": [
-      "30D20",
       "47A10"
     ]
   },
@@ -33,7 +32,7 @@
       "type": "original-proof",
       "relationship": "other",
       "id": "https://github.com/alexodas/jules/blob/main/SpectralGeometry/InfiniteLocalFullLowEnergyCounting.lean",
-      "note": "Origin of this exact selected statement in the substantive Jules formalization. 'original-proof' records first presentation of this particular formulated result in this development, not a claim of novelty, priority or paper-worthiness. An identical earlier literary statement has not been identified; novelty remains unestablished."
+      "note": "This source identifies the first documented presentation of the exact selected formal statement in the Jules Lean development, not a verified claim of priority in mathematics. A focused, non-exhaustive bibliographic review (27 October 2026) of discrete Schrödinger spectral bounds, onsite potentials, low-energy spectral subspaces and eigenvalue/multiplicity counts did not identify an identical theorem in the same formulation and hypotheses. We therefore regard originality as plausible but UNCONFIRMED pending specialist literature review. Related works provide broader spectral-counting results and classical perturbation methods; neither should be misrepresented as the direct source of the selected statement. The proof uses a standard quadratic-form argument and restriction to a finite coordinate sector."
     },
     {
       "title": "Perturbation Theory for Linear Operators",
@@ -44,6 +43,18 @@
       "id": "https://doi.org/10.1007/978-3-642-66282-9",
       "relationship": "background",
       "note": "General theory of bounded perturbations and spectral comparison; not cited as the source of this exact coordinate-injection or multiplicity statement."
+    },
+    {
+      "title": "Counting eigenvalues of Schrödinger operators using the landscape function",
+      "authors": [
+        "Sven Bachmann",
+        "Richard Froese",
+        "Severin Schraven"
+      ],
+      "type": "paper",
+      "id": "https://doi.org/10.4171/JST/488",
+      "relationship": "background",
+      "note": "Related research on upper and lower bounds for the rank of spectral projections using sublevel volumes of an effective potential. It is not identified as the source of our particular one-eigenspace coordinate-injection bound, and its assumptions and conclusions differ. Its existence limits any unsupported claim that potential-sublevel spectral estimates are a new theme."
     },
     {
       "title": "Mathlib4 — Lean mathematical library",
@@ -79,12 +90,12 @@
     "notes": "The mathematical source library predates this packaging change. Costs and earlier human/AI contributions have not been independently audited. Challenge placeholders are never treated as proofs in Solution."
   },
   "fidelity": {
-    "divergences": "No change to the source theorem signature is intended. Selected statement concerns one eigenvalue λ with λ ≠ a and λ < R - ‖B‖; B is the full bounded correction including geometric interactions and perturbations. Its conclusion bounds the full eigenspace finrank by the number of tiles satisfying V(t) ≤ R. Natural-domain, properness, unit-gap and Neumann-series-smallness hypotheses must all be retained. Comparator's Challenge may contain deliberate sorry witnesses for the statement boundary; the source library/ Solution has no proof holes. The result is neither a sum over eigenspaces nor a spectral-counting/min–max theorem. No literature priority is claimed."
+    "divergences": "The selected theorem has not been strengthened or weakened: it bounds geometric multiplicity at ONE λ (λ≠a, λ<R−‖B‖) by #{t : V(t)≤R}; B is the full bounded matching-family interaction plus bounded perturbation and scalar shift. Properness, unit-gap at a and the smallness condition ‖B ∘ R_a‖<1 remain explicit; no self-adjointness hypothesis for B is imposed on this theorem. The argument is an injection of the entire λ-eigenspace into finitely many tile coordinates using the high-energy quadratic form. No bound on the direct sum across different eigenvalues, polynomial asymptotics or spectral-product instantiation is proved. 'Potentially original' concerns only the particular statement following non-exhaustive search; it is not an assertion of established novelty."
   },
   "review": {
-    "status": "AI-assisted packaging; mathematically not peer-reviewed; prior Palomar attempt declined",
+    "status": "Mechanically verified candidate; AI-assisted packaging; originality unconfirmed; no human mathematical peer review",
     "reviewers": [],
-    "notes": "Previous submission mechanically passed but Palomar editorial review objected to Mathlib being labelled 'adapts' and to the limited research significance of the 48 selected elementary results. This revision corrects the Mathlib classification to 'background', records the project as the origin of the precisely selected statement (without claiming mathematical novelty), and narrows Comparator to a per-eigenspace theorem from §4.40. New Comparator and CI checks are required before any resubmission. A separate editorial rejection for insufficient research interest remains possible. No independent expert novelty assessment is claimed."
+    "notes": "This focused submission replaces an earlier mechanically valid but editorially rejected 48-theorem selection. The prior failure cited Mathlib wrongly listed as an adapted mathematical source and insufficient research interest. The new source list correctly distinguishes the selected statement's first identified project presentation (original-proof/other), Kato and Bachmann–Froese–Schraven as mathematical background, and Mathlib as a formal-library dependency. A targeted, non-exhaustive bibliographic search on 27 October 2026 found related spectral counting/projection results but no identical result with the selected formal hypotheses; non-discovery is NOT proof of novelty. Mathematical interest is proposed through a finite coordinate-observability bound for a complete low-energy real eigenspace of an infinite interacting operator, with a quantitative bound on its geometric multiplicity despite an infinite Hilbert space and without symmetry of the bounded correction. The theorem follows a standard form argument and may be judged too elementary or subsumed by prior min–max principles. No mathematical peer review, general eigenvalue-count theorem, or concrete aperiodic-tiling model is claimed. PR #67 passed Lean and Comparator on commit e4db89f5c28f1d433b9497d84f47c69bfb516667; the current metadata change needs new CI before submission."
   },
   "alignment": {
     "namespace": "SpectralGeometry",
@@ -94,7 +105,7 @@
         "lean": "SpectralGeometry.infiniteLocalMatching_full_eigenspace_finrank_le_lowEnergyTiles",
         "module": "SpectralGeometry.InfiniteLocalFullLowEnergyCounting",
         "status": "existing proved source theorem; separately selected for reduced Comparator, pending re-verification",
-        "note": "Only one eigenspace is bounded; the theorem does not imply a multiplicity-summed low-energy counting function bound. Assumes natural onsite regular-shift, properness, smallness and low-energy threshold hypotheses."
+        "note": "Genuine proved Lean theorem, statement already independently matched by Comparator before this metadata revision. A finite-coordinate restriction on ONE eigenspace yields its finrank bound, conditional on the original natural-domain, regular shift, properness, smallness and threshold hypotheses. No self-adjointness of B, global eigenvalue count or spectral product is claimed."
       }
     ]
   },
