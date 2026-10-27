@@ -1,6 +1,6 @@
 # Palomar candidate — low-energy multiplicity of an infinite interacting operator
 
-The submitted **mathematical result** is one theorem from the 46-module
+The candidate **mathematical result** is one theorem from the 46-module
 Lean 4 project, not a count of formalized lemmas. Comparator selects
 `SpectralGeometry.infiniteLocalMatching_full_eigenspace_finrank_le_lowEnergyTiles`
 in [`SpectralGeometry/InfiniteLocalFullLowEnergyCounting.lean`](SpectralGeometry/InfiniteLocalFullLowEnergyCounting.lean).
@@ -153,8 +153,11 @@ lake build SpectralGeometry Challenge Solution
 bash scripts/verify-comparator.sh
 ```
 
-Both Lean/Mathlib and the independent Palomar Comparator passed on
-PR #67 at commit `e4db89f5c28f1d433b9497d84f47c69bfb516667`.
-Any later metadata or Challenge-documentation revision requires fresh CI.
-A Palomar submission must refer to the final public **40-character
-immutable commit SHA**, and is not performed automatically.
+Both Lean/Mathlib and the independent Palomar Comparator must succeed
+on the **exact commit being submitted**. Previous green runs validate only
+their own commit, not subsequent metadata, Challenge or packaging edits.
+Consult the repository's [GitHub Actions history](https://github.com/alexodas/jules/actions)
+for the status of the chosen commit, rather than relying on a particular
+pull-request number or earlier build.
+A Palomar submission must refer to a public, immutable **40-character
+commit SHA** and is not performed automatically.
