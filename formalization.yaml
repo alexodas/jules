@@ -2,7 +2,7 @@
   "version": "v0.4",
   "project": {
     "name": "Jules Spectral Geometry — low-energy eigenspace multiplicity bound",
-    "description": "A Lean 4 formalization with independent Comparator verification of one theorem about the geometric multiplicity of low-energy real eigenvalues for an infinite onsite-plus-bounded-interaction operator H = M_V + B on real ℓ²(Tile). Under finite onsite sublevel sets, a unit-gap regular resolvent shift a, a small resolvent correction, λ ≠ a and λ < R − ‖B‖, the full eigenspace at λ has dimension at most #{t : V(t) ≤ R}. The bounded correction may include infinite finite-color matching interactions and need not be symmetric. This is a per-eigenspace bound, not a total low-energy eigenvalue count, an indexed min–max theorem or a concrete aperiodic-tiling result.",
+    "description": "A Lean 4 formalization prepared for independent Comparator verification of one theorem about the geometric multiplicity of low-energy real eigenvalues for an infinite onsite-plus-bounded-interaction operator H = M_V + B on real ℓ²(Tile). Under finite onsite sublevel sets, a unit-gap regular resolvent shift a, a small resolvent correction, λ ≠ a and λ < R − ‖B‖, the full eigenspace at λ has dimension at most #{t : V(t) ≤ R}. The bounded correction may include infinite finite-color matching interactions and need not be symmetric. This is a per-eigenspace bound, not a total low-energy eigenvalue count, an indexed min–max theorem or a concrete aperiodic-tiling result.",
     "authors": [
       "Alessandro Odasso"
     ],
@@ -83,7 +83,7 @@
         ],
         "framework": "ChatGPT",
         "tool_setup": "AI-assisted construction of a reduced independent Comparator Challenge and provenance metadata via the connected GitHub API; existing mathematical proofs are imported unchanged from the project.",
-        "prompting_notes": "The maintainer requested a controlled resubmission experiment focused on one existing theorem and correction of a prior source-provenance rejection. This records packaging assistance, not authorship or the process that created the previous 46 mathematical source modules."
+        "prompting_notes": "The maintainer requested focused Palomar packaging of one already proved theorem, including explicit source provenance and background literature. This records AI assistance with packaging, not authorship of the earlier mathematical Lean development."
       }
     ],
     "spend_usd": "not tracked",
@@ -93,9 +93,9 @@
     "divergences": "The selected Lean theorem retains its precise per-eigenspace conclusion: λ ≠ a and λ < R − ‖B‖ imply geometric multiplicity at λ is at most #{t : V(t) ≤ R}. The full bounded correction B includes matching-family interactions, a bounded perturbation and scalar shift. The natural domain, properness, unit-gap and small-resolvent-correction assumptions remain explicit; the result does not require B to be self-adjoint. It proves neither a sum of multiplicities over different eigenvalues nor index-wise growth, inverse-square summability or a spectral-product instantiation."
   },
   "review": {
-    "status": "Mechanically verified candidate; AI-assisted packaging; originality unconfirmed; no human mathematical peer review",
+    "status": "AI-assisted packaging; mathematical originality unconfirmed; no human mathematical peer review",
     "reviewers": [],
-    "notes": "An earlier 48-theorem selection passed mechanical checks but was editorially rejected: its sources misclassified Mathlib as an adapted mathematical result, and the chosen statements did not establish sufficient research interest. This focused candidate now uses one full-interacting-operator eigenspace bound. Sources separate the first identified documentation of the precise formal statement from background mathematical literature and Mathlib as a library dependency; source details and bibliographic uncertainty are recorded in `sources`. The mathematical motivation is finite-coordinate observability and an explicit multiplicity upper bound for the full interacting operator, without requiring symmetry of the bounded correction. The technique is standard in character; mathematical novelty, priority and Palomar-level interest remain unconfirmed, and no expert peer review is claimed. Mechanical verification applies to a specific commit only: the final submitted commit must pass fresh Lean and Comparator checks."
+    "notes": "This candidate selects the existing full-interacting-operator low-energy eigenspace multiplicity bound. The recorded origin of the precise formal statement is distinguished from general mathematical literature and Mathlib as a library dependency; citations and bibliographic uncertainty are detailed in `sources`. The research motivation is finite-coordinate observability and a quantitative upper bound on the geometric multiplicity of one real eigenspace, without requiring symmetry of the bounded correction. The proof uses a standard quadratic-form and coordinate-restriction technique; mathematical novelty and research significance have not been independently established. Mechanical verification is commit-specific and must pass on the exact immutable commit used for submission."
   },
   "alignment": {
     "namespace": "SpectralGeometry",
