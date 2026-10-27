@@ -32,6 +32,9 @@ namespace SpectralGeometry
 
 variable {Tile : Type*}
 
+abbrev OnsiteEnd (Tile : Type*) :=
+  TileHilbert Tile →L[ℝ] TileHilbert Tile
+
 @[expose] def infiniteOnsiteLowEnergyTiles (V : Tile → ℝ) (R : ℝ) :
     Set Tile := {t | V t ≤ R}
 
@@ -155,9 +158,6 @@ end MatchingOperatorDefinitions
 -- Match the source: the general bounded resolvent and its unit require no
 -- decidable equality on Tile; only the matching-specific layers do.
 
-abbrev OnsiteEnd (Tile : Type*) :=
-  TileHilbert Tile →L[ℝ] TileHilbert Tile
-
 @[expose] noncomputable def infiniteBoundedOnsiteCorrectionUnit
     (V : Tile → ℝ) (a : ℝ) (hgap : ∀ t, 1 ≤ V t - a)
     (B : OnsiteEnd Tile)
@@ -251,9 +251,5 @@ theorem infiniteLocalMatching_full_eigenspace_finrank_le_lowEnergyTiles
         D V σ w P ε shift a hgap hproper hsmall eigenvalue ≤
       (hproper R).toFinset.card  := by
   sorry -- Independent statement only; Solution imports the original complete Lean proof
-
--- TEMP DIAGNOSTIC: reveal elaborated theorem helper type
-set_option pp.all true in
-#check @SpectralGeometry.infiniteBoundedOnsiteCorrectionUnit
 
 end SpectralGeometry
