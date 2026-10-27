@@ -116,17 +116,15 @@ An earlier equivalent theorem would require changing that declaration
 and citing the real source with the appropriate relationship.
 There has been **no expert priority review** and no novelty certificate.
 
-## Verification and prior editorial outcome
+## Verification and exact submission scope
 
-The former Palomar selection of 48 mostly preparatory theorems passed
-mechanical verification but was rejected because it did not establish
-research interest and wrongly classified Mathlib as an adapted result
-source. This candidate aims to make the **source origin accurate** and
-to present the selected theorem's *actual mathematical motivation*.
-It may still fail Palomar's independent minimum standard of research
-interest; the present statement is weaker than global eigenvalue
-counting, and passing independent kernels does not guarantee novelty
-or editorial acceptance.
+The selected theorem is a **per-eigenspace** dimension estimate, rather
+than a global eigenvalue-counting or ordered-spectrum comparison theorem.
+Its motivation is finite-coordinate observability for the full
+interacting operator. The proof uses standard quadratic-form and
+restriction arguments; novelty and research-level significance have
+not been independently established. Passing mechanical checks does
+not, by itself, imply editorial acceptance.
 
 - `Challenge.lean` imports only Mathlib, independently states the
   theorem and its necessary definitions, and contains deliberate
@@ -154,8 +152,8 @@ bash scripts/verify-comparator.sh
 ```
 
 Both Lean/Mathlib and the independent Palomar Comparator must succeed
-on the **exact commit being submitted**. Previous green runs validate only
-their own commit, not subsequent metadata, Challenge or packaging edits.
+on the **exact commit being submitted**. Passing checks on one commit
+does not validate subsequent metadata, Challenge or packaging edits.
 Consult the repository's [GitHub Actions history](https://github.com/alexodas/jules/actions)
 for the status of the chosen commit, rather than relying on a particular
 pull-request number or earlier build.
