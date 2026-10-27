@@ -187,6 +187,21 @@ abbrev FullEnd (Tile : Type*) :=
 abbrev MultiplicityEnd (Tile : Type*) :=
   TileHilbert Tile →L[ℝ] TileHilbert Tile
 
+/-- Challenge-only signature: finite eigenspace dimension supplied by the
+proven compact-resolvent result in Solution. The placeholder is not a proof. -/
+theorem infiniteLocalMatchingFullEigenspace_finiteDimensional
+    (D : ℕ) (V : Tile → ℝ) (σ : Fin D → Tile ≃ Tile)
+    (w : Fin D → ℝ) (P : FullEnd Tile)
+    (ε shift a : ℝ) (hgap : ∀ t, 1 ≤ V t - a)
+    (hproper : ∀ R : ℝ, (infiniteOnsiteLowEnergyTiles V R).Finite)
+    (hsmall : ‖(infiniteLocalBoundedCorrection D σ w P ε shift).comp
+      (infiniteOnsiteResolventCLM V a hgap)‖ < 1)
+    (eigenvalue : ℝ) (hne : eigenvalue ≠ a) :
+    FiniteDimensional ℝ
+      (infiniteLocalMatchingFullEigenspace
+        D V σ w P ε shift a hgap hsmall eigenvalue hne) := by
+  sorry
+
 @[expose] noncomputable def infiniteLocalMatchingFullMultiplicity
     (D : ℕ) (V : Tile → ℝ) (σ : Fin D → Tile ≃ Tile)
     (w : Fin D → ℝ) (P : MultiplicityEnd Tile)
@@ -197,10 +212,8 @@ abbrev MultiplicityEnd (Tile : Type*) :=
     (eigenvalue : ℝ) : ℕ := by
   classical
   by_cases hne : eigenvalue ≠ a
-  · letI : FiniteDimensional ℝ
-      (infiniteLocalMatchingFullEigenspace
-        D V σ w P ε shift a hgap hsmall eigenvalue hne) := by
-      sorry -- Challenge-only proof-irrelevant instance; Solution imports its verified proof
+  · letI := infiniteLocalMatchingFullEigenspace_finiteDimensional
+      D V σ w P ε shift a hgap hproper hsmall eigenvalue hne
     exact Module.finrank ℝ
       (infiniteLocalMatchingFullEigenspace
         D V σ w P ε shift a hgap hsmall eigenvalue hne)
@@ -209,7 +222,7 @@ abbrev MultiplicityEnd (Tile : Type*) :=
 abbrev CountEnd (Tile : Type*) :=
   TileHilbert Tile →L[ℝ] TileHilbert Tile
 
-set_option maxHeartbeats 4000000
+set_option maxHeartbeats 8000000
 
 /-- Multiplicity of one low-energy full-operator real eigenspace is bounded
 by the number of onsite tiles below a fixed finite-energy threshold.
