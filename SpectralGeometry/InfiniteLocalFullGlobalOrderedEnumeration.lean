@@ -23,8 +23,9 @@ whose level λ occurs in precisely the geometric multiplicity m(λ) slots.
 
 These results assume infinitude and lower boundedness. Neither property
 is a consequence of compact resolvent alone for an arbitrary real
-self-adjoint operator. The divergence λₙ → +∞ and quantitative growth
-bounds are addressed separately in the research roadmap.
+self-adjoint operator. Qualitative divergence λₙ → +∞ is proved in
+InfiniteLocalFullOrderedEigenvalueDivergence. Quantitative growth bounds
+remain open goals of README §6.2.
 -/
 
 namespace SpectralGeometry

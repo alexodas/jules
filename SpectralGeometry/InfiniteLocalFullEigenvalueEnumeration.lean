@@ -11,7 +11,7 @@ public section
 Local finiteness on every bounded interval implies that the set of genuine
 real eigenvalues is countable. If the point spectrum is nonempty, it admits
 a sequence listing every real eigenvalue; the sequence need not be injective
-or increasing, and it does not yet record eigenspace multiplicities.
+or increasing, and it does not record eigenspace multiplicities.
 
 These theorems concern the actual natural-domain eigenvalues of the
 unbounded matching operator, not the as-yet-unformalized full spectrum of
@@ -62,8 +62,9 @@ theorem infiniteLocalMatching_full_eigenvalues_countable
 
 /-- If there is at least one real full-operator eigenvalue, there is a
 sequence listing *all* such eigenvalues and containing no other values.
-The list may repeat eigenvalues; multiplicity-aware ordered enumeration
-is a strictly stronger future theorem. -/
+The list may repeat eigenvalues. Multiplicity-aware ordered enumeration
+is established separately in InfiniteLocalFullGlobalOrderedEnumeration,
+under its additional hypotheses. -/
 theorem infiniteLocalMatching_full_eigenvalues_exists_enumeration
     (D : ℕ) (V : Tile → ℝ) (σ : Fin D → Tile ≃ Tile)
     (w : Fin D → ℝ) (P : EnumerationEnd Tile)

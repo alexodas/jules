@@ -1,10 +1,12 @@
-# Palomar candidate — low-energy multiplicity of an infinite interacting operator
+# Palomar candidate — finite observation and low-energy eigenspace multiplicity
 
 The candidate **mathematical result** is one theorem from the 46-module
 Lean 4 project, not a count of formalized lemmas. Comparator selects
 `SpectralGeometry.infiniteLocalMatching_full_eigenspace_finrank_le_lowEnergyTiles`
 in [`SpectralGeometry/InfiniteLocalFullLowEnergyCounting.lean`](SpectralGeometry/InfiniteLocalFullLowEnergyCounting.lean).
 The theorem was proved in the source development before this packaging work.
+It is the first selected substantive milestone of the
+[Jules research program](README.md#12-first-substantive-milestone-finite-coordinate-observation).
 
 ## Research question
 
@@ -49,8 +51,7 @@ explicit upper bound in terms of a geometric/potential sublevel count.
 **Robustness under bounded interactions.** The threshold has an explicit
 perturbation penalty `‖B‖`. The operator includes infinitely many
 geometric interaction edges represented by a finite family of bounded
-matching operators, not only the finitely many active edges treated in
-our earlier Comparator selection. The proof applies without assuming
+matching operators. The proof applies without assuming
 the bounded correction is symmetric. Its conclusion concerns geometric
 multiplicity, not orthogonal spectral projections for a non-self-adjoint
 operator.
@@ -58,10 +59,10 @@ operator.
 **Research context.** The relevant audience includes specialists in
 discrete Schrödinger operators, spectral theory of graph operators,
 finite-dimensional detection of low-energy states, and rigorous/formal
-operator theory. The bound can serve as one input toward a
-multiplicity-respecting multi-eigenspace counting theorem. Such a
-stronger theorem is an **open goal** in this repository, not a result
-verified by the present Comparator.
+operator theory. The finite observation sector supplies an input to the
+program on quantitative spectral response and associated zeros described
+below. Multi-eigenspace counting remains one of its open intermediate
+goals in [README §6.2](README.md#62-p2--quantitative-observation-and-control-of-low-energy-levels).
 
 **Scope and difficulty.** The proof uses the quadratic-form inequality
 for vectors vanishing on low-potential coordinates: their Rayleigh
@@ -79,6 +80,48 @@ below a threshold, prove an index-wise min–max comparison or
 inverse-square summability, supply a specific Penrose/Ammann–Beenker
 model, or imply any statement about the zeros of the Riemann zeta
 function.
+
+## Role in the research program
+
+The wider objective is to relate an explicitly specified finite local
+change in a confined infinite geometric operator to a quantitatively
+controlled change in its spectrum and the zeros of an associated
+normalized spectral product. The current theorem supplies the first
+selected substantive observation milestone: the finite sector `{t : V(t) ≤ R}`
+distinguishes all vectors in each qualifying fixed-eigenvalue eigenspace.
+
+The [README roadmap](README.md#6-roadmap-proof-status-and-next-steps)
+sets out the subsequent **open proof obligations**:
+
+1. Establish quantitative observation on the whole low-energy spectral
+   subspace, including combinations of distinct eigenspaces, and derive
+   multiplicity-aware counting and indexed spectral comparison. These
+   stronger goals use the self-adjoint setting; the separate
+   per-eigenspace bounds cannot simply be summed.
+2. Prove bounds on how ordered eigenvalues, counted with multiplicity,
+   move under positive onsite interventions supported on a finite
+   observation sector. Verify the gap and summability hypotheses needed
+   for the full interacting spectral products.
+3. Construct the normalized products using the same prescribed affine
+   line, prove their exact zero multiplicities, and transfer the spectral
+   displacement estimates to the corresponding indexed zeros. Choosing
+   the line does not itself establish new spectral information.
+4. Analyze verified finite-support changes of site energies or couplings
+   through complex compressed resolvents and relative determinants, and
+   certify finite-patch approximations with explicit error bounds.
+
+The [confined Ammann–Beenker model proposed in README §6.4](README.md#64-p4--a-confined-ammannbeenker-model-and-a-finite-intervention)
+is a concrete application to construct and verify. Its geometry,
+operator hypotheses and response estimates have not been formalized.
+The present candidate does not depend on that proposed construction.
+
+Restriction injectivity alone provides neither a numerical reconstruction
+algorithm nor a quantitative stability constant, eigenvalue-displacement
+bound or relative-determinant identity. Those conclusions require
+additional proofs and are outside the current Comparator selection.
+The research interest of the selected theorem must still be assessed on
+its own mathematical content and demonstrated uses; its role in this
+program does not by itself establish novelty or standalone significance.
 
 ## Human origin and AI-assisted development
 

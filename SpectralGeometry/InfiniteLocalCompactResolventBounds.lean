@@ -58,7 +58,8 @@ theorem infiniteOnsiteResolventCLM_norm_le_inv_gap
     abs_of_nonneg (le_of_lt (inv_pos.mpr hδ))] using hn
 
 /-- An explicit onsite gap larger than the norm of the bounded
-correction implies the smallness condition needed for P1. -/
+correction implies the smallness condition for the compact
+shifted-inverse construction. -/
 theorem infiniteBoundedOnsite_comp_norm_lt_one
     (V : Tile → ℝ) (a δ : ℝ)
     (hδ : 0 < δ) (hgap : ∀ t, δ ≤ V t - a)

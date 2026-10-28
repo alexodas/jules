@@ -15,9 +15,9 @@ finite dimensionality, excludes the chosen resolvent shift as an
 eigenvalue, and establishes orthogonality of eigenvectors with
 distinct real eigenvalues under the existing symmetry hypotheses.
 
-This does not yet prove that every full spectral point is an
-eigenvalue or that full eigenvalues are isolated. Isolation and
-enumeration remain separate P2 milestones.
+This module concerns eigenspaces. Full real spectral completeness,
+isolation and ordered enumeration are proved in their dedicated
+modules under their additional hypotheses.
 -/
 
 namespace SpectralGeometry
