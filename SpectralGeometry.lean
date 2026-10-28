@@ -55,3 +55,8 @@ public section
 Entry point for the formally checked analytic product and the developing
 geometric-operator theory.
 -/
+
+public import SpectralGeometry.DomainSpectralSubspace
+public import SpectralGeometry.InfiniteLowEnergyObservation
+public import SpectralGeometry.InfiniteLowEnergyCounting
+public import SpectralGeometry.InfiniteLocalFullSpectralObservation
