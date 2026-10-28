@@ -1,6 +1,6 @@
 module
 
-public import SpectralGeometry.InfiniteOrderedSpectralControl
+public import SpectralGeometry.InfiniteOrderedSpectralExistence
 public import SpectralGeometry.InfiniteOnsitePowerGrowth
 
 public section
@@ -47,7 +47,11 @@ theorem onsite_tendsto_of_proper (V : Tile → ℝ)
     Tendsto (fun n => V (e n)) atTop atTop := by
   apply real_tendsto_atTop_of_finite_sublevel_indices
   intro R
-  exact Set.Finite.of_injOn (fun n hn => hn.le) he.injOn (hproper R)
+  apply Set.Finite.of_injOn (f := e)
+    (t := infiniteOnsiteLowEnergyTiles V R) ?_ he.injOn (hproper R)
+  intro n hn
+  change V (e n) ≤ R
+  exact (show V (e n) < R from hn).le
 
 /-- Positive full-spectrum summability from proper onsite summability,
 an actual ordered eigenbasis and a strict lower gap exceeding the correction
@@ -123,6 +127,46 @@ theorem finiteSector_preserves_compact_shift (V : Tile → ℝ)
         IsCompactOperator (infiniteBoundedOnsiteResolvent V a hunit
           (B + τ • finiteSectorProjection F) hsmall) :=
   infiniteBoundedOnsite_exists_compact_shift V v₀ hV hproper _
+
+/-- The preserved positive full spectrum satisfies the existing canonical
+product's admissibility predicate. This does not assert entire holomorphy
+or the exact order of a zero. -/
+theorem fullSpectrum_admissible_of_positive_summable (ev : ℕ → ℝ)
+    (hpos : ∀ n, 0 < ev n) (hs : Summable (fun n => 1 / (ev n) ^ 2))
+    (center direction : ℂ) : Admissible ev center direction :=
+  admissible_of_inv_sq_summable hpos hs center direction
+
+/-- Along the entire specified perturbation interval, ordered spectra exist
+and preserve a positive gap and inverse-square summability, with the uniform
+response estimate for every selected low level. The initial basis may be
+obtained from the original exact multiplicity-tag enumeration. -/
+theorem finiteSector_controlled_summable_family [Infinite Tile]
+    (V : Tile → ℝ) (B : TileHilbert Tile →L[ℝ] TileHilbert Tile)
+    (hB : ∀ x y, inner ℝ (B x) y = inner ℝ x (B y))
+    (v₀ R E : ℝ) (hV : ∀ t, v₀ ≤ V t) (hgap : ‖B‖ < v₀) (hR : v₀ < R)
+    (hproper : ∀ r : ℝ, (infiniteOnsiteLowEnergyTiles V r).Finite)
+    (e : ℕ ≃ Tile) (horder : Monotone (fun n => V (e n)))
+    (honsite : Summable (fun t => 1 / (V t) ^ 2))
+    (F : Finset Tile) (hF : ∀ t, t ∉ F → R ≤ V t)
+    (ev : ℕ → ℝ) (hev : Monotone ev)
+    (b : DomainEigenbasis (infiniteOnsiteDomain V) (onsitePlusBounded V B) ev) :
+    ∀ τ : ℝ, 0 ≤ τ → τ ≤ R - v₀ →
+      ∃ μ : ℕ → ℝ, Monotone μ ∧
+        Nonempty (DomainEigenbasis (infiniteOnsiteDomain V)
+          (onsitePlusBounded V (B + τ • finiteSectorProjection F)) μ) ∧
+        (∀ n, v₀ - ‖B‖ ≤ μ n) ∧ (∀ n, 0 < μ n) ∧
+        Summable (fun n => 1 / (μ n) ^ 2) ∧
+        ∀ n, ev n ≤ E →
+          ((R - ‖B‖ - E) / (R - v₀)) * τ ≤ μ n - ev n ∧ μ n - ev n ≤ τ := by
+  have hbase := onsitePlusBounded_ordered_positive_summable
+    V B hB v₀ hV hgap hproper e horder honsite ev hev b
+  intro τ hτ hτR
+  obtain ⟨μ, hμ, ⟨bt⟩⟩ := finiteSector_exists_orderedEigenbasis V v₀ hV hproper B hB F τ
+  have hp := finiteSector_preserves_gap_summability V B hB F τ hτ
+    ev μ hev hμ b bt (v₀ - ‖B‖) (sub_pos.mpr hgap) hbase.1 hbase.2.2
+  exact ⟨μ, hμ, ⟨bt⟩, hp.1, hp.2.1, hp.2.2,
+    fun n hn => finiteSector_ordered_response V B hB v₀ R E hV hR F hF
+      τ hτ hτR ev μ hev hμ b bt n hn⟩
 
 end
 end SpectralGeometry

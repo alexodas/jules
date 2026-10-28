@@ -27,7 +27,7 @@ these levels is an explicit hypothesis when this basis is used in min-max. -/
     HilbertBasis.ofRepr (LinearIsometryEquiv.refl ℝ _)
   let bn := reindexHilbertBasis b e
   have hb (n : ℕ) : bn n = lp.single (2 : ENNReal) (e n) (1 : ℝ) := by
-    rw [reindexHilbertBasis_apply]
+    rw [reindexHilbertBasis_apply, ← b.repr_symm_single]
     rfl
   have hm (n : ℕ) : bn n ∈ infiniteOnsiteDomain V := by
     rw [hb]
@@ -63,16 +63,40 @@ theorem onsitePlusBounded_ordered_comparison (V : Tile → ℝ)
     (b : DomainEigenbasis (infiniteOnsiteDomain V) (onsitePlusBounded V B) ev) (n : ℕ) :
     V (e n) - ‖B‖ ≤ ev n ∧ ev n ≤ V (e n) + ‖B‖ := by
   have hlo := ordered_eigenvalues_affine_le (onsiteDomainEigenbasis V e) b
-    (infiniteOnsiteOperator_symmetric V) (onsitePlusBounded_symmetric V B hB)
+    (fun x y => (infiniteOnsiteOperator_symmetric V x y).symm) (onsitePlusBounded_symmetric V B hB)
     hVorder hev 1 (-‖B‖) zero_le_one
     (fun x => by simpa using (onsitePlusBounded_energy_sandwich V B x).1) n
   have hhi := ordered_eigenvalues_affine_le b (onsiteDomainEigenbasis V e)
-    (onsitePlusBounded_symmetric V B hB) (infiniteOnsiteOperator_symmetric V)
+    (onsitePlusBounded_symmetric V B hB) (fun x y => (infiniteOnsiteOperator_symmetric V x y).symm)
     hev hVorder 1 (-‖B‖) zero_le_one
     (fun x => by have hh := (onsitePlusBounded_energy_sandwich V B x).2; simpa using (by linarith :
       inner ℝ (x : TileHilbert Tile) (onsitePlusBounded V B x) - ‖B‖ * ‖(x : TileHilbert Tile)‖ ^ 2 ≤
       inner ℝ (x : TileHilbert Tile) (infiniteOnsiteOperator V x))) n
   constructor <;> linarith
+
+/-- The ordered comparison for precisely the original matching-spectrum
+multiplicity tags, with the existing resolvent and symmetry hypotheses. -/
+theorem infiniteLocalMatching_full_ordered_comparison
+    (D : ℕ) (V : Tile → ℝ) (σ : Fin D → Tile ≃ Tile) (w : Fin D → ℝ)
+    (P : TileHilbert Tile →L[ℝ] TileHilbert Tile) (ε shift a : ℝ)
+    (hgap : ∀ t, 1 ≤ V t - a)
+    (hproper : ∀ R : ℝ, (infiniteOnsiteLowEnergyTiles V R).Finite)
+    (hsmall : ‖(infiniteLocalBoundedCorrection D σ w P ε shift).comp
+      (infiniteOnsiteResolventCLM V a hgap)‖ < 1)
+    (hσ : ∀ i t, σ i (σ i t) = t)
+    (hP : ∀ x y : TileHilbert Tile, inner ℝ x (P y) = inner ℝ (P x) y)
+    (seq : ℕ → ℝ ×ₗ ℕ) (hseq : StrictMono seq)
+    (hrange : Set.range seq = toLex ''
+      infiniteLocalMatchingFullMultiplicityTags D V σ w P ε shift a hgap hproper hsmall)
+    (e : ℕ ≃ Tile) (horder : Monotone (fun n => V (e n))) (n : ℕ) :
+    V (e n) - ‖infiniteLocalBoundedCorrection D σ w P ε shift‖ ≤ (ofLex (seq n)).1 ∧
+      (ofLex (seq n)).1 ≤ V (e n) + ‖infiniteLocalBoundedCorrection D σ w P ε shift‖ := by
+  obtain ⟨b⟩ := infiniteLocalMatching_full_exists_domainEigenbasis
+    D V σ w P ε shift a hgap hproper hsmall hσ hP seq hseq hrange
+  exact onsitePlusBounded_ordered_comparison V _
+    (infiniteLocalBoundedCorrection_symmetric D σ w P ε shift hσ hP) e horder
+    (fun k => (ofLex (seq k)).1)
+    (fun i j hij => Prod.Lex.monotone_fst _ _ (hseq.monotone hij)) b n
 
 /-- Positive bounded corrections sharpen the lower onsite comparison. -/
 theorem onsitePlusBounded_ordered_ge_onsite_of_nonneg (V : Tile → ℝ)
@@ -84,10 +108,30 @@ theorem onsitePlusBounded_ordered_ge_onsite_of_nonneg (V : Tile → ℝ)
     (b : DomainEigenbasis (infiniteOnsiteDomain V) (onsitePlusBounded V B) ev) (n : ℕ) :
     V (e n) ≤ ev n := by
   have hh := ordered_eigenvalues_affine_le (onsiteDomainEigenbasis V e) b
-    (infiniteOnsiteOperator_symmetric V) (onsitePlusBounded_symmetric V B hB)
+    (fun x y => (infiniteOnsiteOperator_symmetric V x y).symm) (onsitePlusBounded_symmetric V B hB)
     hVorder hev 1 0 zero_le_one (fun x => by
       simp only [one_mul, zero_mul, add_zero, onsitePlusBounded_apply, inner_add_right]
       exact le_add_of_nonneg_right (hpos x)) n
+  simpa using hh
+
+/-- A nonnegative interaction costs nothing in the lower comparison; only
+the norm of the remaining signed correction is subtracted. This applies to
+the existing matching Laplacian when its weights are nonnegative. -/
+theorem onsitePlusBounded_ordered_ge_of_nonneg_part (V : Tile → ℝ)
+    (L Q : TileHilbert Tile →L[ℝ] TileHilbert Tile)
+    (hB : ∀ x y, inner ℝ ((L + Q) x) y = inner ℝ x ((L + Q) y))
+    (hL : ∀ x, 0 ≤ inner ℝ x (L x))
+    (e : ℕ ≃ Tile) (horder : Monotone (fun n => V (e n)))
+    (ev : ℕ → ℝ) (hev : Monotone ev)
+    (b : DomainEigenbasis (infiniteOnsiteDomain V) (onsitePlusBounded V (L + Q)) ev)
+    (n : ℕ) : V (e n) - ‖Q‖ ≤ ev n := by
+  have hh := ordered_eigenvalues_affine_le (onsiteDomainEigenbasis V e) b
+    (fun x y => (infiniteOnsiteOperator_symmetric V x y).symm) (onsitePlusBounded_symmetric V _ hB)
+    horder hev 1 (-‖Q‖) zero_le_one (fun x => by
+      have hq := (abs_le.mp (infiniteLocalBoundedPerturbation_inner_abs_le Q x)).1
+      have hl := hL x
+      simp only [onsitePlusBounded_apply, ContinuousLinearMap.add_apply, inner_add_right]
+      nlinarith) n
   simpa using hh
 
 /-- A positive finite-sector perturbation is still symmetric. -/

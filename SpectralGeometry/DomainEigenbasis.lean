@@ -81,6 +81,13 @@ namespace DomainEigenbasis
 
 variable {ι : Type*} {d : Submodule ℝ H} {A : d →ₗ[ℝ] H} {ev : ι → ℝ}
 variable (b : DomainEigenbasis d A ev)
+/-- Reindex actual domain eigenvectors by an equivalence. -/
+@[expose] def reindex {κ : Type*} [CompleteSpace H] (e : κ ≃ ι) :
+    DomainEigenbasis d A (fun i => ev (e i)) where
+  basis := reindexHilbertBasis b.basis e
+  mem_domain i := by simpa only [reindexHilbertBasis_apply] using b.mem_domain (e i)
+  eigen i := by simpa only [reindexHilbertBasis_apply] using b.eigen (e i)
+
 variable (hA : ∀ x y : d, inner ℝ (A x) (y : H) = inner ℝ (x : H) (A y))
 include hA
 

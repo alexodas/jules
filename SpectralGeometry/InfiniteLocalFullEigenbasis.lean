@@ -19,11 +19,9 @@ noncomputable section
 
 variable {Tile : Type*} [DecidableEq Tile]
 
-/-- Connect the existing tag enumeration to an actual complete eigenbasis
-on the original natural domain. The existence of this enumeration is the
-separate infinite-tag theorem of §4.37; no infinite enumeration is asserted
-for a finite or empty spectrum. -/
-theorem infiniteLocalMatching_full_exists_domainEigenbasis
+/-- A complete eigenbasis indexed by the original multiplicity tags.
+This construction also covers finite and empty Hilbert spaces. -/
+theorem infiniteLocalMatching_full_exists_tagEigenbasis
     (D : ℕ) (V : Tile → ℝ) (σ : Fin D → Tile ≃ Tile) (w : Fin D → ℝ)
     (P : TileHilbert Tile →L[ℝ] TileHilbert Tile) (ε shift a : ℝ)
     (hgap : ∀ t, 1 ≤ V t - a)
@@ -32,12 +30,11 @@ theorem infiniteLocalMatching_full_exists_domainEigenbasis
       (infiniteOnsiteResolventCLM V a hgap)‖ < 1)
     (hσ : ∀ i t, σ i (σ i t) = t)
     (hP : ∀ x y : TileHilbert Tile, inner ℝ x (P y) = inner ℝ (P x) y)
-    (seq : ℕ → ℝ ×ₗ ℕ) (hseq : StrictMono seq)
-    (hrange : Set.range seq = toLex ''
-      infiniteLocalMatchingFullMultiplicityTags D V σ w P ε shift a hgap hproper hsmall) :
+ :
     Nonempty (DomainEigenbasis (infiniteOnsiteDomain V)
       (onsitePlusBounded V (infiniteLocalBoundedCorrection D σ w P ε shift))
-      (fun n => (ofLex (seq n)).1)) := by
+      (fun q : infiniteLocalMatchingFullMultiplicityTags
+        D V σ w P ε shift a hgap hproper hsmall => q.1.1)) := by
   classical
   let p (ev : {ev : ℝ // ev ≠ a}) : Submodule ℝ (TileHilbert Tile) :=
     infiniteLocalMatchingFullEigenspace D V σ w P ε shift a hgap hsmall ev ev.property
@@ -67,7 +64,7 @@ theorem infiniteLocalMatching_full_exists_domainEigenbasis
   let f (i : I) : tags := by
     have hk : i.2.val < infiniteLocalMatchingFullMultiplicity D V σ w P ε shift a hgap hproper hsmall i.1 := by
       rw [← hm]
-      exact i.2.property
+      exact i.2.isLt
     exact ⟨(i.1.val, i.2.val),
       (infiniteLocalMatching_full_eigenvalue_iff_multiplicity_pos
         D V σ w P ε shift a hgap hproper hsmall i.1).mpr
@@ -92,10 +89,54 @@ theorem infiniteLocalMatching_full_exists_domainEigenbasis
         exact q.property.2
       exact ⟨⟨⟨q.1.1, hne⟩, ⟨q.1.2, hk⟩⟩, Subtype.ext (Prod.eta q.1)⟩
   let e₁ : I ≃ tags := Equiv.ofBijective f hf
+  let e : tags ≃ I := e₁.symm
+  have he (n : tags) : (e n).1.val = n.1.1 :=
+    congrArg (fun q : tags => q.1.1) (e₁.apply_symm_apply n)
+  let bn := reindexHilbertBasis b e
+  have hbmem (n : tags) : bn n ∈ p (e n).1 := by
+    simpa only [bn, reindexHilbertBasis_apply] using hb (e n)
+  have hn (n : tags) : ∃ x : infiniteOnsiteDomain V,
+      (x : TileHilbert Tile) = bn n ∧
+      infiniteLocalShiftedPerturbedOperator D V σ w P ε shift x = (e n).1.val • bn n :=
+    (infiniteLocalMatchingFullEigenspace_mem_iff D V σ w P ε shift a hgap hsmall
+      (e n).1 (e n).1.property (bn n)).mp (hbmem n)
+  choose x hx hxe using hn
+  have hmemb (n : tags) : bn n ∈ infiniteOnsiteDomain V := by
+    rw [← hx n]
+    exact (x n).property
+  refine ⟨⟨bn, hmemb, ?_⟩⟩
+  intro n
+  have hc : (⟨bn n, hmemb n⟩ : infiniteOnsiteDomain V) = x n := Subtype.ext (hx n).symm
+  rw [hc, onsitePlusBounded_eq_local, hxe n, he n]
+
+
+/-- Connect the existing tag enumeration to an actual complete eigenbasis
+on the original natural domain. The existence of this enumeration is the
+separate infinite-tag theorem of §4.37; no infinite enumeration is asserted
+for a finite or empty spectrum. -/
+theorem infiniteLocalMatching_full_exists_domainEigenbasis
+    (D : ℕ) (V : Tile → ℝ) (σ : Fin D → Tile ≃ Tile) (w : Fin D → ℝ)
+    (P : TileHilbert Tile →L[ℝ] TileHilbert Tile) (ε shift a : ℝ)
+    (hgap : ∀ t, 1 ≤ V t - a)
+    (hproper : ∀ R : ℝ, (infiniteOnsiteLowEnergyTiles V R).Finite)
+    (hsmall : ‖(infiniteLocalBoundedCorrection D σ w P ε shift).comp
+      (infiniteOnsiteResolventCLM V a hgap)‖ < 1)
+    (hσ : ∀ i t, σ i (σ i t) = t)
+    (hP : ∀ x y : TileHilbert Tile, inner ℝ x (P y) = inner ℝ (P x) y)
+    (seq : ℕ → ℝ ×ₗ ℕ) (hseq : StrictMono seq)
+    (hrange : Set.range seq = toLex ''
+      infiniteLocalMatchingFullMultiplicityTags D V σ w P ε shift a hgap hproper hsmall) :
+    Nonempty (DomainEigenbasis (infiniteOnsiteDomain V)
+      (onsitePlusBounded V (infiniteLocalBoundedCorrection D σ w P ε shift))
+      (fun n => (ofLex (seq n)).1)) := by
+  classical
+  obtain ⟨b⟩ := infiniteLocalMatching_full_exists_tagEigenbasis
+    D V σ w P ε shift a hgap hproper hsmall hσ hP
+  let tags := infiniteLocalMatchingFullMultiplicityTags D V σ w P ε shift a hgap hproper hsmall
   have htag (n : ℕ) : ofLex (seq n) ∈ tags := by
     have hmem : seq n ∈ toLex '' tags := hrange ▸ Set.mem_range_self n
     obtain ⟨q, hq, hqe⟩ := hmem
-    simpa only [← hqe] using hq
+    simpa [← hqe] using hq
   let tagseq (n : ℕ) : tags := ⟨ofLex (seq n), htag n⟩
   have ht : Function.Bijective tagseq := by
     constructor
@@ -108,25 +149,34 @@ theorem infiniteLocalMatching_full_exists_domainEigenbasis
         exact ⟨q.1, q.property, rfl⟩
       obtain ⟨n, hn⟩ := hmem
       exact ⟨n, Subtype.ext (congrArg ofLex hn)⟩
-  let e : ℕ ≃ I := (Equiv.ofBijective tagseq ht).trans e₁.symm
-  have he (n : ℕ) : (e n).1.val = (ofLex (seq n)).1 :=
-    congrArg (fun q : tags => q.1.1) (e₁.apply_symm_apply (tagseq n))
-  let bn := reindexHilbertBasis b e
-  have hbmem (n : ℕ) : bn n ∈ p (e n).1 := by
-    simpa only [bn, reindexHilbertBasis_apply] using hb (e n)
-  have hn (n : ℕ) : ∃ x : infiniteOnsiteDomain V,
-      (x : TileHilbert Tile) = bn n ∧
-      infiniteLocalShiftedPerturbedOperator D V σ w P ε shift x = (e n).1.val • bn n :=
-    (infiniteLocalMatchingFullEigenspace_mem_iff D V σ w P ε shift a hgap hsmall
-      (e n).1 (e n).1.property (bn n)).mp (hbmem n)
-  choose x hx hxe using hn
-  have hmemb (n : ℕ) : bn n ∈ infiniteOnsiteDomain V := by
-    rw [← hx n]
-    exact (x n).property
-  refine ⟨⟨bn, hmemb, ?_⟩⟩
-  intro n
-  have hc : (⟨bn n, hmemb n⟩ : infiniteOnsiteDomain V) = x n := Subtype.ext (hx n).symm
-  rw [hc, onsitePlusBounded_eq_local, hxe n, he n]
+  let e : ℕ ≃ tags := Equiv.ofBijective tagseq ht
+  exact ⟨b.reindex e⟩
+
+/-- Infinitely many sites force infinitely many spectral multiplicity tags.
+This is derived from completeness, rather than assumed from compactness. -/
+theorem infiniteLocalMatching_full_tags_infinite [Infinite Tile]
+    (D : ℕ) (V : Tile → ℝ) (σ : Fin D → Tile ≃ Tile) (w : Fin D → ℝ)
+    (P : TileHilbert Tile →L[ℝ] TileHilbert Tile) (ε shift a : ℝ)
+    (hgap : ∀ t, 1 ≤ V t - a)
+    (hproper : ∀ R : ℝ, (infiniteOnsiteLowEnergyTiles V R).Finite)
+    (hsmall : ‖(infiniteLocalBoundedCorrection D σ w P ε shift).comp
+      (infiniteOnsiteResolventCLM V a hgap)‖ < 1)
+    (hσ : ∀ i t, σ i (σ i t) = t)
+    (hP : ∀ x y : TileHilbert Tile, inner ℝ x (P y) = inner ℝ (P x) y)
+ :
+    (infiniteLocalMatchingFullMultiplicityTags
+      D V σ w P ε shift a hgap hproper hsmall).Infinite := by
+  classical
+  intro hf
+  letI := hf.fintype
+  obtain ⟨b⟩ := infiniteLocalMatching_full_exists_tagEigenbasis
+    D V σ w P ε shift a hgap hproper hsmall hσ hP
+  letI : FiniteDimensional ℝ (TileHilbert Tile) :=
+    Module.Finite.of_basis b.basis.toOrthonormalBasis.toBasis
+  let siteBasis : HilbertBasis Tile ℝ (TileHilbert Tile) :=
+    HilbertBasis.ofRepr (LinearIsometryEquiv.refl ℝ _)
+  exact Module.Finite.not_linearIndependent_of_infinite siteBasis
+    siteBasis.orthonormal.linearIndependent
 
 end
 end SpectralGeometry

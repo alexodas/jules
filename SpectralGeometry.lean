@@ -54,6 +54,8 @@ public import SpectralGeometry.DomainEigenbasis
 public import SpectralGeometry.InfiniteLocalFullEigenbasis
 public import SpectralGeometry.OrderedVariationalPrinciple
 public import SpectralGeometry.InfiniteOrderedSpectralControl
+public import SpectralGeometry.InfiniteOrderedSpectralExistence
+public import SpectralGeometry.InfiniteFullSpectralSummability
 
 public section
 

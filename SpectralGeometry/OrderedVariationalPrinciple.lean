@@ -33,14 +33,14 @@ variable (b : DomainEigenbasis d A ev)
 
 @[expose] def firstCoordinates (n : ℕ) : d →ₗ[ℝ] (Fin n → ℝ) where
   toFun x i := inner ℝ (b.basis i) (x : H)
-  map_add' x y := by ext i; simp
-  map_smul' r x := by ext i; simp
+  map_add' x y := by ext i; simp [inner_add_right]
+  map_smul' r x := by ext i; simp [real_inner_smul_right]
 
 theorem prefixSynthesis_coefficient (n : ℕ) (c : Fin (n + 1) → ℝ) (j : Fin (n + 1)) :
     inner ℝ (b.basis j) ((b.prefixSynthesis n c : d) : H) = c j := by
   have ho := b.basis.orthonormal.comp (fun i : Fin (n + 1) => (i : ℕ)) Fin.val_injective
   simpa only [prefixSynthesis, LinearMap.coe_mk, AddHom.coe_mk,
-    Submodule.coe_sum, Submodule.coe_smul, domainVector] using ho.inner_right_fintype c j
+    Submodule.coe_sum, Submodule.coe_smul, domainVector, Function.comp_apply] using ho.inner_right_fintype c j
 
 theorem prefixSynthesis_injective (n : ℕ) : Function.Injective (b.prefixSynthesis n) := by
   intro c e h
@@ -50,7 +50,7 @@ theorem prefixSynthesis_injective (n : ℕ) : Function.Injective (b.prefixSynthe
 
 variable (hA : ∀ x y : d, inner ℝ (A x) (y : H) = inner ℝ (x : H) (A y))
 variable (hmono : Monotone ev)
-include hA hmono
+include b hA hmono
 
 /-- The first n+1 eigenvectors furnish a trial space attaining the n-th
 level, including at a repeated level. -/
@@ -141,7 +141,8 @@ theorem ordered_eigenvalues_affine_le
   · subst α
     have hh := hform (bK.domainVector n)
     have he : K (bK.domainVector n) = μ n • bK.basis n := bK.eigen n
-    simpa only [zero_mul, zero_add, DomainEigenbasis.domainVector, he,
+    rw [he] at hh
+    simpa only [zero_mul, zero_add, DomainEigenbasis.domainVector,
       real_inner_smul_right, real_inner_self_eq_norm_sq, bK.basis.orthonormal.1,
       one_pow, mul_one] using hh
   · have hap : 0 < α := lt_of_le_of_ne hα (Ne.symm ha)
@@ -157,6 +158,20 @@ theorem ordered_eigenvalues_affine_le
         _ = α * (((μ n - β) / α) * ‖((bK.prefixSynthesis n c : d) : H)‖ ^ 2) := by field_simp
     have hh := (le_div_iff₀ hap).mp he
     nlinarith
+
+/-- Any two monotone complete eigenbases of the same domain operator give
+the same ordered levels. Thus the comparison does not depend on arbitrary
+choices of vectors inside repeated eigenspaces. -/
+theorem DomainEigenbasis.ordered_levels_unique {μ : ℕ → ℝ}
+    (b : DomainEigenbasis d A ev) (c : DomainEigenbasis d A μ)
+    (hA : ∀ x y : d, inner ℝ (A x) (y : H) = inner ℝ (x : H) (A y))
+    (hev : Monotone ev) (hμ : Monotone μ) : ev = μ := by
+  funext n
+  have hlo := ordered_eigenvalues_affine_le b c hA hA hev hμ 1 0 zero_le_one
+    (fun x => by simp) n
+  have hhi := ordered_eigenvalues_affine_le c b hA hA hμ hev 1 0 zero_le_one
+    (fun x => by simp) n
+  linarith
 
 end
 end SpectralGeometry

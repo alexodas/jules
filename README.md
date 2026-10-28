@@ -18,15 +18,19 @@ the single mathematical result selected by the root Comparator configuration.
 | Natural-domain operators, bounded matching interactions, conditional self-adjointness and compact resolvents | Formalized under the explicit hypotheses documented in §4 |
 | Real spectral completeness, exact geometric multiplicities, ordered infinite enumeration and qualitative divergence | Formalized under the additional hypotheses of §§4.23–4.38 |
 | Finite-coordinate detection and the multiplicity bound for one low-energy eigenspace | Formalized in §4.40; selected for independent statement verification |
-| Canonical products for abstract admissible positive level sequences | Formalized in §2; no full interacting spectral instantiation yet |
-| Simultaneous quantitative observation, eigenvalue comparison, full-spectrum summability and finite-sector eigenvalue lifting | Open proof obligations in §6.2 |
+| Simultaneous quantitative observation and total low-energy multiplicity counting | Formalized in §§4.41–4.43, with symmetry for simultaneous spectral control |
+| Variational characterization, ordered onsite comparison and finite-sector eigenvalue response | Formalized in §§4.44–4.47 with complete eigenbases, exact multiplicities and explicit infinite-indexing conditions |
+| Positive full-spectrum inverse-square summability and its preservation under nonnegative finite-sector interventions | Formalized under the sufficient growth, ordering and gap hypotheses of §4.48 |
+| Canonical products for admissible positive levels, now including full spectra under §4.48 | Admissibility and the existing convergence/localization results are available; entire holomorphy and exact zero orders remain open in §6.3 |
 | A concrete Ammann–Beenker model, relative-product identities and certified finite-patch zero response | Proposed research milestones in §§6.4–6.6 |
 
 The research objective is an end-to-end statement relating an explicitly defined
 local geometric modification to a quantitatively controlled change in a
 spectral product and its zeros. The current observation theorem supplies a
-finite observation sector for this program. It does not already prove the
-subsequent response, approximation or statistical results.
+finite observation sector for this program. The subsequent abstract spectral
+response is now proved separately. A concrete geometric application, certified
+approximation and statistical results remain open. The Comparator selection
+still contains only the original single-eigenspace theorem.
 
 The chosen affine line is part of the definition of the analytic family.
 Originality and research significance must come from the geometric and spectral
@@ -102,11 +106,18 @@ kernel of restriction, the obstruction gives injectivity and the dimension
 bound.
 
 **Role in the research program.** The theorem identifies a finite observation
-sector for each sufficiently low eigenspace. The next task is to strengthen
-this into a quantitative estimate for the whole low-energy spectral subspace
-and then into a response to perturbations supported on that sector. Injectivity
-alone does not provide a numerical reconstruction algorithm, a quantitative
-stability constant or independent control of several zeros. The relative
+sector for each sufficiently low eigenspace. Under the additional symmetry
+and lower-bound assumptions, §§4.41–4.43 now prove quantitative observation of
+the whole low-energy spectral subspace and a total count with multiplicities.
+The variational bridge of §§4.44–4.46 turns that form inequality into
+$\kappa\tau\le\lambda_n(H+\tau P_{F_R})-\lambda_n(H)\le\tau$
+for the levels and parameter interval specified in §6.2, including repeated
+levels. Section 4.48 transfers onsite summability to the positive full spectrum
+and preserves it along this intervention.
+
+These are additional source theorems, not additions to the current
+Comparator-selected statement. They do not provide a numerical reconstruction
+algorithm or independent control of several zeros. The relative
 determinant identity in §6.5 is a separate proof obligation; it does not follow
 from this theorem alone.
 
@@ -205,12 +216,16 @@ criterion
 \sum_{n=0}^{\infty}q_n^{-2}<\infty,
 ```
 and the existence of a zero at each positive prescribed level. The paired
-factors encode symmetric locations. A full spectral instantiation and a
-formal theorem identifying all zero orders with exact spectral multiplicities
-remain open obligations.
+factors encode symmetric locations. A formal theorem identifying all zero
+orders with exact spectral multiplicities remains open.
 
-The onsite-only growth modules provide admissible diagonal examples. They do
-not yet supply an admissible sequence of the full interacting eigenvalues.
+Section 4.48 now proves positive inverse-square summability for full interacting
+levels under explicit properness, onsite ordering, summability and gap
+hypotheses. Its power-growth corollary reuses the onsite criterion with exponent
+greater than one half. `fullSpectrum_admissible_of_positive_summable` applies the
+existing admissibility criterion to these levels, including the nonnegative
+finite-sector family. This supplies the analytic core's input; it does not
+prove entire holomorphy or exact zero orders.
 
 ### 2.2. A common analytic coordinate for geometric operators
 
@@ -222,9 +237,12 @@ F_H(z)=\prod_{n=0}^{\infty}
 D_H(s)=F_H\!\left(\frac{s-c}{d}\right).
 ```
 
-This definition requires the positive full spectrum with exact multiplicities
-and inverse-square summability. Once these obligations are met, the target
-zero divisor is
+The positive full spectrum with exact multiplicities and inverse-square
+summability is now available under §§4.44–4.48. The sufficient signed-correction
+criterion requires $v_0>\|B\|$ separately from onsite growth; compact resolvent
+alone does not give summability or positivity. The same gap and summability
+persist for nonnegative finite-sector perturbations. The target exact zero
+divisor is
 ```math
 s=c\pm d\,\lambda_n(H),\qquad D_H(c)=1,
 ```
@@ -1220,9 +1238,175 @@ This last theorem controls the **dimension of a complete eigenspace** rather tha
 
 **Precise limitation:** the inequality above applies to *one eigenspace at a time*. It cannot simply be summed over distinct eigenvalues: to prove the desired multiplicity-aware counting inequality or `\lambda_n(H)\ge\lambda_n(M_V)-\|B\|`, the next step must control the **direct sum of all low-energy eigenspaces**, using their orthogonality under the self-adjoint hypotheses (§§4.27, 4.35) and a dimension comparison with the finite onsite sector. The final index-wise comparison, interacting inverse-square summability, and concrete tiling instantiation remain open (§6.2).
 
+### 4.41. Simultaneous spectral subspaces on the natural domain
+
+[DomainSpectralSubspace.lean](SpectralGeometry/DomainSpectralSubspace.lean)
+defines `domainEigenspace` as the actual kernel of $A-\lambda I$ inside a
+specified domain $d$, and `domainLowSpectralSubspace` as the span of **all**
+eigenspaces with level at most $E$. For a symmetric domain operator,
+`domainLowSpectralSubspace_energy_le` proves
+$\langle x,Ax\rangle\le E\|x\|^2$ on this entire span. The proof groups
+vectors by distinct levels and uses orthogonality, including arbitrary
+combinations of vectors from different eigenspaces. No compactness or
+finite-dimensionality is assumed in this abstract lemma.
+
+### 4.42. Quantitative finite-sector observation and closedness
+
+[InfiniteLowEnergyObservation.lean](SpectralGeometry/InfiniteLowEnergyObservation.lean)
+constructs the symmetric positive coordinate contraction `finiteSectorProjection`
+and the natural-domain operator `onsitePlusBounded`.
+For $V\ge v_0$, finite $F$ and $V(t)\ge R$ outside $F$, it proves
+```math
+\langle x,Hx\rangle\ge(R-\|B\|)\|x\|^2-(R-v_0)\|P_Fx\|^2.
+```
+`onsitePlusBounded_lowSpectral_observation` combines this with §4.41:
+```math
+\frac{R-\|B\|-E}{R-v_0}\|x\|^2\le\|P_Fx\|^2,\qquad R>v_0.
+```
+Symmetry of $B$ is required for the spectral-subspace step. If
+$E<R-\|B\|$, restriction is injective and the module **derives** finite
+dimensionality, the bound $\dim L_E\le\#F$, and closedness of its image in
+the ambient Hilbert space. Thus taking the closed low-energy eigenvector span
+adds no vectors and does not lose the natural-domain condition. Properness
+supplies $F=F_R$; the reusable form argument only needs the displayed finite
+sector hypothesis. It covers finite, empty and infinite site types.
+
+### 4.43. Total low-energy counting with the original multiplicities
+
+[InfiniteLowEnergyCounting.lean](SpectralGeometry/InfiniteLowEnergyCounting.lean)
+injects the direct sum of any finite family of distinct low eigenspaces into
+the common observed subspace. It bounds the **sum of their dimensions once**,
+not by adding separate upper bounds from §4.40.
+
+[InfiniteLocalFullSpectralObservation.lean](SpectralGeometry/InfiniteLocalFullSpectralObservation.lean)
+identifies these domain eigenspaces with the existing resolvent eigenspaces.
+`infiniteLocalMatching_full_total_lowEnergy_count` constructs a finite set
+whose membership is exactly $\lambda\in\sigma_{\rm real}(H)$ and
+$\lambda<R-\|B\|$, and proves
+```math
+\sum_{\lambda<R-\|B\|}m_H(\lambda)\le\#F_R.
+```
+The multiplicity is the original `infiniteLocalMatchingFullMultiplicity`.
+This bridge assumes properness, the unit shifted onsite gap, the small
+resolvent-correction bound, involutive matchings and symmetric $P$.
+The shift is excluded using its proved resolvent property. The finite set may
+be empty; no infinite enumeration is needed for this count.
+
+### 4.44. Complete eigenbases with exact multiplicity tags
+
+[DomainEigenbasis.lean](SpectralGeometry/DomainEigenbasis.lean) records a
+complete Hilbert basis of genuine eigenvectors in the specified domain.
+`hasSum_energy` derives the energy expansion from symmetry and Parseval
+applied to $x$ and $Ax$, without postulating an unbounded-operator expansion.
+
+[InfiniteLocalFullEigenbasis.lean](SpectralGeometry/InfiniteLocalFullEigenbasis.lean)
+constructs such a basis from the existing complete finite-dimensional
+resolvent eigenspaces. `infiniteLocalMatching_full_exists_tagEigenbasis`
+uses exactly the original multiplicity tags, also for finite or empty spaces.
+`infiniteLocalMatching_full_exists_domainEigenbasis` reindexes it along any
+exact strictly increasing tag enumeration from §4.37. Repeated eigenvalues
+therefore have exactly their original number of orthonormal slots.
+`infiniteLocalMatching_full_tags_infinite` derives infinitude of the tag set
+from an infinite site type and completeness; it does not infer infinitude
+from compactness alone. All these matching results retain the explicit
+resolvent, properness and symmetry hypotheses.
+
+### 4.45. A variational characterization of the ordered levels
+
+[OrderedVariationalPrinciple.lean](SpectralGeometry/OrderedVariationalPrinciple.lean)
+proves `DomainEigenbasis.eigenvalue_le_iff_trial`: for a symmetric domain
+operator with a complete eigenbasis and monotone levels,
+$\lambda_n\le E$ exactly when there is an injective trial map
+$\mathbb R^{n+1}\to d$ whose Rayleigh numerators are at most $E\|x\|^2$.
+The first $n+1$ basis vectors give one direction; a dimension argument against
+the first $n$ coordinates gives the other.
+
+`ordered_eigenvalues_affine_le` transfers any common-domain form inequality
+$\alpha A+\beta I\le K$, $\alpha\ge0$, to
+$\alpha\lambda_n(A)+\beta\le\lambda_n(K)$. The zero-coefficient case is
+included. `DomainEigenbasis.ordered_levels_unique` proves independence from
+basis choices inside repeated eigenspaces. The infinite sequence interface
+requires actual complete $\mathbb N$-indexed eigenbases; it makes no infinite
+listing claim for finite or empty spaces.
+
+### 4.46. Ordered onsite comparison and finite-sector response
+
+[InfiniteOrderedSpectralControl.lean](SpectralGeometry/InfiniteOrderedSpectralControl.lean)
+constructs the onsite eigenbasis from an explicit bijection $e:\mathbb N\simeq T$.
+If $v_n=V(e(n))$ is monotone, `onsitePlusBounded_ordered_comparison` proves
+```math
+v_n-\|B\|\le\lambda_n(H)\le v_n+\|B\|.
+```
+`infiniteLocalMatching_full_ordered_comparison` applies this directly to the
+existing exact matching-spectrum tag enumeration. The site bijection and its
+onsite ordering are explicit inputs, not a newly implemented sorting algorithm.
+For a nonnegative interaction $L$ and signed correction $Q$, the lower bound
+improves to $v_n-\|Q\|$; a wholly nonnegative correction gives $v_n$.
+
+`finiteSector_ordered_response` proves
+```math
+\frac{R-\|B\|-E}{R-v_0}\,\tau
+\le\lambda_n(H+\tau P_F)-\lambda_n(H)\le\tau
+```
+for $V\ge v_0$, $R>v_0$, finite $F$ with $V\ge R$ outside $F$,
+$\lambda_n(H)\le E$ and $0\le\tau\le R-v_0$. It assumes symmetric $B$
+and actual monotone complete eigenbases of both operators on the **same**
+natural domain. Section 4.47 supplies their existence in the infinite proper
+setting. For $E<R-\|B\|$ the lower response coefficient is positive.
+The proof uses the affine comparison with $\alpha=1-\tau/(R-v_0)$,
+including the endpoint $\alpha=0$. It never assumes simple eigenvalues,
+differentiable eigenvalue branches or an absence of crossings.
+
+### 4.47. Existence and operator hypotheses along the perturbation
+
+[InfiniteOrderedSpectralExistence.lean](SpectralGeometry/InfiniteOrderedSpectralExistence.lean)
+embeds a generic bounded correction into the existing matching construction
+with zero matching colors. `onsitePlusBoundedPMap_isSelfAdjoint` proves genuine
+self-adjointness on the unchanged natural domain for symmetric $B$.
+
+For an infinite site type, proper $V$ and a global onsite lower bound,
+`onsitePlusBounded_exists_orderedEigenbasis` derives a complete monotone
+infinite eigenbasis: it chooses a sufficiently negative compact-resolvent
+shift, proves the spectral lower bound and uses §4.44 to establish infinite
+tags before invoking §4.37. `finiteSector_exists_orderedEigenbasis` proves
+existence for every real perturbation parameter. Boundedness, symmetry,
+properness and the natural domain persist; positivity is an additional result
+for nonnegative parameters in §4.48. Finite and empty cases are handled by
+the tag-basis and observation/counting results, not by this infinite listing.
+
+### 4.48. Full-spectrum summability and a controlled positive family
+
+[InfiniteFullSpectralSummability.lean](SpectralGeometry/InfiniteFullSpectralSummability.lean)
+proves that a bounded lower error preserves inverse-square summability for
+levels tending to infinity. Properness gives divergence along an injective
+site listing. Thus `onsitePlusBounded_ordered_positive_summable` transfers
+onsite summability to the complete full spectrum under §4.46's explicit
+ordered bijection and eigenbasis assumptions. A separate bound
+$V\ge v_0>\|B\|$ gives the uniform positive gap $v_0-\|B\|$.
+
+`onsitePlusBounded_powerGrowth_positive_summable` instantiates this with the
+existing sufficient growth $V(k)\ge(k+1)^\alpha$, $\alpha>1/2$, on sites
+indexed by $\mathbb N$; these original labels need not already be sorted.
+Other onsite criteria, including §4.4, enter through the general transfer.
+The gap assumption is not inferred from growth or compactness.
+
+`finiteSector_preserves_gap_summability` preserves any supplied positive
+baseline gap and inverse-square summability for every $\tau\ge0$.
+`finiteSector_preserves_compact_shift` provides a compact shifted inverse for
+every real $\tau$; the chosen shift may depend on $\tau$.
+`finiteSector_controlled_summable_family` combines the existence theorem,
+the sufficient baseline gap/summability criterion and the response bound on
+the entire interval $0\le\tau\le R-v_0$. It does not assume the perturbed
+eigenbases or perturbed summability as input.
+
+`fullSpectrum_admissible_of_positive_summable` connects these full levels to
+the existing canonical-product predicate. Entire holomorphy, exact zero
+orders, relative determinants, the concrete tiling and perturbations of
+arbitrary sign remain separate obligations.
+
 ## 5. Building and verification
 
-The canonical import list is maintained in [`SpectralGeometry.lean`](SpectralGeometry.lean). It currently imports **46 Lean modules**: one analytic core, four finite-dimensional modules, and forty-one infinite-dimensional modules.
+The canonical import list is maintained in [`SpectralGeometry.lean`](SpectralGeometry.lean). It currently imports **56 Lean modules**: one analytic core, four finite-dimensional geometry modules, and fifty-one operator/spectral modules (including domain-generic interfaces).
 
 - **Analytic core (1):** [`CanonicalProduct.lean`](SpectralGeometry/CanonicalProduct.lean)
 - **Finite-dimensional geometry (4):**
@@ -1276,6 +1460,18 @@ The canonical import list is maintained in [`SpectralGeometry.lean`](SpectralGeo
   - [`InfiniteLocalFullVariationalComparison.lean`](SpectralGeometry/InfiniteLocalFullVariationalComparison.lean)
   - [`InfiniteLocalFullLowEnergyCounting.lean`](SpectralGeometry/InfiniteLocalFullLowEnergyCounting.lean)
 
+- **Simultaneous observation, variational control and full summability (10):**
+  - [`DomainSpectralSubspace.lean`](SpectralGeometry/DomainSpectralSubspace.lean)
+  - [`InfiniteLowEnergyObservation.lean`](SpectralGeometry/InfiniteLowEnergyObservation.lean)
+  - [`InfiniteLowEnergyCounting.lean`](SpectralGeometry/InfiniteLowEnergyCounting.lean)
+  - [`InfiniteLocalFullSpectralObservation.lean`](SpectralGeometry/InfiniteLocalFullSpectralObservation.lean)
+  - [`DomainEigenbasis.lean`](SpectralGeometry/DomainEigenbasis.lean)
+  - [`InfiniteLocalFullEigenbasis.lean`](SpectralGeometry/InfiniteLocalFullEigenbasis.lean)
+  - [`OrderedVariationalPrinciple.lean`](SpectralGeometry/OrderedVariationalPrinciple.lean)
+  - [`InfiniteOrderedSpectralControl.lean`](SpectralGeometry/InfiniteOrderedSpectralControl.lean)
+  - [`InfiniteOrderedSpectralExistence.lean`](SpectralGeometry/InfiniteOrderedSpectralExistence.lean)
+  - [`InfiniteFullSpectralSummability.lean`](SpectralGeometry/InfiniteFullSpectralSummability.lean)
+
 The project uses Lean 4 `v4.35.0` with its corresponding Mathlib version. Every module listed above is imported by the root entry point.
 
 ```bash
@@ -1296,7 +1492,7 @@ one [`comparator.json`](comparator.json), one
 Comparator selects **one theorem**, the per-eigenspace low-energy multiplicity
 bound of §4.40, together with 16 independently reproduced definitions and type abbreviations needed to state it.
 The toolchain's Lean, NanoDa and con-ron kernels verify the selected
-comparison. The separate Lean build still covers **all 46 mathematical
+comparison. The separate Lean build still covers **all 56 mathematical
 source modules**; earlier compact-resolvent, real-spectrum and ordered
 enumeration theorems remain compiled prerequisites but are not individually
 compared in this submission. The metadata records the first identified
@@ -1387,7 +1583,7 @@ and P4 denote research phases, not theorem numbers.
 - [x] Establish inverse-square summability for suitable linearly or
   power-law growing onsite-only levels (§§4.4–4.5).
 
-**Open simultaneous observation and spectral comparison**
+**Verified simultaneous observation and spectral comparison (§§4.41–4.46)**
 
 Assume the self-adjoint compact-resolvent setting, $V(t)\ge v_0$,
 $C=\|B\|$, $R>v_0$, and $E<R-C$. Set
@@ -1397,7 +1593,7 @@ F_R=\{t:V(t)\le R\},
 \kappa=\frac{R-C-E}{R-v_0}>0.
 ```
 
-- [ ] Strengthen the existing eigenspace restriction theorem to the
+- [x] Strengthen the existing eigenspace restriction theorem to the
   quantitative estimate
   ```math
   \|P_{F_R}\psi\|^2\ge\kappa\|\psi\|^2
@@ -1405,7 +1601,7 @@ F_R=\{t:V(t)\le R\},
   for the entire spectral subspace below or at $E$, including linear
   combinations from distinct levels. Verify the domain, finite-dimensional
   and spectral-subspace hypotheses explicitly.
-- [ ] Derive the multiplicity-aware counting bound
+- [x] Derive the multiplicity-aware counting bound
   ```math
   \sum_{\substack{\lambda\in\sigma_{\mathrm{real}}(H)\\
                    \lambda<R-\|B\|}}m_H(\lambda)
@@ -1413,7 +1609,7 @@ F_R=\{t:V(t)\le R\},
   ```
   The separate bounds on individual eigenspaces in §4.40 cannot simply be
   summed to obtain it.
-- [ ] Connect the exact ordered enumeration to a variational/counting
+- [x] Connect the exact ordered enumeration to a variational/counting
   principle and prove
   ```math
   v_n-\|B\|\le\lambda_n(H)\le v_n+\|B\|,
@@ -1422,9 +1618,9 @@ F_R=\{t:V(t)\le R\},
   multiplicity convention. Exploit a nonnegative Laplacian to sharpen
   the lower bound where applicable.
 
-**Open finite-sector response theorem**
+**Verified finite-sector response and sufficient summability (§§4.46–4.48)**
 
-- [ ] For $H_\tau=H+\tau P_{F_R}$, prove
+- [x] For $H_\tau=H+\tau P_{F_R}$, prove
   ```math
   \kappa\tau
   \le\lambda_n(H_\tau)-\lambda_n(H)
@@ -1432,23 +1628,39 @@ F_R=\{t:V(t)\le R\},
   \qquad
   \lambda_n(H)\le E,\quad 0\le\tau\le R-v_0.
   ```
-  The proof must control ordered levels with multiplicities and must not
-  assume simple eigenvalues. A possible form-comparison route is to
-  establish
+  The proof controls ordered levels with multiplicities and does not
+  assume simple eigenvalues. The verified form-comparison route establishes
   ```math
   H\ge(R-C)I-(R-v_0)P_{F_R}
   ```
-  on the natural domain and apply the proved variational comparison.
-- [ ] Transfer sufficient quantitative onsite growth to the ordered full
+  on the natural domain and applies the proved variational comparison.
+- [x] Transfer sufficient quantitative onsite growth to the ordered full
   eigenvalues and prove full-spectrum inverse-square summability.
   Positivity must also be verified; compact resolvent alone is insufficient.
-- [ ] Prove preservation of the required gap and summability along the
-  parameter range used for finite-sector and other local perturbations.
+- [x] Preserve the required positive gap and summability for nonnegative
+  finite-sector perturbations, and prove existence of the ordered spectra
+  throughout the response interval. Self-adjointness and compact shifted
+  inverses are supplied by §§4.47–4.48; the resolvent shift may vary with the
+  parameter.
+- [ ] Extend a suitable gap/summability package to other signed local
+  perturbations under independently checked quantitative hypotheses.
 
-This phase supplies a concrete consequence of finite observation: a finite
-onsite intervention has a controlled effect on every selected low ordered
-level. The bound is an open target; neither it nor simultaneous observation
-is part of the current Comparator-selected theorem.
+**Scope of the verified statements.** The norm comparison and growth transfer
+use an explicitly sorted bijection of the onsite sites. Ordered full levels
+come from complete domain eigenbases; §4.44 connects the original exact tags,
+and §4.47 derives their existence for infinite site types, proper lower-bounded
+$V$ and symmetric bounded corrections. The sufficient positive-summability
+package uses $v_0>\|B\|$ and summable onsite inverse squares (or the proved
+power-growth criterion). Positive interactions admit the sharper lower
+comparison in §4.46. Finite/empty cases are covered by observation, counting
+and tag bases; the $\mathbb N$-sequence statements explicitly address the
+infinite case.
+
+This phase now supplies a proved abstract consequence of finite observation:
+a finite onsite intervention has a controlled effect on every selected low
+ordered level. An application must still establish a nonempty target window
+and its geometric hypotheses. These new source results are **not** part of
+the unchanged Comparator-selected theorem of §4.40.
 
 ### 6.3. P3 — Full spectral products and their exact zero divisors
 
@@ -1457,14 +1669,15 @@ is part of the current Comparator-selected theorem.
 - [x] Define the paired canonical product and prove compact-uniform
   convergence and zero localization for an admissible positive sequence
   (CanonicalProduct.lean, §2).
-- [x] Prove admissibility from inverse-square summability and provide
-  sufficient onsite-only growth examples (§§4.4–4.5).
+- [x] Prove admissibility from inverse-square summability, with onsite
+  growth examples (§§4.4–4.5) and the full-spectrum transfer (§4.48).
+- [x] Package positive ordered full levels as an admissible sequence under
+  the explicit lower-gap, properness, onsite-ordering and summability
+  hypotheses of §4.48. Sections 4.44 and 4.47 supply exact multiplicity
+  indexing and the infinite-site existence conditions.
 
-**Open full-operator instantiation**
+**Open analytic consequences and geometric instantiation**
 
-- [ ] Package the positive, ordered, inverse-square-summable full spectrum
-  as an admissible sequence. Check the lower bound, infinitude, indexing
-  and exact multiplicity assumptions.
 - [ ] Prove that $F_H$ and $D_H$ are entire and identify every zero
   and its order. Exact spectral multiplicities must become exact zero
   multiplicities, including repeated eigenvalues.
@@ -1511,10 +1724,12 @@ The model to construct is
   condition $V>\|B\|$ to be positive.
 - [ ] Prove properness of $V(x)=1+|x|^2$ and a quantitative two-dimensional
   vertex-counting bound. Transfer the resulting onsite growth to
-  full-spectrum summability using §6.2.
+  full-spectrum summability using the verified comparison/transfer lemmas
+  in §§4.46–4.48. This model's positive-Laplacian gap must be established
+  separately from the stronger sufficient condition $v_0>\|B\|$.
 - [ ] Verify compact-resolvent hypotheses at an appropriate real shift
-  and prove the lower-bound and infinitude conditions needed for the
-  global ordered spectrum.
+  and verify the onsite lower bound and infinite vertex type needed to
+  invoke the global ordered-spectrum existence result of §4.47.
 
 **Open worked finite-sector application**
 
@@ -1533,8 +1748,9 @@ S=\{x:|x|\le2\},\qquad H_\tau=H+\tau P_S.
   \le\tau,\qquad
   \lambda_n(H)\le3,\quad 0\le\tau\le4.
   ```
-  This target exploits positivity beyond the general norm-penalty
-  estimate of §6.2.
+  The general norm-penalty estimate is now proved in §4.46. This concrete
+  target still needs a stronger form bound exploiting Laplacian positivity
+  and the verified geometric sector.
 - [ ] Verify that the central vertex and its eight unit-distance neighbors
   give a nine-dimensional trial space with energy at most three.
   Consequently prove that the application controls at least nine levels
@@ -1662,6 +1878,11 @@ theorem, and carries no asserted connection to the Riemann zeta function.
   source classification does not certify mathematical priority.
 
 **Assessment and future selection**
+
+The source results of §§4.41–4.48 now include simultaneous observation,
+total counting and an abstract finite-sector response. Their compilation does
+not change the selected §4.40 statement, establish a concrete geometric
+application or certify originality or independent research interest.
 
 - [ ] Assess the selected result's research interest on its actual
   mathematical content and demonstrated uses. Its role in a larger
