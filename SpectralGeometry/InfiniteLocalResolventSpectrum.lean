@@ -11,16 +11,17 @@ public section
 The unbounded onsite-plus-bounded operator H = M_V+B is symmetric on
 its natural domain when B is symmetric. If the quantitative onsite gap
 makes the bounded inverse Rₐ=(H-aI)⁻¹ exist, then Rₐ is itself
-self-adjoint. Its compactness, already proved in P1, gives the first
-direct applications of Mathlib's compact self-adjoint spectral theorem:
+self-adjoint. Together with the compactness proved in
+InfiniteLocalCompactResolvent, this gives direct applications of
+Mathlib's compact self-adjoint spectral theorem:
 
 * every nonzero eigenspace of Rₐ is finite-dimensional;
 * the closed linear span of all its eigenspaces is the full Hilbert space.
 
-These statements concern the compact bounded resolvent. A subsequent
-step must transfer its eigenvalues and eigenvectors to H and provide
-an eigenvalue enumeration and growth estimates. They are NOT asserted
-in this module.
+These statements concern the compact bounded resolvent. Eigenpair
+transfer and eigenvalue enumeration are established in their dedicated
+modules under the stated hypotheses. Quantitative full-spectrum growth
+and inverse-square summability remain open goals of README §6.2.
 -/
 
 namespace SpectralGeometry

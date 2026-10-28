@@ -17,7 +17,8 @@ states for which pointwise multiplication by V remains square-summable.
 We prove that this domain is a real linear subspace, construct the onsite
 operator as a linear map from the domain to ℓ², and prove its pointwise
 action. No local-finiteness, boundedness of V, or finiteness of Tile is
-assumed. The pair interaction and ε-perturbation are future additions.
+assumed. The bounded interaction and ε-perturbation are constructed in
+the dedicated interaction modules.
 
 Self-adjointness, density of the domain, compact resolvent, and positivity
 of the infinite operator are NOT claimed in this file.
