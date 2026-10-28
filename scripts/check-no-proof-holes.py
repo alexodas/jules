@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """Guard against unfinished proof holes or new axioms in substantive modules.
 
-The independent statement modules Challenge and ChallengeFinite intentionally
-contain sorry placeholders and are not scanned here. This textual check
+The independent statement module Challenge intentionally contains sorry
+placeholders and is not scanned here. This textual check
 supplements, not replaces, Lean's kernel and Comparator.
 """
 from pathlib import Path
