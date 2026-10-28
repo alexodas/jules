@@ -42,6 +42,7 @@ theorem exists_hilbertBasis_subordinate [CompleteSpace H] {ι : Type*}
     apply iSup_le
     intro i x hx
     have hr := congrArg (fun y : p i => (y : H)) ((ob i).sum_repr ⟨x, hx⟩)
+    change _ = x at hr
     rw [← hr]
     simp only [Submodule.coe_sum, Submodule.coe_smul]
     apply Submodule.sum_mem
@@ -68,12 +69,13 @@ and empty index types. -/
     · rintro ⟨i, rfl⟩
       exact ⟨e.symm i, by simp⟩
   apply HilbertBasis.mk hv
+  change ⊤ ≤ (Submodule.span ℝ (Set.range (fun i => b (e i)))).topologicalClosure
   rw [hr, b.dense_span]
 
 @[simp] theorem reindexHilbertBasis_apply {ι κ : Type*} [CompleteSpace H]
     (b : HilbertBasis ι ℝ H) (e : κ ≃ ι) (i : κ) :
     reindexHilbertBasis b e i = b (e i) := by
-  simp only [reindexHilbertBasis, HilbertBasis.coe_mk]
+  simp only [reindexHilbertBasis, HilbertBasis.coe_mk, Function.comp_apply]
 
 namespace DomainEigenbasis
 
@@ -104,13 +106,13 @@ theorem hasSum_energy (x : d) :
 theorem energy_le_of_support (x : d) (E : ℝ)
     (hs : ∀ i, E < ev i → inner ℝ (b.basis i) (x : H) = 0) :
     inner ℝ (x : H) (A x) ≤ E * ‖(x : H)‖ ^ 2 := by
-  have hn : HasSum (fun i => (inner ℝ (b.basis i) (x : H)) ^ 2) ‖(x : H)‖ ^ 2 := by
+  have hn : HasSum (fun i => (inner ℝ (b.basis i) (x : H)) ^ 2) (‖(x : H)‖ ^ 2) := by
     convert b.basis.hasSum_inner_mul_inner (x : H) (x : H) using 1
     · ext i
       rw [real_inner_comm (x : H) (b.basis i)]
       ring
     · exact (real_inner_self_eq_norm_sq _).symm
-  apply HasSum.le (b.hasSum_energy hA x) (hn.mul_left E)
+  refine hasSum_le ?_ (b.hasSum_energy hA x) (hn.mul_left E)
   intro i
   by_cases hi : ev i ≤ E
   · exact mul_le_mul_of_nonneg_right hi (sq_nonneg _)
@@ -121,13 +123,13 @@ theorem energy_le_of_support (x : d) (E : ℝ)
 theorem energy_ge_of_support (x : d) (E : ℝ)
     (hs : ∀ i, ev i < E → inner ℝ (b.basis i) (x : H) = 0) :
     E * ‖(x : H)‖ ^ 2 ≤ inner ℝ (x : H) (A x) := by
-  have hn : HasSum (fun i => (inner ℝ (b.basis i) (x : H)) ^ 2) ‖(x : H)‖ ^ 2 := by
+  have hn : HasSum (fun i => (inner ℝ (b.basis i) (x : H)) ^ 2) (‖(x : H)‖ ^ 2) := by
     convert b.basis.hasSum_inner_mul_inner (x : H) (x : H) using 1
     · ext i
       rw [real_inner_comm (x : H) (b.basis i)]
       ring
     · exact (real_inner_self_eq_norm_sq _).symm
-  apply HasSum.le (hn.mul_left E) (b.hasSum_energy hA x)
+  refine hasSum_le ?_ (hn.mul_left E) (b.hasSum_energy hA x)
   intro i
   by_cases hi : E ≤ ev i
   · exact mul_le_mul_of_nonneg_right hi (sq_nonneg _)
