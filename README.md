@@ -22,6 +22,7 @@ the single mathematical result selected by the root Comparator configuration.
 | Variational characterization, ordered onsite comparison and finite-sector eigenvalue response | Formalized in §§4.44–4.47 with complete eigenbases, exact multiplicities and explicit infinite-indexing conditions |
 | Positive full-spectrum inverse-square summability and its preservation under nonnegative finite-sector interventions | Formalized under the sufficient growth, ordering and gap hypotheses of §4.48 |
 | Entire canonical products and exact zero divisors for admissible positive full spectra | Formalized in §§2.4 and 4.49: every zero has its exact geometric multiplicity; normalization and paired symmetry are proved |
+| Indexed finite-sector response of full spectral-product zeros, with operator-specific exact geometric orders | Formalized in §§4.50–4.52 and 6.3 for the positive finite-sector family under the stated infinite-indexing, gap and summability conditions |
 | A concrete Ammann–Beenker model, relative-product identities and certified finite-patch zero response | Proposed research milestones in §§6.4–6.6 |
 
 The research objective is an end-to-end statement relating an explicitly defined
@@ -30,7 +31,8 @@ spectral product and its zeros. The current observation theorem supplies a
 finite observation sector for this program. The subsequent abstract spectral
 response is now proved separately. The analytic product is entire and records
 the exact full spectral multiplicities under the stated positivity and
-summability hypotheses. The indexed zero-response bridge, a concrete geometric
+summability hypotheses. The indexed zero-response bridge is now proved for positive finite-sector
+perturbations in the sufficient abstract setting. A concrete geometric
 application, certified approximation and statistical results remain open. The
 Comparator selection still contains only the original single-eigenspace theorem.
 
@@ -117,8 +119,10 @@ for the levels and parameter interval specified in §6.2, including repeated
 levels. Section 4.48 transfers onsite summability to the positive full spectrum
 and preserves it along this intervention. Section 4.49 now turns the exact
 full spectral enumeration into an entire product whose zeros have precisely
-the geometric eigenspace multiplicities. The separate formal transfer of the
-response inequality to indexed zero displacements remains the next §6.3 task.
+the geometric eigenspace multiplicities. Sections 4.50–4.52 now transfer this response to the actual indexed zeros of
+the two entire full spectral products, with fixed affine data and the correct
+operator-specific geometric orders. The concrete geometric application is
+still open in §6.4.
 
 These are additional source theorems, not additions to the current
 Comparator-selected statement. They do not provide a numerical reconstruction
@@ -232,7 +236,9 @@ greater than one half. `fullSpectrum_admissible_of_positive_summable` applies th
 existing admissibility criterion to these levels, including the nonnegative
 finite-sector family. The new analytic theorems apply to this input, and §4.49
 identifies repetition counts with the original full geometric multiplicities.
-No complex resolvent is needed for this scalar product construction; the
+The new indexed-point and exact-tag bridge of §§4.50–4.52 also makes this a
+quantitative analytic displacement statement for positive finite-sector
+perturbations. No complex resolvent is needed for this scalar product construction; the
 complex-resolvent interface required for relative determinants remains open.
 
 ### 2.2. A common analytic coordinate for geometric operators
@@ -264,6 +270,11 @@ Using the same $c,d$ for every operator makes zero displacement comparable
 across the family. For $c=\tfrac12$ and $d=i$, the positive zero heights
 are the positive eigenvalues. The affine coordinate fixes the line; it does
 not create spectral correlations or encode a preferred distribution.
+For the positive finite-sector intervention of §4.52, fixed $c,d$ give the
+verified response bound $|d|\kappa\tau\le |z_n^\pm(\tau)-z_n^\pm(0)|\le |d|\tau$
+for exactly the indices with baseline energy at most $E$. The positive
+coefficient follows from $E<R-\|B\|$ and $v_0<R$; the theorem does not assert
+a nonempty energy window or disjoint zero sets.
 
 ### 2.3. Target: a relative product for a finite geometric defect
 
@@ -299,8 +310,11 @@ the infinite operator. Certified finite-patch approximation is therefore part
 of the intended result, rather than a consequence of the determinant's size.
 The framework of finite-rank perturbation determinants is classical; see,
 for example, [Golinskii, Spectra of infinite graphs with tails](https://doi.org/10.1080/03081087.2016.1155529).
-Any originality claim must concern a precisely identified geometric or
-quantitative contribution beyond that framework.
+The new §4.52 indexed zero-displacement inequality compares the products'
+zeros without a relative determinant; it does not establish the proposed
+identity or approximate a determinant. Any originality claim must concern a
+precisely identified geometric or quantitative contribution beyond that
+framework.
 
 ### 2.4. Entire products, exact zeros and their orders
 
@@ -336,6 +350,13 @@ finite set leaves an entire product nonzero at the point, so
 For $d\ne0$, the fiber is finite under the admissibility hypotheses. No simple-spectrum
 assumption is made. For the full spectral enumeration, §4.49 identifies this
 cardinality with the previously defined geometric eigenspace dimension.
+The extensions in §§4.50–4.52 prove the oriented differences and
+quantitative norm estimates between corresponding indexed points for the
+same fixed $c,d$. Via an explicitly constructed zero-color matching tag
+enumeration and uniqueness of complete monotone domain eigenbases, the
+points are zeros of the full products and their orders agree with the
+respective operators' geometric multiplicities. The first statement keeps
+the absolute value of the real level difference until positivity is known.
 This construction does not prove a relative determinant identity, a complex
 operator spectral theorem, or quantitative approximation of zeros.
 
@@ -1448,9 +1469,10 @@ eigenbases or perturbed summability as input.
 
 `fullSpectrum_admissible_of_positive_summable` connects these full levels to
 the existing canonical-product predicate. Sections 2.4 and 4.49 now supply
-entire holomorphy and exact zero orders from that input. Indexed zero-response
-estimates, relative determinants, the concrete tiling and suitable
-gap/summability packages for perturbations of arbitrary sign remain open.
+entire holomorphy and exact zero orders from that input. The indexed
+finite-sector zero-response theorem is proved in §4.52. Relative determinants,
+the concrete tiling and suitable gap/summability packages for perturbations
+of arbitrary sign remain open.
 
 ### 4.49. Full spectral products with exact geometric zero multiplicities
 
@@ -1497,17 +1519,91 @@ operator spectrum theorem. The supplied infinite sequence is justified by
 finite/empty spectral cases remain separate. Repeated levels are allowed and
 produce the exact original geometric multiplicity at each paired zero.
 Normalization and symmetry use the same arbitrary fixed $c,d$ throughout a
-family. The formal indexed zero-displacement estimate and concrete geometric
-instantiation remain open in §§6.3–6.4.
+family. The formal indexed zero-displacement estimate is now proved in §4.52;
+the concrete geometric instantiation of §6.4 remains open.
+
+
+### 4.50. Algebraic identities for indexed spectral points
+
+[IndexedSpectralPoints.lean](SpectralGeometry/IndexedSpectralPoints.lean)
+defines the points $z_n^+ = c+d\lambda_n$ and $z_n^- = c-d\lambda_n$
+for a real sequence, a fixed complex center $c$, and a fixed direction $d$.
+The two subtraction lemmas give exactly
+$
+z_n^\pm(\tau)-z_n^\pm(0)
+=\pm d\,(\lambda_n(H_\tau)-\lambda_n(H)),
+$
+with the real difference cast into the complex numbers. The norm lemmas first
+give $|d|\,|\lambda_n(H_\tau)-\lambda_n(H)|$. Only after an ordered
+nonnegative response is established does
+`indexedSpectralPoints_norm_bounds` remove the real absolute value.
+`indexedSpectralPoints_ne` proves that a positive lower response, a
+strictly positive parameter and $d\ne0$ exclude stationary *indexed*
+points. It does not claim disjoint zero sets at different parameters.
+
+### 4.51. Matching the variational levels to exact geometric zero orders
+
+[OrderedSpectralProductBridge.lean](SpectralGeometry/OrderedSpectralProductBridge.lean)
+bridges the two distinct spectral APIs. The min-max and response results use
+arbitrary monotone complete `DomainEigenbasis` sequences. In contrast, the
+exact order theorem of §4.49 uses a strictly increasing enumeration of *all*
+geometric multiplicity tags. `onsitePlusBounded_ordered_eq_exact_tag_levels`
+constructs the latter explicitly using zero matching colors, a sufficiently
+negative resolvent shift, infinite sites, properness, symmetry and the
+existing lower-bound and tag-infinitude proofs. It then applies
+`DomainEigenbasis.ordered_levels_unique` to identify the sequences
+index by index. It does not assume that the existential ordered-basis
+theorem itself supplies tag coverage.
+
+`HasExactFullSpectralProduct` records entire differentiability, the exact
+two-sided zero set given by the real spectrum of the actual operator, and
+zero orders equal to the original full geometric multiplicities at every
+positive level. Its witnessing shift and Neumann bound are allowed to depend
+on the bounded correction.
+`onsitePlusBounded_hasExactFullSpectralProduct` establishes this predicate
+from the complete ordered basis, positivity and inverse-square summability,
+using §4.49; `indexedSpectralPoints_product_zeros` identifies both indexed
+points as actual zeros. Each operator receives its own multiplicity function;
+no invariance of multiplicities under perturbation is asserted.
+
+### 4.52. Effective finite-sector displacement of full-product zeros
+
+[FiniteSectorZeroResponse.lean](SpectralGeometry/FiniteSectorZeroResponse.lean)
+proves `finiteSector_fullProducts_indexedZeroResponse` for infinitely many
+sites with a symmetric bounded correction, proper onsite potential,
+an explicitly monotone onsite bijection, onsite inverse-square summability,
+$V\ge v_0>\|B\|$, $v_0<R$, a finite set $F$ with $V\ge R$ outside it,
+and $E<R-\|B\|$. For each $0\le\tau\le R-v_0$, it constructs a monotone
+complete ordered sequence of the actual operator
+$H_\tau=M_V+B+\tau P_F$ on the same natural domain. Both its product and the
+baseline product have the exact real zero sets and geometric orders of their
+respective operators. With the *same* fixed $c,d\in\mathbb C$, $d\ne0$, for
+each index with $\lambda_n(H)\le E$ it proves
+$
+|d|\,\frac{R-\|B\|-E}{R-v_0}\,\tau
+\le |z_n^\pm(\tau)-z_n^\pm(0)|\le |d|\,\tau.
+$
+The oriented complex differences and the four zero identities are included
+in the conclusion. For $\tau>0$ each indexed point changes position relative
+to its baseline index. The proof invokes the already verified
+`finiteSector_controlled_summable_family` and gap/summability preservation,
+not an assumed response estimate or a new condition
+$v_0>\|B+\tau P_F\|$. Both interval endpoints are included. The theorem
+does not assert that the energy window is nonempty, rule out zero collisions
+between *different* indices and parameter values, or select a global
+eigenvector family depending on $\tau$. The geometric Ammann–Beenker
+instantiation, signed-intervention extension, relative determinant and
+certified zero approximation remain open.
 
 ## 5. Building and verification
 
-The canonical import list is maintained in [`SpectralGeometry.lean`](SpectralGeometry.lean). It currently imports **59 Lean modules**: three analytic modules, four finite-dimensional geometry modules, and fifty-two operator/spectral modules (including domain-generic interfaces).
+The canonical import list is maintained in [`SpectralGeometry.lean`](SpectralGeometry.lean). It currently imports **62 Lean modules**: four analytic modules, four finite-dimensional geometry modules, and fifty-four operator/spectral modules (including domain-generic interfaces).
 
-- **Analytic core and exact zero orders (3):**
+- **Analytic core and indexed-point algebra (4):**
   - [`CanonicalProduct.lean`](SpectralGeometry/CanonicalProduct.lean)
   - [`CanonicalProductAnalytic.lean`](SpectralGeometry/CanonicalProductAnalytic.lean)
   - [`CanonicalProductZeroOrder.lean`](SpectralGeometry/CanonicalProductZeroOrder.lean)
+  - [`IndexedSpectralPoints.lean`](SpectralGeometry/IndexedSpectralPoints.lean)
 - **Finite-dimensional geometry (4):**
   - [`FinitePerturbation.lean`](SpectralGeometry/FinitePerturbation.lean)
   - [`FinitePositiveEnergy.lean`](SpectralGeometry/FinitePositiveEnergy.lean)
@@ -1571,8 +1667,10 @@ The canonical import list is maintained in [`SpectralGeometry.lean`](SpectralGeo
   - [`InfiniteOrderedSpectralExistence.lean`](SpectralGeometry/InfiniteOrderedSpectralExistence.lean)
   - [`InfiniteFullSpectralSummability.lean`](SpectralGeometry/InfiniteFullSpectralSummability.lean)
 
-- **Full spectral products (1):**
+- **Full spectral products and indexed response (3):**
   - [`InfiniteFullSpectralProduct.lean`](SpectralGeometry/InfiniteFullSpectralProduct.lean)
+  - [`OrderedSpectralProductBridge.lean`](SpectralGeometry/OrderedSpectralProductBridge.lean)
+  - [`FiniteSectorZeroResponse.lean`](SpectralGeometry/FiniteSectorZeroResponse.lean)
 
 The project uses Lean 4 `v4.35.0` with its corresponding Mathlib version. Every module listed above is imported by the root entry point.
 
@@ -1594,7 +1692,7 @@ one [`comparator.json`](comparator.json), one
 Comparator selects **one theorem**, the per-eigenspace low-energy multiplicity
 bound of §4.40, together with 16 independently reproduced definitions and type abbreviations needed to state it.
 The toolchain's Lean, NanoDa and con-ron kernels verify the selected
-comparison. The separate Lean build still covers **all 59 mathematical
+comparison. The separate Lean build still covers **all 62 mathematical
 source modules**; earlier compact-resolvent, real-spectrum and ordered
 enumeration theorems remain compiled prerequisites but are not individually
 compared in this submission. The metadata records the first identified
@@ -1770,7 +1868,9 @@ infinite case.
 
 This phase now supplies a proved abstract consequence of finite observation:
 a finite onsite intervention has a controlled effect on every selected low
-ordered level. An application must still establish a nonempty target window
+ordered level. Section 4.52 transfers this existing response to the indexed
+zeros of both full spectral products, while the stronger signed and geometric
+extensions above remain open. An application must still establish a nonempty target window
 and its geometric hypotheses. These new source results are **not** part of
 the unchanged Comparator-selected theorem of §4.40.
 
@@ -1798,12 +1898,16 @@ the unchanged Comparator-selected theorem of §4.40.
   identity. These identities hold for every member of an admissible family;
   the line $c+d\mathbb R$ is prescribed by its definition.
 
-**Next: indexed zero response and geometric instantiation**
+**Verified indexed zero response (§§4.50–4.52); geometric instantiation remains open**
 
-- [ ] Instantiate the finite-sector response theorem of §6.2 as a
-  displacement estimate for the corresponding indexed zeros along the
-  same line. Common zero locations at different parameter values must
-  not be confused with stationary indexed levels.
+- [x] Transfer the finite-sector response theorem of §6.2 to the actual
+  indexed zeros of both full spectral products, with fixed $c,d$,
+  operator-specific geometric orders, the oriented identities, and the
+  two-sided bound $|d|\kappa\tau\le|z_n^\pm(\tau)-z_n^\pm(0)|\le|d|\tau$.
+  For $\tau>0$ every selected indexed zero moves, but common locations
+  from different indices at different parameters are not excluded.
+  The statement is conditional on $\lambda_n(H)\le E$ and does not prove
+  that such an index exists.
 - [ ] Distinguish compact-set convergence of products from quantitative
   approximation of individual zeros or clusters. Additional separation or
   contour hypotheses must be proved when they are used.
@@ -1875,8 +1979,8 @@ S=\{x:|x|\le2\},\qquad H_\tau=H+\tau P_S.
 - [ ] Instantiate the entire-product and exact-multiplicity theorem of §4.49
   once the model's hypotheses above are verified, then obtain the indexed
   zero-displacement bounds on the prescribed line. The abstract analytic
-  theorem is proved; these geometric hypotheses and the response bridge
-  still need verification.
+  response bridge is proved in §4.52; the model-specific geometric, gap,
+  summability and low-energy nonemptiness hypotheses still need verification.
 - [ ] Investigate whether the tiling's geometry permits a smaller
   observation/intervention set with a proved quantitative guarantee.
   This is a separate research question, not a consequence of
@@ -1998,9 +2102,10 @@ theorem, and carries no asserted connection to the Riemann zeta function.
 
 **Assessment and future selection**
 
-The source results of §§4.41–4.49 now include simultaneous observation,
-total counting, an abstract finite-sector response and entire full spectral
-products with exact geometric zero multiplicities. Their compilation does
+The source results of §§4.41–4.52 now include simultaneous observation,
+total counting, an abstract finite-sector response, entire full spectral
+products with exact geometric zero multiplicities, and indexed finite-sector
+zero displacement. Their compilation does
 not change the selected §4.40 statement, establish a concrete geometric
 application or certify originality or independent research interest.
 
