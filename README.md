@@ -1528,15 +1528,15 @@ instantiation remain open in §§6.3–6.4.
 defines the points $z_n^+ = c+d\lambda_n$ and $z_n^- = c-d\lambda_n$
 for a real sequence, a fixed complex center $c$, and a fixed direction $d$.
 The two subtraction lemmas give exactly
-\[
+$
 z_n^\pm(\tau)-z_n^\pm(0)
 =\pm d\,(\lambda_n(H_\tau)-\lambda_n(H)),
-\]
+$
 with the real difference cast into the complex numbers. The norm lemmas first
 give $|d|\,|\lambda_n(H_\tau)-\lambda_n(H)|$. Only after an ordered
 nonnegative response is established does
-\`indexedSpectralPoints_norm_bounds\` remove the real absolute value.
-\`indexedSpectralPoints_ne\` proves that a positive lower response, a
+`indexedSpectralPoints_norm_bounds` remove the real absolute value.
+`indexedSpectralPoints_ne` proves that a positive lower response, a
 strictly positive parameter and $d\ne0$ exclude stationary *indexed*
 points. It does not claim disjoint zero sets at different parameters.
 
@@ -1544,31 +1544,31 @@ points. It does not claim disjoint zero sets at different parameters.
 
 [OrderedSpectralProductBridge.lean](SpectralGeometry/OrderedSpectralProductBridge.lean)
 bridges the two distinct spectral APIs. The min-max and response results use
-arbitrary monotone complete \`DomainEigenbasis\` sequences. In contrast, the
+arbitrary monotone complete `DomainEigenbasis` sequences. In contrast, the
 exact order theorem of §4.49 uses a strictly increasing enumeration of *all*
-geometric multiplicity tags. \`onsitePlusBounded_ordered_eq_exact_tag_levels\`
+geometric multiplicity tags. `onsitePlusBounded_ordered_eq_exact_tag_levels`
 constructs the latter explicitly using zero matching colors, a sufficiently
 negative resolvent shift, infinite sites, properness, symmetry and the
 existing lower-bound and tag-infinitude proofs. It then applies
-\`DomainEigenbasis.ordered_levels_unique\` to identify the sequences
+`DomainEigenbasis.ordered_levels_unique` to identify the sequences
 index by index. It does not assume that the existential ordered-basis
 theorem itself supplies tag coverage.
 
-\`HasExactFullSpectralProduct\` records entire differentiability, the exact
+`HasExactFullSpectralProduct` records entire differentiability, the exact
 two-sided zero set given by the real spectrum of the actual operator, and
 zero orders equal to the original full geometric multiplicities at every
 positive level. Its witnessing shift and Neumann bound are allowed to depend
 on the bounded correction.
-\`onsitePlusBounded_hasExactFullSpectralProduct\` establishes this predicate
+`onsitePlusBounded_hasExactFullSpectralProduct` establishes this predicate
 from the complete ordered basis, positivity and inverse-square summability,
-using §4.49; \`indexedSpectralPoints_product_zeros\` identifies both indexed
+using §4.49; `indexedSpectralPoints_product_zeros` identifies both indexed
 points as actual zeros. Each operator receives its own multiplicity function;
 no invariance of multiplicities under perturbation is asserted.
 
 ### 4.52. Effective finite-sector displacement of full-product zeros
 
 [FiniteSectorZeroResponse.lean](SpectralGeometry/FiniteSectorZeroResponse.lean)
-proves \`finiteSector_fullProducts_indexedZeroResponse\` for infinitely many
+proves `finiteSector_fullProducts_indexedZeroResponse` for infinitely many
 sites with a symmetric bounded correction, proper onsite potential,
 an explicitly monotone onsite bijection, onsite inverse-square summability,
 $V\ge v_0>\|B\|$, $v_0<R$, a finite set $F$ with $V\ge R$ outside it,
@@ -1578,14 +1578,14 @@ $H_\tau=M_V+B+\tau P_F$ on the same natural domain. Both its product and the
 baseline product have the exact real zero sets and geometric orders of their
 respective operators. With the *same* fixed $c,d\in\mathbb C$, $d\ne0$, for
 each index with $\lambda_n(H)\le E$ it proves
-\[
+$
 |d|\,\frac{R-\|B\|-E}{R-v_0}\,\tau
 \le |z_n^\pm(\tau)-z_n^\pm(0)|\le |d|\,\tau.
-\]
+$
 The oriented complex differences and the four zero identities are included
 in the conclusion. For $\tau>0$ each indexed point changes position relative
 to its baseline index. The proof invokes the already verified
-\`finiteSector_controlled_summable_family\` and gap/summability preservation,
+`finiteSector_controlled_summable_family` and gap/summability preservation,
 not an assumed response estimate or a new condition
 $v_0>\|B+\tau P_F\|$. Both interval endpoints are included. The theorem
 does not assert that the energy window is nonempty, rule out zero collisions
