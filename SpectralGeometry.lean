@@ -59,6 +59,7 @@ public import SpectralGeometry.InfiniteFullSpectralSummability
 public import SpectralGeometry.CanonicalProductAnalytic
 public import SpectralGeometry.CanonicalProductZeroOrder
 public import SpectralGeometry.InfiniteFullSpectralProduct
+public import SpectralGeometry.IndexedSpectralPoints
 
 public section
 
