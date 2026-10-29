@@ -19,13 +19,14 @@ noncomputable section
 
 variable {Tile : Type*} [DecidableEq Tile]
 
+omit [DecidableEq Tile] in
 theorem boundedCorrection_add_symmetric
     (B K : TileHilbert Tile →L[ℝ] TileHilbert Tile)
     (hB : ∀ x y, inner ℝ (B x) y = inner ℝ x (B y))
     (hK : ∀ x y, inner ℝ (K x) y = inner ℝ x (K y)) :
     ∀ x y, inner ℝ ((B + K) x) y = inner ℝ x ((B + K) y) := by
   intro x y
-  simp only [ContinuousLinearMap.add_apply, inner_add_left, inner_add_right, hB, hK]
+  simp only [add_apply, inner_add_left, inner_add_right, hB, hK]
 
 theorem onsitePlusBounded_perturbation_energy (V : Tile → ℝ)
     (B K : TileHilbert Tile →L[ℝ] TileHilbert Tile) (x : infiniteOnsiteDomain V) :
