@@ -46,7 +46,7 @@ theorem onsitePlusBounded_exists_certified_zero_clusters [Infinite Tile]
       (∀ i, |μ i - ev i| ≤ η) ∧
       (∀ i, ‖positiveSpectralPoint μ c d i - positiveSpectralPoint ev c d i‖ ≤ ‖d‖ * η ∧
         ‖negativeSpectralPoint μ c d i - negativeSpectralPoint ev c d i‖ ≤ ‖d‖ * η) ∧
-      ∀ a b : ℝ, 0 < a → ∀ m n : ℕ,
+      ∀ a b : ℝ, 0 < a → a < b → ∀ m n : ℕ,
         OrderedGapCertificate ev η a m → OrderedGapCertificate ev η b n →
         CertifiedCanonicalWindow ev c d a b m n ∧
           CertifiedCanonicalWindow μ c d a b m n := by
@@ -71,7 +71,7 @@ theorem onsitePlusBounded_exists_certified_zero_clusters [Infinite Tile]
     rw [positiveSpectralPoint_sub_norm, negativeSpectralPoint_sub_norm]
     exact ⟨mul_le_mul_of_nonneg_left (hclose i) (norm_nonneg d),
       mul_le_mul_of_nonneg_left (hclose i) (norm_nonneg d)⟩
-  · intro a b ha' m n hcutA hcutB
+  · intro a b ha' _hab m n hcutA hcutB
     exact ⟨canonicalProduct_certified_window ev ev hev c d ha hd η a b ha' m n hcutA hcutB
         (fun i => by simpa using hη),
       canonicalProduct_certified_window ev μ hev c d haμ hd η a b ha' m n hcutA hcutB hclose⟩

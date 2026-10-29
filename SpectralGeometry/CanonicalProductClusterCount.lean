@@ -38,7 +38,7 @@ theorem levelMultiplicity_eq_filter_card (q : ℕ → ℝ) (S : Finset ℕ)
       invFun := fun j => ⟨j.val, (Finset.mem_filter.mp j.property).2⟩
       left_inv := fun j => rfl
       right_inv := fun j => rfl }
-  exact (Nat.card_congr e).trans (by simp)
+  exact (Nat.card_congr e).trans (by simp only [Nat.card_eq_fintype_card, Fintype.card_coe])
 
 /-- Summing level multiplicities recovers the size of a saturated index set. -/
 theorem sum_levelMultiplicity_eq_card (q : ℕ → ℝ) (S : Finset ℕ)
@@ -93,6 +93,75 @@ structure CertifiedCanonicalWindow (q : ℕ → ℝ) (c d : ℂ)
   orders : ∀ sign : ℝ, sign = 1 ∨ sign = -1 →
     (∑ r ∈ spectralWindowLevels q m n, analyticOrderAt (canonicalProduct q c d)
       (c + d * ((sign * r : ℝ) : ℂ))) = ((n - m : ℕ) : ℕ∞)
+
+/-- The finite set of complex zero locations, with repetitions removed. -/
+@[expose] def spectralWindowZeros (q : ℕ → ℝ) (c d : ℂ) (sign : ℝ)
+    (m n : ℕ) : Finset ℂ := by
+  classical
+  exact (spectralWindowLevels q m n).image (fun r => c + d * ((sign * r : ℝ) : ℂ))
+
+theorem signedLinePoint_injective (c d : ℂ) (hd : d ≠ 0)
+    (sign : ℝ) (hsign : sign ≠ 0) :
+    Function.Injective (fun r : ℝ => c + d * ((sign * r : ℝ) : ℂ)) := by
+  intro r t he
+  have hc := mul_left_cancel₀ hd (add_left_cancel he)
+  have hr : sign * r = sign * t := by exact_mod_cast hc
+  exact mul_left_cancel₀ hsign hr
+
+/-- The listed complex points are exactly all zeros on the closed signed
+segment. This makes completeness of the finite zero set explicit. -/
+theorem CertifiedCanonicalWindow.mem_zeros_iff
+    {q : ℕ → ℝ} {c d : ℂ} {a b : ℝ} {m n : ℕ}
+    (h : CertifiedCanonicalWindow q c d a b m n)
+    (sign : ℝ) (hsign : sign = 1 ∨ sign = -1) (z : ℂ) :
+    z ∈ spectralWindowZeros q c d sign m n ↔
+      ∃ r ∈ Set.Icc a b, z = c + d * ((sign * r : ℝ) : ℂ) ∧
+        canonicalProduct q c d z = 0 := by
+  classical
+  constructor
+  · intro hz
+    obtain ⟨r, hr, rfl⟩ := Finset.mem_image.mp hz
+    obtain ⟨i, hi, hir⟩ := Finset.mem_image.mp hr
+    have hin := (h.indices i).mpr hi
+    have hab : r ∈ Set.Icc a b := by rw [← hir]; exact ⟨hin.1.le, hin.2.le⟩
+    exact ⟨r, hab, rfl, (h.zeros r hab sign hsign).mpr hr⟩
+  · rintro ⟨r, hr, rfl, hz⟩
+    exact Finset.mem_image.mpr ⟨r, (h.zeros r hr sign hsign).mp hz, rfl⟩
+
+/-- Summing the analytic orders over the distinct complex zeros gives
+exactly the size of the index block, even when several indices coincide. -/
+theorem CertifiedCanonicalWindow.complex_order_sum
+    {q : ℕ → ℝ} {c d : ℂ} {a b : ℝ} {m n : ℕ}
+    (h : CertifiedCanonicalWindow q c d a b m n) (hd : d ≠ 0)
+    (sign : ℝ) (hsign : sign = 1 ∨ sign = -1) :
+    (∑ z ∈ spectralWindowZeros q c d sign m n,
+      analyticOrderAt (canonicalProduct q c d) z) = ((n - m : ℕ) : ℕ∞) := by
+  classical
+  have hs : sign ≠ 0 := by rcases hsign with rfl | rfl <;> norm_num
+  unfold spectralWindowZeros
+  rw [Finset.sum_image]
+  · exact h.orders sign hsign
+  · intro r _ t _ he
+    exact signedLinePoint_injective c d hd sign hs he
+
+/-- Both endpoints are zero-free when the certified segment is nonempty. -/
+theorem CertifiedCanonicalWindow.boundary_ne_zero
+    {q : ℕ → ℝ} {c d : ℂ} {a b : ℝ} {m n : ℕ}
+    (h : CertifiedCanonicalWindow q c d a b m n) (hab : a ≤ b)
+    (sign : ℝ) (hsign : sign = 1 ∨ sign = -1) :
+    canonicalProduct q c d (c + d * ((sign * a : ℝ) : ℂ)) ≠ 0 ∧
+      canonicalProduct q c d (c + d * ((sign * b : ℝ) : ℂ)) ≠ 0 := by
+  constructor
+  · intro hz
+    have hr := (h.zeros a ⟨le_rfl, hab⟩ sign hsign).mp hz
+    obtain ⟨i, hi, hir⟩ := Finset.mem_image.mp hr
+    have ht := ((h.indices i).mpr hi).1
+    linarith
+  · intro hz
+    have hr := (h.zeros b ⟨hab, le_rfl⟩ sign hsign).mp hz
+    obtain ⟨i, hi, hir⟩ := Finset.mem_image.mp hr
+    have ht := ((h.indices i).mpr hi).2
+    linarith
 
 /-- Separated reference cuts and a level-error bound certify the complete
 zero cluster of the approximating product. No uniform-product-convergence
