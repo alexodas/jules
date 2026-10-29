@@ -1469,9 +1469,10 @@ eigenbases or perturbed summability as input.
 
 `fullSpectrum_admissible_of_positive_summable` connects these full levels to
 the existing canonical-product predicate. Sections 2.4 and 4.49 now supply
-entire holomorphy and exact zero orders from that input. Indexed zero-response
-estimates, relative determinants, the concrete tiling and suitable
-gap/summability packages for perturbations of arbitrary sign remain open.
+entire holomorphy and exact zero orders from that input. The indexed
+finite-sector zero-response theorem is proved in §4.52. Relative determinants,
+the concrete tiling and suitable gap/summability packages for perturbations
+of arbitrary sign remain open.
 
 ### 4.49. Full spectral products with exact geometric zero multiplicities
 
@@ -1518,8 +1519,8 @@ operator spectrum theorem. The supplied infinite sequence is justified by
 finite/empty spectral cases remain separate. Repeated levels are allowed and
 produce the exact original geometric multiplicity at each paired zero.
 Normalization and symmetry use the same arbitrary fixed $c,d$ throughout a
-family. The formal indexed zero-displacement estimate and concrete geometric
-instantiation remain open in §§6.3–6.4.
+family. The formal indexed zero-displacement estimate is now proved in §4.52;
+the concrete geometric instantiation of §6.4 remains open.
 
 
 ### 4.50. Algebraic identities for indexed spectral points
