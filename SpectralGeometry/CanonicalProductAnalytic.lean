@@ -121,6 +121,11 @@ theorem canonicalProduct_zero_iff (h : Admissible q c d) (hd : d ≠ 0) (s : ℂ
   · rintro ⟨n, hn⟩
     exact tprod_of_exists_eq_zero ⟨n, (factor_zero_iff h.positive hd n s).mpr hn⟩
 
+/-- The same product in the standard coordinate, used for `F_H` and `D_H`. -/
+theorem canonicalProduct_affine_coordinate (q : ℕ → ℝ) (c d s : ℂ) :
+    canonicalProduct q c d s = canonicalProduct q 0 1 ((s - c) / d) := by
+  simp [canonicalProduct, factor, perturb]
+
 /-- Fixed-center normalization, without any convergence or positivity assumption. -/
 @[simp] theorem canonicalProduct_at_center (q : ℕ → ℝ) (c d : ℂ) :
     canonicalProduct q c d c = 1 := by

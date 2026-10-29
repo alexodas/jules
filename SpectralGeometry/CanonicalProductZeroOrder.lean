@@ -79,7 +79,7 @@ theorem canonicalProduct_split_finset (h : Admissible q c d) (F : Finset ℕ) (s
       ∏' n : ℕ, factor q c d n s :=
     Multipliable.tprod_mul_tprod_compl (s := (F : Set ℕ))
       (f := fun n : ℕ => factor q c d n s) hf ht.multipliable
-  rw [Finset.tprod_subtype'] at hp
+  rw [Finset.tprod_subtype' F (fun n : ℕ => factor q c d n s)] at hp
   exact hp.symm
 
 /-- A finite product of factors vanishing at a point has order its cardinality. -/

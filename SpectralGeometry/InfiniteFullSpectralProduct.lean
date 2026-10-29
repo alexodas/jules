@@ -30,7 +30,7 @@ theorem levelMultiplicity_eq_of_tag_enumeration
     (hcover : ∀ r k, k < m r → ∃ n, seq n = (r, k)) (r : ℝ) :
     levelMultiplicity (fun n => (seq n).1) r = m r := by
   let f (n : {n : ℕ // (seq n).1 = r}) : Fin (m r) :=
-    ⟨(seq n).2, by rw [← n.property]; exact hmem n⟩
+    ⟨(seq n).2, by simpa only [n.property] using hmem n.val⟩
   have hf : Function.Bijective f := by
     constructor
     · intro i j hij
@@ -56,6 +56,8 @@ variable {Tile : Type*} [DecidableEq Tile]
     (hrange : Set.range seq = toLex ''
       infiniteLocalMatchingFullMultiplicityTags D V σ w P ε shift a hgap hproper hsmall)
 
+include hseq hrange
+
 /-- The number of repetitions in the original exact ordered sequence is the
 geometric multiplicity, including zero for parameters outside the spectrum. -/
 theorem infiniteLocalMatching_full_sequence_levelMultiplicity (r : ℝ) :
@@ -64,7 +66,9 @@ theorem infiniteLocalMatching_full_sequence_levelMultiplicity (r : ℝ) :
   apply levelMultiplicity_eq_of_tag_enumeration
     (infiniteLocalMatchingFullMultiplicity D V σ w P ε shift a hgap hproper hsmall)
     (fun n => ofLex (seq n))
-  · exact ofLex.injective.comp hseq.injective
+  · intro n m h
+    apply hseq.injective
+    exact congrArg toLex h
   · intro n
     have hn : seq n ∈ toLex ''
         infiniteLocalMatchingFullMultiplicityTags D V σ w P ε shift a hgap hproper hsmall :=
