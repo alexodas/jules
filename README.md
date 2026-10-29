@@ -18,15 +18,19 @@ the single mathematical result selected by the root Comparator configuration.
 | Natural-domain operators, bounded matching interactions, conditional self-adjointness and compact resolvents | Formalized under the explicit hypotheses documented in §4 |
 | Real spectral completeness, exact geometric multiplicities, ordered infinite enumeration and qualitative divergence | Formalized under the additional hypotheses of §§4.23–4.38 |
 | Finite-coordinate detection and the multiplicity bound for one low-energy eigenspace | Formalized in §4.40; selected for independent statement verification |
-| Canonical products for abstract admissible positive level sequences | Formalized in §2; no full interacting spectral instantiation yet |
-| Simultaneous quantitative observation, eigenvalue comparison, full-spectrum summability and finite-sector eigenvalue lifting | Open proof obligations in §6.2 |
+| Simultaneous quantitative observation and total low-energy multiplicity counting | Formalized in §§4.41–4.43, with symmetry for simultaneous spectral control |
+| Variational characterization, ordered onsite comparison and finite-sector eigenvalue response | Formalized in §§4.44–4.47 with complete eigenbases, exact multiplicities and explicit infinite-indexing conditions |
+| Positive full-spectrum inverse-square summability and its preservation under nonnegative finite-sector interventions | Formalized under the sufficient growth, ordering and gap hypotheses of §4.48 |
+| Canonical products for admissible positive levels, now including full spectra under §4.48 | Admissibility and the existing convergence/localization results are available; entire holomorphy and exact zero orders remain open in §6.3 |
 | A concrete Ammann–Beenker model, relative-product identities and certified finite-patch zero response | Proposed research milestones in §§6.4–6.6 |
 
 The research objective is an end-to-end statement relating an explicitly defined
 local geometric modification to a quantitatively controlled change in a
 spectral product and its zeros. The current observation theorem supplies a
-finite observation sector for this program. It does not already prove the
-subsequent response, approximation or statistical results.
+finite observation sector for this program. The subsequent abstract spectral
+response is now proved separately. A concrete geometric application, certified
+approximation and statistical results remain open. The Comparator selection
+still contains only the original single-eigenspace theorem.
 
 The chosen affine line is part of the definition of the analytic family.
 Originality and research significance must come from the geometric and spectral
@@ -102,11 +106,18 @@ kernel of restriction, the obstruction gives injectivity and the dimension
 bound.
 
 **Role in the research program.** The theorem identifies a finite observation
-sector for each sufficiently low eigenspace. The next task is to strengthen
-this into a quantitative estimate for the whole low-energy spectral subspace
-and then into a response to perturbations supported on that sector. Injectivity
-alone does not provide a numerical reconstruction algorithm, a quantitative
-stability constant or independent control of several zeros. The relative
+sector for each sufficiently low eigenspace. Under the additional symmetry
+and lower-bound assumptions, §§4.41–4.43 now prove quantitative observation of
+the whole low-energy spectral subspace and a total count with multiplicities.
+The variational bridge of §§4.44–4.46 turns that form inequality into
+$\kappa\tau\le\lambda_n(H+\tau P_{F_R})-\lambda_n(H)\le\tau$
+for the levels and parameter interval specified in §6.2, including repeated
+levels. Section 4.48 transfers onsite summability to the positive full spectrum
+and preserves it along this intervention.
+
+These are additional source theorems, not additions to the current
+Comparator-selected statement. They do not provide a numerical reconstruction
+algorithm or independent control of several zeros. The relative
 determinant identity in §6.5 is a separate proof obligation; it does not follow
 from this theorem alone.
 
@@ -205,12 +216,16 @@ criterion
 \sum_{n=0}^{\infty}q_n^{-2}<\infty,
 ```
 and the existence of a zero at each positive prescribed level. The paired
-factors encode symmetric locations. A full spectral instantiation and a
-formal theorem identifying all zero orders with exact spectral multiplicities
-remain open obligations.
+factors encode symmetric locations. A formal theorem identifying all zero
+orders with exact spectral multiplicities remains open.
 
-The onsite-only growth modules provide admissible diagonal examples. They do
-not yet supply an admissible sequence of the full interacting eigenvalues.
+Section 4.48 now proves positive inverse-square summability for full interacting
+levels under explicit properness, onsite ordering, summability and gap
+hypotheses. Its power-growth corollary reuses the onsite criterion with exponent
+greater than one half. `fullSpectrum_admissible_of_positive_summable` applies the
+existing admissibility criterion to these levels, including the nonnegative
+finite-sector family. This supplies the analytic core's input; it does not
+prove entire holomorphy or exact zero orders.
 
 ### 2.2. A common analytic coordinate for geometric operators
 
@@ -222,9 +237,12 @@ F_H(z)=\prod_{n=0}^{\infty}
 D_H(s)=F_H\!\left(\frac{s-c}{d}\right).
 ```
 
-This definition requires the positive full spectrum with exact multiplicities
-and inverse-square summability. Once these obligations are met, the target
-zero divisor is
+The positive full spectrum with exact multiplicities and inverse-square
+summability is now available under §§4.44–4.48. The sufficient signed-correction
+criterion requires $v_0>\|B\|$ separately from onsite growth; compact resolvent
+alone does not give summability or positivity. The same gap and summability
+persist for nonnegative finite-sector perturbations. The target exact zero
+divisor is
 ```math
 s=c\pm d\,\lambda_n(H),\qquad D_H(c)=1,
 ```
@@ -291,7 +309,7 @@ w(t,u)=w(u,t),\quad P_{tu}=P_{ut}
 
 The file also proves that setting `ε=0` recovers exactly the unperturbed geometric matrix. This is useful because real symmetric finite matrices have real eigenvalues, so changing a symmetric perturbation cannot destroy that structural feature.
 
-**Scope of this module:** the verified theorem concerns a *finite* matrix; symmetry alone does not imply positive eigenvalues or any infinite-dimensional spectral conclusions. Later §§4.20–4.30 establish conditional self-adjointness, compact resolvent, and isolation and local finiteness of genuine real eigenvalues for the abstract infinite matching-family operator. Conditional real-spectrum enumeration with exact geometric multiplicities is established later in §§4.36–4.37, qualitative divergence in §4.38, and a positive real spectral gap under explicit assumptions in §4.39. Quantitative index-wise comparison and inverse-square summability for the full interacting operator remain open.
+**Scope of this module:** the verified theorem concerns a *finite* matrix; symmetry alone does not imply positive eigenvalues or any infinite-dimensional spectral conclusions. Later §§4.20–4.30 establish conditional self-adjointness, compact resolvent, and isolation and local finiteness of genuine real eigenvalues for the abstract infinite matching-family operator. Conditional real-spectrum enumeration with exact geometric multiplicities is established later in §§4.36–4.37, qualitative divergence in §4.38, and a positive real spectral gap under explicit assumptions in §4.39. Quantitative index-wise comparison and sufficient full-spectrum inverse-square summability are proved under the additional hypotheses in §§4.44–4.48.
 
 ### 3.2. Positivity under controlled perturbations
 
@@ -316,7 +334,7 @@ Q_{H_\varepsilon}(\psi)=Q_{H_0}(\psi)+\varepsilon Q_P(\psi).
 
 The Lean file also proves that **strictly positive** base energy on every nonzero configuration stays strictly positive under the same assumptions. These results concern all tile-amplitude configurations, not a selection of eigenfunctions.
 
-**Scope of the second result:** this finite-dimensional theorem proves *stability* of positivity, assuming positivity of the original and perturbation energies. The following section derives a sufficient condition for the original energy from the geometric inputs themselves. The distinct infinite-operator results, including conditional self-adjointness, compact resolvent and locally finite real point spectrum, are proved later in §§4.20–4.30. Under additional hypotheses, the full interacting real spectrum is subsequently enumerated with exact geometric multiplicities (§4.37) and its ordered eigenvalues are proved to tend to `+∞` (§4.38). Quantitative growth comparison and inverse-square summability remain open.
+**Scope of the second result:** this finite-dimensional theorem proves *stability* of positivity, assuming positivity of the original and perturbation energies. The following section derives a sufficient condition for the original energy from the geometric inputs themselves. The distinct infinite-operator results, including conditional self-adjointness, compact resolvent and locally finite real point spectrum, are proved later in §§4.20–4.30. Under additional hypotheses, the full interacting real spectrum is subsequently enumerated with exact geometric multiplicities (§4.37) and its ordered eigenvalues are proved to tend to `+∞` (§4.38). Quantitative growth comparison and sufficient inverse-square summability are proved under the additional hypotheses in §§4.46–4.48.
 
 ### 3.3. Nonnegative energy from geometry
 
@@ -361,7 +379,7 @@ Q_{H_\varepsilon}(\psi)=
 
 Together with the **symmetry theorem** (when `P` is symmetric), this means every eigenvalue of the real symmetric *finite* perturbed matrix is strictly positive under these hypotheses.
 
-**Scope:** the result is finite-dimensional; the hypothesis `V(t)>0` for every tile is sufficient, not necessarily optimal. This finite-dimensional theorem does not itself construct the infinite operator or establish a uniform gap across growing patches. The later abstract infinite-operator construction appears in §4; inverse-square summability for the interacting spectrum remains open.
+**Scope:** the result is finite-dimensional; the hypothesis `V(t)>0` for every tile is sufficient, not necessarily optimal. This finite-dimensional theorem does not itself construct the infinite operator or establish a uniform gap across growing patches. The later abstract infinite-operator construction appears in §4; sufficient inverse-square summability for the interacting spectrum is proved in §4.48 under explicit growth, ordering and positive-gap hypotheses.
 
 ## 4. Infinite-dimensional geometric operators and spectral theory
 
@@ -385,7 +403,7 @@ D(V)=\left\{\psi\in\ell^2(T):t\mapsto V(t)\psi(t)\in\ell^2(T)\right\},
 
 The new Lean file proves that `D(V)` is a real **linear subspace**, constructs `M_V:D(V)\to\ell^2(T)` as a linear map, checks its value on each tile, and proves that when `V(t)\ge0`, each local energy contribution `\psi(t)(M_V\psi)(t)` is nonnegative. These facts require neither a finite number of tiles nor a bounded potential.
 
-**Scope of this first infinite result:** only the individual-energy contribution is built here. The pair-interaction Laplacian `L_w` and the perturbation `\varepsilon P` are not yet included **in this first module**; §§4.6–4.9 subsequently construct infinite interactions. The density of `D(V)` is addressed in §4.2; §§4.20–4.30 establish conditional self-adjointness, compact resolvent, finite eigenspace dimension, and isolation and local finiteness of the full operator's genuine real eigenvalues. These later theorems require additional hypotheses and do not follow merely from defining the domain; conditional multiplicity-aware ordering and qualitative divergence of the full real spectrum are subsequently proved in §§4.37–4.38; quantitative indexed comparison and inverse-square summability for the interacting spectrum remain open.
+**Scope of this first infinite result:** only the individual-energy contribution is built here. The pair-interaction Laplacian `L_w` and the perturbation `\varepsilon P` are not yet included **in this first module**; §§4.6–4.9 subsequently construct infinite interactions. The density of `D(V)` is addressed in §4.2; §§4.20–4.30 establish conditional self-adjointness, compact resolvent, finite eigenspace dimension, and isolation and local finiteness of the full operator's genuine real eigenvalues. These later theorems require additional hypotheses and do not follow merely from defining the domain; conditional multiplicity-aware ordering and qualitative divergence of the full real spectrum are subsequently proved in §§4.37–4.38; quantitative indexed comparison and sufficient inverse-square summability are proved under the additional hypotheses in §§4.46–4.48.
 
 ### 4.2. Density of the natural operator domain
 
@@ -492,7 +510,7 @@ H_\varepsilon\psi = M_V\psi+L_{E,w}\psi+\varepsilon P\psi,
 
 All terms map the same state into `ℓ²(T)`; hence their sum is defined on the existing dense onsite domain `D(V)`. Lean formalizes the **exact decomposition of the full quadratic energy**. Assuming `V(t)≥0`, nonnegative active edge weights, `\langle\psi,P\psi\rangle≥0` and `\varepsilon≥0`, the combined energy is nonnegative. The combined operator is also symmetric if the perturbation is symmetric.
 
-**Crucial distinction:** positivity *does* survive an operator sum when the three quadratic forms are well-defined and nonnegative on a shared domain (and the perturbation has the correct sign). However, **self-adjointness, compact resolvent, discrete spectrum, strict positivity and inverse-square spectral summability do not follow automatically from these componentwise hypotheses**. The `V(n)` growth results in §§4.4–4.5 currently refer only to the diagonal operator; they are not yet theorems about eigenvalues of `H_\varepsilon`.
+**Crucial distinction:** positivity *does* survive an operator sum when the three quadratic forms are well-defined and nonnegative on a shared domain (and the perturbation has the correct sign). However, **self-adjointness, compact resolvent, discrete spectrum, strict positivity and inverse-square spectral summability do not follow automatically from these componentwise hypotheses**. The `V(n)` growth results in §§4.4–4.5 concern the diagonal operator. Sections 4.46–4.48 now transfer their sufficient summability conditions to full interacting levels with explicit ordering, properness and positive-gap hypotheses.
 
 ### 4.8. Countably infinite geometric interactions with summable weights
 
@@ -559,7 +577,7 @@ H_\varepsilon\psi=\lambda\psi,\ \psi\ne0
 
 Indeed, the onsite and interaction quadratic energies are nonnegative, so `(λ-ε)‖ψ‖²≥0`. If `ε>0`, every point eigenvalue is **strictly positive**. This bound holds without absolute summability of all edge weights and without bounding `V` from above.
 
-**Scope:** these theorems constrain eigenvalues *if nonzero eigenvectors exist*; they do not by themselves establish spectral completeness or exclude continuous spectrum. Subsequent §§4.20–4.30 prove conditional self-adjointness and compact resolvent, density of genuine eigenvectors, and isolation and bounded-interval finiteness of distinct real eigenvalues. Section 4.32 subsequently establishes the real bounded-inverse spectral-mapping theorem for the unbounded operator; complex-spectrum formalization, inverse-square summability, and a connection to the canonical product remain open.
+**Scope:** these theorems constrain eigenvalues *if nonzero eigenvectors exist*; they do not by themselves establish spectral completeness or exclude continuous spectrum. Subsequent §§4.20–4.30 prove conditional self-adjointness and compact resolvent, density of genuine eigenvectors, and isolation and bounded-interval finiteness of distinct real eigenvalues. Section 4.32 subsequently establishes the real bounded-inverse spectral-mapping theorem for the unbounded operator; complex-spectrum formalization remains open. Section 4.48 proves sufficient full-spectrum inverse-square summability and admissibility for the existing canonical product.
 
 ### 4.11. Stable spectral lower bounds under signed bounded perturbations
 
@@ -702,7 +720,7 @@ the graph `G(H_{\varepsilon,m})` is also **closed**. The proof is explicit: subt
 
 No nonnegativity of `V`, matching weights or `P` is needed for closedness, and no symmetry of `P` is assumed. The matching-family representation remains the same special class of infinite local interactions as in §4.9.
 
-**Scope:** closedness is **not the same as self-adjointness**. This module alone does not establish an adjoint equality, a bounded or compact resolvent, spectral discreteness, or inverse-square summability. Self-adjointness is subsequently proved in §4.22, compact resolvent under explicit hypotheses in §§4.20–4.21, and isolation and local finiteness of genuine real eigenvalues in §§4.29–4.30. Full real bounded-inverse spectral mapping is subsequently established in §4.32; a complex-spectrum extension and inverse-square summability remain open.
+**Scope:** closedness is **not the same as self-adjointness**. This module alone does not establish an adjoint equality, a bounded or compact resolvent, spectral discreteness, or inverse-square summability. Self-adjointness is subsequently proved in §4.22, compact resolvent under explicit hypotheses in §§4.20–4.21, and isolation and local finiteness of genuine real eigenvalues in §§4.29–4.30. Full real bounded-inverse spectral mapping is subsequently established in §4.32; a complex-spectrum extension remains open, while §4.48 proves sufficient full-spectrum inverse-square summability under its additional hypotheses.
 
 ### 4.15. Explicit adjoint characterization and self-adjointness criterion
 
@@ -757,7 +775,7 @@ The proof shows that the coordinatewise inverse gives a square-summable state be
 
 **What this establishes:** the shifted **onsite** operator `M_V-aI : D(V)→ℓ²(T)` is a bijection under the explicit unit-gap assumption, with a concrete coordinate formula for its inverse. This is a genuine solvability statement, stronger than merely excluding real point eigenvalues.
 
-**Relation to subsequent results:** this module establishes bijectivity and the coordinate formula, but does not itself package the inverse as a continuous linear map. The bounded inverse and its compactness are established in §§4.18–4.19. Sections 4.20–4.21 subsequently prove two-sided invertibility of a shifted **interacting** operator and compactness of its resolvent under explicit hypotheses; §§4.29–4.30 establish isolation and local finiteness of genuine real eigenvalues. Full real bounded-inverse spectral mapping is subsequently established in §4.32; its complex extension, inverse-square summability, and a specialized aperiodic-tiling model remain open. The one-unit condition is a convenient sufficient hypothesis, not a necessary one.
+**Relation to subsequent results:** this module establishes bijectivity and the coordinate formula, but does not itself package the inverse as a continuous linear map. The bounded inverse and its compactness are established in §§4.18–4.19. Sections 4.20–4.21 subsequently prove two-sided invertibility of a shifted **interacting** operator and compactness of its resolvent under explicit hypotheses; §§4.29–4.30 establish isolation and local finiteness of genuine real eigenvalues. Full real bounded-inverse spectral mapping is subsequently established in §4.32; its complex extension and a specialized aperiodic-tiling model remain open. Sufficient full-spectrum inverse-square summability is proved separately in §4.48. The one-unit condition is a convenient sufficient hypothesis, not a necessary one.
 
 ### 4.17. Finite low-energy sectors under a proper onsite potential
 
@@ -767,7 +785,7 @@ Lean proves two consequences on the natural onsite domain: any genuine point eig
 
 The hypothesis of finite low-energy sublevel sets is a precise form of *onsite potential growth at infinity*. It is additional to previous results and is **not claimed for an arbitrary potential or automatically for a particular geometric tiling**.
 
-**Important scope:** these results concern `M_V`, **not the fully interacting operator** `H=M_V+L_w+εP+mI`. On their own they do not prove compact resolvent, spectral discreteness, inverse-square summability, or eigenvalue existence for an arbitrary potential. The finite-rank approximation and compact onsite resolvent are proved in §4.18 under the additional unit-gap assumption. A compact resolvent for the **interacting** operator is subsequently proved in §§4.20–4.21, and local finiteness of genuine real eigenvalues in §4.30. Quantitative growth and inverse-square summability for the interacting spectrum remain open.
+**Important scope:** these results concern `M_V`, **not the fully interacting operator** `H=M_V+L_w+εP+mI`. On their own they do not prove compact resolvent, spectral discreteness, inverse-square summability, or eigenvalue existence for an arbitrary potential. The finite-rank approximation and compact onsite resolvent are proved in §4.18 under the additional unit-gap assumption. A compact resolvent for the **interacting** operator is subsequently proved in §§4.20–4.21, and local finiteness of genuine real eigenvalues in §4.30. Quantitative onsite comparison and sufficient inverse-square summability for the interacting spectrum are proved in §§4.46–4.48 under explicit additional hypotheses.
 
 ### 4.18. Compact resolvent of a proper onsite potential
 
@@ -826,7 +844,7 @@ Assume the unit gap `V(t)-a≥1`, finite onsite sublevel sets as in §4.18, and 
 
 The module constructs this expression as a continuous linear map, shows that its outputs belong to `D(V)`, proves both inverse identities for the **full** shifted operator, and proves its compactness by composition with the compact onsite resolvent.
 
-The result applies to any bounded correction satisfying the stated condition, in particular to the finite-color matching-family interaction with a bounded controlled perturbation encoded by `B=L_w+εP+mI`. It does **not** claim that `‖B R_a‖<1` holds automatically for arbitrary coupling strengths or at an arbitrary spectral shift. Compactness alone does not imply the quantitative inverse-square eigenvalue estimate. The subsequent §§4.23–4.30 derive spectral completeness, finite-dimensional eigenspaces, and isolation and local finiteness of genuine real eigenvalues under additional hypotheses; the complete **real** spectral mapping is subsequently proved in §4.32, while a complex-spectrum extension and inverse-square summability remain open.
+The result applies to any bounded correction satisfying the stated condition, in particular to the finite-color matching-family interaction with a bounded controlled perturbation encoded by `B=L_w+εP+mI`. It does **not** claim that `‖B R_a‖<1` holds automatically for arbitrary coupling strengths or at an arbitrary spectral shift. Compactness alone does not imply the quantitative inverse-square eigenvalue estimate. The subsequent §§4.23–4.30 derive spectral completeness, finite-dimensional eigenspaces, and isolation and local finiteness of genuine real eigenvalues under additional hypotheses; the complete **real** spectral mapping is subsequently proved in §4.32, while a complex-spectrum extension remains open, while §4.48 proves sufficient full-spectrum inverse-square summability under its additional hypotheses.
 
 ### 4.21. Quantitative compact-resolvent bounds and sufficiently negative shifts
 
@@ -847,7 +865,7 @@ For the finite-color matching-family model from §4.9, with `D` matching colors 
  \le 2DW+|\varepsilon|\,\|P\|+|m|.
 ```
 
-Thus `V(t)-a≥δ≥1` and `δ>2DW+|ε|‖P‖+|m|` suffice for the compact shifted inverse of the actual local matching operator via its already-proved bounded-correction identity. Neither symmetry of `P` nor a fixed small coupling is required for this existence result. With the additional symmetry assumptions, §4.22 proves self-adjointness, §4.27 proves density of genuine eigenvectors, and §§4.29–4.30 establish isolation and local finiteness of distinct real eigenvalues. Full real bounded-inverse spectral mapping is subsequently proved in §4.32. Conditional ordering with exact geometric multiplicities and qualitative divergence are subsequently established in §§4.36–4.38. The complex-spectrum extension, quantitative ordered-level comparison and inverse-square summability remain open P2 objectives.
+Thus `V(t)-a≥δ≥1` and `δ>2DW+|ε|‖P‖+|m|` suffice for the compact shifted inverse of the actual local matching operator via its already-proved bounded-correction identity. Neither symmetry of `P` nor a fixed small coupling is required for this existence result. With the additional symmetry assumptions, §4.22 proves self-adjointness, §4.27 proves density of genuine eigenvectors, and §§4.29–4.30 establish isolation and local finiteness of distinct real eigenvalues. Full real bounded-inverse spectral mapping is subsequently proved in §4.32. Conditional ordering with exact geometric multiplicities and qualitative divergence are subsequently established in §§4.36–4.38. The complex-spectrum extension remains an open P2 objective. Quantitative ordered-level comparison and sufficient inverse-square summability are proved under the additional hypotheses in §§4.44–4.48.
 
 ### 4.22. Self-adjoint onsite and infinite local operators in Mathlib's partial-operator API
 
@@ -870,7 +888,7 @@ H_{\varepsilon,m}=M_V+L_w+\varepsilon P+mI
 
 the same argument proves `IsSelfAdjoint` for its `LinearPMap` representation when each matching permutation is involutive and the bounded perturbation `P` is symmetric. A reusable graph-and-pairing lemma identifies the adjoint graph with the original graph, using Mathlib's `LinearPMap.adjoint_graph_eq_graph_adjoint`. **The actual domain remains `D(V)`; it is not silently replaced by all of `ℓ²(T)`.**
 
-**Scope:** this establishes the operator-theoretic interface needed before applying later spectral results. It requires the stated symmetry assumptions for the full local operator and makes no claim about compactness without the properness/gap hypotheses of §§4.20–4.21. The later §4.25 proves finite-dimensional full-operator eigenspaces under compact-resolvent hypotheses, while §4.29 proves isolation of nonzero real spectral points of the compact bounded resolvent. Section 4.30 subsequently establishes isolation and bounded-interval finiteness for **genuine full-operator real eigenvalues**. Section 4.32 subsequently characterizes the complete **real bounded-inverse spectrum** on the natural domain. Conditional multiplicity-aware ordering and qualitative divergence are proved later (§§4.36–4.38); the complex-spectrum extension, quantitative ordered-level comparison and inverse-square summability remain open.
+**Scope:** this establishes the operator-theoretic interface needed before applying later spectral results. It requires the stated symmetry assumptions for the full local operator and makes no claim about compactness without the properness/gap hypotheses of §§4.20–4.21. The later §4.25 proves finite-dimensional full-operator eigenspaces under compact-resolvent hypotheses, while §4.29 proves isolation of nonzero real spectral points of the compact bounded resolvent. Section 4.30 subsequently establishes isolation and bounded-interval finiteness for **genuine full-operator real eigenvalues**. Section 4.32 subsequently characterizes the complete **real bounded-inverse spectrum** on the natural domain. Conditional multiplicity-aware ordering and qualitative divergence are proved later (§§4.36–4.38); the complex-spectrum extension remains open. Quantitative ordered-level comparison and sufficient inverse-square summability are proved under the additional hypotheses in §§4.44–4.48.
 
 ### 4.23. Compact self-adjoint resolvents and their eigenspaces
 
@@ -882,7 +900,7 @@ The new module proves that `R_a` is self-adjoint as a continuous linear map, usi
 - **Spectral totality:** the orthogonal complement of the supremum of all eigenspaces of `R_a` is zero. Equivalently, their linear span is dense in the real Hilbert space.
 - **Local matching specialization:** if each matching permutation is involutive and the bounded perturbation `P` is symmetric, the corrected geometric resolvent is self-adjoint whenever the explicit Neumann condition is satisfied. The gap bounds of §4.21 provide sufficient conditions for its existence.
 
-**Important distinction:** these are formalized properties of the **compact bounded resolvent**. Section 4.24 separately transfers nonzero resolvent eigenpairs to eigenpairs of the unbounded operator `H` via `λ=a+μ⁻¹`; §4.29 subsequently proves isolation of nonzero real spectral points of the compact resolvent. Section 4.30 also isolates genuine full-operator real eigenvalues and proves that only finitely many distinct eigenvalues occur in each bounded interval. The complete **real bounded-inverse spectrum** is subsequently characterized in §4.32. Later §§4.36–4.38 establish conditional multiplicity-aware ordering and qualitative divergence for the full real spectrum. A full complex-spectrum extension, quantitative ordered-eigenvalue growth and inverse-square summability remain open.
+**Important distinction:** these are formalized properties of the **compact bounded resolvent**. Section 4.24 separately transfers nonzero resolvent eigenpairs to eigenpairs of the unbounded operator `H` via `λ=a+μ⁻¹`; §4.29 subsequently proves isolation of nonzero real spectral points of the compact resolvent. Section 4.30 also isolates genuine full-operator real eigenvalues and proves that only finitely many distinct eigenvalues occur in each bounded interval. The complete **real bounded-inverse spectrum** is subsequently characterized in §4.32. Later §§4.36–4.38 establish conditional multiplicity-aware ordering and qualitative divergence for the full real spectrum. A full complex-spectrum extension remains open. Sections 4.46–4.48 prove quantitative onsite comparison and sufficient full-spectrum inverse-square summability under their additional hypotheses.
 
 ### 4.24. Eigenpair correspondence between the compact resolvent and the full operator
 
@@ -906,7 +924,7 @@ H\psi=(a+\mu^{-1})f.
 
 An additional formulation starts with an arbitrary real `λ≠a` and uses `μ=(λ-a)⁻¹`. For nonzero `f`, these are genuine eigenpairs. The correspondence itself is algebraic and does **not** require the bounded correction to be symmetric; the compact self-adjoint spectral conclusions of §4.23 still require their own properness and symmetry hypotheses.
 
-**Scope:** the eigenpair correspondence at a fixed resolvent shift is now formalized. Subsequent §4.30 transfers resolvent isolation to the full operator's **real point spectrum**, including finiteness of distinct eigenvalues on bounded intervals. The subsequent §4.32 identifies the full **real bounded-inverse spectrum** of the unbounded operator. Conditional ordering with exact multiplicities and qualitative divergence are established in §§4.36–4.38. The complex-resolvent interface, quantitative comparison and full-spectrum summability remain open (§§6.1–6.2).
+**Scope:** the eigenpair correspondence at a fixed resolvent shift is now formalized. Subsequent §4.30 transfers resolvent isolation to the full operator's **real point spectrum**, including finiteness of distinct eigenvalues on bounded intervals. The subsequent §4.32 identifies the full **real bounded-inverse spectrum** of the unbounded operator. Conditional ordering with exact multiplicities and qualitative divergence are established in §§4.36–4.38. The complex-resolvent interface remains open (§6.1). Quantitative comparison and sufficient full-spectrum summability are proved under the additional hypotheses in §§4.44–4.48.
 
 ### 4.25. Finite multiplicity and orthogonality of full local eigenvectors
 
@@ -916,7 +934,7 @@ The module identifies membership in this submodule with the actual domain-restri
 
 Under involutive matching permutations and symmetry of the bounded perturbation `P`, eigenvectors corresponding to **different real eigenvalues are orthogonal**. This orthogonality theorem is an operator-symmetry consequence and does not need the extra compactness hypotheses.
 
-**Scope:** finite-dimensional eigenspaces and orthogonality alone do not imply isolation. Section 4.30 uses the additional compact-resolvent spectral isolation from §4.29 to establish isolation and bounded-interval finiteness of **genuine full-operator eigenvalues**. Section 4.32 later identifies the full **real bounded-inverse spectrum** with the point spectrum under explicit hypotheses, and §4.33 introduces unordered multiplicity tags. Conditional ordered enumeration with exact multiplicities is established in §§4.36–4.37 and divergence in §4.38. The complex-resolvent interface, quantitative comparison and full-spectrum summability remain open (§§6.1–6.2).
+**Scope:** finite-dimensional eigenspaces and orthogonality alone do not imply isolation. Section 4.30 uses the additional compact-resolvent spectral isolation from §4.29 to establish isolation and bounded-interval finiteness of **genuine full-operator eigenvalues**. Section 4.32 later identifies the full **real bounded-inverse spectrum** with the point spectrum under explicit hypotheses, and §4.33 introduces unordered multiplicity tags. Conditional ordered enumeration with exact multiplicities is established in §§4.36–4.37 and divergence in §4.38. The complex-resolvent interface remains open (§6.1). Quantitative comparison and sufficient full-spectrum summability are proved under the additional hypotheses in §§4.44–4.48.
 
 ### 4.26. Fredholm spectral exhaustion for the nonzero local resolvent spectrum
 
@@ -933,7 +951,7 @@ H\psi=(a+\mu^{-1})\psi.
 
 Equivalently, for a real parameter `λ≠a`, the transformed value `(λ-a)⁻¹` belongs to the resolvent spectrum **if and only if** `λ` admits a nonzero eigenvector of the unbounded full local operator. The forward implication uses Fredholm's alternative; the reverse implication uses the two-sided inverse and the eigenpair correspondence from §4.24. **No symmetry hypothesis is needed** for this compact-operator spectral-point/eigenpair equivalence.
 
-**Precise scope:** the proof exhausts the **nonzero spectrum of the compact bounded resolvent**, not the full spectrum of the unbounded `LinearPMap` by a separate spectral-mapping theorem. The special point `0` of the compact resolvent spectrum is deliberately excluded from this correspondence. Section 4.29 subsequently proves that the nonzero real spectral points of the compact resolvent are isolated and that zero is their only possible accumulation point. Section 4.30 further isolates the actual full-operator real eigenvalues and rules out finite accumulation. Section 4.32 subsequently characterizes the complete **real bounded-inverse spectrum** on the natural domain. Conditional ordered enumeration with exact multiplicities is established in §§4.36–4.37 and divergence in §4.38. The complex-resolvent interface, quantitative comparison and full-spectrum summability remain open (§§6.1–6.2).
+**Precise scope:** the proof exhausts the **nonzero spectrum of the compact bounded resolvent**, not the full spectrum of the unbounded `LinearPMap` by a separate spectral-mapping theorem. The special point `0` of the compact resolvent spectrum is deliberately excluded from this correspondence. Section 4.29 subsequently proves that the nonzero real spectral points of the compact resolvent are isolated and that zero is their only possible accumulation point. Section 4.30 further isolates the actual full-operator real eigenvalues and rules out finite accumulation. Section 4.32 subsequently characterizes the complete **real bounded-inverse spectrum** on the natural domain. Conditional ordered enumeration with exact multiplicities is established in §§4.36–4.37 and divergence in §4.38. The complex-resolvent interface remains open (§6.1). Quantitative comparison and sufficient full-spectrum summability are proved under the additional hypotheses in §§4.44–4.48.
 
 ### 4.27. Completeness of genuine eigenvectors of the full infinite local operator
 
@@ -945,7 +963,7 @@ Second, by the eigenpair correspondence of §4.24, every nonzero resolvent eigen
 
 This result requires the existing compactness conditions (onsite finite sublevels, the unit gap and the Neumann smallness condition), involutive matchings and symmetry of the bounded perturbation. It is stronger than merely stating that the resolvent has complete eigenvectors; it directly packages the genuine unbounded operator's natural-domain eigenvectors as a total family.
 
-**Scope:** the complete eigenvector family need not yet be enumerated or ordered. Dense eigenvector span alone does **not** establish that finite full-operator eigenvalues are isolated, that there are no finite spectral accumulation points, or any spectral growth or inverse-square summability estimate. Section 4.30 subsequently establishes isolation and no finite accumulation for genuine real eigenvalues. Conditional ordering with exact multiplicities and qualitative divergence are established in §§4.36–4.38. Quantitative comparison and full-spectrum inverse-square summability remain open (§6.2).
+**Scope:** the complete eigenvector family need not yet be enumerated or ordered. Dense eigenvector span alone does **not** establish that finite full-operator eigenvalues are isolated, that there are no finite spectral accumulation points, or any spectral growth or inverse-square summability estimate. Section 4.30 subsequently establishes isolation and no finite accumulation for genuine real eigenvalues. Conditional ordering with exact multiplicities and qualitative divergence are established in §§4.36–4.38. Quantitative comparison and sufficient full-spectrum inverse-square summability are proved under the additional hypotheses in §§4.44–4.48.
 
 ### 4.28. A resolvent-norm exclusion zone for full-operator eigenvalues
 
@@ -959,7 +977,7 @@ If a nonzero state in the natural domain is a full-operator eigenvector at a rea
 
 The module also formalizes the contrapositive: whenever `λ≠a` and `|(λ-a)⁻¹|>‖R_a‖‖I‖`, every natural-domain solution of `Hψ=λψ` is zero. Here `I` is the identity operator on `ℓ²(T)`. Its norm is one on a nonzero Hilbert space; the Lean statement retains the factor `‖I‖` to avoid requiring a nontrivial-space instance when the tile type can be empty. This excludes genuine eigenvalues from a quantitative neighborhood of the **chosen resolvent shift**. It does not require the symmetry assumptions used for self-adjoint spectral completeness.
 
-**Precise scope:** the result isolates the selected resolvent shift from point eigenvalues with an explicit norm test. It does **not** prove that each full-operator eigenvalue is isolated from other eigenvalues, that the entire unbounded spectrum is exhausted by eigenvalues, that the spectrum can be ordered, or that inverse-square summability holds. Section 4.30 subsequently establishes isolation and bounded-interval finiteness for genuine full-operator real eigenvalues, and §4.32 identifies the complete **real bounded-inverse spectrum**. Conditional ordered enumeration with exact multiplicities and qualitative divergence are established in §§4.36–4.38. The complex-resolvent interface and full-spectrum summability remain open (§§6.1–6.2).
+**Precise scope:** the result isolates the selected resolvent shift from point eigenvalues with an explicit norm test. It does **not** prove that each full-operator eigenvalue is isolated from other eigenvalues, that the entire unbounded spectrum is exhausted by eigenvalues, that the spectrum can be ordered, or that inverse-square summability holds. Section 4.30 subsequently establishes isolation and bounded-interval finiteness for genuine full-operator real eigenvalues, and §4.32 identifies the complete **real bounded-inverse spectrum**. Conditional ordered enumeration with exact multiplicities and qualitative divergence are established in §§4.36–4.38. The complex-resolvent interface remains open (§6.1); sufficient full-spectrum summability is proved separately in §4.48.
 
 ### 4.29. Isolation of nonzero points in the compact resolvent spectrum
 
@@ -983,7 +1001,7 @@ Consequently, **every nonzero real spectral point is isolated**. More precisely,
 
 In particular, **zero is the only possible accumulation point** of the real spectrum of the compact resolvent. The module does not require a nonempty tile type or an infinite-dimensional Hilbert space.
 
-**Scope:** this finishes the bounded-resolvent isolation milestone. The following §4.30 transfers it via `λ=a+μ⁻¹` to **genuine real eigenvalues** of the unbounded operator. The subsequent §4.32 establishes real bounded-inverse spectral mapping on the natural domain; conditional ordering with exact multiplicities and qualitative divergence are established in §§4.36–4.38. The complex-resolvent interface and quantitative spectral goals remain open (§§6.1–6.2).
+**Scope:** this finishes the bounded-resolvent isolation milestone. The following §4.30 transfers it via `λ=a+μ⁻¹` to **genuine real eigenvalues** of the unbounded operator. The subsequent §4.32 establishes real bounded-inverse spectral mapping on the natural domain; conditional ordering with exact multiplicities and qualitative divergence are established in §§4.36–4.38. The complex-resolvent interface remains open (§6.1); the quantitative observation, comparison and finite-sector response results are proved in §§4.41–4.48.
 
 ### 4.30. Isolation and local finiteness of genuine full-operator eigenvalues
 
@@ -996,7 +1014,7 @@ Write `Eig(H)` for the set of real parameters `λ` for which there is a **nonzer
 
 The transfer uses the existing equivalence `λ∈Eig(H) ↔ (λ−a)⁻¹∈σ_ℝ(R_a)` for `λ≠a` (§4.26). The already-checked two-sided inverse excludes `a` as an eigenvalue (§4.25). Continuity and injectivity of `λ↦(λ−a)⁻¹` yield isolation, while bounded `|λ|` ensures the corresponding resolvent spectral parameters remain uniformly away from zero, so §4.29 gives finiteness.
 
-**Precise scope:** these results by themselves identify properties of the **real point spectrum**; the subsequent §4.32 defines and characterizes the full **real bounded-inverse spectrum** on the same natural domain. Local finiteness counts **distinct eigenvalues**, not multiplicities. The next §4.31 proves countability and constructs a complete, possibly repeating listing of these real eigenvalues when nonempty. Ordered enumeration **with exact geometric multiplicities** and qualitative divergence are proved separately in §§4.36–4.38. Quantitative eigenvalue comparison and inverse-square summability remain open (§6.2).
+**Precise scope:** these results by themselves identify properties of the **real point spectrum**; the subsequent §4.32 defines and characterizes the full **real bounded-inverse spectrum** on the same natural domain. Local finiteness counts **distinct eigenvalues**, not multiplicities. The next §4.31 proves countability and constructs a complete, possibly repeating listing of these real eigenvalues when nonempty. Ordered enumeration **with exact geometric multiplicities** and qualitative divergence are proved separately in §§4.36–4.38. Quantitative eigenvalue comparison and sufficient inverse-square summability are proved under the additional hypotheses in §§4.44–4.48.
 
 ### 4.31. Countability and a complete (unordered) listing of full-operator eigenvalues
 
@@ -1011,7 +1029,7 @@ The Lean module **[`SpectralGeometry/InfiniteLocalFullEigenvalueEnumeration.lean
 
 If `Eig(H)` is **nonempty**, Lean also constructs a sequence `e : ℕ → ℝ` whose range is **exactly** `Eig(H)`. This works whether the underlying tile type or the point spectrum is finite or infinite: **repetitions are allowed** in the sequence, so a finite nonempty point spectrum is handled correctly. No eigenvalue-existence assertion is made for arbitrary tile types; an empty point spectrum is countable but has no real-valued sequence with exactly that range.
 
-**Scope:** this is a full *set-theoretic listing* of the real **point spectrum**, not a classification of the whole unbounded `LinearPMap` spectrum. The sequence is not asserted increasing or injective and **does not record eigenspace multiplicities**. The project has already proved finite-dimensional eigenspaces (§4.25). The following §4.32 formalizes the **full real bounded-inverse spectral mapping** on the natural domain; conditional ordering **with exact geometric multiplicities** and qualitative divergence are proved later in §§4.36–4.38, while the complex-spectrum extension remains open (§6.1). Quantitative eigenvalue growth and inverse-square summability do not follow from countability alone and remain open (§6.2).
+**Scope:** this is a full *set-theoretic listing* of the real **point spectrum**, not a classification of the whole unbounded `LinearPMap` spectrum. The sequence is not asserted increasing or injective and **does not record eigenspace multiplicities**. The project has already proved finite-dimensional eigenspaces (§4.25). The following §4.32 formalizes the **full real bounded-inverse spectral mapping** on the natural domain; conditional ordering **with exact geometric multiplicities** and qualitative divergence are proved later in §§4.36–4.38, while the complex-spectrum extension remains open (§6.1). Quantitative eigenvalue growth and inverse-square summability do not follow from countability alone; §§4.44–4.48 supply the necessary variational bridge and sufficient growth/positivity hypotheses.
 
 ### 4.32. The full real bounded-inverse spectrum on the natural domain
 
@@ -1051,7 +1069,7 @@ b\in\sigma_{\mathrm{real}}(H)
 
 This includes `b=a`, excluded from both sides by the previously checked inverse. The statement requires compactness of the shifted resolvent, but **not self-adjointness**: it rules out additional real bounded-inverse spectral points that are not eigenvalues under these hypotheses.
 
-**Precise scope:** this is a complete **real bounded-inverse spectral mapping** theorem for the natural-domain operator, under the explicit compact-resolvent assumptions. The project has not yet formalized the analogous full **complex** spectrum or a Mathlib-native spectrum API for unbounded `LinearPMap` operators. Conditional ordering **with exact geometric multiplicities** and qualitative divergence are established later in §§4.36–4.38; §4.39 also proves a positive real spectral gap under explicit assumptions. Quantitative ordered-eigenvalue comparison and inverse-square summability remain open (§6.2).
+**Precise scope:** this is a complete **real bounded-inverse spectral mapping** theorem for the natural-domain operator, under the explicit compact-resolvent assumptions. The project has not yet formalized the analogous full **complex** spectrum or a Mathlib-native spectrum API for unbounded `LinearPMap` operators. Conditional ordering **with exact geometric multiplicities** and qualitative divergence are established later in §§4.36–4.38; §4.39 also proves a positive real spectral gap under explicit assumptions. Quantitative ordered-eigenvalue comparison and sufficient inverse-square summability are proved under the additional hypotheses in §§4.44–4.48.
 
 ### 4.33. Countable eigenvalue enumeration with eigenspace multiplicity tags
 
@@ -1059,7 +1077,7 @@ The Lean module **[`SpectralGeometry/InfiniteLocalFullEigenvalueMultiplicity.lea
 
 The module then defines the **multiplicity-tagged real point spectrum** as pairs `(λ, k)` such that `λ` is a genuine eigenvalue and `k < m(λ)`. Under the existing symmetry and compactness assumptions it proves that this tagged set is **countable**, and, **if nonempty**, has a sequence with exactly that set as its range.
 
-**Precise limit:** a range-exact sequence may repeat the same tag arbitrarily; it is **not** an injective or ordered enumeration. The next §4.34 proves the missing positive-multiplicity and exact-coverage statements. Multiplicity-aware global ordering is established separately in §4.37 and qualitative divergence in §4.38; quantitative eigenvalue growth and inverse-square summability for the full interacting operator remain open.
+**Precise limit:** a range-exact sequence may repeat the same tag arbitrarily; it is **not** an injective or ordered enumeration. The next §4.34 proves the missing positive-multiplicity and exact-coverage statements. Multiplicity-aware global ordering is established separately in §4.37 and qualitative divergence in §4.38; quantitative onsite comparison and sufficient inverse-square summability for the full interacting operator are proved under the additional hypotheses in §§4.44–4.48.
 
 ### 4.34. Positive geometric multiplicity and exact tagged-spectrum coverage
 
@@ -1111,7 +1129,7 @@ For the full matching-family operator with an **additional symmetric bounded cor
 
 The Lean version explicitly excludes the designated resolvent shift `a` in its index type; the previously proved two-sided inverse shows `a\notin\sigma_{\mathrm{real}}(H)`, so **no real spectral point is discarded**. The proof removes regular parameters from the dense family of §4.27 by showing their full eigenspaces are trivial; it then transfers density to the family indexed solely by actual real spectral points. This is **density of the linear span**, not a claim that the algebraic span is closed.
 
-**Limitations:** these are results for the **real** bounded-inverse spectrum of the actual natural-domain operator, not a formal complex spectral theorem or a naturally indexed eigenbasis. Conditional ordering with exact multiplicities is established in §§4.36–4.37 and qualitative divergence in §4.38. Quantitative comparison and full-spectrum inverse-square summability remain open (§6.2); the complex-resolvent interface needed for the response theorem remains open in §6.1.
+**Limitations:** these are results for the **real** bounded-inverse spectrum of the actual natural-domain operator, not a formal complex spectral theorem or a naturally indexed eigenbasis. Conditional ordering with exact multiplicities is established in §§4.36–4.37 and qualitative divergence in §4.38. Sections 4.44–4.48 subsequently construct complete tagged eigenbases and prove quantitative comparison, finite-sector spectral response and sufficient full-spectrum inverse-square summability. The complex-resolvent interface for the analytic response program remains open in §6.1.
 
 ### 4.36. Ordered finite spectral windows with exact multiplicity tags
 
@@ -1130,7 +1148,7 @@ More strongly, Lean constructs a **finite list** whose members are **exactly** t
 
 A separate theorem handles an **entire finite real point spectrum**, yielding a globally sorted finite tagged list, including the empty-spectrum case. This is conditional on finiteness of the real point spectrum; it is not a claim that every infinite tiling has only finitely many eigenvalues.
 
-**Precise limit:** the ordered lists are finite on each bounded window or on an already finite spectrum. The module does **not** yet construct a coherent, globally indexed `ℕ → ℝ` eigenvalue sequence for an **infinite** spectrum, prove that the global spectrum is bounded below, or establish `λₙ → +∞`. The global infinite-spectrum enumeration under explicit lower-bound and infinitude hypotheses is subsequently proved in §4.37, and qualitative divergence to `+∞` in §4.38. Quantitative growth/comparison, inverse-square summability and the complex spectrum remain open (§§6.1–6.2).
+**Precise limit:** the ordered lists are finite on each bounded window or on an already finite spectrum. The module does **not** yet construct a coherent, globally indexed `ℕ → ℝ` eigenvalue sequence for an **infinite** spectrum, prove that the global spectrum is bounded below, or establish `λₙ → +∞`. The global infinite-spectrum enumeration under explicit lower-bound and infinitude hypotheses is subsequently proved in §4.37, and qualitative divergence to `+∞` in §4.38. Quantitative onsite comparison and sufficient inverse-square summability are proved under the additional hypotheses in §§4.44–4.48; the complex-spectrum interface remains open (§6.1).
 
 ### 4.37. Globally ordered infinite spectrum with exact geometric multiplicities
 
@@ -1158,7 +1176,7 @@ Writing `λₙ=(t_n)_1` yields a **nondecreasing sequence of real full-operator 
 
 Consequently each real eigenvalue occurs precisely as often as its **finite geometric eigenspace dimension**, rather than merely being included in an unordered set-theoretic range. This does not follow from countability alone; the key additional ingredients are local finiteness, lower boundedness, and infinitude.
 
-**Precise scope:** the hypotheses of lower boundedness and infinite spectrum are explicit, not inferred for all possible geometric models. Empty and finite spectra are handled separately by §4.36. The theorem concerns the *real* full interacting point/bounded-inverse spectrum, not the unformalized complex spectrum. **Divergence `λₙ→+∞` is proved in §4.38; quantitative comparison with onsite levels, inverse-square summability, and any concrete aperiodic model remain open.** These are recorded in §6.
+**Precise scope:** the hypotheses of lower boundedness and infinite spectrum are explicit, not inferred for all possible geometric models. Empty and finite spectra are handled separately by §4.36. The theorem concerns the *real* full interacting point/bounded-inverse spectrum, not the unformalized complex spectrum. **Divergence `λₙ→+∞` is proved in §4.38; quantitative comparison with onsite levels and sufficient inverse-square summability are proved under the additional hypotheses in §§4.44–4.48.** A concrete aperiodic model remains open (§6.4).
 
 ### 4.38. Divergence to +∞ of the globally ordered full real spectrum
 
@@ -1177,7 +1195,7 @@ Lean establishes the full limit in the filter formulation:
 
 equivalently, `λₙ → +∞`. It also proves an existence theorem combining a **strictly increasing, range-exact global enumeration of tags** with divergence of the projected real eigenvalues. With §4.37, each eigenvalue is represented **exactly as many times as its finite geometric eigenspace dimension**.
 
-**Scope:** the assumptions that the tagged spectrum is infinite and the real eigenvalues are bounded below are explicit and are **not** established here for every geometric potential. A limit of `+∞` is a **qualitative** result: it does not imply a polynomial growth rate, a positive spectral gap, or `∑ₙ λₙ⁻² < ∞`. Proving sufficient quantitative comparison and summability conditions for the full operator remains open (§6.2); no claim about the unformalized complex spectrum or a concrete aperiodic model is made.
+**Scope:** the assumptions that the tagged spectrum is infinite and the real eigenvalues are bounded below are explicit and are **not** established here for every geometric potential. A limit of `+∞` is a **qualitative** result: it does not imply a polynomial growth rate, a positive spectral gap, or `∑ₙ λₙ⁻² < ∞`. Sections 4.44–4.48 now prove sufficient quantitative comparison and summability conditions for the full operator. They also derive infinite tag sets from infinite site types in the proper symmetric setting. No claim about the unformalized complex spectrum or a concrete aperiodic model is made.
 
 ### 4.39. Variational comparison and uniform real spectral gap for the full operator
 
@@ -1196,7 +1214,7 @@ In particular, `\langle\psi,M_V\psi\rangle-\|B\|\|\psi\|^2
 
 **Full real spectrum, not just point eigenvalues.** If `V(t)\ge c` for every tile, the onsite quadratic form is at least `c\|\psi\|^2`. Hence every genuine real eigenvalue of `H` satisfies `\lambda\ge c-\|B\|`. Under the previously verified compact-resolvent/real spectral-exhaustion hypotheses (§4.32), this bound extends to the **entire real bounded-inverse spectrum**, not only eigenvectors selected in advance. In particular, the sufficient condition `c>\|B\|` yields the **uniform positive real spectral gap** `\lambda\ge c-\|B\|>0`.
 
-**What is *not* yet proved:** this is the variational **form inequality** required for min–max; Lean has **not yet derived** the desired index-wise comparison `\lambda_n(H)\ge\lambda_n(M_V)-\|B\|` between the two ordered spectra. Such a theorem still requires a multiplicity-aware min–max principle or counting argument on the unbounded self-adjoint domain, with an explicit bridge to the §4.37 eigenvalue enumeration. Nor does this lemma imply a polynomial growth rate, inverse-square summability, a complex spectrum theorem, or the existence of a concrete geometric tiling. See §6.2 for these remaining tasks.
+**Scope and subsequent use:** this module proves the variational **form inequality**. The multiplicity-aware min–max principle and its bridge to the §4.37 enumeration are now proved in §§4.44–4.45, yielding the index-wise comparison `\lambda_n(H)\ge\lambda_n(M_V)-\|B\|` in §4.46. Sufficient full-spectrum summability is derived in §4.48 with additional growth and positivity hypotheses. These conclusions do not follow from the form inequality alone; the complex-spectrum interface and a concrete geometric tiling remain open (§§6.1, 6.4).
 
 ### 4.40. Low-energy coordinate injection and eigenspace multiplicity counting
 
@@ -1218,11 +1236,177 @@ m_H(\lambda)=\dim E_\lambda(H)\le \#\{t:V(t)\le R\}.
 
 This last theorem controls the **dimension of a complete eigenspace** rather than only detecting one eigenvector. It holds without requiring a global indexed onsite-eigenvalue sequence or a new complex-spectrum construction.
 
-**Precise limitation:** the inequality above applies to *one eigenspace at a time*. It cannot simply be summed over distinct eigenvalues: to prove the desired multiplicity-aware counting inequality or `\lambda_n(H)\ge\lambda_n(M_V)-\|B\|`, the next step must control the **direct sum of all low-energy eigenspaces**, using their orthogonality under the self-adjoint hypotheses (§§4.27, 4.35) and a dimension comparison with the finite onsite sector. The final index-wise comparison, interacting inverse-square summability, and concrete tiling instantiation remain open (§6.2).
+**Scope and subsequent strengthening:** the inequality above applies to *one eigenspace at a time* and cannot simply be summed over distinct eigenvalues. Sections 4.41–4.43 now control the **direct sum of all low-energy eigenspaces** using symmetry, orthogonality and one dimension comparison with the finite onsite sector. Sections 4.44–4.48 prove the ordered-level comparison, finite-sector response and sufficient interacting inverse-square summability. These are separate source results; this section remains the unchanged Comparator-selected single-eigenspace theorem. The concrete tiling instantiation remains open (§6.4).
+
+### 4.41. Simultaneous spectral subspaces on the natural domain
+
+[DomainSpectralSubspace.lean](SpectralGeometry/DomainSpectralSubspace.lean)
+defines `domainEigenspace` as the actual kernel of $A-\lambda I$ inside a
+specified domain $d$, and `domainLowSpectralSubspace` as the span of **all**
+eigenspaces with level at most $E$. For a symmetric domain operator,
+`domainLowSpectralSubspace_energy_le` proves
+$\langle x,Ax\rangle\le E\|x\|^2$ on this entire span. The proof groups
+vectors by distinct levels and uses orthogonality, including arbitrary
+combinations of vectors from different eigenspaces. No compactness or
+finite-dimensionality is assumed in this abstract lemma.
+
+### 4.42. Quantitative finite-sector observation and closedness
+
+[InfiniteLowEnergyObservation.lean](SpectralGeometry/InfiniteLowEnergyObservation.lean)
+constructs the symmetric positive coordinate contraction `finiteSectorProjection`
+and the natural-domain operator `onsitePlusBounded`.
+For $V\ge v_0$, finite $F$ and $V(t)\ge R$ outside $F$, it proves
+```math
+\langle x,Hx\rangle\ge(R-\|B\|)\|x\|^2-(R-v_0)\|P_Fx\|^2.
+```
+`onsitePlusBounded_lowSpectral_observation` combines this with §4.41:
+```math
+\frac{R-\|B\|-E}{R-v_0}\|x\|^2\le\|P_Fx\|^2,\qquad R>v_0.
+```
+Symmetry of $B$ is required for the spectral-subspace step. If
+$E<R-\|B\|$, restriction is injective and the module **derives** finite
+dimensionality, the bound $\dim L_E\le\#F$, and closedness of its image in
+the ambient Hilbert space. Thus taking the closed low-energy eigenvector span
+adds no vectors and does not lose the natural-domain condition. Properness
+supplies $F=F_R$; the reusable form argument only needs the displayed finite
+sector hypothesis. It covers finite, empty and infinite site types.
+
+### 4.43. Total low-energy counting with the original multiplicities
+
+[InfiniteLowEnergyCounting.lean](SpectralGeometry/InfiniteLowEnergyCounting.lean)
+injects the direct sum of any finite family of distinct low eigenspaces into
+the common observed subspace. It bounds the **sum of their dimensions once**,
+not by adding separate upper bounds from §4.40.
+
+[InfiniteLocalFullSpectralObservation.lean](SpectralGeometry/InfiniteLocalFullSpectralObservation.lean)
+identifies these domain eigenspaces with the existing resolvent eigenspaces.
+`infiniteLocalMatching_full_total_lowEnergy_count` constructs a finite set
+whose membership is exactly $\lambda\in\sigma_{\rm real}(H)$ and
+$\lambda<R-\|B\|$, and proves
+```math
+\sum_{\lambda<R-\|B\|}m_H(\lambda)\le\#F_R.
+```
+The multiplicity is the original `infiniteLocalMatchingFullMultiplicity`.
+This bridge assumes properness, the unit shifted onsite gap, the small
+resolvent-correction bound, involutive matchings and symmetric $P$.
+The shift is excluded using its proved resolvent property. The finite set may
+be empty; no infinite enumeration is needed for this count.
+
+### 4.44. Complete eigenbases with exact multiplicity tags
+
+[DomainEigenbasis.lean](SpectralGeometry/DomainEigenbasis.lean) records a
+complete Hilbert basis of genuine eigenvectors in the specified domain.
+`hasSum_energy` derives the energy expansion from symmetry and Parseval
+applied to $x$ and $Ax$, without postulating an unbounded-operator expansion.
+
+[InfiniteLocalFullEigenbasis.lean](SpectralGeometry/InfiniteLocalFullEigenbasis.lean)
+constructs such a basis from the existing complete finite-dimensional
+resolvent eigenspaces. `infiniteLocalMatching_full_exists_tagEigenbasis`
+uses exactly the original multiplicity tags, also for finite or empty spaces.
+`infiniteLocalMatching_full_exists_domainEigenbasis` reindexes it along any
+exact strictly increasing tag enumeration from §4.37. Repeated eigenvalues
+therefore have exactly their original number of orthonormal slots.
+`infiniteLocalMatching_full_tags_infinite` derives infinitude of the tag set
+from an infinite site type and completeness; it does not infer infinitude
+from compactness alone. All these matching results retain the explicit
+resolvent, properness and symmetry hypotheses.
+
+### 4.45. A variational characterization of the ordered levels
+
+[OrderedVariationalPrinciple.lean](SpectralGeometry/OrderedVariationalPrinciple.lean)
+proves `DomainEigenbasis.eigenvalue_le_iff_trial`: for a symmetric domain
+operator with a complete eigenbasis and monotone levels,
+$\lambda_n\le E$ exactly when there is an injective trial map
+$\mathbb R^{n+1}\to d$ whose Rayleigh numerators are at most $E\|x\|^2$.
+The first $n+1$ basis vectors give one direction; a dimension argument against
+the first $n$ coordinates gives the other.
+
+`ordered_eigenvalues_affine_le` transfers any common-domain form inequality
+$\alpha A+\beta I\le K$, $\alpha\ge0$, to
+$\alpha\lambda_n(A)+\beta\le\lambda_n(K)$. The zero-coefficient case is
+included. `DomainEigenbasis.ordered_levels_unique` proves independence from
+basis choices inside repeated eigenspaces. The infinite sequence interface
+requires actual complete $\mathbb N$-indexed eigenbases; it makes no infinite
+listing claim for finite or empty spaces.
+
+### 4.46. Ordered onsite comparison and finite-sector response
+
+[InfiniteOrderedSpectralControl.lean](SpectralGeometry/InfiniteOrderedSpectralControl.lean)
+constructs the onsite eigenbasis from an explicit bijection $e:\mathbb N\simeq T$.
+If $v_n=V(e(n))$ is monotone, `onsitePlusBounded_ordered_comparison` proves
+```math
+v_n-\|B\|\le\lambda_n(H)\le v_n+\|B\|.
+```
+`infiniteLocalMatching_full_ordered_comparison` applies this directly to the
+existing exact matching-spectrum tag enumeration. The site bijection and its
+onsite ordering are explicit inputs, not a newly implemented sorting algorithm.
+For a nonnegative interaction $L$ and signed correction $Q$, the lower bound
+improves to $v_n-\|Q\|$; a wholly nonnegative correction gives $v_n$.
+
+`finiteSector_ordered_response` proves
+```math
+\frac{R-\|B\|-E}{R-v_0}\,\tau
+\le\lambda_n(H+\tau P_F)-\lambda_n(H)\le\tau
+```
+for $V\ge v_0$, $R>v_0$, finite $F$ with $V\ge R$ outside $F$,
+$\lambda_n(H)\le E$ and $0\le\tau\le R-v_0$. It assumes symmetric $B$
+and actual monotone complete eigenbases of both operators on the **same**
+natural domain. Section 4.47 supplies their existence in the infinite proper
+setting. For $E<R-\|B\|$ the lower response coefficient is positive.
+The proof uses the affine comparison with $\alpha=1-\tau/(R-v_0)$,
+including the endpoint $\alpha=0$. It never assumes simple eigenvalues,
+differentiable eigenvalue branches or an absence of crossings.
+
+### 4.47. Existence and operator hypotheses along the perturbation
+
+[InfiniteOrderedSpectralExistence.lean](SpectralGeometry/InfiniteOrderedSpectralExistence.lean)
+embeds a generic bounded correction into the existing matching construction
+with zero matching colors. `onsitePlusBoundedPMap_isSelfAdjoint` proves genuine
+self-adjointness on the unchanged natural domain for symmetric $B$.
+
+For an infinite site type, proper $V$ and a global onsite lower bound,
+`onsitePlusBounded_exists_orderedEigenbasis` derives a complete monotone
+infinite eigenbasis: it chooses a sufficiently negative compact-resolvent
+shift, proves the spectral lower bound and uses §4.44 to establish infinite
+tags before invoking §4.37. `finiteSector_exists_orderedEigenbasis` proves
+existence for every real perturbation parameter. Boundedness, symmetry,
+properness and the natural domain persist; positivity is an additional result
+for nonnegative parameters in §4.48. Finite and empty cases are handled by
+the tag-basis and observation/counting results, not by this infinite listing.
+
+### 4.48. Full-spectrum summability and a controlled positive family
+
+[InfiniteFullSpectralSummability.lean](SpectralGeometry/InfiniteFullSpectralSummability.lean)
+proves that a bounded lower error preserves inverse-square summability for
+levels tending to infinity. Properness gives divergence along an injective
+site listing. Thus `onsitePlusBounded_ordered_positive_summable` transfers
+onsite summability to the complete full spectrum under §4.46's explicit
+ordered bijection and eigenbasis assumptions. A separate bound
+$V\ge v_0>\|B\|$ gives the uniform positive gap $v_0-\|B\|$.
+
+`onsitePlusBounded_powerGrowth_positive_summable` instantiates this with the
+existing sufficient growth $V(k)\ge(k+1)^\alpha$, $\alpha>1/2$, on sites
+indexed by $\mathbb N$; these original labels need not already be sorted.
+Other onsite criteria, including §4.4, enter through the general transfer.
+The gap assumption is not inferred from growth or compactness.
+
+`finiteSector_preserves_gap_summability` preserves any supplied positive
+baseline gap and inverse-square summability for every $\tau\ge0$.
+`finiteSector_preserves_compact_shift` provides a compact shifted inverse for
+every real $\tau$; the chosen shift may depend on $\tau$.
+`finiteSector_controlled_summable_family` combines the existence theorem,
+the sufficient baseline gap/summability criterion and the response bound on
+the entire interval $0\le\tau\le R-v_0$. It does not assume the perturbed
+eigenbases or perturbed summability as input.
+
+`fullSpectrum_admissible_of_positive_summable` connects these full levels to
+the existing canonical-product predicate. Entire holomorphy, exact zero
+orders, relative determinants, the concrete tiling and perturbations of
+arbitrary sign remain separate obligations.
 
 ## 5. Building and verification
 
-The canonical import list is maintained in [`SpectralGeometry.lean`](SpectralGeometry.lean). It currently imports **46 Lean modules**: one analytic core, four finite-dimensional modules, and forty-one infinite-dimensional modules.
+The canonical import list is maintained in [`SpectralGeometry.lean`](SpectralGeometry.lean). It currently imports **56 Lean modules**: one analytic core, four finite-dimensional geometry modules, and fifty-one operator/spectral modules (including domain-generic interfaces).
 
 - **Analytic core (1):** [`CanonicalProduct.lean`](SpectralGeometry/CanonicalProduct.lean)
 - **Finite-dimensional geometry (4):**
@@ -1276,6 +1460,18 @@ The canonical import list is maintained in [`SpectralGeometry.lean`](SpectralGeo
   - [`InfiniteLocalFullVariationalComparison.lean`](SpectralGeometry/InfiniteLocalFullVariationalComparison.lean)
   - [`InfiniteLocalFullLowEnergyCounting.lean`](SpectralGeometry/InfiniteLocalFullLowEnergyCounting.lean)
 
+- **Simultaneous observation, variational control and full summability (10):**
+  - [`DomainSpectralSubspace.lean`](SpectralGeometry/DomainSpectralSubspace.lean)
+  - [`InfiniteLowEnergyObservation.lean`](SpectralGeometry/InfiniteLowEnergyObservation.lean)
+  - [`InfiniteLowEnergyCounting.lean`](SpectralGeometry/InfiniteLowEnergyCounting.lean)
+  - [`InfiniteLocalFullSpectralObservation.lean`](SpectralGeometry/InfiniteLocalFullSpectralObservation.lean)
+  - [`DomainEigenbasis.lean`](SpectralGeometry/DomainEigenbasis.lean)
+  - [`InfiniteLocalFullEigenbasis.lean`](SpectralGeometry/InfiniteLocalFullEigenbasis.lean)
+  - [`OrderedVariationalPrinciple.lean`](SpectralGeometry/OrderedVariationalPrinciple.lean)
+  - [`InfiniteOrderedSpectralControl.lean`](SpectralGeometry/InfiniteOrderedSpectralControl.lean)
+  - [`InfiniteOrderedSpectralExistence.lean`](SpectralGeometry/InfiniteOrderedSpectralExistence.lean)
+  - [`InfiniteFullSpectralSummability.lean`](SpectralGeometry/InfiniteFullSpectralSummability.lean)
+
 The project uses Lean 4 `v4.35.0` with its corresponding Mathlib version. Every module listed above is imported by the root entry point.
 
 ```bash
@@ -1296,7 +1492,7 @@ one [`comparator.json`](comparator.json), one
 Comparator selects **one theorem**, the per-eigenspace low-energy multiplicity
 bound of §4.40, together with 16 independently reproduced definitions and type abbreviations needed to state it.
 The toolchain's Lean, NanoDa and con-ron kernels verify the selected
-comparison. The separate Lean build still covers **all 46 mathematical
+comparison. The separate Lean build still covers **all 56 mathematical
 source modules**; earlier compact-resolvent, real-spectrum and ordered
 enumeration theorems remain compiled prerequisites but are not individually
 compared in this submission. The metadata records the first identified
@@ -1387,7 +1583,7 @@ and P4 denote research phases, not theorem numbers.
 - [x] Establish inverse-square summability for suitable linearly or
   power-law growing onsite-only levels (§§4.4–4.5).
 
-**Open simultaneous observation and spectral comparison**
+**Verified simultaneous observation and spectral comparison (§§4.41–4.46)**
 
 Assume the self-adjoint compact-resolvent setting, $V(t)\ge v_0$,
 $C=\|B\|$, $R>v_0$, and $E<R-C$. Set
@@ -1397,7 +1593,7 @@ F_R=\{t:V(t)\le R\},
 \kappa=\frac{R-C-E}{R-v_0}>0.
 ```
 
-- [ ] Strengthen the existing eigenspace restriction theorem to the
+- [x] Strengthen the existing eigenspace restriction theorem to the
   quantitative estimate
   ```math
   \|P_{F_R}\psi\|^2\ge\kappa\|\psi\|^2
@@ -1405,7 +1601,7 @@ F_R=\{t:V(t)\le R\},
   for the entire spectral subspace below or at $E$, including linear
   combinations from distinct levels. Verify the domain, finite-dimensional
   and spectral-subspace hypotheses explicitly.
-- [ ] Derive the multiplicity-aware counting bound
+- [x] Derive the multiplicity-aware counting bound
   ```math
   \sum_{\substack{\lambda\in\sigma_{\mathrm{real}}(H)\\
                    \lambda<R-\|B\|}}m_H(\lambda)
@@ -1413,7 +1609,7 @@ F_R=\{t:V(t)\le R\},
   ```
   The separate bounds on individual eigenspaces in §4.40 cannot simply be
   summed to obtain it.
-- [ ] Connect the exact ordered enumeration to a variational/counting
+- [x] Connect the exact ordered enumeration to a variational/counting
   principle and prove
   ```math
   v_n-\|B\|\le\lambda_n(H)\le v_n+\|B\|,
@@ -1422,9 +1618,9 @@ F_R=\{t:V(t)\le R\},
   multiplicity convention. Exploit a nonnegative Laplacian to sharpen
   the lower bound where applicable.
 
-**Open finite-sector response theorem**
+**Verified finite-sector response and sufficient summability (§§4.46–4.48)**
 
-- [ ] For $H_\tau=H+\tau P_{F_R}$, prove
+- [x] For $H_\tau=H+\tau P_{F_R}$, prove
   ```math
   \kappa\tau
   \le\lambda_n(H_\tau)-\lambda_n(H)
@@ -1432,23 +1628,39 @@ F_R=\{t:V(t)\le R\},
   \qquad
   \lambda_n(H)\le E,\quad 0\le\tau\le R-v_0.
   ```
-  The proof must control ordered levels with multiplicities and must not
-  assume simple eigenvalues. A possible form-comparison route is to
-  establish
+  The proof controls ordered levels with multiplicities and does not
+  assume simple eigenvalues. The verified form-comparison route establishes
   ```math
   H\ge(R-C)I-(R-v_0)P_{F_R}
   ```
-  on the natural domain and apply the proved variational comparison.
-- [ ] Transfer sufficient quantitative onsite growth to the ordered full
+  on the natural domain and applies the proved variational comparison.
+- [x] Transfer sufficient quantitative onsite growth to the ordered full
   eigenvalues and prove full-spectrum inverse-square summability.
   Positivity must also be verified; compact resolvent alone is insufficient.
-- [ ] Prove preservation of the required gap and summability along the
-  parameter range used for finite-sector and other local perturbations.
+- [x] Preserve the required positive gap and summability for nonnegative
+  finite-sector perturbations, and prove existence of the ordered spectra
+  throughout the response interval. Self-adjointness and compact shifted
+  inverses are supplied by §§4.47–4.48; the resolvent shift may vary with the
+  parameter.
+- [ ] Extend a suitable gap/summability package to other signed local
+  perturbations under independently checked quantitative hypotheses.
 
-This phase supplies a concrete consequence of finite observation: a finite
-onsite intervention has a controlled effect on every selected low ordered
-level. The bound is an open target; neither it nor simultaneous observation
-is part of the current Comparator-selected theorem.
+**Scope of the verified statements.** The norm comparison and growth transfer
+use an explicitly sorted bijection of the onsite sites. Ordered full levels
+come from complete domain eigenbases; §4.44 connects the original exact tags,
+and §4.47 derives their existence for infinite site types, proper lower-bounded
+$V$ and symmetric bounded corrections. The sufficient positive-summability
+package uses $v_0>\|B\|$ and summable onsite inverse squares (or the proved
+power-growth criterion). Positive interactions admit the sharper lower
+comparison in §4.46. Finite/empty cases are covered by observation, counting
+and tag bases; the $\mathbb N$-sequence statements explicitly address the
+infinite case.
+
+This phase now supplies a proved abstract consequence of finite observation:
+a finite onsite intervention has a controlled effect on every selected low
+ordered level. An application must still establish a nonempty target window
+and its geometric hypotheses. These new source results are **not** part of
+the unchanged Comparator-selected theorem of §4.40.
 
 ### 6.3. P3 — Full spectral products and their exact zero divisors
 
@@ -1457,14 +1669,15 @@ is part of the current Comparator-selected theorem.
 - [x] Define the paired canonical product and prove compact-uniform
   convergence and zero localization for an admissible positive sequence
   (CanonicalProduct.lean, §2).
-- [x] Prove admissibility from inverse-square summability and provide
-  sufficient onsite-only growth examples (§§4.4–4.5).
+- [x] Prove admissibility from inverse-square summability, with onsite
+  growth examples (§§4.4–4.5) and the full-spectrum transfer (§4.48).
+- [x] Package positive ordered full levels as an admissible sequence under
+  the explicit lower-gap, properness, onsite-ordering and summability
+  hypotheses of §4.48. Sections 4.44 and 4.47 supply exact multiplicity
+  indexing and the infinite-site existence conditions.
 
-**Open full-operator instantiation**
+**Open analytic consequences and geometric instantiation**
 
-- [ ] Package the positive, ordered, inverse-square-summable full spectrum
-  as an admissible sequence. Check the lower bound, infinitude, indexing
-  and exact multiplicity assumptions.
 - [ ] Prove that $F_H$ and $D_H$ are entire and identify every zero
   and its order. Exact spectral multiplicities must become exact zero
   multiplicities, including repeated eigenvalues.
@@ -1511,10 +1724,12 @@ The model to construct is
   condition $V>\|B\|$ to be positive.
 - [ ] Prove properness of $V(x)=1+|x|^2$ and a quantitative two-dimensional
   vertex-counting bound. Transfer the resulting onsite growth to
-  full-spectrum summability using §6.2.
+  full-spectrum summability using the verified comparison/transfer lemmas
+  in §§4.46–4.48. This model's positive-Laplacian gap must be established
+  separately from the stronger sufficient condition $v_0>\|B\|$.
 - [ ] Verify compact-resolvent hypotheses at an appropriate real shift
-  and prove the lower-bound and infinitude conditions needed for the
-  global ordered spectrum.
+  and verify the onsite lower bound and infinite vertex type needed to
+  invoke the global ordered-spectrum existence result of §4.47.
 
 **Open worked finite-sector application**
 
@@ -1533,8 +1748,9 @@ S=\{x:|x|\le2\},\qquad H_\tau=H+\tau P_S.
   \le\tau,\qquad
   \lambda_n(H)\le3,\quad 0\le\tau\le4.
   ```
-  This target exploits positivity beyond the general norm-penalty
-  estimate of §6.2.
+  The general norm-penalty estimate is now proved in §4.46. This concrete
+  target still needs a stronger form bound exploiting Laplacian positivity
+  and the verified geometric sector.
 - [ ] Verify that the central vertex and its eight unit-distance neighbors
   give a nine-dimensional trial space with energy at most three.
   Consequently prove that the application controls at least nine levels
@@ -1662,6 +1878,11 @@ theorem, and carries no asserted connection to the Riemann zeta function.
   source classification does not certify mathematical priority.
 
 **Assessment and future selection**
+
+The source results of §§4.41–4.48 now include simultaneous observation,
+total counting and an abstract finite-sector response. Their compilation does
+not change the selected §4.40 statement, establish a concrete geometric
+application or certify originality or independent research interest.
 
 - [ ] Assess the selected result's research interest on its actual
   mathematical content and demonstrated uses. Its role in a larger
