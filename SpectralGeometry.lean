@@ -62,6 +62,10 @@ public import SpectralGeometry.InfiniteFullSpectralProduct
 public import SpectralGeometry.IndexedSpectralPoints
 public import SpectralGeometry.OrderedSpectralProductBridge
 public import SpectralGeometry.FiniteSectorZeroResponse
+public import SpectralGeometry.OrderedSpectralWindow
+public import SpectralGeometry.CanonicalProductClusterCount
+public import SpectralGeometry.InfiniteBoundedSpectralStability
+public import SpectralGeometry.InfiniteFullSpectralCluster
 
 public section
 
