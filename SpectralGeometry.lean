@@ -56,6 +56,9 @@ public import SpectralGeometry.OrderedVariationalPrinciple
 public import SpectralGeometry.InfiniteOrderedSpectralControl
 public import SpectralGeometry.InfiniteOrderedSpectralExistence
 public import SpectralGeometry.InfiniteFullSpectralSummability
+public import SpectralGeometry.CanonicalProductAnalytic
+public import SpectralGeometry.CanonicalProductZeroOrder
+public import SpectralGeometry.InfiniteFullSpectralProduct
 
 public section
 

@@ -24,7 +24,8 @@ variable {q : ℕ → ℝ} {c d : ℂ}
 theorem factor_hasDerivAt (n : ℕ) (s : ℂ) :
     HasDerivAt (factor q c d n)
       (-(2 * ((s - c) / d) * (1 / d) / (q n : ℂ) ^ 2)) s := by
-  simpa [factor, perturb] using
+  change HasDerivAt (fun z : ℂ => 1 + -(((z - c) / d) ^ 2 / (q n : ℂ) ^ 2)) _ s
+  simpa using
     (((((hasDerivAt_id s).sub_const c).div_const d).pow 2).div_const
       ((q n : ℂ) ^ 2)).neg.const_add 1
 
@@ -56,7 +57,7 @@ theorem canonicalProduct_zeroIndices_finite (h : Admissible q c d) (s : ℂ) :
       change 1 + perturb q c d n.val s = 0 at hz
       linear_combination hz
     simp [hp])
-  letI := Finite.of_summable_const (show (0 : ℝ) < 1 by norm_num) hc
+  let := Finite.of_summable_const (show (0 : ℝ) < 1 by norm_num) hc
   exact Set.toFinite Z
 
 /-- Removing finitely many factors is a genuine product factorization,
@@ -67,12 +68,19 @@ theorem canonicalProduct_split_finset (h : Admissible q c d) (F : Finset ℕ) (s
         canonicalProductAlong q c d
           (⟨Subtype.val, Subtype.val_injective⟩ : {n // n ∉ F} ↪ ℕ) s := by
   let e : {n // n ∉ F} ↪ ℕ := ⟨Subtype.val, Subtype.val_injective⟩
-  have ht := (canonicalProductAlong_uniform_on_compact h e {s}
-    isCompact_singleton).hasProd (by simp)
+  have ht : HasProd (fun n : {n // n ∉ F} => factor q c d n.val s)
+      (canonicalProductAlong q c d e s) :=
+    (canonicalProductAlong_uniform_on_compact h e {s}
+      isCompact_singleton).hasProd (by simp)
   have hf : Multipliable (fun n : (F : Set ℕ) => factor q c d n s) :=
     Multipliable.of_finite
-  simpa [canonicalProduct, canonicalProductAlong, e, Finset.tprod_subtype'] using
-    (hf.tprod_mul_tprod_compl ht.multipliable).symm
+  have hp : (∏' n : (F : Set ℕ), factor q c d n.val s) *
+      (∏' n : ↥((F : Set ℕ)ᶜ), factor q c d n.val s) =
+      ∏' n : ℕ, factor q c d n s :=
+    Multipliable.tprod_mul_tprod_compl (s := (F : Set ℕ))
+      (f := fun n : ℕ => factor q c d n s) hf ht.multipliable
+  rw [Finset.tprod_subtype'] at hp
+  exact hp.symm
 
 /-- A finite product of factors vanishing at a point has order its cardinality. -/
 theorem factor_finset_analyticOrderAt (hpos : ∀ n, 0 < q n) (hd : d ≠ 0)
@@ -83,7 +91,7 @@ theorem factor_finset_analyticOrderAt (hpos : ∀ n, 0 < q n) (hd : d ≠ 0)
   | @insert n F hn ih =>
     have hf : AnalyticAt ℂ (fun z => ∏ i ∈ F, factor q c d i z) s := by
       apply Differentiable.analyticAt
-      exact Differentiable.finsetProd (fun i _ => factor_differentiable i)
+      exact Differentiable.fun_finsetProd (fun i _ => factor_differentiable i)
     have he : (fun z => ∏ i ∈ insert n F, factor q c d i z) =
         factor q c d n * (fun z => ∏ i ∈ F, factor q c d i z) := by
       ext z
@@ -107,7 +115,7 @@ theorem canonicalProduct_analyticOrderAt (h : Admissible q c d) (hd : d ≠ 0) (
     canonicalProductAlong_ne_zero h e s (fun n hn => n.property ((hF n).mpr hn))
   have hp : AnalyticAt ℂ (fun z => ∏ n ∈ F, factor q c d n z) s := by
     apply Differentiable.analyticAt
-    exact Differentiable.finsetProd (fun n _ => factor_differentiable n)
+    exact Differentiable.fun_finsetProd (fun n _ => factor_differentiable n)
   have he : canonicalProduct q c d =
       (fun z => ∏ n ∈ F, factor q c d n z) * canonicalProductAlong q c d e :=
     funext (canonicalProduct_split_finset h F)
@@ -116,6 +124,7 @@ theorem canonicalProduct_analyticOrderAt (h : Admissible q c d) (hd : d ≠ 0) (
     ht.analyticOrderAt_eq_zero.mpr htn, add_zero]
   congr 1
   have hset : (F : Set ℕ) = {n : ℕ | factor q c d n s = 0} := Set.ext hF
+  change F.card = Nat.card ↥{n : ℕ | factor q c d n s = 0}
   rw [← hset]
   simp
 

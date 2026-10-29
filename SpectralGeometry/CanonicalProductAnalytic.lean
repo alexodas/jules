@@ -56,9 +56,7 @@ theorem canonicalProductAlong_differentiable {ι : Type*}
   apply Eventually.of_forall
   intro F
   apply Differentiable.differentiableOn
-  apply Differentiable.finsetProd
-  intro i hi
-  exact factor_differentiable (e i)
+  exact Differentiable.fun_finsetProd (fun i _ => factor_differentiable (e i))
 
 /-- Entire holomorphy of the original paired canonical product. -/
 theorem canonicalProduct_differentiable (h : Admissible q c d) :
