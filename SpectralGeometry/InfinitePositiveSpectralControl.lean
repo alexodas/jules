@@ -45,6 +45,31 @@ theorem onsitePlusNonneg_ordered_positive_summable [Infinite Tile]
   apply one_div_le_one_div_of_le (sq_pos_of_pos (hv₀.trans_le (hV (e n))))
   nlinarith [hc n, hV (e n), hlo n]
 
+/-- The existing nonnegative matching Laplacian satisfies the positive
+interaction hypotheses. No smallness assumption on its weights is needed
+for the onsite gap and spectral summability. This is an abstract matching
+application, not a construction of a named tiling. -/
+theorem infiniteLocalMatching_exists_positive_summable_spectrum [Infinite Tile]
+    (V : Tile → ℝ) (D : ℕ) (σ : Fin D → Tile ≃ Tile) (w : Fin D → ℝ)
+    (hσ : ∀ i t, σ i (σ i t) = t) (hw : ∀ i, 0 ≤ w i)
+    (v₀ : ℝ) (hv₀ : 0 < v₀) (hV : ∀ t, v₀ ≤ V t)
+    (hproper : ∀ R : ℝ, (infiniteOnsiteLowEnergyTiles V R).Finite)
+    (honsite : Summable (fun t => 1 / (V t) ^ 2)) :
+    ∃ ev : ℕ → ℝ, Monotone ev ∧
+      Nonempty (DomainEigenbasis (infiniteOnsiteDomain V)
+        (onsitePlusBounded V (infiniteLocalMatchingLaplacian D σ w)) ev) ∧
+      (∀ n, v₀ ≤ ev n) ∧ (∀ n, 0 < ev n) ∧
+      Summable (fun n => 1 / (ev n) ^ 2) := by
+  let B := infiniteLocalMatchingLaplacian D σ w
+  have hB : ∀ x y, inner ℝ (B x) y = inner ℝ x (B y) :=
+    fun x y => (infiniteLocalMatchingLaplacian_symmetric D σ w hσ x y).symm
+  have hp : ∀ x, 0 ≤ inner ℝ x (B x) :=
+    infiniteLocalMatchingLaplacian_energy_nonneg D σ w hw
+  obtain ⟨ev, hev, ⟨b⟩⟩ := onsitePlusBounded_exists_orderedEigenbasis V v₀ hV hproper B hB
+  obtain ⟨hlo, hpos, hs⟩ := onsitePlusNonneg_ordered_positive_summable
+    V B hB hp v₀ hv₀ hV hproper honsite ev hev b
+  exact ⟨ev, hev, ⟨b⟩, hlo, hpos, hs⟩
+
 /-- A positive interaction leaves the onsite sector form bound unchanged. -/
 theorem onsitePlusNonneg_sector_form_bound (V : Tile → ℝ)
     (B : TileHilbert Tile →L[ℝ] TileHilbert Tile)

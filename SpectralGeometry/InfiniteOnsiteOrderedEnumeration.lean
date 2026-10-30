@@ -21,7 +21,7 @@ noncomputable section
 
 variable {Tile : Type*}
 
-/-- Proper onsite energies on infinitely many sites admit a sorted
+/-- Proper onsite energies on infinitely many sites have a sorted
 bijection. Equal-energy sites remain distinct and are all enumerated. -/
 theorem infiniteOnsite_exists_monotone_equiv [Infinite Tile]
     (V : Tile → ℝ)
@@ -32,7 +32,7 @@ theorem infiniteOnsite_exists_monotone_equiv [Infinite Tile]
   have hkey : Function.Injective key := by
     intro x y h
     exact embeddingToCardinal.injective (congrArg (fun p => (ofLex p).2) h)
-  letI : LinearOrder Tile := LinearOrder.lift' key hkey
+  let : LinearOrder Tile := LinearOrder.lift' key hkey
   have hpred (x : Tile) : {y : Tile | y < x}.Finite := by
     apply (hproper (V x)).subset
     intro y hy
