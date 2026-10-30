@@ -60,6 +60,21 @@ theorem LocalAnalyticZeroControl.zero {f : ℂ → ℂ} {a : ℂ} {m : ℕ} {ρ 
   rw [h.order]
   exact_mod_cast (Nat.ne_of_gt h.order_pos)
 
+/-- The reference disk isolates one distinct zero, with its full order. -/
+theorem LocalAnalyticZeroControl.zero_iff {f : ℂ → ℂ} {a : ℂ} {m : ℕ} {ρ C : ℝ}
+    (h : LocalAnalyticZeroControl f a m ρ C) {z : ℂ} (hz : z ∈ closedBall a ρ) :
+    f z = 0 ↔ z = a := by
+  constructor
+  · intro hfz
+    by_contra hza
+    have hp := mul_pos h.constant_pos
+      (pow_pos (norm_pos_iff.mpr (sub_ne_zero.mpr hza)) m)
+    have hl := h.lower z hz
+    simp only [hfz, norm_zero] at hl
+    exact (not_le_of_gt hp) hl
+  · rintro rfl
+    exact h.zero
+
 /-- A holomorphic function whose center value is strictly smaller in norm
 than every boundary value must have an interior zero. -/
 theorem analytic_exists_zero_of_boundary_norm_lt {g : ℂ → ℂ} {a : ℂ} {ρ : ℝ}
@@ -89,7 +104,8 @@ theorem analytic_error_le_on_closedBall {f g : ℂ → ℂ} {a : ℂ} {ρ ε : �
     ∀ z ∈ closedBall a ρ, ‖g z - f z‖ ≤ ε := by
   have hd : DiffContOnCl ℂ (fun z => g z - f z) (ball a ρ) := by
     apply DifferentiableOn.diffContOnCl
-    simpa only [closure_ball a hρ.ne'] using hg.differentiableOn.sub hf.differentiableOn
+    simpa only [closure_ball a hρ.ne', Pi.sub_def] using
+      hg.differentiableOn.sub hf.differentiableOn
   intro z hz
   apply Complex.norm_le_of_forall_mem_frontier_norm_le isBounded_ball hd
     (fun w hw => herr w (by simpa [frontier_ball a hρ.ne'] using hw))
@@ -127,6 +143,21 @@ theorem LocalAnalyticZeroControl.approximation {f g : ℂ → ℂ} {a : ℂ} {m 
     have he : ‖f z‖ ≤ ε := by simpa [hgz] using herr' z hz
     apply (le_div_iff₀ h.constant_pos).mpr
     simpa [mul_comm] using (h.lower z hz).trans he
+
+/-- The power estimate written as a distance bound. Repeated zeros require
+the exponent `1 / m`; no linear displacement estimate is asserted. -/
+theorem LocalAnalyticZeroControl.zero_distance_le {f g : ℂ → ℂ} {a : ℂ} {m : ℕ}
+    {ρ C ε : ℝ} (h : LocalAnalyticZeroControl f a m ρ C)
+    (herr : ∀ z ∈ closedBall a ρ, ‖g z - f z‖ ≤ ε)
+    {z : ℂ} (hz : z ∈ closedBall a ρ) (hgz : g z = 0) :
+    ‖z - a‖ ≤ (ε / C) ^ (1 / (m : ℝ)) := by
+  have he : ‖f z‖ ≤ ε := by simpa [hgz] using herr z hz
+  have hp : ‖z - a‖ ^ m ≤ ε / C := by
+    apply (le_div_iff₀ h.constant_pos).mpr
+    simpa [mul_comm] using (h.lower z hz).trans he
+  have hr := Real.rpow_le_rpow (pow_nonneg (norm_nonneg (z - a)) m) hp
+    (inv_nonneg.mpr (Nat.cast_nonneg m : (0 : ℝ) ≤ m))
+  simpa only [Real.pow_rpow_inv_natCast (norm_nonneg (z - a)) h.order_pos.ne', one_div] using hr
 
 /-- Uniform error excludes zeros wherever the reference modulus exceeds
 that error; this also certifies zero-free regions between disks. -/

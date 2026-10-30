@@ -1,9 +1,6 @@
 module
 
 public import SpectralGeometry.CanonicalProduct
-public import SpectralGeometry.AnalyticZeroLocalization
-public import SpectralGeometry.CanonicalProductApproximation
-public import SpectralGeometry.FullSpectralZeroLocalization
 public import SpectralGeometry.FinitePerturbation
 public import SpectralGeometry.FinitePositiveEnergy
 public import SpectralGeometry.FiniteGeometricEnergy
@@ -72,6 +69,9 @@ public import SpectralGeometry.InfiniteFullSpectralCluster
 public import SpectralGeometry.InfiniteOnsiteOrderedEnumeration
 public import SpectralGeometry.InfinitePositiveSpectralControl
 public import SpectralGeometry.PositiveFiniteSectorZeroResponse
+public import SpectralGeometry.AnalyticZeroLocalization
+public import SpectralGeometry.CanonicalProductApproximation
+public import SpectralGeometry.FullSpectralZeroLocalization
 
 public section
 

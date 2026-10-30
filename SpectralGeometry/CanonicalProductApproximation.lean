@@ -74,6 +74,22 @@ theorem canonicalProductApproximationError_nonneg (q : ℕ → ℝ)
   apply mul_nonneg (Real.exp_pos _).le
   exact sub_nonneg.mpr (Real.one_le_exp (mul_nonneg hA (tsum_nonneg (fun _ => by positivity))))
 
+/-- Independently verified upper bounds for the total inverse-square sum
+and its tail give a scalar error budget containing no infinite sums. -/
+theorem canonicalProductApproximationError_le_of_bounds (q : ℕ → ℝ)
+    {A S T : ℝ} (hA : 0 ≤ A) (N : ℕ)
+    (hS : (∑' n, 1 / (q n) ^ 2) ≤ S)
+    (hT : (∑' k, 1 / (q (k + N)) ^ 2) ≤ T) :
+    canonicalProductApproximationError q A N ≤
+      Real.exp (A * S) * (Real.exp (A * T) - 1) := by
+  unfold canonicalProductApproximationError
+  apply mul_le_mul
+    (Real.exp_le_exp.mpr (mul_le_mul_of_nonneg_left hS hA))
+    (sub_le_sub_right (Real.exp_le_exp.mpr (mul_le_mul_of_nonneg_left hT hA)) 1)
+  · exact sub_nonneg.mpr (Real.one_le_exp
+      (mul_nonneg hA (tsum_nonneg (fun _ => by positivity))))
+  · exact (Real.exp_pos _).le
+
 /-- Explicit pointwise error, uniform whenever the affine-coordinate bound
 `A` is uniform. Positivity and inverse-square summability are the same
 inputs used to construct admissibility of the full product. -/
@@ -100,9 +116,10 @@ bound. A numerical rate still requires a numerical bound for the tail. -/
 theorem canonicalProductApproximationError_tendsto_zero {q : ℕ → ℝ}
     (_hs : Summable (fun n => 1 / (q n) ^ 2)) (A : ℝ) :
     Tendsto (canonicalProductApproximationError q A) atTop (𝓝 0) := by
+  unfold canonicalProductApproximationError
   have ht := tendsto_sum_nat_add (fun n => 1 / (q n) ^ 2)
   have he := (Real.continuous_exp.tendsto _).comp (ht.const_mul A)
-  simpa [canonicalProductApproximationError] using
+  simpa only [mul_zero, Real.exp_zero, sub_self, Function.comp_apply] using
     (he.sub (tendsto_const_nhds (x := (1 : ℝ)))).const_mul
       (Real.exp (A * ∑' n, 1 / (q n) ^ 2))
 
