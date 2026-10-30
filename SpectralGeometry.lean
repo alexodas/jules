@@ -66,6 +66,9 @@ public import SpectralGeometry.OrderedSpectralWindow
 public import SpectralGeometry.CanonicalProductClusterCount
 public import SpectralGeometry.InfiniteBoundedSpectralStability
 public import SpectralGeometry.InfiniteFullSpectralCluster
+public import SpectralGeometry.InfiniteOnsiteOrderedEnumeration
+public import SpectralGeometry.InfinitePositiveSpectralControl
+public import SpectralGeometry.PositiveFiniteSectorZeroResponse
 
 public section
 

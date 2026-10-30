@@ -20,10 +20,11 @@ the single mathematical result selected by the root Comparator configuration.
 | Finite-coordinate detection and the multiplicity bound for one low-energy eigenspace | Formalized in §4.40; selected for independent statement verification |
 | Simultaneous quantitative observation and total low-energy multiplicity counting | Formalized in §§4.41–4.43, with symmetry for simultaneous spectral control |
 | Variational characterization, ordered onsite comparison and finite-sector eigenvalue response | Formalized in §§4.44–4.47 with complete eigenbases, exact multiplicities and explicit infinite-indexing conditions |
-| Positive full-spectrum inverse-square summability and its preservation under nonnegative finite-sector interventions | Formalized under the sufficient growth, ordering and gap hypotheses of §4.48 |
+| Positive full-spectrum inverse-square summability and its preservation under nonnegative finite-sector interventions | Formalized under §4.48's signed-correction criterion and §4.58's positive-interaction criterion |
 | Entire canonical products and exact zero divisors for admissible positive full spectra | Formalized in §§2.4 and 4.49: every zero has its exact geometric multiplicity; normalization and paired symmetry are proved |
 | Indexed finite-sector response of full spectral-product zeros, with operator-specific exact geometric orders | Formalized in §§4.50–4.52 and 6.3 for the positive finite-sector family under the stated infinite-indexing, gap and summability conditions |
 | Exact zero-cluster certificates under small symmetric bounded operator errors | Formalized in §§4.53–4.56: finite boundary margins certify both reflected zero sets and their total multiplicity |
+| Onsite ordering from properness and sharpened positive-interaction spectral and zero response | Formalized in §§4.57–4.59: the onsite gap is preserved without a small interaction-norm assumption; the onsite ordering is constructed |
 | A concrete Ammann–Beenker model, relative-product identities and certified finite-patch zero response | Proposed research milestones in §§6.4–6.6 |
 
 The research objective is an end-to-end statement relating an explicitly defined
@@ -35,7 +36,10 @@ the exact full spectral multiplicities under the stated positivity and
 summability hypotheses. The indexed zero-response bridge is now proved for positive finite-sector
 perturbations in the sufficient abstract setting. A bounded-operator-error
 certificate now controls separated zero clusters, with exact multiplicity
-counts. A concrete geometric application, certified finite-patch approximation
+counts. Proper onsite sublevels now supply the required sorted site bijection.
+For nonnegative interactions, the positive onsite gap and a sharper indexed
+response are proved without requiring that gap to exceed the interaction norm.
+A concrete geometric application, certified finite-patch approximation
 and statistical results remain open. The
 Comparator selection still contains only the original single-eigenspace theorem.
 
@@ -127,8 +131,11 @@ the two entire full spectral products, with fixed affine data and the correct
 operator-specific geometric orders. Sections 4.53–4.56 now certify the total
 zero multiplicity in a separated window under a small symmetric bounded
 operator error. They derive all-index error bounds and use finite neighboring
-level checks at the window boundaries. The concrete geometric application
-remains open in §6.4.
+level checks at the window boundaries. Sections 4.57–4.59 construct the onsite
+ordering from properness and prove a stronger positive-interaction family:
+the gap remains $v_0>0$, and the response coefficient becomes
+$(R-E)/(R-v_0)$, with no interaction-norm penalty. The concrete geometric
+application remains open in §6.4.
 
 These are additional source theorems, not additions to the current
 Comparator-selected statement. They do not provide a numerical reconstruction
@@ -240,11 +247,15 @@ levels under explicit properness, onsite ordering, summability and gap
 hypotheses. Its power-growth corollary reuses the onsite criterion with exponent
 greater than one half. `fullSpectrum_admissible_of_positive_summable` applies the
 existing admissibility criterion to these levels, including the nonnegative
-finite-sector family. The new analytic theorems apply to this input, and §4.49
+finite-sector family. Section 4.57 constructs the sorted onsite bijection on
+infinite proper site types. Section 4.58 gives a separate positive-interaction
+transfer with $V\ge v_0>0$, retaining the gap $v_0$ regardless of the
+interaction norm. The analytic theorems apply to these inputs, and §4.49
 identifies repetition counts with the original full geometric multiplicities.
 The new indexed-point and exact-tag bridge of §§4.50–4.52 also makes this a
 quantitative analytic displacement statement for positive finite-sector
-perturbations. No complex resolvent is needed for this scalar product construction; the
+perturbations; §4.59 proves its sharper positive-interaction version.
+No complex resolvent is needed for this scalar product construction; the
 complex-resolvent interface required for relative determinants remains open.
 
 ### 2.2. A common analytic coordinate for geometric operators
@@ -260,8 +271,12 @@ D_H(s)=F_H\!\left(\frac{s-c}{d}\right).
 The positive full spectrum with exact multiplicities and inverse-square
 summability is now available under §§4.44–4.48. The sufficient signed-correction
 criterion requires $v_0>\|B\|$ separately from onsite growth; compact resolvent
-alone does not give summability or positivity. The same gap and summability
-persist for nonnegative finite-sector perturbations. Section 4.49 proves the
+alone does not give summability or positivity. For symmetric nonnegative $B$,
+§4.58 instead proves $\lambda_n(H)\ge v_0>0$ and summability from proper,
+inverse-square-summable onsite energies, without a bound on $\|B\|$.
+The onsite ordering is constructed by §4.57. Each of these baseline gaps and
+summability conclusions persists for nonnegative finite-sector perturbations.
+Section 4.49 proves the
 exact zero divisor
 ```math
 s=c\pm d\,\lambda_n(H),\qquad D_H(c)=1,
@@ -281,6 +296,9 @@ verified response bound $|d|\kappa\tau\le |z_n^\pm(\tau)-z_n^\pm(0)|\le |d|\tau$
 for exactly the indices with baseline energy at most $E$. The positive
 coefficient follows from $E<R-\|B\|$ and $v_0<R$; the theorem does not assert
 a nonempty energy window or disjoint zero sets.
+For nonnegative $B$, §4.59 proves the same type of conclusion with the sharper
+$\kappa=(R-E)/(R-v_0)>0$ under $E<R$, again with the explicit interval
+$0\le\tau\le R-v_0$ and without asserting a nonempty target window.
 
 ### 2.3. Target: a relative product for a finite geometric defect
 
@@ -1458,7 +1476,9 @@ v_n-\|B\|\le\lambda_n(H)\le v_n+\|B\|.
 ```
 `infiniteLocalMatching_full_ordered_comparison` applies this directly to the
 existing exact matching-spectrum tag enumeration. The site bijection and its
-onsite ordering are explicit inputs, not a newly implemented sorting algorithm.
+onsite ordering are explicit inputs of this API. Section 4.57 now constructs
+such a bijection from properness on infinite site types; this is a classical
+existence proof, not an executable numerical sorting algorithm.
 For a nonnegative interaction $L$ and signed correction $Q$, the lower bound
 improves to $v_n-\|Q\|$; a wholly nonnegative correction gives $v_n$.
 
@@ -1475,6 +1495,8 @@ setting. For $E<R-\|B\|$ the lower response coefficient is positive.
 The proof uses the affine comparison with $\alpha=1-\tau/(R-v_0)$,
 including the endpoint $\alpha=0$. It never assumes simple eigenvalues,
 differentiable eigenvalue branches or an absence of crossings.
+Section 4.58 proves the stronger coefficient $(R-E)/(R-v_0)$ when the whole
+bounded interaction is nonnegative, using its sharper sector form bound.
 
 ### 4.47. Existence and operator hypotheses along the perturbation
 
@@ -1508,6 +1530,9 @@ existing sufficient growth $V(k)\ge(k+1)^\alpha$, $\alpha>1/2$, on sites
 indexed by $\mathbb N$; these original labels need not already be sorted.
 Other onsite criteria, including §4.4, enter through the general transfer.
 The gap assumption is not inferred from growth or compactness.
+The additional positive-interaction package in §4.58 instead retains the
+onsite gap $v_0>0$, without requiring $v_0>\|B\|$; it uses §4.57 to obtain
+the sorted onsite bijection rather than accepting one as an input.
 
 `finiteSector_preserves_gap_summability` preserves any supplied positive
 baseline gap and inverse-square summability for every $\tau\ge0$.
@@ -1735,9 +1760,99 @@ certificate for a bounded common-domain discrepancy. It does not yet supply
 an error estimate for a finite patch, a contour theorem for arbitrary
 analytic approximants, or an instantiation for the proposed tiling.
 
+### 4.57. Sorted onsite enumeration from properness
+
+[InfiniteOnsiteOrderedEnumeration.lean](SpectralGeometry/InfiniteOnsiteOrderedEnumeration.lean)
+proves `infiniteOnsite_exists_monotone_equiv`. If the site type is infinite
+and every onsite sublevel $\{t:V(t)\le R\}$ is finite, then there exists a
+bijection $e:\mathbb N\simeq T$ with $n\mapsto V(e(n))$ nondecreasing.
+All sites at repeated energies are retained. No countability hypothesis,
+injectivity of $V$, supplied enumeration or additional lower bound is needed
+for this ordering theorem.
+
+The proof orders sites lexicographically by their energies and a classical
+injective cardinal-valued tie breaker. Every predecessor set lies in a finite
+onsite sublevel, so the enumeration theorem of §4.37 applies. This supplies
+the ordering input of the existing comparison and growth-transfer APIs.
+It is a noncomputable existence construction; it does not yet provide a
+numerical sorting procedure. The infinite-site hypothesis is explicit:
+finite and empty spaces are not represented by repeating sites indefinitely.
+
+### 4.58. Positive-interaction gaps, summability and sharper spectral response
+
+[InfinitePositiveSpectralControl.lean](SpectralGeometry/InfinitePositiveSpectralControl.lean)
+proves `onsitePlusNonneg_ordered_positive_summable`. Assume symmetric bounded
+$B$ with $\langle x,Bx\rangle\ge0$, $V\ge v_0>0$, finite onsite sublevels,
+onsite inverse-square summability and infinitely many sites. For an actual
+monotone complete eigenbasis of $H=M_V+B$ on $D(V)$, it proves
+```math
+\lambda_n(H)\ge v_0>0,
+\qquad \sum_n\lambda_n(H)^{-2}<\infty.
+```
+The sorted onsite bijection comes from §4.57, and the existing positive
+comparison $\lambda_n(H)\ge V(e(n))$ gives a termwise inverse-square bound.
+The eigenbasis is supplied by §4.47. No smallness condition on $\|B\|$ is
+required. `infiniteLocalMatching_exists_positive_summable_spectrum` derives
+the complete ordered spectrum, gap and summability for the existing finite
+family of involutive matchings with nonnegative weights. Its weights need
+not be small; this corollary does not construct a named tiling.
+
+`onsitePlusNonneg_sector_form_bound` proves
+```math
+H\ge R I-(R-v_0)P_F
+```
+on the natural domain when $V\ge R$ outside the finite set $F$.
+`finiteSector_ordered_response_of_form_bound` first treats a general proved
+sector inequality $H\ge A I-DP_F$, $D>0$. The resulting
+`finiteSector_ordered_response_of_nonneg` gives
+```math
+\frac{R-E}{R-v_0}\,\tau
+\le\lambda_n(H+\tau P_F)-\lambda_n(H)\le\tau,
+\quad \lambda_n(H)\le E,\quad 0\le\tau\le R-v_0.
+```
+Here $R>v_0$, and the lower coefficient is positive for $E<R$.
+The proof uses the same domain-aware variational principle as §4.46,
+including multiplicities, crossings and both parameter endpoints.
+
+`finiteSector_nonneg_controlled_summable_family` constructs the perturbed
+ordered spectra for every $\tau\ge0$, preserves the gap $v_0$ and
+inverse-square summability, and proves monotonicity of every ordered level.
+The displayed quantitative response is restricted to $\tau\le R-v_0$.
+Self-adjointness and compact shifted inverses follow from the existing
+properness and symmetry theorems on the unchanged natural domain; the shift
+may depend on $\tau$. No perturbed eigenbasis or perturbed summability is
+assumed. This is an infinite-sequence result and does not assert that any
+level lies in the selected low-energy window.
+
+### 4.59. Sharpened full-product zero response for positive interactions
+
+[PositiveFiniteSectorZeroResponse.lean](SpectralGeometry/PositiveFiniteSectorZeroResponse.lean)
+proves `finiteSector_nonneg_fullProducts_indexedZeroResponse`. Under §4.58's
+positive-interaction, properness and onsite summability hypotheses, it
+constructs both ordered spectra and `HasExactFullSpectralProduct` for the
+actual original and perturbed operators. Fixed $c,d$ with $d\ne0$ give
+```math
+|d|\frac{R-E}{R-v_0}\,\tau
+\le |z_n^\pm(\tau)-z_n^\pm(0)|\le |d|\tau,
+\quad \lambda_n(H)\le E<R,\quad 0\le\tau\le R-v_0.
+```
+The theorem also proves that these points are zeros of their respective
+products, the oriented difference identities, and movement of each selected
+indexed zero for $\tau>0$. Exact analytic orders are the geometric
+multiplicities of each product's own operator. A supplied onsite ordering,
+simple eigenvalues and $v_0>\|B\|$ are not hypotheses of this application.
+
+For $v_0=1$, $R=5$, $E=3$, the coefficient is $1/2$, as targeted in §6.4.
+This is the abstract estimate needed there; the Ammann–Beenker vertex set,
+matching representation, geometric sector, growth and nine-level trial
+space have not yet been verified. In particular, the theorem does not
+establish a nonempty controlled window or exclude common zero locations
+arising from different indices at different parameters. Relative products
+and certified finite-patch approximation remain separate obligations.
+
 ## 5. Building and verification
 
-The canonical import list is maintained in [`SpectralGeometry.lean`](SpectralGeometry.lean). It currently imports **66 Lean modules**: six analytic and window modules, four finite-dimensional geometry modules, and fifty-six operator/spectral modules (including domain-generic interfaces).
+The canonical import list is maintained in [`SpectralGeometry.lean`](SpectralGeometry.lean). It currently imports **69 Lean modules**: six analytic and window modules, four finite-dimensional geometry modules, and fifty-nine operator/spectral modules (including domain-generic interfaces).
 
 - **Analytic core, indexed points and certified windows (6):**
   - [`CanonicalProduct.lean`](SpectralGeometry/CanonicalProduct.lean)
@@ -1751,12 +1866,13 @@ The canonical import list is maintained in [`SpectralGeometry.lean`](SpectralGeo
   - [`FinitePositiveEnergy.lean`](SpectralGeometry/FinitePositiveEnergy.lean)
   - [`FiniteGeometricEnergy.lean`](SpectralGeometry/FiniteGeometricEnergy.lean)
   - [`FiniteStrictPositivity.lean`](SpectralGeometry/FiniteStrictPositivity.lean)
-- **Onsite foundations, growth and summability (5):**
+- **Onsite foundations, growth and summability (6):**
   - [`InfiniteOnsite.lean`](SpectralGeometry/InfiniteOnsite.lean)
   - [`InfiniteOnsiteDensity.lean`](SpectralGeometry/InfiniteOnsiteDensity.lean)
   - [`InfiniteOnsiteEigenvalues.lean`](SpectralGeometry/InfiniteOnsiteEigenvalues.lean)
   - [`InfiniteOnsiteSummability.lean`](SpectralGeometry/InfiniteOnsiteSummability.lean)
   - [`InfiniteOnsitePowerGrowth.lean`](SpectralGeometry/InfiniteOnsitePowerGrowth.lean)
+  - [`InfiniteOnsiteOrderedEnumeration.lean`](SpectralGeometry/InfiniteOnsiteOrderedEnumeration.lean)
 - **Infinite interactions and local-operator estimates (11):**
   - [`InfiniteFiniteEdgeInteraction.lean`](SpectralGeometry/InfiniteFiniteEdgeInteraction.lean)
   - [`InfiniteBoundedPerturbation.lean`](SpectralGeometry/InfiniteBoundedPerturbation.lean)
@@ -1797,7 +1913,7 @@ The canonical import list is maintained in [`SpectralGeometry.lean`](SpectralGeo
   - [`InfiniteLocalFullVariationalComparison.lean`](SpectralGeometry/InfiniteLocalFullVariationalComparison.lean)
   - [`InfiniteLocalFullLowEnergyCounting.lean`](SpectralGeometry/InfiniteLocalFullLowEnergyCounting.lean)
 
-- **Simultaneous observation, variational control and full summability (10):**
+- **Simultaneous observation, variational control and full summability (11):**
   - [`DomainSpectralSubspace.lean`](SpectralGeometry/DomainSpectralSubspace.lean)
   - [`InfiniteLowEnergyObservation.lean`](SpectralGeometry/InfiniteLowEnergyObservation.lean)
   - [`InfiniteLowEnergyCounting.lean`](SpectralGeometry/InfiniteLowEnergyCounting.lean)
@@ -1808,11 +1924,13 @@ The canonical import list is maintained in [`SpectralGeometry.lean`](SpectralGeo
   - [`InfiniteOrderedSpectralControl.lean`](SpectralGeometry/InfiniteOrderedSpectralControl.lean)
   - [`InfiniteOrderedSpectralExistence.lean`](SpectralGeometry/InfiniteOrderedSpectralExistence.lean)
   - [`InfiniteFullSpectralSummability.lean`](SpectralGeometry/InfiniteFullSpectralSummability.lean)
+  - [`InfinitePositiveSpectralControl.lean`](SpectralGeometry/InfinitePositiveSpectralControl.lean)
 
-- **Full spectral products and indexed response (3):**
+- **Full spectral products and indexed response (4):**
   - [`InfiniteFullSpectralProduct.lean`](SpectralGeometry/InfiniteFullSpectralProduct.lean)
   - [`OrderedSpectralProductBridge.lean`](SpectralGeometry/OrderedSpectralProductBridge.lean)
   - [`FiniteSectorZeroResponse.lean`](SpectralGeometry/FiniteSectorZeroResponse.lean)
+  - [`PositiveFiniteSectorZeroResponse.lean`](SpectralGeometry/PositiveFiniteSectorZeroResponse.lean)
 
 - **Bounded spectral errors and full zero-cluster certificates (2):**
   - [`InfiniteBoundedSpectralStability.lean`](SpectralGeometry/InfiniteBoundedSpectralStability.lean)
@@ -1838,7 +1956,7 @@ one [`comparator.json`](comparator.json), one
 Comparator selects **one theorem**, the per-eigenspace low-energy multiplicity
 bound of §4.40, together with 16 independently reproduced definitions and type abbreviations needed to state it.
 The toolchain's Lean, NanoDa and con-ron kernels verify the selected
-comparison. The separate Lean build still covers **all 66 mathematical
+comparison. The separate Lean build still covers **all 69 mathematical
 source modules**; earlier compact-resolvent, real-spectrum and ordered
 enumeration theorems remain compiled prerequisites but are not individually
 compared in this submission. The metadata records the first identified
@@ -1989,7 +2107,7 @@ F_R=\{t:V(t)\le R\},
   inverses are supplied by §§4.47–4.48; the resolvent shift may vary with the
   parameter.
 
-**Verified signed-error extension and remaining application inputs**
+**Verified signed-error extension, onsite ordering and positive interactions**
 
 - [x] Preserve a supplied positive gap and inverse-square summability for
   symmetric bounded perturbations of either sign with $\|K\|<\gamma$,
@@ -1997,31 +2115,52 @@ F_R=\{t:V(t)\le R\},
   perturbed spectra and exact products under its sufficient onsite
   hypotheses. This includes small signed finite-support interventions;
   it does not cover errors exceeding the verified gap.
-- [ ] Derive the sorted onsite site bijection from suitable structural
-  hypotheses. The existing comparison/transfer accepts that bijection as
-  an input; existence of the ordered **full** eigenbasis is already proved.
-- [ ] Package the sharper positive-interaction comparison with a separate
-  gap and summability argument for applications that do not satisfy
-  $v_0>\|B\|$, including the model of §6.4. The sharper comparison itself
-  is already verified in §4.46.
+- [x] Derive a sorted onsite site bijection from finite onsite sublevel
+  sets on an infinite site type (§4.57), including repeated onsite energies.
+  Existing comparison/transfer APIs may still accept the bijection as an
+  input; the existence obligation is now proved. The construction is
+  noncomputable and does not enumerate finite or empty types by $\mathbb N$.
+- [x] Package the sharper positive-interaction comparison with its gap and
+  summability argument (§4.58). For symmetric nonnegative bounded $B$,
+  $V\ge v_0>0$, properness and onsite inverse-square summability give the
+  gap $v_0$ and summability of the full spectrum, without $v_0>\|B\|$.
+  The matching-Laplacian corollary constructs the ordered spectrum under
+  the existing involution and nonnegative-weight hypotheses.
+- [x] Prove the stronger sector form bound and response for nonnegative
+  interactions:
+  ```math
+  H\ge R I-(R-v_0)P_F,\qquad
+  \frac{R-E}{R-v_0}\,\tau
+  \le\lambda_n(H+\tau P_F)-\lambda_n(H)\le\tau.
+  ```
+  Here $R>v_0$, $\lambda_n(H)\le E<R$, $0\le\tau\le R-v_0$, and
+  $V\ge R$ outside the finite sector. The positive-interaction family
+  preserves its gap and summability for all $\tau\ge0$; the quantitative
+  response retains the stated interval. Section 4.59 transfers this
+  stronger estimate to the actual indexed full-product zeros.
 
 **Scope of the verified statements.** The norm comparison and growth transfer
-use an explicitly sorted bijection of the onsite sites. Ordered full levels
+use a sorted bijection of the onsite sites, now supplied by §4.57 under
+properness and infinitude. Ordered full levels
 come from complete domain eigenbases; §4.44 connects the original exact tags,
 and §4.47 derives their existence for infinite site types, proper lower-bounded
 $V$ and symmetric bounded corrections. The sufficient positive-summability
-package uses $v_0>\|B\|$ and summable onsite inverse squares (or the proved
-power-growth criterion). Positive interactions admit the sharper lower
-comparison in §4.46. Finite/empty cases are covered by observation, counting
+package of §4.48 uses $v_0>\|B\|$ and summable onsite inverse squares (or the
+proved power-growth criterion). The positive-interaction alternative in
+§4.58 only requires the positive onsite lower bound $v_0>0$, together with
+properness and onsite summability. Finite/empty cases are covered by observation, counting
 and tag bases; the $\mathbb N$-sequence statements explicitly address the
 infinite case.
 
 This phase now supplies a proved abstract consequence of finite observation:
 a finite onsite intervention has a controlled effect on every selected low
-ordered level. Section 4.52 transfers this existing response to the indexed
-zeros of both full spectral products, while the stronger signed and geometric
-extensions above remain open. An application must still establish a nonempty target window
-and its geometric hypotheses. These new source results are **not** part of
+ordered level. Sections 4.52 and 4.59 transfer the respective norm-penalty and
+positive-interaction responses to the indexed zeros of both full spectral
+products. All the listed abstract obligations of this subsection are proved
+under their stated hypotheses. An application must still establish a nonempty
+target window and its geometric hypotheses (§6.4); general analytic and
+finite-patch approximation certificates remain open in §§6.3 and 6.6.
+These source results are **not** part of
 the unchanged Comparator-selected theorem of §4.40.
 
 ### 6.3. P3 — Full spectral products and their exact zero divisors
@@ -2032,11 +2171,14 @@ the unchanged Comparator-selected theorem of §4.40.
   convergence and zero localization for an admissible positive sequence
   (CanonicalProduct.lean, §2).
 - [x] Prove admissibility from inverse-square summability, with onsite
-  growth examples (§§4.4–4.5) and the full-spectrum transfer (§4.48).
+  growth examples (§§4.4–4.5), the signed-correction full-spectrum transfer
+  (§4.48) and the positive-interaction alternative (§4.58).
 - [x] Package positive ordered full levels as an admissible sequence under
   the explicit lower-gap, properness, onsite-ordering and summability
   hypotheses of §4.48. Sections 4.44 and 4.47 supply exact multiplicity
-  indexing and the infinite-site existence conditions.
+  indexing and the infinite-site existence conditions. Section 4.57 now
+  constructs the onsite ordering; §4.58 supplies the stronger gap and
+  summability package for nonnegative interactions.
 
 **Verified analytic consequences (§§2.4 and 4.49)**
 
@@ -2048,7 +2190,7 @@ the unchanged Comparator-selected theorem of §4.40.
   identity. These identities hold for every member of an admissible family;
   the line $c+d\mathbb R$ is prescribed by its definition.
 
-**Verified indexed zero response (§§4.50–4.52); geometric instantiation remains open**
+**Verified indexed zero response (§§4.50–4.52 and 4.59); geometric instantiation remains open**
 
 - [x] Transfer the finite-sector response theorem of §6.2 to the actual
   indexed zeros of both full spectral products, with fixed $c,d$,
@@ -2058,6 +2200,12 @@ the unchanged Comparator-selected theorem of §4.40.
   from different indices at different parameters are not excluded.
   The statement is conditional on $\lambda_n(H)\le E$ and does not prove
   that such an index exists.
+- [x] For nonnegative interactions, derive the sharper
+  $\kappa=(R-E)/(R-v_0)$ under $V\ge v_0>0$, $E<R$ and
+  $0\le\tau\le R-v_0$, without a small interaction-norm assumption or
+  a supplied onsite ordering (§4.59). Both products retain their actual
+  operator-specific geometric zero orders. Properness, onsite summability
+  and the finite sector's exterior lower bound remain explicit inputs.
 
 **Certified operator-error windows and remaining approximation work**
 
@@ -2104,12 +2252,16 @@ The model to construct is
 - [ ] Verify that the interaction is nonnegative and has norm at most
   one, so that the full operator has lower bound one on its natural
   domain. This example need not satisfy the stronger sufficient
-  condition $V>\|B\|$ to be positive.
+  condition $V>\|B\|$ to be positive. The abstract positive-interaction
+  gap and matching-Laplacian package are now proved in §4.58; their
+  geometric hypotheses still have to be verified for this vertex model.
 - [ ] Prove properness of $V(x)=1+|x|^2$ and a quantitative two-dimensional
   vertex-counting bound. Transfer the resulting onsite growth to
   full-spectrum summability using the verified comparison/transfer lemmas
-  in §§4.46–4.48. This model's positive-Laplacian gap must be established
-  separately from the stronger sufficient condition $v_0>\|B\|$.
+  in §§4.46–4.48 and the positive-interaction package of §4.58. Once
+  properness and infinitude are verified, §4.57 supplies the sorted
+  onsite bijection. The positive-Laplacian gap then uses $v_0=1$;
+  it does not require the stronger condition $v_0>\|B\|$.
 - [ ] Verify compact-resolvent hypotheses at an appropriate real shift
   and verify the onsite lower bound and infinite vertex type needed to
   invoke the global ordered-spectrum existence result of §4.47.
@@ -2123,17 +2275,17 @@ S=\{x:|x|\le2\},\qquad H_\tau=H+\tau P_S.
 
 - [ ] Prove that $S$ is finite and that the intervention is a bounded,
   finite-rank positive perturbation.
-- [ ] Using nonnegativity of the Laplacian, establish
-  $H\ge5I-4P_S$ and derive the sharpened estimate
+- [ ] Verify the sector and positivity hypotheses needed to instantiate
+  §4.58's form bound $H\ge5I-4P_S$ and sharpened estimate
   ```math
   \frac{\tau}{2}
   \le\lambda_n(H_\tau)-\lambda_n(H)
   \le\tau,\qquad
   \lambda_n(H)\le3,\quad 0\le\tau\le4.
   ```
-  The general norm-penalty estimate is now proved in §4.46. This concrete
-  target still needs a stronger form bound exploiting Laplacian positivity
-  and the verified geometric sector.
+  The norm-penalty estimate remains available in §4.46; the sharper abstract
+  form bound and response are now proved in §4.58. This concrete target
+  still needs the verified geometric sector and interaction representation.
 - [ ] Verify that the central vertex and its eight unit-distance neighbors
   give a nine-dimensional trial space with energy at most three.
   Consequently prove that the application controls at least nine levels
@@ -2142,8 +2294,10 @@ S=\{x:|x|\le2\},\qquad H_\tau=H+\tau P_S.
 - [ ] Instantiate the entire-product and exact-multiplicity theorem of §4.49
   once the model's hypotheses above are verified, then obtain the indexed
   zero-displacement bounds on the prescribed line. The abstract analytic
-  response bridge is proved in §4.52; the model-specific geometric, gap,
-  summability and low-energy nonemptiness hypotheses still need verification.
+  response bridges are proved in §§4.52 and 4.59, with the latter giving
+  the coefficient $1/2$ here. The model-specific geometric inputs,
+  summability and low-energy nonemptiness still need verification; the
+  abstract positive-gap theorem is available in §4.58.
 - [ ] Investigate whether the tiling's geometry permits a smaller
   observation/intervention set with a proved quantitative guarantee.
   This is a separate research question, not a consequence of
@@ -2267,11 +2421,12 @@ theorem, and carries no asserted connection to the Riemann zeta function.
 
 **Assessment and future selection**
 
-The source results of §§4.41–4.56 now include simultaneous observation,
+The source results of §§4.41–4.59 now include simultaneous observation,
 total counting, an abstract finite-sector response, entire full spectral
 products with exact geometric zero multiplicities, indexed finite-sector
-zero displacement, and separated zero-cluster certificates under bounded
-operator error. Their compilation does
+zero displacement, separated zero-cluster certificates under bounded
+operator error, onsite ordering from properness, and a sharper positive-
+interaction spectral and zero-response family. Their compilation does
 not change the selected §4.40 statement, establish a concrete geometric
 application or certify originality or independent research interest.
 
