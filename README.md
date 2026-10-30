@@ -23,6 +23,7 @@ the single mathematical result selected by the root Comparator configuration.
 | Positive full-spectrum inverse-square summability and its preservation under nonnegative finite-sector interventions | Formalized under the sufficient growth, ordering and gap hypotheses of §4.48 |
 | Entire canonical products and exact zero divisors for admissible positive full spectra | Formalized in §§2.4 and 4.49: every zero has its exact geometric multiplicity; normalization and paired symmetry are proved |
 | Indexed finite-sector response of full spectral-product zeros, with operator-specific exact geometric orders | Formalized in §§4.50–4.52 and 6.3 for the positive finite-sector family under the stated infinite-indexing, gap and summability conditions |
+| Exact zero-cluster certificates under small symmetric bounded operator errors | Formalized in §§4.53–4.56: finite boundary margins certify both reflected zero sets and their total multiplicity |
 | A concrete Ammann–Beenker model, relative-product identities and certified finite-patch zero response | Proposed research milestones in §§6.4–6.6 |
 
 The research objective is an end-to-end statement relating an explicitly defined
@@ -32,8 +33,10 @@ finite observation sector for this program. The subsequent abstract spectral
 response is now proved separately. The analytic product is entire and records
 the exact full spectral multiplicities under the stated positivity and
 summability hypotheses. The indexed zero-response bridge is now proved for positive finite-sector
-perturbations in the sufficient abstract setting. A concrete geometric
-application, certified approximation and statistical results remain open. The
+perturbations in the sufficient abstract setting. A bounded-operator-error
+certificate now controls separated zero clusters, with exact multiplicity
+counts. A concrete geometric application, certified finite-patch approximation
+and statistical results remain open. The
 Comparator selection still contains only the original single-eigenspace theorem.
 
 The chosen affine line is part of the definition of the analytic family.
@@ -121,8 +124,11 @@ and preserves it along this intervention. Section 4.49 now turns the exact
 full spectral enumeration into an entire product whose zeros have precisely
 the geometric eigenspace multiplicities. Sections 4.50–4.52 now transfer this response to the actual indexed zeros of
 the two entire full spectral products, with fixed affine data and the correct
-operator-specific geometric orders. The concrete geometric application is
-still open in §6.4.
+operator-specific geometric orders. Sections 4.53–4.56 now certify the total
+zero multiplicity in a separated window under a small symmetric bounded
+operator error. They derive all-index error bounds and use finite neighboring
+level checks at the window boundaries. The concrete geometric application
+remains open in §6.4.
 
 These are additional source theorems, not additions to the current
 Comparator-selected statement. They do not provide a numerical reconstruction
@@ -357,8 +363,53 @@ enumeration and uniqueness of complete monotone domain eigenbases, the
 points are zeros of the full products and their orders agree with the
 respective operators' geometric multiplicities. The first statement keeps
 the absolute value of the real level difference until positivity is known.
-This construction does not prove a relative determinant identity, a complex
-operator spectral theorem, or quantitative approximation of zeros.
+The additional bounded-error zero certificates are described in §2.5.
+A relative determinant identity, a complex operator spectral theorem and
+finite-patch approximation estimates remain open.
+
+### 2.5. Certified zero clusters from bounded operator error
+
+Sections 4.53–4.56 give a quantitative certificate using **operator error**
+and **spectral boundary margins**. Let $H=M_V+B$, $\widetilde H=H+K$ on the
+same natural domain, with symmetric bounded $B,K$. Under the explicit properness,
+onsite-ordering and summability assumptions, require
+```math
+\|K\|\le\eta<v_0-\|B\|,\qquad V\ge v_0.
+```
+Both complete ordered spectra exist, remain positive and inverse-square
+summable, and satisfy
+```math
+|\lambda_i(\widetilde H)-\lambda_i(H)|\le\eta,
+\qquad
+|z_i^\pm(\widetilde H)-z_i^\pm(H)|\le |d|\eta.
+```
+
+Write $q_i=\lambda_i(H)$. A cut at energy $t$ and index $k$ is certified by
+```math
+k>0\ \Longrightarrow\ q_{k-1}+\eta<t,
+\qquad t+\eta<q_k.
+```
+At $k=0$ only the second inequality is required. For a positive window
+$0<a<b$, apply these finite checks at $(a,m)$ and $(b,n)$. For both operators,
+the indices in $(a,b)$ are then exactly $m,\ldots,n-1$. On **each** reflected
+segment $c\pm d[a,b]$, the finite set $Z^\pm$ consists of all product zeros,
+the endpoints are zero-free, and
+```math
+\sum_{z\in Z^\pm}\operatorname{ord}_z D=n-m.
+```
+The sum is over distinct complex points, weighted by their exact analytic
+orders, which are the respective operators' geometric multiplicities.
+Repeated levels may split or merge inside the window. Empty windows are
+included; the underlying full-spectrum sequence still requires infinitely
+many sites. The certificate does not assert that every chosen window has
+large enough boundary margins.
+
+Compact-uniform convergence of products alone is not used to infer these
+bounds. A finite-patch application must first supply a justified comparison
+of operators or resolvents and an appropriate quantitative error certificate.
+A finite matrix on a different Hilbert space does not automatically satisfy
+the common-domain bounded-error hypothesis. Certificates based solely on
+scalar analytic approximation and contour arguments remain open.
 
 ## 3. Finite-dimensional geometric operators
 
@@ -1470,9 +1521,10 @@ eigenbases or perturbed summability as input.
 `fullSpectrum_admissible_of_positive_summable` connects these full levels to
 the existing canonical-product predicate. Sections 2.4 and 4.49 now supply
 entire holomorphy and exact zero orders from that input. The indexed
-finite-sector zero-response theorem is proved in §4.52. Relative determinants,
-the concrete tiling and suitable gap/summability packages for perturbations
-of arbitrary sign remain open.
+finite-sector zero-response theorem is proved in §4.52. Section 4.55 now
+preserves a positive gap and summability for symmetric bounded errors of
+either sign whose norm is smaller than the supplied gap. Relative determinants,
+the concrete tiling and extensions beyond this small-error criterion remain open.
 
 ### 4.49. Full spectral products with exact geometric zero multiplicities
 
@@ -1592,18 +1644,108 @@ $v_0>\|B+\tau P_F\|$. Both interval endpoints are included. The theorem
 does not assert that the energy window is nonempty, rule out zero collisions
 between *different* indices and parameter values, or select a global
 eigenvector family depending on $\tau$. The geometric Ammann–Beenker
-instantiation, signed-intervention extension, relative determinant and
-certified zero approximation remain open.
+instantiation, relative determinant and certified finite-patch approximation
+remain open. Small signed-error stability and separated zero-window
+certificates are proved in §§4.53–4.56 under their additional norm and
+boundary-margin hypotheses. They do not restrict the positive-response
+interval already verified in this section.
+
+### 4.53. Ordered windows certified by neighboring levels
+
+[OrderedSpectralWindow.lean](SpectralGeometry/OrderedSpectralWindow.lean)
+defines `OrderedGapCertificate q δ t k` using only the two inequalities
+$q_{k-1}+\delta<t$ (when $k>0$) and $t+\delta<q_k$.
+For monotone reference levels and an all-index bound
+$|\mu_i-q_i|\le\delta$, `orderedGapCertificate_separates` proves that every
+index below $k$ is strictly below $t$ and every remaining index is strictly
+above it. Boundary exclusion is a conclusion, not an assumption about the
+unknown perturbed levels.
+
+`orderedWindow_indices_iff` combines two cuts to identify the complete
+window index set with `Finset.Ico m n`. `orderedWindow_finite_card` proves
+its finiteness and cardinality $n-m$. A cut before the first index and an
+empty index block are included. No separation is required between the
+levels inside the block.
+
+### 4.54. Counting exact analytic orders on the complex line
+
+[CanonicalProductClusterCount.lean](SpectralGeometry/CanonicalProductClusterCount.lean)
+proves `canonicalProduct_cluster_order_sum`: the sum of analytic orders over
+the distinct levels of a finite, level-saturated index set is its cardinality.
+Saturation means every copy of an included level is present; it is derived
+for the certified window, so repeated levels are not partially counted.
+The proof reuses §2.4's exact order theorem and a finite fiber decomposition.
+
+`canonicalProduct_certified_window` constructs `CertifiedCanonicalWindow`
+from the reference cuts, the level-error bound, admissibility of the compared
+sequence, $d\ne0$ and a positive lower window endpoint. It records the exact
+indices, the complete zero set on each closed reflected segment, and the
+order sum. `spectralWindowZeros` is the finite set of distinct complex roots.
+The methods `mem_zeros_iff`, `complex_order_sum` and `boundary_ne_zero` prove
+that these are all segment zeros, that their analytic orders sum to $n-m$,
+and that both endpoints are zero-free for $a\le b$. Injectivity of the signed
+affine coordinate is proved explicitly before changing the order sum from
+real levels to complex points. Empty windows and repeated levels are covered.
+
+### 4.55. Small symmetric bounded errors: ordered levels, gap and summability
+
+[InfiniteBoundedSpectralStability.lean](SpectralGeometry/InfiniteBoundedSpectralStability.lean)
+proves `onsitePlusBounded_ordered_perturbation_bound` for symmetric bounded
+$B,K$ and actual complete monotone domain eigenbases of $M_V+B$ and
+$M_V+B+K$ on the same natural domain:
+```math
+|\lambda_i(M_V+B+K)-\lambda_i(M_V+B)|\le\|K\|.
+```
+The proof derives a two-sided quadratic-form comparison and invokes the
+existing variational theorem. It permits either sign and infinite rank of
+$K$, and does not assume simple eigenvalues.
+
+`positive_invSq_summable_of_small_error` shows that a supplied baseline gap
+$q_i\ge\gamma$ and inverse-square summability persist under
+$\mu_i\ge q_i-\delta$, $0\le\delta<\gamma$. The new gap is
+$\gamma-\delta>0$. Its proof compares $\mu_i$ to
+$((\gamma-\delta)/\gamma)q_i$; no separate growth or summability hypothesis
+is imposed on the perturbed sequence.
+`onsitePlusBounded_small_error_preserves_summability` applies this to the
+actual operator error. This abstract lemma accepts any proved baseline gap;
+§4.56 uses the sufficient gap $v_0-\|B\|$ from the existing onsite transfer.
+
+### 4.56. Full spectral zero-cluster certificates under operator error
+
+[InfiniteFullSpectralCluster.lean](SpectralGeometry/InfiniteFullSpectralCluster.lean)
+proves `onsitePlusBounded_exists_certified_zero_clusters`. It assumes infinitely
+many sites, symmetric bounded $B,K$, $V\ge v_0$, proper onsite sublevel sets,
+a supplied sorted onsite bijection, onsite inverse-square summability,
+$\|K\|\le\eta<v_0-\|B\|$, and fixed $c,d$ with $d\ne0$.
+
+The theorem derives both complete ordered spectra, their lower gaps,
+admissibility and `HasExactFullSpectralProduct` for their respective actual
+operators. Existence and the original geometric multiplicity identification
+come from §§4.47 and 4.51; the witnessing compact-resolvent shifts may differ.
+It proves the all-index level error and the two signed zero-displacement
+bounds $|d|\eta$. Each positive energy window with the two reference cut
+certificates receives `CertifiedCanonicalWindow` for **both** products,
+hence the same total geometric zero multiplicity on each signed segment.
+
+The theorem does not assume the perturbed spectrum, its summability, the
+level error or the zero count as input. The boundary margins are independent
+finite inequalities to verify in an application. Multiplicities inside a
+window may change; their total is conserved. This is an infinite-operator
+certificate for a bounded common-domain discrepancy. It does not yet supply
+an error estimate for a finite patch, a contour theorem for arbitrary
+analytic approximants, or an instantiation for the proposed tiling.
 
 ## 5. Building and verification
 
-The canonical import list is maintained in [`SpectralGeometry.lean`](SpectralGeometry.lean). It currently imports **62 Lean modules**: four analytic modules, four finite-dimensional geometry modules, and fifty-four operator/spectral modules (including domain-generic interfaces).
+The canonical import list is maintained in [`SpectralGeometry.lean`](SpectralGeometry.lean). It currently imports **66 Lean modules**: six analytic and window modules, four finite-dimensional geometry modules, and fifty-six operator/spectral modules (including domain-generic interfaces).
 
-- **Analytic core and indexed-point algebra (4):**
+- **Analytic core, indexed points and certified windows (6):**
   - [`CanonicalProduct.lean`](SpectralGeometry/CanonicalProduct.lean)
   - [`CanonicalProductAnalytic.lean`](SpectralGeometry/CanonicalProductAnalytic.lean)
   - [`CanonicalProductZeroOrder.lean`](SpectralGeometry/CanonicalProductZeroOrder.lean)
   - [`IndexedSpectralPoints.lean`](SpectralGeometry/IndexedSpectralPoints.lean)
+  - [`OrderedSpectralWindow.lean`](SpectralGeometry/OrderedSpectralWindow.lean)
+  - [`CanonicalProductClusterCount.lean`](SpectralGeometry/CanonicalProductClusterCount.lean)
 - **Finite-dimensional geometry (4):**
   - [`FinitePerturbation.lean`](SpectralGeometry/FinitePerturbation.lean)
   - [`FinitePositiveEnergy.lean`](SpectralGeometry/FinitePositiveEnergy.lean)
@@ -1672,6 +1814,10 @@ The canonical import list is maintained in [`SpectralGeometry.lean`](SpectralGeo
   - [`OrderedSpectralProductBridge.lean`](SpectralGeometry/OrderedSpectralProductBridge.lean)
   - [`FiniteSectorZeroResponse.lean`](SpectralGeometry/FiniteSectorZeroResponse.lean)
 
+- **Bounded spectral errors and full zero-cluster certificates (2):**
+  - [`InfiniteBoundedSpectralStability.lean`](SpectralGeometry/InfiniteBoundedSpectralStability.lean)
+  - [`InfiniteFullSpectralCluster.lean`](SpectralGeometry/InfiniteFullSpectralCluster.lean)
+
 The project uses Lean 4 `v4.35.0` with its corresponding Mathlib version. Every module listed above is imported by the root entry point.
 
 ```bash
@@ -1692,7 +1838,7 @@ one [`comparator.json`](comparator.json), one
 Comparator selects **one theorem**, the per-eigenspace low-energy multiplicity
 bound of §4.40, together with 16 independently reproduced definitions and type abbreviations needed to state it.
 The toolchain's Lean, NanoDa and con-ron kernels verify the selected
-comparison. The separate Lean build still covers **all 62 mathematical
+comparison. The separate Lean build still covers **all 66 mathematical
 source modules**; earlier compact-resolvent, real-spectrum and ordered
 enumeration theorems remain compiled prerequisites but are not individually
 compared in this submission. The metadata records the first identified
@@ -1843,10 +1989,14 @@ F_R=\{t:V(t)\le R\},
   inverses are supplied by §§4.47–4.48; the resolvent shift may vary with the
   parameter.
 
-**Remaining extensions and application inputs**
+**Verified signed-error extension and remaining application inputs**
 
-- [ ] Extend a suitable gap/summability package to other signed local
-  perturbations under independently checked quantitative hypotheses.
+- [x] Preserve a supplied positive gap and inverse-square summability for
+  symmetric bounded perturbations of either sign with $\|K\|<\gamma$,
+  where $\gamma$ is the baseline gap (§4.55). Section 4.56 derives complete
+  perturbed spectra and exact products under its sufficient onsite
+  hypotheses. This includes small signed finite-support interventions;
+  it does not cover errors exceeding the verified gap.
 - [ ] Derive the sorted onsite site bijection from suitable structural
   hypotheses. The existing comparison/transfer accepts that bijection as
   an input; existence of the ordered **full** eigenbasis is already proved.
@@ -1908,9 +2058,22 @@ the unchanged Comparator-selected theorem of §4.40.
   from different indices at different parameters are not excluded.
   The statement is conditional on $\lambda_n(H)\le E$ and does not prove
   that such an index exists.
-- [ ] Distinguish compact-set convergence of products from quantitative
-  approximation of individual zeros or clusters. Additional separation or
-  contour hypotheses must be proved when they are used.
+
+**Certified operator-error windows and remaining approximation work**
+
+- [x] Under an independently supplied bounded-operator error certificate,
+  derive the all-index level and zero errors and certify the exact total
+  zero multiplicity in a separated window (§§4.53–4.56). Neighboring
+  reference levels certify both boundary cuts; separation of all remaining
+  indices and exclusion of boundary zeros are proved. Each reflected
+  segment has exactly the stated order sum, including empty windows and
+  repeated levels.
+- [ ] Derive zero-location or cluster-count certificates from quantitative
+  scalar analytic approximation on compact sets, with any required
+  contour/separation hypotheses. The operator-error theorem above does
+  not turn qualitative compact-uniform product convergence into such an
+  error estimate. Finite-patch operator/resolvent error certificates
+  remain open in §6.6.
 
 ### 6.4. P4 — A confined Ammann–Beenker model and a finite intervention
 
@@ -2041,10 +2204,12 @@ This phase provides the missing approximation certificate.
   do not assume a universal exponential rate.
 - [ ] Propagate the matrix error to the relative determinant and the
   analytic products, controlling their normalizations.
-- [ ] Certify zero counts in contours and intervals, with multiplicities.
-  Individual displacement estimates require appropriate isolation
-  hypotheses or certified clusters; uniform approximation alone must
-  not be treated as a simple-root error estimate.
+- [ ] Certify zero counts in contours and intervals for the finite-patch
+  approximation, with multiplicities. The bounded common-domain operator
+  certificate of §4.56 is available only after a compatible error bound
+  has been proved; it does not identify a finite matrix with the infinite
+  operator. General contour certificates remain open, and uniform scalar
+  approximation alone is not a simple-root displacement estimate.
 - [ ] Make the resulting error bounds small relative to the spectral
   scale of the proposed application. In statistical comparisons, fix the
   unfolding independently and control its amplification of spectral error.
@@ -2102,10 +2267,11 @@ theorem, and carries no asserted connection to the Riemann zeta function.
 
 **Assessment and future selection**
 
-The source results of §§4.41–4.52 now include simultaneous observation,
+The source results of §§4.41–4.56 now include simultaneous observation,
 total counting, an abstract finite-sector response, entire full spectral
-products with exact geometric zero multiplicities, and indexed finite-sector
-zero displacement. Their compilation does
+products with exact geometric zero multiplicities, indexed finite-sector
+zero displacement, and separated zero-cluster certificates under bounded
+operator error. Their compilation does
 not change the selected §4.40 statement, establish a concrete geometric
 application or certify originality or independent research interest.
 
