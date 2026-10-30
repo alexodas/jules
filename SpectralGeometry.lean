@@ -69,6 +69,9 @@ public import SpectralGeometry.InfiniteFullSpectralCluster
 public import SpectralGeometry.InfiniteOnsiteOrderedEnumeration
 public import SpectralGeometry.InfinitePositiveSpectralControl
 public import SpectralGeometry.PositiveFiniteSectorZeroResponse
+public import SpectralGeometry.AnalyticZeroLocalization
+public import SpectralGeometry.CanonicalProductApproximation
+public import SpectralGeometry.FullSpectralZeroLocalization
 
 public section
 
