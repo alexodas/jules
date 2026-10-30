@@ -94,6 +94,7 @@ theorem LocalAnalyticZeroControl.canonical_approximation
 
 variable {Tile : Type*} [DecidableEq Tile]
 
+omit [DecidableEq Tile] in
 /-- The exponent for a full spectral zero is its actual geometric
 multiplicity, using the compact-resolvent witness of that product. -/
 theorem HasExactFullSpectralProduct.local_zero_controls

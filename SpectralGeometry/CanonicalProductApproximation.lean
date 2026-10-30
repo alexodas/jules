@@ -114,10 +114,18 @@ theorem canonicalProduct_partial_error_le {q : ℕ → ℝ}
 /-- The explicit error tends to zero for every fixed affine-coordinate
 bound. A numerical rate still requires a numerical bound for the tail. -/
 theorem canonicalProductApproximationError_tendsto_zero {q : ℕ → ℝ}
-    (_hs : Summable (fun n => 1 / (q n) ^ 2)) (A : ℝ) :
+    (hs : Summable (fun n => 1 / (q n) ^ 2)) (A : ℝ) :
     Tendsto (canonicalProductApproximationError q A) atTop (𝓝 0) := by
   unfold canonicalProductApproximationError
-  have ht := tendsto_sum_nat_add (fun n => 1 / (q n) ^ 2)
+  have ht : Tendsto (fun N => ∑' k, 1 / (q (k + N)) ^ 2) atTop (𝓝 0) := by
+    have heq : (fun N => ∑' k, 1 / (q (k + N)) ^ 2) =
+        (fun N => (∑' k, 1 / (q k) ^ 2) - ∑ k ∈ Finset.range N, 1 / (q k) ^ 2) := by
+      funext N
+      linarith [hs.sum_add_tsum_nat_add N]
+    rw [heq]
+    convert (tendsto_const_nhds (x := ∑' k, 1 / (q k) ^ 2)).sub
+      hs.tendsto_sum_tsum_nat using 1
+    simp
   have he := (Real.continuous_exp.tendsto _).comp (ht.const_mul A)
   simpa only [mul_zero, Real.exp_zero, sub_self, Function.comp_apply] using
     (he.sub (tendsto_const_nhds (x := (1 : ℝ)))).const_mul

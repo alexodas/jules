@@ -25,6 +25,7 @@ the single mathematical result selected by the root Comparator configuration.
 | Indexed finite-sector response of full spectral-product zeros, with operator-specific exact geometric orders | Formalized in §§4.50–4.52 and 6.3 for the positive finite-sector family under the stated infinite-indexing, gap and summability conditions |
 | Exact zero-cluster certificates under small symmetric bounded operator errors | Formalized in §§4.53–4.56: finite boundary margins certify both reflected zero sets and their total multiplicity |
 | Onsite ordering from properness and sharpened positive-interaction spectral and zero response | Formalized in §§4.57–4.59: the onsite gap is preserved without a small interaction-norm assumption; the onsite ordering is constructed |
+| Scalar analytic approximation and local zero certificates with multiplicities | Formalized in §§4.60–4.62: explicit product-tail errors, persistence of at least one zero and a multiplicity-dependent location bound; general exact cluster counts remain open |
 | A concrete Ammann–Beenker model, relative-product identities and certified finite-patch zero response | Proposed research milestones in §§6.4–6.6 |
 
 The research objective is an end-to-end statement relating an explicitly defined
@@ -39,7 +40,11 @@ certificate now controls separated zero clusters, with exact multiplicity
 counts. Proper onsite sublevels now supply the required sorted site bijection.
 For nonnegative interactions, the positive onsite gap and a sharper indexed
 response are proved without requiring that gap to exceed the interaction norm.
-A concrete geometric application, certified finite-patch approximation
+Scalar analytic errors now yield local zero certificates, with the actual
+zero multiplicity determining the power in the location bound. An explicit
+inverse-square tail controls finite truncations of a fixed canonical product.
+A concrete geometric application, general analytic cluster-count certificates,
+certified finite-patch approximation
 and statistical results remain open. The
 Comparator selection still contains only the original single-eigenspace theorem.
 
@@ -134,8 +139,13 @@ operator error. They derive all-index error bounds and use finite neighboring
 level checks at the window boundaries. Sections 4.57–4.59 construct the onsite
 ordering from properness and prove a stronger positive-interaction family:
 the gap remains $v_0>0$, and the response coefficient becomes
-$(R-E)/(R-v_0)$, with no interaction-norm penalty. The concrete geometric
-application remains open in §6.4.
+$(R-E)/(R-v_0)$, with no interaction-norm penalty. Sections 4.60–4.62 add a
+different kind of certificate: scalar approximation near a zero of order
+$m$ preserves at least one nearby zero and bounds every zero in the certified
+disk at the scale $\varepsilon^{1/m}$. The full product's geometric
+multiplicities supply $m$, and inverse-square tails supply explicit product
+truncation errors. This does not prove equality of the approximating zero
+count. The concrete geometric application remains open in §6.4.
 
 These are additional source theorems, not additions to the current
 Comparator-selected statement. They do not provide a numerical reconstruction
@@ -426,8 +436,51 @@ Compact-uniform convergence of products alone is not used to infer these
 bounds. A finite-patch application must first supply a justified comparison
 of operators or resolvents and an appropriate quantitative error certificate.
 A finite matrix on a different Hilbert space does not automatically satisfy
-the common-domain bounded-error hypothesis. Certificates based solely on
-scalar analytic approximation and contour arguments remain open.
+the common-domain bounded-error hypothesis. Scalar local zero-location
+certificates are now proved in §2.6; equality of zero counts under general
+analytic approximation remains open.
+
+### 2.6. Scalar approximation near a multiple spectral zero
+
+Sections 4.60–4.62 give a local certificate for an arbitrary analytic
+approximant $g$ of a full spectral product $f=D_H$. At a zero $a$ with
+finite positive order $m$, the formalization constructs $\rho,C>0$ such that
+```math
+|f(z)|\ge C|z-a|^m\qquad (|z-a|\le\rho).
+```
+The reference disk contains only the distinct zero $a$, with its full
+multiplicity $m$. Suppose $g$ is analytic on a neighborhood of the closed
+disk and, on its boundary,
+```math
+|g(z)-f(z)|\le\varepsilon,\qquad
+\varepsilon\ge0,\qquad 2\varepsilon<C\rho^m.
+```
+Then $g$ has at least one zero in the open disk, has none on its boundary,
+and every zero $z$ in the closed disk satisfies
+```math
+|z-a|^m\le\varepsilon/C,
+\qquad |z-a|\le(\varepsilon/C)^{1/m}.
+```
+For the full spectral product, $m$ is the original geometric eigenspace
+multiplicity. A linear location estimate is obtained when $m=1$; no
+simple-spectrum assumption is imposed in the general result. The proof
+uses the local analytic factorization and the maximum modulus principle.
+It does not prove that the total approximating zero multiplicity is $m$.
+An arbitrary approximant's zeros may lie off the prescribed line.
+
+The scalar error can be certified from a finite product
+$P_N=\prod_{n<N}(1-((z-c)/d)^2/q_n^2)$. For positive $q_n$ with
+$S=\sum_nq_n^{-2}<\infty$, put $T_N=\sum_{k\ge0}q_{k+N}^{-2}$.
+On any set with $|(z-c)/d|^2\le A$, $A\ge0$, the proved bound is
+```math
+|D_q(z)-P_N(z)|\le e^{AS}(e^{AT_N}-1).
+```
+The right side tends to zero; certified upper bounds for $S,T_N$ can
+replace the infinite sums. An additional error $\eta$ in approximating
+$P_N$ adds to this bound. The estimate remains valid at zeros of $P_N$
+and includes $N=0$. These are truncations of one fixed spectral sequence.
+Neither a finite-patch operator error nor numerical values for the local
+constants $C,\rho$ are supplied by the abstract existence theorem.
 
 ## 3. Finite-dimensional geometric operators
 
@@ -1850,17 +1903,117 @@ establish a nonempty controlled window or exclude common zero locations
 arising from different indices at different parameters. Relative products
 and certified finite-patch approximation remain separate obligations.
 
+### 4.60. Local zero certificates from scalar boundary error
+
+[AnalyticZeroLocalization.lean](SpectralGeometry/AnalyticZeroLocalization.lean)
+defines `LocalAnalyticZeroControl f a m ρ C`. It records $m>0$,
+$\rho,C>0$, analyticity on a neighborhood of the closed disk, exact order
+$\operatorname{ord}_a f=m$, and
+$C|z-a|^m\le|f(z)|$ throughout that disk.
+`exists_localAnalyticZeroControl` derives these data from analyticity at
+$a$ and finite positive zero order. It extracts the nonvanishing analytic
+cofactor and uses continuity to obtain its positive lower bound. Thus
+existence of the constants is proved, although their numerical values
+remain to be certified in an application.
+
+`LocalAnalyticZeroControl.zero_iff` proves that the reference disk isolates
+the distinct zero $a$. `analytic_error_le_on_closedBall` extends a uniform
+boundary error to the closed disk by the maximum modulus principle.
+`LocalAnalyticZeroControl.approximation` assumes an approximant analytic
+near the closed disk, a boundary error at most $\varepsilon\ge0$ and
+$2\varepsilon<C\rho^m$. It proves existence of an interior zero, exclusion
+of boundary zeros, and
+```math
+g(z)=0,\quad |z-a|\le\rho
+\quad\Longrightarrow\quad |z-a|^m\le\varepsilon/C.
+```
+The existence proof applies the maximum principle to the inverse under a
+contradictory zero-free hypothesis. `zero_distance_le` writes the bound as
+$(\varepsilon/C)^{1/m}$; `approximation_ne_zero_of_norm_gt` gives the
+complementary zero-exclusion test wherever the reference modulus exceeds
+the certified error. These statements do not count the approximating
+zeros, assume that they are simple, or keep them on a real affine line.
+
+### 4.61. Explicit inverse-square tail errors for canonical products
+
+[CanonicalProductApproximation.lean](SpectralGeometry/CanonicalProductApproximation.lean)
+defines `canonicalPartialProduct` and `canonicalProductApproximationError`.
+For positive $q_n$, summable inverse squares, a finite cutoff $N$, and a
+squared affine-coordinate bound $A$, `canonicalProduct_partial_error_le`
+proves the uniform estimate of §2.6:
+```math
+|D_q(z)-P_N(z)|\le E_N(A),\qquad
+E_N(A)=e^{AS}(e^{AT_N}-1),\quad
+S=\sum_nq_n^{-2},\quad T_N=\sum_{k\ge0}q_{k+N}^{-2}.
+```
+`tprod_one_add_truncation_error` first proves the underlying estimate for
+any complex product with a summable norm majorant. It splits the initial
+product from its tail and passes finite exponential bounds to the limit.
+It never divides by the initial product, so the bound includes its zeros
+and the empty product at $N=0$.
+
+`canonicalProductApproximationError_tendsto_zero` proves $E_N(A)\to0$ for
+fixed $A$. `canonicalProductApproximationError_le_of_bounds` replaces
+$S,T_N$ by independently verified upper bounds, giving an error budget
+with no infinite sums in its conclusion.
+`canonicalProduct_approximation_error_add` adds a certified error $\eta$
+between an arbitrary approximant and $P_N$. A computable convergence rate
+still requires a computable tail bound. No finite-volume spectrum is
+identified with this truncation of the fixed full sequence.
+
+### 4.62. Scalar approximation at full spectral zeros
+
+[FullSpectralZeroLocalization.lean](SpectralGeometry/FullSpectralZeroLocalization.lean)
+connects the preceding certificates to the existing exact divisor.
+`canonicalProduct_exists_local_zero_control` obtains local control at
+each signed indexed zero, with exponent `levelMultiplicity q (q i)`.
+`HasExactFullSpectralProduct.local_zero_controls` instead states that
+exponent directly as the actual operator's geometric multiplicity, using
+the compact-resolvent witness already belonging to that full product.
+The order is not supplied independently of the spectral divisor.
+
+`LocalAnalyticZeroControl.canonical_approximation` combines the local
+certificate with §4.61's tail error and an independently bounded analytic
+approximation to the finite product. For a disk about $a$, it proves the
+affine-coordinate bound
+```math
+A=\left(\frac{|a-c|+\rho}{|d|}\right)^2
+```
+and uses $\varepsilon=E_N(A)+\eta$ in the condition
+$2\varepsilon<C\rho^m$. Its conclusion includes an interior zero, the
+power location bound for every zero in the disk, and a zero-free boundary.
+
+`onsitePlusNonneg_exists_scalar_zero_control` constructs the required
+ordered full spectrum, complete natural-domain eigenbasis, positivity,
+inverse-square summability, exact full product and local zero controls.
+It assumes infinitely many sites, symmetric nonnegative bounded $B$,
+$V\ge v_0>0$, proper onsite sublevels, onsite inverse-square summability,
+and fixed $c,d$ with $d\ne0$. It reuses §§4.47, 4.51 and 4.58, including
+their self-adjointness and compact-resolvent construction on $D(V)$.
+No smallness of $\|B\|$, simple eigenvalues or supplied onsite ordering
+is required. Finite and empty spectra are not padded into an infinite
+sequence; the local analytic lemmas themselves do not require an
+infinite-dimensional operator.
+
+The arbitrary approximant need not be a spectral product, share the
+paired symmetry, or have its zeros on the prescribed line. The theorem
+certifies persistence and local location, not equality of total zero
+multiplicity, an index matching, or a finite-patch error. Concrete
+numerical cofactor and tail bounds and the geometric model remain open.
+
 ## 5. Building and verification
 
-The canonical import list is maintained in [`SpectralGeometry.lean`](SpectralGeometry.lean). It currently imports **69 Lean modules**: six analytic and window modules, four finite-dimensional geometry modules, and fifty-nine operator/spectral modules (including domain-generic interfaces).
+The canonical import list is maintained in [`SpectralGeometry.lean`](SpectralGeometry.lean). It currently imports **72 Lean modules**: eight analytic and window modules, four finite-dimensional geometry modules, and sixty operator/spectral modules (including domain-generic interfaces).
 
-- **Analytic core, indexed points and certified windows (6):**
+- **Analytic core, indexed points and certified windows (8):**
   - [`CanonicalProduct.lean`](SpectralGeometry/CanonicalProduct.lean)
   - [`CanonicalProductAnalytic.lean`](SpectralGeometry/CanonicalProductAnalytic.lean)
   - [`CanonicalProductZeroOrder.lean`](SpectralGeometry/CanonicalProductZeroOrder.lean)
   - [`IndexedSpectralPoints.lean`](SpectralGeometry/IndexedSpectralPoints.lean)
   - [`OrderedSpectralWindow.lean`](SpectralGeometry/OrderedSpectralWindow.lean)
   - [`CanonicalProductClusterCount.lean`](SpectralGeometry/CanonicalProductClusterCount.lean)
+  - [`AnalyticZeroLocalization.lean`](SpectralGeometry/AnalyticZeroLocalization.lean)
+  - [`CanonicalProductApproximation.lean`](SpectralGeometry/CanonicalProductApproximation.lean)
 - **Finite-dimensional geometry (4):**
   - [`FinitePerturbation.lean`](SpectralGeometry/FinitePerturbation.lean)
   - [`FinitePositiveEnergy.lean`](SpectralGeometry/FinitePositiveEnergy.lean)
@@ -1926,11 +2079,12 @@ The canonical import list is maintained in [`SpectralGeometry.lean`](SpectralGeo
   - [`InfiniteFullSpectralSummability.lean`](SpectralGeometry/InfiniteFullSpectralSummability.lean)
   - [`InfinitePositiveSpectralControl.lean`](SpectralGeometry/InfinitePositiveSpectralControl.lean)
 
-- **Full spectral products and indexed response (4):**
+- **Full spectral products and analytic zero response (5):**
   - [`InfiniteFullSpectralProduct.lean`](SpectralGeometry/InfiniteFullSpectralProduct.lean)
   - [`OrderedSpectralProductBridge.lean`](SpectralGeometry/OrderedSpectralProductBridge.lean)
   - [`FiniteSectorZeroResponse.lean`](SpectralGeometry/FiniteSectorZeroResponse.lean)
   - [`PositiveFiniteSectorZeroResponse.lean`](SpectralGeometry/PositiveFiniteSectorZeroResponse.lean)
+  - [`FullSpectralZeroLocalization.lean`](SpectralGeometry/FullSpectralZeroLocalization.lean)
 
 - **Bounded spectral errors and full zero-cluster certificates (2):**
   - [`InfiniteBoundedSpectralStability.lean`](SpectralGeometry/InfiniteBoundedSpectralStability.lean)
@@ -1956,7 +2110,7 @@ one [`comparator.json`](comparator.json), one
 Comparator selects **one theorem**, the per-eigenspace low-energy multiplicity
 bound of §4.40, together with 16 independently reproduced definitions and type abbreviations needed to state it.
 The toolchain's Lean, NanoDa and con-ron kernels verify the selected
-comparison. The separate Lean build still covers **all 69 mathematical
+comparison. The separate Lean build still covers **all 72 mathematical
 source modules**; earlier compact-resolvent, real-spectrum and ordered
 enumeration theorems remain compiled prerequisites but are not individually
 compared in this submission. The metadata records the first identified
@@ -2158,7 +2312,8 @@ ordered level. Sections 4.52 and 4.59 transfer the respective norm-penalty and
 positive-interaction responses to the indexed zeros of both full spectral
 products. All the listed abstract obligations of this subsection are proved
 under their stated hypotheses. An application must still establish a nonempty
-target window and its geometric hypotheses (§6.4); general analytic and
+target window and its geometric hypotheses (§6.4). Local scalar analytic
+certificates are now available in §6.3; general analytic zero counts and
 finite-patch approximation certificates remain open in §§6.3 and 6.6.
 These source results are **not** part of
 the unchanged Comparator-selected theorem of §4.40.
@@ -2207,7 +2362,7 @@ the unchanged Comparator-selected theorem of §4.40.
   operator-specific geometric zero orders. Properness, onsite summability
   and the finite sector's exterior lower bound remain explicit inputs.
 
-**Certified operator-error windows and remaining approximation work**
+**Certified operator-error windows and scalar analytic approximation**
 
 - [x] Under an independently supplied bounded-operator error certificate,
   derive the all-index level and zero errors and certify the exact total
@@ -2216,12 +2371,29 @@ the unchanged Comparator-selected theorem of §4.40.
   indices and exclusion of boundary zeros are proved. Each reflected
   segment has exactly the stated order sum, including empty windows and
   repeated levels.
-- [ ] Derive zero-location or cluster-count certificates from quantitative
-  scalar analytic approximation on compact sets, with any required
-  contour/separation hypotheses. The operator-error theorem above does
-  not turn qualitative compact-uniform product convergence into such an
-  error estimate. Finite-patch operator/resolvent error certificates
-  remain open in §6.6.
+- [x] Derive local zero-location certificates from scalar analytic
+  approximation on a disk boundary (§4.60). Finite positive zero order
+  supplies a reference disk and a cofactor lower bound. Under the stated
+  error threshold, prove existence of an interior zero, exclusion of
+  boundary zeros and the multiplicity-dependent power bound for every
+  approximating zero in the disk. Section 4.62 identifies the exponent
+  with the full operator's geometric multiplicity. Neither simple roots
+  nor a conclusion about equality of zero counts is assumed.
+- [x] Derive an explicit uniform scalar error for truncating a fixed
+  canonical product from its inverse-square tail (§4.61). Prove convergence
+  of this error to zero, permit independent upper bounds for the total
+  sum and tail, and add a separately certified finite-approximation error.
+  Section 4.62 combines the error with the local zero certificate.
+- [ ] Prove exact total zero-multiplicity conservation for general analytic
+  approximants under explicit contour hypotheses. The local certificate
+  proves at least one zero and a location bound, not that exactly $m$
+  zeros counted with multiplicity persist. A general Rouché-type counting
+  theorem remains a separate obligation.
+- [ ] Supply concrete numerical lower bounds for the analytic cofactors,
+  isolation radii and inverse-square tails in a worked application.
+  Existence of local constants and a symbolic tail estimate do not
+  themselves compute these data. Finite-patch operator/resolvent error
+  certificates remain open in §6.6.
 
 ### 6.4. P4 — A confined Ammann–Beenker model and a finite intervention
 
@@ -2357,13 +2529,17 @@ This phase provides the missing approximation certificate.
   verified locality and barrier assumptions, with explicit constants;
   do not assume a universal exponential rate.
 - [ ] Propagate the matrix error to the relative determinant and the
-  analytic products, controlling their normalizations.
+  analytic products, controlling their normalizations. The absolute
+  scalar tail budget of §4.61 is available for a fixed spectral sequence;
+  deriving it from a finite-patch matrix remains to be justified.
 - [ ] Certify zero counts in contours and intervals for the finite-patch
   approximation, with multiplicities. The bounded common-domain operator
   certificate of §4.56 is available only after a compatible error bound
   has been proved; it does not identify a finite matrix with the infinite
-  operator. General contour certificates remain open, and uniform scalar
-  approximation alone is not a simple-root displacement estimate.
+  operator. Sections 4.60–4.62 now certify local zero persistence and
+  location from scalar analytic error, with exponent $1/m$ at a reference
+  zero of multiplicity $m$. General exact contour counts and the required
+  finite-patch error bounds remain open.
 - [ ] Make the resulting error bounds small relative to the spectral
   scale of the proposed application. In statistical comparisons, fix the
   unfolding independently and control its amplification of spectral error.
@@ -2421,12 +2597,15 @@ theorem, and carries no asserted connection to the Riemann zeta function.
 
 **Assessment and future selection**
 
-The source results of §§4.41–4.59 now include simultaneous observation,
+The source results of §§4.41–4.62 now include simultaneous observation,
 total counting, an abstract finite-sector response, entire full spectral
 products with exact geometric zero multiplicities, indexed finite-sector
 zero displacement, separated zero-cluster certificates under bounded
-operator error, onsite ordering from properness, and a sharper positive-
-interaction spectral and zero-response family. Their compilation does
+operator error, onsite ordering from properness, a sharper positive-
+interaction spectral and zero-response family, explicit scalar product-tail
+errors, and local analytic zero certificates using the exact spectral
+multiplicity as exponent. General scalar-approximation zero counts remain
+open. Their compilation does
 not change the selected §4.40 statement, establish a concrete geometric
 application or certify originality or independent research interest.
 
