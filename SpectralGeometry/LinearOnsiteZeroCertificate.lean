@@ -62,11 +62,12 @@ theorem linearOnsite_hasExactFullSpectralProduct :
     rw [he]
     simpa using onsiteDomainEigenbasis linearOnsitePotential (Equiv.refl ℕ)
   apply onsitePlusBounded_hasExactFullSpectralProduct linearOnsitePotential 1
-    (fun n => by dsimp [linearOnsitePotential]; positivity) linearOnsitePotential_proper 0
+    (fun n => le_add_of_nonneg_left (Nat.cast_nonneg n)) linearOnsitePotential_proper 0
     (by intro x y; simp) linearOnsitePotential _ hb
     linearOnsitePotential_positive linearOnsitePotential_invSq_summable 0 1 (by norm_num)
   intro i j hij
-  exact add_le_add_right (Nat.cast_le.mpr hij) 1
+  change (i : ℝ) + 1 ≤ (j : ℝ) + 1
+  linarith [show (i : ℝ) ≤ j by exact_mod_cast hij]
 
 /-- Numerical tails also hold for the complete spectrum after any
 symmetric nonnegative bounded interaction. This supplies a tail certificate,
@@ -83,15 +84,14 @@ theorem linearOnsitePlusNonneg_exists_numerical_tails
       (∀ N : ℕ, 0 < N → (∑' k, 1 / (ev (k + N)) ^ 2) ≤ 1 / (N : ℝ)) ∧
       (∀ A : ℝ, 0 ≤ A → A ≤ 2 → ∀ N : ℕ, 2 ≤ N →
         canonicalProductApproximationError ev A N ≤ 324 / (N : ℝ)) := by
-  have hV : ∀ n, 1 ≤ linearOnsitePotential n := by
-    intro n
-    dsimp [linearOnsitePotential]
-    positivity
+  have hV : ∀ n, 1 ≤ linearOnsitePotential n :=
+    fun n => le_add_of_nonneg_left (Nat.cast_nonneg n)
   obtain ⟨ev, hev, ⟨b⟩⟩ := onsitePlusBounded_exists_orderedEigenbasis
     linearOnsitePotential 1 hV linearOnsitePotential_proper B hB
   have ho : Monotone (fun n => linearOnsitePotential ((Equiv.refl ℕ) n)) := by
     intro i j hij
-    exact add_le_add_right (Nat.cast_le.mpr hij) 1
+    change (i : ℝ) + 1 ≤ (j : ℝ) + 1
+    linarith [show (i : ℝ) ≤ j by exact_mod_cast hij]
   have hg : ∀ n : ℕ, (n : ℝ) + 1 ≤ ev n := fun n =>
     onsitePlusBounded_ordered_ge_onsite_of_nonneg linearOnsitePotential B hB hpos
       (Equiv.refl ℕ) ho ev hev b n
@@ -235,7 +235,8 @@ theorem linearOnsite_approximation_certificate (N : ℕ) (hN : 16384 ≤ N)
     rw [norm_sub_rev] at hp
     linarith [herr z hz]
   have hc := linearOnsite_zero_control.approximation_zero_count hg he (by norm_num)
-  simpa using hc
+  norm_num at hc ⊢
+  exact hc
 
 end
 end SpectralGeometry
