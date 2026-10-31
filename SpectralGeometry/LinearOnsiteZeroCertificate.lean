@@ -68,6 +68,37 @@ theorem linearOnsite_hasExactFullSpectralProduct :
   intro i j hij
   exact add_le_add_right (Nat.cast_le.mpr hij) 1
 
+/-- Numerical tails also hold for the complete spectrum after any
+symmetric nonnegative bounded interaction. This supplies a tail certificate,
+not a cofactor or isolation radius for that interacting operator. -/
+theorem linearOnsitePlusNonneg_exists_numerical_tails
+    (B : TileHilbert ℕ →L[ℝ] TileHilbert ℕ)
+    (hB : ∀ x y, inner ℝ (B x) y = inner ℝ x (B y))
+    (hpos : ∀ x, 0 ≤ inner ℝ x (B x)) :
+    ∃ ev : ℕ → ℝ, Monotone ev ∧
+      Nonempty (DomainEigenbasis (infiniteOnsiteDomain linearOnsitePotential)
+        (onsitePlusBounded linearOnsitePotential B) ev) ∧
+      (∀ n : ℕ, (n : ℝ) + 1 ≤ ev n) ∧
+      Summable (fun n => 1 / (ev n) ^ 2) ∧
+      (∀ N : ℕ, 0 < N → (∑' k, 1 / (ev (k + N)) ^ 2) ≤ 1 / (N : ℝ)) ∧
+      (∀ A : ℝ, 0 ≤ A → A ≤ 2 → ∀ N : ℕ, 2 ≤ N →
+        canonicalProductApproximationError ev A N ≤ 324 / (N : ℝ)) := by
+  have hV : ∀ n, 1 ≤ linearOnsitePotential n := by
+    intro n
+    dsimp [linearOnsitePotential]
+    positivity
+  obtain ⟨ev, hev, ⟨b⟩⟩ := onsitePlusBounded_exists_orderedEigenbasis
+    linearOnsitePotential 1 hV linearOnsitePotential_proper B hB
+  have ho : Monotone (fun n => linearOnsitePotential ((Equiv.refl ℕ) n)) := by
+    intro i j hij
+    exact add_le_add_right (Nat.cast_le.mpr hij) 1
+  have hg : ∀ n : ℕ, (n : ℝ) + 1 ≤ ev n := fun n =>
+    onsitePlusBounded_ordered_ge_onsite_of_nonneg linearOnsitePotential B hB hpos
+      (Equiv.refl ℕ) ho ev hev b n
+  refine ⟨ev, hev, ⟨b⟩, hg, ?_, fun N hN => invSq_tail_le_of_linear_growth hg N hN,
+    fun A hA hA2 N hN => canonicalProductApproximationError_le_linear_rate hg hA hA2 N hN⟩
+  exact infiniteOnsiteLinearGrowth_invSq_summable ev (by simpa using hg)
+
 private theorem linearOnsite_disk_norm {z : ℂ} (hz : z ∈ closedBall 1 (1 / 4 : ℝ)) :
     ‖z‖ ≤ 5 / 4 := by
   have hd := mem_closedBall_iff_norm.mp hz
@@ -75,9 +106,9 @@ private theorem linearOnsite_disk_norm {z : ℂ} (hz : z ∈ closedBall 1 (1 / 4
   norm_num at ht
   linarith
 
-private theorem linearOnsite_first_two_lower {z : ℂ}
+private theorem linearOnsite_cofactor_prefix_lower {z : ℂ}
     (hz : z ∈ closedBall 1 (1 / 4 : ℝ)) :
-    (273 / 256 : ℝ) * ‖z - 1‖ ≤ ‖canonicalPartialProduct linearOnsitePotential 0 1 2 z‖ := by
+    (273 / 256 : ℝ) ≤ ‖-(z + 1) * factor linearOnsitePotential 0 1 1 z‖ := by
   have hd := mem_closedBall_iff_norm.mp hz
   have hzn := linearOnsite_disk_norm hz
   have hp : (7 / 4 : ℝ) ≤ ‖z + 1‖ := by
@@ -85,23 +116,67 @@ private theorem linearOnsite_first_two_lower {z : ℂ}
     rw [show (z + 1) - (z - 1) = (2 : ℂ) by ring] at ht
     norm_num at ht
     linarith
-  have hfactor0 : factor linearOnsitePotential 0 1 0 z = -(z - 1) * (z + 1) := by
-    simp [factor, perturb, linearOnsitePotential]
-    ring
   have hfactor1 : factor linearOnsitePotential 0 1 1 z = 1 - z ^ 2 / 4 := by
     norm_num [factor, perturb, linearOnsitePotential, sub_eq_add_neg]
-  have h0 : (7 / 4 : ℝ) * ‖z - 1‖ ≤ ‖factor linearOnsitePotential 0 1 0 z‖ := by
-    rw [hfactor0, norm_mul, norm_neg]
-    nlinarith [norm_nonneg (z - 1)]
   have h1 : (39 / 64 : ℝ) ≤ ‖factor linearOnsitePotential 0 1 1 z‖ := by
     have ht := norm_sub_le (1 - z ^ 2 / 4) (-(z ^ 2 / 4))
     simp only [sub_neg_eq_add, sub_add_cancel, norm_one, norm_neg, norm_div, norm_pow] at ht
     norm_num at ht
     rw [hfactor1]
     nlinarith [norm_nonneg z]
-  rw [canonicalPartialProduct, Finset.prod_range_succ, Finset.prod_range_succ,
-    Finset.prod_range_zero, one_mul, norm_mul]
-  have hm := mul_le_mul h0 h1 (by norm_num) (norm_nonneg _)
+  rw [norm_mul, norm_neg]
+  have hm := mul_le_mul hp h1 (by norm_num) (norm_nonneg _)
+  nlinarith
+
+/-- An explicit entire cofactor at the first zero, including its value
+at the zero itself; it is not defined by division at that point. -/
+@[expose] def linearOnsiteCofactor (z : ℂ) : ℂ :=
+  -(z + 1) * factor linearOnsitePotential 0 1 1 z *
+    canonicalProduct (fun n => linearOnsitePotential (n + 2)) 0 1 z
+
+theorem linearOnsiteCofactor_differentiable : Differentiable ℂ linearOnsiteCofactor := by
+  have ht := canonicalProduct_differentiable (admissible_of_inv_sq_summable
+    (fun n => linearOnsitePotential_positive (n + 2))
+    ((summable_nat_add_iff 2).mpr linearOnsitePotential_invSq_summable) 0 1)
+  have hf := factor_differentiable (q := linearOnsitePotential) (c := 0) (d := 1) 1
+  unfold linearOnsiteCofactor
+  fun_prop
+
+/-- The factorization is exact everywhere, including at the zero. -/
+theorem linearOnsite_cofactor_factorization (z : ℂ) :
+    canonicalProduct linearOnsitePotential 0 1 z = (z - 1) * linearOnsiteCofactor z := by
+  rw [canonicalProduct_eq_partial_mul_tail linearOnsitePotential_positive
+    linearOnsitePotential_invSq_summable 0 1 2 z]
+  simp only [canonicalPartialProduct, Finset.prod_range_succ, Finset.prod_range_zero, one_mul]
+  have hfactor0 : factor linearOnsitePotential 0 1 0 z = -(z - 1) * (z + 1) := by
+    simp [factor, perturb, linearOnsitePotential]
+    ring
+  change (factor linearOnsitePotential 0 1 0 z * factor linearOnsitePotential 0 1 1 z) *
+      (∏' k, factor linearOnsitePotential 0 1 (k + 2) z) =
+    (z - 1) * (-(z + 1) * factor linearOnsitePotential 0 1 1 z *
+      (∏' k, factor linearOnsitePotential 0 1 (k + 2) z))
+  rw [hfactor0]
+  ring
+
+/-- A numerical lower bound for the actual analytic cofactor throughout
+the closed disk, including at its center. -/
+theorem linearOnsiteCofactor_norm_lower {z : ℂ} (hz : z ∈ closedBall 1 (1 / 4 : ℝ)) :
+    (1 / 5 : ℝ) ≤ ‖linearOnsiteCofactor z‖ := by
+  have hzn := linearOnsite_disk_norm hz
+  have hzA : ‖(z - (0 : ℂ)) / 1‖ ^ 2 ≤ (25 / 16 : ℝ) := by
+    simp only [sub_zero, div_one]
+    nlinarith [norm_nonneg z]
+  have htail : (∑' k, 1 / (linearOnsitePotential (k + 2)) ^ 2) ≤ (1 / 2 : ℝ) := by
+    simpa using invSq_tail_le_of_linear_growth
+      (q := linearOnsitePotential) (fun _ => le_rfl) 2 (by norm_num)
+  have hl := canonicalProduct_tail_norm_lower linearOnsitePotential_positive
+    linearOnsitePotential_invSq_summable 0 1 2 (by norm_num : (0 : ℝ) ≤ 25 / 16)
+    hzA htail (by norm_num)
+  change (1 / 5 : ℝ) ≤ ‖(-(z + 1) * factor linearOnsitePotential 0 1 1 z) *
+    (∏' k, factor linearOnsitePotential 0 1 (k + 2) z)‖
+  rw [norm_mul]
+  have hm := mul_le_mul (linearOnsite_cofactor_prefix_lower hz) hl
+    (by norm_num) (norm_nonneg _)
   nlinarith
 
 /-- A fully numerical local control at the first spectral zero. The
@@ -116,18 +191,10 @@ theorem linearOnsite_zero_control :
     fun z _ => (canonicalProduct_differentiable ha).analyticAt z, ?_, ?_⟩
   · simpa [hm] using ho
   · intro z hz
-    have hzn := linearOnsite_disk_norm hz
-    have hzA : ‖(z - (0 : ℂ)) / 1‖ ^ 2 ≤ (25 / 16 : ℝ) := by
-      simp only [sub_zero, div_one]
-      nlinarith [norm_nonneg z]
-    have htail : (∑' k, 1 / (linearOnsitePotential (k + 2)) ^ 2) ≤ (1 / 2 : ℝ) := by
-      simpa using invSq_tail_le_of_linear_growth
-        (q := linearOnsitePotential) (fun _ => le_rfl) 2 (by norm_num)
-    have hl := canonicalProduct_lower_of_prefix_tail linearOnsitePotential_positive
-      linearOnsitePotential_invSq_summable 0 1 2 (by norm_num : (0 : ℝ) ≤ 25 / 16)
-      hzA htail (by norm_num) (linearOnsite_first_two_lower hz)
-    simp only [pow_one]
-    nlinarith [norm_nonneg (z - 1)]
+    rw [linearOnsite_cofactor_factorization, norm_mul, pow_one]
+    have hl := mul_le_mul_of_nonneg_left (linearOnsiteCofactor_norm_lower hz)
+      (norm_nonneg (z - 1))
+    simpa [mul_comm] using hl
 
 /-- A rational error bound for every cutoff at least 16384, uniformly on
 the whole closed disk. The finite product is not expanded computationally. -/
