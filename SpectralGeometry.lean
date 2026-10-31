@@ -72,6 +72,9 @@ public import SpectralGeometry.PositiveFiniteSectorZeroResponse
 public import SpectralGeometry.AnalyticZeroLocalization
 public import SpectralGeometry.CanonicalProductApproximation
 public import SpectralGeometry.FullSpectralZeroLocalization
+public import SpectralGeometry.AnalyticDiskZeroCount
+public import SpectralGeometry.AnalyticRouche
+public import SpectralGeometry.FullSpectralZeroCounts
 
 public section
 
