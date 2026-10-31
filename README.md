@@ -26,6 +26,7 @@ the single mathematical result selected by the root Comparator configuration.
 | Exact zero-cluster certificates under small symmetric bounded operator errors | Formalized in §§4.53–4.56: finite boundary margins certify both reflected zero sets and their total multiplicity |
 | Onsite ordering from properness and sharpened positive-interaction spectral and zero response | Formalized in §§4.57–4.59: the onsite gap is preserved without a small interaction-norm assumption; the onsite ordering is constructed |
 | Scalar analytic approximation and local zero certificates with multiplicities | Formalized in §§4.60–4.65: explicit product-tail errors, multiplicity-dependent location bounds and exact total zero counts under a strict circular-boundary error; no simplicity assumption |
+| Numerical tail rates and a worked scalar zero certificate | Formalized in §§4.66–4.67: explicit radius, cofactor bound and cutoff for the linear onsite model; numerical tail bounds also hold after symmetric nonnegative bounded interactions |
 | A concrete Ammann–Beenker model, relative-product identities and certified finite-patch zero response | Proposed research milestones in §§6.4–6.6 |
 
 The research objective is an end-to-end statement relating an explicitly defined
@@ -45,9 +46,12 @@ zero multiplicity determining the power in the location bound. A proved
 Rouché theorem conserves the total zero multiplicity in a disk under a
 strict boundary error. An explicit inverse-square tail controls finite
 truncations of a fixed canonical product and eventually certifies their
-exact local counts. Concrete numerical cofactor/radius/tail certificates,
-a geometric application, certified finite-patch approximation and statistical
-results remain open. Counting on arbitrary noncircular contours is not
+exact local counts. A worked linear onsite model now has a numerical
+cofactor bound, isolation radius and truncation cutoff. Linear spectral
+growth gives an explicit tail rate, also for that onsite potential with a
+symmetric nonnegative bounded interaction. Cofactor/radius certificates for
+interacting geometric models, a geometric application, certified finite-patch
+approximation and statistical results remain open. Counting on arbitrary noncircular contours is not
 formalized. The
 Comparator selection still contains only the original single-eigenspace theorem.
 
@@ -151,8 +155,14 @@ truncation errors. Sections 4.63–4.65 now prove the disk argument principle
 and Rouché's theorem, upgrading the local certificate to exactly $m$ zeros
 counted with multiplicity under $\varepsilon<C\rho^m$. The approximant may
 split a multiple zero. The conserved count is the original operator's
-geometric multiplicity. This strengthens the scalar-approximation link;
-the concrete geometric application remains open in §6.4.
+geometric multiplicity. Sections 4.66–4.67 now turn this into a numerical
+worked certificate for onsite multiplication by $n+1$: radius $1/4$,
+cofactor lower bound $1/5$, and a sufficient finite-product cutoff $16384$,
+including a nonzero additional approximation-error budget. The same
+quantitative tail estimates apply to its full spectrum with a symmetric
+nonnegative bounded interaction, while the explicit cofactor and radius
+are proved for the onsite model. The concrete geometric application remains
+open in §6.4.
 
 These are additional source theorems, not additions to the current
 Comparator-selected statement. They do not provide a numerical reconstruction
@@ -504,6 +514,25 @@ local count; a numerical cutoff still requires a numerical tail bound.
 These are truncations of one fixed spectral sequence. Neither a
 finite-patch operator error nor numerical values for the local
 constants $C,\rho$ are supplied by the abstract existence theorem.
+
+Sections 4.66–4.67 now supply a worked numerical instance. For
+$q_n=n+1$, $c=0$, $d=1$, $a=1$, the full onsite spectral product has an
+explicit entire cofactor $G$ with $F(z)=(z-1)G(z)$ and
+```math
+|G(z)|\ge\frac15\quad (|z-1|\le\tfrac14),\qquad
+\sum_nq_n^{-2}\le2,\qquad
+\sum_{k\ge0}q_{k+N}^{-2}\le\frac1N\quad(N\ge1).
+```
+For any sequence with $q_n\ge n+1$, the existing error budget satisfies
+$E_N(A)\le324/N$ when $0\le A\le2$ and $N\ge2$. On the displayed disk,
+$A=25/16$, so every $N\ge16384$ gives $|F-P_N|\le1/50$.
+If an analytic $g$ has boundary error $|g-P_N|\le1/100$, then
+$|g-F|\le3/100<1/20=C\rho$. The proved certificate gives total zero
+order **one**, no boundary zeros, and $|z-1|\le3/20$ for every zero
+in the disk. The cutoff is sufficient, not asserted minimal. This is an
+infinite diagonal operator on its natural domain, not a finite-patch or
+a named tiling construction; the complete spectral identification is
+proved in §4.67.
 
 ## 3. Finite-dimensional geometric operators
 
@@ -1984,7 +2013,9 @@ with no infinite sums in its conclusion.
 `canonicalProduct_approximation_error_add` adds a certified error $\eta$
 between an arbitrary approximant and $P_N$. A computable convergence rate
 still requires a computable tail bound. No finite-volume spectrum is
-identified with this truncation of the fixed full sequence.
+identified with this truncation of the fixed full sequence. Section 4.66
+adds the numerical bounds $S\le2$, $T_N\le1/N$ and $E_N(A)\le324/N$
+under the stated linear growth and coordinate restrictions.
 
 ### 4.62. Scalar approximation at full spectral zeros
 
@@ -2025,8 +2056,8 @@ paired symmetry, or have its zeros on the prescribed line. The theorem
 certifies persistence and local location, not equality of total zero
 multiplicity, an index matching, or a finite-patch error. Section 4.65 adds
 the exact disk count using the same local controls and tail budget.
-Concrete numerical cofactor and tail bounds and the geometric model
-remain open.
+Section 4.67 supplies numerical cofactor and tail bounds for a worked
+linear onsite model. The interacting geometric application remains open.
 
 ### 4.63. Finite disk zero counts and the argument principle
 
@@ -2097,7 +2128,9 @@ It requires positive $q_n$, summable inverse squares, the local control,
 and analyticity of $g$ near the closed disk. The approximant need not be
 another spectral product. `eventually_partial_zero_count` proves that
 all sufficiently long partial products have count $m$ and a zero-free
-boundary; the threshold index is existential, not a computed cutoff.
+boundary; this general theorem's threshold index is existential.
+Section 4.67 supplies a sufficient numerical cutoff for the linear onsite
+example, using §4.66's additional growth and lower-bound estimates.
 
 `canonicalProduct_exists_local_counting_control` constructs these local
 controls at each signed indexed zero of an admissible product with
@@ -2112,17 +2145,104 @@ self-adjointness, summability or enumeration assumption is hidden in the
 analytic comparison. Finite/empty analytic zero sets are handled by §4.64;
 no finite spectrum is padded into the infinite spectral construction.
 
-These results supply the disk-counting step of §6.3. Numerical cofactor
-bounds, isolation radii and inverse-square tails, the geometric application,
-and finite-patch operator/resolvent errors remain to be supplied. Counting
-on noncircular contours is outside this interface. The current Palomar
-candidate remains the single-eigenspace theorem of §4.40.
+These results supply the disk-counting step of §6.3. Sections 4.66–4.67
+provide numerical data for a worked onsite example. Cofactor/radius
+certificates for interacting geometric models and finite-patch
+operator/resolvent errors remain to be supplied. Counting on noncircular
+contours is outside this interface. The current Palomar candidate remains
+the single-eigenspace theorem of §4.40.
+
+### 4.66. Numerical tail rates and finite-factor lower certificates
+
+[CanonicalProductNumericalBounds.lean](SpectralGeometry/CanonicalProductNumericalBounds.lean)
+proves, from the explicit lower growth bound $q_n\ge n+1$,
+```math
+S=\sum_{n\ge0}q_n^{-2}\le2,\qquad
+T_N=\sum_{k\ge0}q_{k+N}^{-2}\le\frac1N\quad(N\ge1).
+```
+`invSq_tail_le_of_linear_growth` uses a telescoping reciprocal comparison
+for finite partial sums and passes to the summable limit.
+`invSq_sum_le_two_of_linear_growth` adds the first term. The positive
+cutoff restriction is explicit; the total series has its separate bound.
+`canonicalProductApproximationError_le_linear_rate` then proves
+```math
+0\le A\le2,\quad N\ge2
+\quad\Longrightarrow\quad E_N(A)\le\frac{324}{N}.
+```
+The constant is conservative: the proof bounds the exponential factors
+using verified real inequalities. It does not use floating-point
+approximations, an assumed rate, or an expansion of a long partial product.
+
+`norm_tprod_one_add_ge_one_sub_tsum` proves
+$|\prod_n(1+u_n)|\ge1-\sum_n|u_n|$ for a summable norm budget at most
+one. `canonicalProduct_tail_norm_lower` specializes this to a tail with
+inverse-square bound $T$ and $AT\le1$, obtaining modulus at least $1-AT$.
+`canonicalProduct_eq_partial_mul_tail` gives the exact factorization even
+at zeros of the prefix. `canonicalProduct_lower_of_prefix_tail` combines
+a finite-prefix bound $L\le|P_N(z)|$ with that tail to obtain
+$L(1-AT)\le|F(z)|$. These are reusable certificates; the bounds on the
+finite factors and on the tail must still be proved in each application.
+
+### 4.67. A numerical certificate for the complete linear onsite spectrum
+
+[LinearOnsiteZeroCertificate.lean](SpectralGeometry/LinearOnsiteZeroCertificate.lean)
+defines `linearOnsitePotential n = n + 1`. Positivity, inverse-square
+summability and properness of all onsite sublevels are proved.
+`linearOnsite_hasExactFullSpectralProduct` constructs the complete ordered
+eigenbasis and invokes the existing natural-domain spectral bridge for
+$H=M_V$ on $\ell^2(\mathbb N)$, with $B=0$. Thus the sequence used in the
+certificate is the full spectrum with its geometric multiplicities,
+not only a supplied list of point eigenvalues. The domain is $D(V)$;
+the existing self-adjointness and compact-resolvent construction applies
+with the now verified lower bound and properness. This is an infinite
+onsite model, without a geometric tiling or a finite-patch interpretation.
+
+`linearOnsiteCofactor` is the explicit entire function
+```math
+G(z)=-(z+1)\left(1-\frac{z^2}{4}\right)
+       \prod_{k\ge0}\left(1-\frac{z^2}{(k+3)^2}\right).
+```
+`linearOnsiteCofactor_differentiable` and
+`linearOnsite_cofactor_factorization` prove entire holomorphy and
+$F(z)=(z-1)G(z)$ everywhere, including at $z=1$.
+`linearOnsiteCofactor_norm_lower` proves $|G(z)|\ge1/5$ on the whole
+closed disk of radius $1/4$. The proof bounds the two explicit factors
+by $7/4$ and $39/64$, and the remaining product by $7/32$ using
+$A=25/16$ and $T_2\le1/2$. The center is included in the cofactor bound;
+no division by $z-1$ at the zero is used.
+
+`linearOnsite_zero_control` packages radius $\rho=1/4$, constant $C=1/5$
+and exact order $m=1$. It therefore isolates the reference zero through
+the existing `LocalAnalyticZeroControl` interface.
+`linearOnsite_partial_error` proves $|F-P_N|\le1/50$ on the entire
+closed disk for every $N\ge16384$.
+`linearOnsite_approximation_certificate` assumes only that $g$ is analytic
+near this disk and $|g-P_N|\le1/100$ on its boundary, and proves
+simultaneously:
+
+- total analytic zero order $N_g(1,1/4)=1$;
+- no zero on the circle $|z-1|=1/4$;
+- every zero in the closed disk satisfies $|z-1|\le3/20$.
+
+The total error budget is $3/100< C\rho=1/20$. The earlier Rouché and
+location results supply these conclusions, with no zero-count assumption
+on the approximant. The constants and cutoff are sufficient certificates,
+not optimized numerical values.
+
+`linearOnsitePlusNonneg_exists_numerical_tails` also constructs a complete
+ordered eigenbasis for $M_V+B$ for every symmetric nonnegative bounded
+$B$ on the same space. The existing variational comparison gives
+$\lambda_n\ge n+1$; the new theorem then supplies summability,
+$T_N\le1/N$ and $E_N(A)\le324/N$ with the same cutoff and coordinate
+restrictions as §4.66. It does **not** transfer the explicit cofactor,
+first-zero location or isolation radius of the $B=0$ example to arbitrary
+interactions. Those data still need model-specific certificates.
 
 ## 5. Building and verification
 
-The canonical import list is maintained in [`SpectralGeometry.lean`](SpectralGeometry.lean). It currently imports **75 Lean modules**: ten analytic and window modules, four finite-dimensional geometry modules, and sixty-one operator/spectral modules (including domain-generic interfaces).
+The canonical import list is maintained in [`SpectralGeometry.lean`](SpectralGeometry.lean). It currently imports **77 Lean modules**: eleven analytic and window modules, four finite-dimensional geometry modules, and sixty-two operator/spectral modules (including domain-generic interfaces).
 
-- **Analytic core, indexed points and certified windows (10):**
+- **Analytic core, indexed points and certified windows (11):**
   - [`CanonicalProduct.lean`](SpectralGeometry/CanonicalProduct.lean)
   - [`CanonicalProductAnalytic.lean`](SpectralGeometry/CanonicalProductAnalytic.lean)
   - [`CanonicalProductZeroOrder.lean`](SpectralGeometry/CanonicalProductZeroOrder.lean)
@@ -2133,6 +2253,7 @@ The canonical import list is maintained in [`SpectralGeometry.lean`](SpectralGeo
   - [`CanonicalProductApproximation.lean`](SpectralGeometry/CanonicalProductApproximation.lean)
   - [`AnalyticDiskZeroCount.lean`](SpectralGeometry/AnalyticDiskZeroCount.lean)
   - [`AnalyticRouche.lean`](SpectralGeometry/AnalyticRouche.lean)
+  - [`CanonicalProductNumericalBounds.lean`](SpectralGeometry/CanonicalProductNumericalBounds.lean)
 - **Finite-dimensional geometry (4):**
   - [`FinitePerturbation.lean`](SpectralGeometry/FinitePerturbation.lean)
   - [`FinitePositiveEnergy.lean`](SpectralGeometry/FinitePositiveEnergy.lean)
@@ -2198,13 +2319,14 @@ The canonical import list is maintained in [`SpectralGeometry.lean`](SpectralGeo
   - [`InfiniteFullSpectralSummability.lean`](SpectralGeometry/InfiniteFullSpectralSummability.lean)
   - [`InfinitePositiveSpectralControl.lean`](SpectralGeometry/InfinitePositiveSpectralControl.lean)
 
-- **Full spectral products and analytic zero response (6):**
+- **Full spectral products and analytic zero response (7):**
   - [`InfiniteFullSpectralProduct.lean`](SpectralGeometry/InfiniteFullSpectralProduct.lean)
   - [`OrderedSpectralProductBridge.lean`](SpectralGeometry/OrderedSpectralProductBridge.lean)
   - [`FiniteSectorZeroResponse.lean`](SpectralGeometry/FiniteSectorZeroResponse.lean)
   - [`PositiveFiniteSectorZeroResponse.lean`](SpectralGeometry/PositiveFiniteSectorZeroResponse.lean)
   - [`FullSpectralZeroLocalization.lean`](SpectralGeometry/FullSpectralZeroLocalization.lean)
   - [`FullSpectralZeroCounts.lean`](SpectralGeometry/FullSpectralZeroCounts.lean)
+  - [`LinearOnsiteZeroCertificate.lean`](SpectralGeometry/LinearOnsiteZeroCertificate.lean)
 
 - **Bounded spectral errors and full zero-cluster certificates (2):**
   - [`InfiniteBoundedSpectralStability.lean`](SpectralGeometry/InfiniteBoundedSpectralStability.lean)
@@ -2230,7 +2352,7 @@ one [`comparator.json`](comparator.json), one
 Comparator selects **one theorem**, the per-eigenspace low-energy multiplicity
 bound of §4.40, together with 16 independently reproduced definitions and type abbreviations needed to state it.
 The toolchain's Lean, NanoDa and con-ron kernels verify the selected
-comparison. The separate Lean build still covers **all 75 mathematical
+comparison. The separate Lean build still covers **all 77 mathematical
 source modules**; earlier compact-resolvent, real-spectrum and ordered
 enumeration theorems remain compiled prerequisites but are not individually
 compared in this submission. The metadata records the first identified
@@ -2433,10 +2555,11 @@ positive-interaction responses to the indexed zeros of both full spectral
 products. All the listed abstract obligations of this subsection are proved
 under their stated hypotheses. An application must still establish a nonempty
 target window and its geometric hypotheses (§6.4). Local scalar analytic
-certificates and exact disk counts are now available in §6.3. Concrete
-numerical scalar certificates and finite-patch approximation certificates
-remain open in §§6.3 and 6.6; noncircular contours are not covered by the
-proved disk theorem.
+certificates and exact disk counts are now available in §6.3, together
+with a numerical worked onsite certificate and quantitative tails for its
+nonnegative interacting family (§§4.66–4.67). Interacting geometric
+cofactor/radius data and finite-patch approximation certificates remain
+open in §§6.3 and 6.6; noncircular contours are not covered by the disk theorem.
 These source results are **not** part of
 the unchanged Comparator-selected theorem of §4.40.
 
@@ -2520,11 +2643,23 @@ the unchanged Comparator-selected theorem of §4.40.
   The spectral specialization identifies $m$ with the actual geometric
   multiplicity. A version for arbitrary noncircular contours has not been
   formalized; the proved disk case supplies the local certificates.
-- [ ] Supply concrete numerical lower bounds for the analytic cofactors,
-  isolation radii and inverse-square tails in a worked application.
-  Existence of local constants and a symbolic tail estimate do not
-  themselves compute these data. Finite-patch operator/resolvent error
-  certificates remain open in §6.6.
+- [x] Supply concrete numerical cofactor bounds, isolation radii and
+  inverse-square tails in a worked onsite application (§§4.66–4.67).
+  For $V(n)=n+1$, $B=0$, the full-spectrum identification is proved and
+  the first positive zero has radius $1/4$ and an entire cofactor with
+  modulus at least $1/5$ throughout the closed disk. For $N\ge16384$,
+  the product tail error is at most $1/50$; an additional boundary error
+  $1/100$ gives count one, boundary exclusion and distance at most $3/20$.
+  The cutoff is sufficient, not claimed optimal.
+- [x] Transfer the numerical tails $T_N\le1/N$ and $E_N(A)\le324/N$
+  to the complete spectrum of this linear onsite potential with any
+  symmetric nonnegative bounded interaction, under the cutoff/coordinate
+  restrictions of §4.66. The ordering and eigenbasis are constructed.
+- [ ] Supply corresponding cofactor and isolation-radius certificates for
+  the interacting geometric model of §6.4. The onsite example does not
+  establish those data for general interactions, even when a numerical
+  tail bound is available. Noncircular contour counts are not formalized;
+  finite-patch operator/resolvent error certificates remain open in §6.6.
 
 ### 6.4. P4 — A confined Ammann–Beenker model and a finite intervention
 
@@ -2661,8 +2796,10 @@ This phase provides the missing approximation certificate.
   do not assume a universal exponential rate.
 - [ ] Propagate the matrix error to the relative determinant and the
   analytic products, controlling their normalizations. The absolute
-  scalar tail budget of §4.61 is available for a fixed spectral sequence;
-  deriving it from a finite-patch matrix remains to be justified.
+  scalar tail budget of §4.61 and the linear-growth rate of §4.66 are
+  available for a fixed spectral sequence; deriving the required data
+  from a finite-patch matrix remains to be justified. The worked numerical
+  onsite certificate of §4.67 does not supply such a matrix error.
 - [ ] Certify zero counts in contours and intervals for the finite-patch
   approximation, with multiplicities. The bounded common-domain operator
   certificate of §4.56 is available only after a compatible error bound
@@ -2730,7 +2867,7 @@ theorem, and carries no asserted connection to the Riemann zeta function.
 
 **Assessment and future selection**
 
-The source results of §§4.41–4.65 now include simultaneous observation,
+The source results of §§4.41–4.67 now include simultaneous observation,
 total counting, an abstract finite-sector response, entire full spectral
 products with exact geometric zero multiplicities, indexed finite-sector
 zero displacement, separated zero-cluster certificates under bounded
@@ -2741,7 +2878,10 @@ multiplicity as exponent. The disk argument principle and Rouché theorem
 now also certify exact scalar-approximation counts with the original
 spectral multiplicity, including repeated zeros. These are formalized
 classical analytic tools and their spectral application; their compilation
-does not establish mathematical originality. Numerical certificates,
+does not establish mathematical originality. Sections 4.66–4.67 add
+numerical tail rates, their transfer to a nonnegative interacting family,
+and a complete rational zero certificate for a worked onsite model.
+Cofactor/radius certificates for interacting geometric models,
 noncircular contour counts and finite-patch errors remain open. These
 results do not change the selected §4.40 statement, establish a concrete geometric
 application or certify originality or independent research interest.
