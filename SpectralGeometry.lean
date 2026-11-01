@@ -77,6 +77,9 @@ public import SpectralGeometry.AnalyticRouche
 public import SpectralGeometry.FullSpectralZeroCounts
 public import SpectralGeometry.CanonicalProductNumericalBounds
 public import SpectralGeometry.LinearOnsiteZeroCertificate
+public import SpectralGeometry.AmmannBeenkerCutProject
+public import SpectralGeometry.AmmannBeenkerGraph
+public import SpectralGeometry.AmmannBeenkerOperator
 
 public section
 

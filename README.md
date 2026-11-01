@@ -27,7 +27,8 @@ the single mathematical result selected by the root Comparator configuration.
 | Onsite ordering from properness and sharpened positive-interaction spectral and zero response | Formalized in §§4.57–4.59: the onsite gap is preserved without a small interaction-norm assumption; the onsite ordering is constructed |
 | Scalar analytic approximation and local zero certificates with multiplicities | Formalized in §§4.60–4.65: explicit product-tail errors, multiplicity-dependent location bounds and exact total zero counts under a strict circular-boundary error; no simplicity assumption |
 | Numerical tail rates and a worked scalar zero certificate | Formalized in §§4.66–4.67: explicit radius, cofactor bound and cutoff for the linear onsite model; numerical tail bounds also hold after symmetric nonnegative bounded interactions |
-| A concrete Ammann–Beenker model, relative-product identities and certified finite-patch zero response | Proposed research milestones in §§6.4–6.6 |
+| Explicit octagonal cut-and-project vertex graph and nine-level finite-sector response | Formalized in §§4.68–4.70: infinite embedded vertices, exact central star, matching Laplacian and a nonempty controlled window |
+| Geometric full-product instantiation, relative products and certified finite-patch zero response | Remaining obligations in §§6.4–6.6; geometric growth/summability is the next dependency |
 
 The research objective is an end-to-end statement relating an explicitly defined
 local geometric modification to a quantitatively controlled change in a
@@ -49,9 +50,12 @@ truncations of a fixed canonical product and eventually certifies their
 exact local counts. A worked linear onsite model now has a numerical
 cofactor bound, isolation radius and truncation cutoff. Linear spectral
 growth gives an explicit tail rate, also for that onsite potential with a
-symmetric nonnegative bounded interaction. Cofactor/radius certificates for
-interacting geometric models, a geometric application, certified finite-patch
-approximation and statistical results remain open. Counting on arbitrary noncircular contours is not
+symmetric nonnegative bounded interaction. An explicit octagonal vertex graph
+now supplies a concrete spectral application: at least nine ordered levels
+are controlled by a finite onsite intervention, with positive gap preserved.
+Its geometric inverse-square summability and full-product instantiation,
+cofactor/radius certificates, finite-patch approximation and statistical
+results remain open. Counting on arbitrary noncircular contours is not
 formalized. The
 Comparator selection still contains only the original single-eigenspace theorem.
 
@@ -161,8 +165,10 @@ cofactor lower bound $1/5$, and a sufficient finite-product cutoff $16384$,
 including a nonzero additional approximation-error budget. The same
 quantitative tail estimates apply to its full spectrum with a symmetric
 nonnegative bounded interaction, while the explicit cofactor and radius
-are proved for the onsite model. The concrete geometric application remains
-open in §6.4.
+are proved for the onsite model. Sections 4.68–4.70 now construct the
+octagonal cut-and-project vertex graph and prove a concrete response for
+its first nine ordered levels. The geometric full-product application still
+requires the growth/summability step of §6.4.
 
 These are additional source theorems, not additions to the current
 Comparator-selected statement. They do not provide a numerical reconstruction
@@ -1947,13 +1953,15 @@ indexed zero for $\tau>0$. Exact analytic orders are the geometric
 multiplicities of each product's own operator. A supplied onsite ordering,
 simple eigenvalues and $v_0>\|B\|$ are not hypotheses of this application.
 
-For $v_0=1$, $R=5$, $E=3$, the coefficient is $1/2$, as targeted in §6.4.
-This is the abstract estimate needed there; the Ammann–Beenker vertex set,
-matching representation, geometric sector, growth and nine-level trial
-space have not yet been verified. In particular, the theorem does not
-establish a nonempty controlled window or exclude common zero locations
-arising from different indices at different parameters. Relative products
-and certified finite-patch approximation remain separate obligations.
+For $v_0=1$, $R=5$, $E=3$, the coefficient is $1/2$. Sections 4.68–4.70
+now construct the centered octagonal vertex set, matching interaction and
+finite sector, and prove $\lambda_8(H)\le3$ from nine distinct central sites.
+Thus that spectral application has a nonempty window. Applying this
+full-product theorem to it still requires geometric inverse-square
+summability. The abstract theorem itself does not assume or prove window
+nonemptiness, and does not exclude common zero locations arising from
+different indices at different parameters. Relative products and certified
+finite-patch approximation remain separate obligations.
 
 ### 4.60. Local zero certificates from scalar boundary error
 
@@ -2238,9 +2246,120 @@ restrictions as §4.66. It does **not** transfer the explicit cofactor,
 first-zero location or isolation radius of the $B=0$ example to arbitrary
 interactions. Those data still need model-specific certificates.
 
+### 4.68. An explicit octagonal cut-and-project vertex set
+
+[AmmannBeenkerCutProject.lean](SpectralGeometry/AmmannBeenkerCutProject.lean)
+defines lifts $n=(n_0,n_1,n_2,n_3)\in\mathbb Z^4$, with $\alpha=\sqrt2/2$,
+and the two conjugate projections
+```math
+p(n)=(n_0+\alpha(n_1-n_3))+i(n_2+\alpha(n_1+n_3)),
+\qquad
+p^*(n)=(n_0-\alpha(n_1-n_3))+i(-n_2+\alpha(n_1+n_3)).
+```
+The accepted lifts satisfy the **open** centered octagonal window
+```math
+|u|,|v|<\tfrac12+\alpha,\qquad |u+v|,|u-v|<1+\alpha,
+\qquad u+iv=p^*(n).
+```
+This fixes the boundary convention explicitly. These are the standard
+conjugate eighth-root coordinates and unit-side octagon used for the
+Ammann–Beenker vertex construction; see [Beenker's report](https://pure.tue.nl/ws/files/4269555/253166.pdf)
+and the projection description in
+[Topological densities of quasiperiodic structures](https://doi.org/10.1515/zkri-2025-0003).
+The Lean definitions, rather than a picture or an assumed tiling predicate,
+specify the set used below.
+
+`physical_injective`, `internal_injective` and `position_injective`
+prove uniqueness of the integer lift using irrationality of $\sqrt2$.
+The origin and every signed standard basis lift are admitted; their
+physical distances from the origin are one. `inflate` is an integer map
+whose physical projection scales by $1+\sqrt2$ and whose internal
+projection scales by $1-\sqrt2$. `admitted_inflate` and
+`inflatedOriginNeighbor_injective` prove that the accepted vertex type is
+infinite, rather than assuming infinitude.
+
+`joint_norm_identity` identifies the sum of the squared projection norms
+with $2\sum_i n_i^2$. It gives `coordinate_bound`: accepted lifts with
+$|p(n)|\le R$, $R\ge0$, satisfy $|n_i|\le R+3$.
+`finite_norm_sublevel` then proves finiteness of the actual vertices in
+every radius sublevel, including empty sublevels. This proves local
+finiteness and will supply properness. It is **not** a two-dimensional
+counting rate or a uniform separation estimate. Polygonal coverage,
+aperiodicity and global rotational-symmetry theorems are not asserted.
+
+### 4.69. Exact neighbors, parity matchings and the concrete Laplacian
+
+[AmmannBeenkerGraph.lean](SpectralGeometry/AmmannBeenkerGraph.lean)
+defines adjacency independently of the matching operators: two admitted
+lifts differ by $\pm e_i$. `adjacent_irrefl`, `adjacent_symm` and
+`adjacent_unit_length` prove that these are undirected unit-length edges
+without loops. The converse classification of all pairs at Euclidean
+distance one is not claimed here.
+
+Direction and parity of the corresponding integer coordinate define eight
+colors. Each color exchanges the two endpoints of its admitted edge and
+fixes a vertex when the proposed partner is absent.
+`latticeMate_involutive` and `mate_involutive` prove the involutions;
+`mate_adjacent`, `adjacent_exists_mate` and `mate_color_unique` prove
+that their nontrivial edges are exactly the defined edges, each occurring
+in one color. `neighbors_card_le` gives degree at most eight, and
+`origin_neighbors_card` proves that the center has exactly eight distinct
+neighbors, all at unit distance.
+
+With weight $1/16$ for each color, `interaction_apply` proves the exact
+coordinate formula
+```math
+(B\psi)(x)=\frac1{16}\sum_{y\sim x}(\psi(x)-\psi(y)).
+```
+`interaction_nonneg`, `interaction_symmetric` and `interaction_norm_le`
+give nonnegative energy, symmetry and $\|B\|\le1$ on the full real
+$\ell^2$ space. This uses the existing infinite matching operator API;
+fixed points do not add a diagonal term or a fictitious edge.
+
+### 4.70. A nonempty nine-level spectral response on the vertex graph
+
+[AmmannBeenkerOperator.lean](SpectralGeometry/AmmannBeenkerOperator.lean)
+sets $V(x)=1+|p(x)|^2$, $H=M_V+B$ on its natural domain $D(V)$, and
+$S=\{x:|p(x)|\le2\}$. `potential_proper` and `potential_lower` prove
+finite onsite sublevels and $V\ge1$; `sector` is proved finite and
+`potential_outside_sector` gives $V\ge5$ off $S$.
+
+`centralStar_card` proves that the center and its neighbors give nine
+distinct sites. `centralStar_potential_le` bounds their onsite energies by
+two. `ninth_onsite_le` places the ninth sorted onsite level below or at
+two, by injecting these nine sites into any proposed initial segment.
+The established variational comparison and $\|B\|\le1$ then give
+$\lambda_8(H)\le3$; no nonempty spectral window is assumed.
+
+The principal theorem `AmmannBeenker.exists_nine_level_response`
+constructs complete monotone natural-domain eigenbases for $H$ and every
+$H_\tau=H+\tau P_S$, $0\le\tau\le4$, and proves
+```math
+\lambda_n(H),\lambda_n(H_\tau)\ge1\quad(n\in\mathbb N),\qquad
+\lambda_n(H)\le3\quad(0\le n<9),
+```
+```math
+\frac\tau2\le\lambda_n(H_\tau)-\lambda_n(H)\le\tau
+\quad(0\le n<9,\ 0\le\tau\le4).
+```
+Infinitude, properness, the central sites and the interaction bounds are
+proved inputs from this explicit graph. The common-domain self-adjoint
+and compact-shifted-resolvent existence package is reused, and the shift
+may depend on $\tau$. Repeated levels are counted through complete
+orthonormal eigenbases; simplicity is not assumed. The proof uses the
+positive sector form bound and the verified min–max comparison.
+
+This is a concrete **spectral** consequence. Inverse-square summability
+for this geometric potential, its full canonical product and the
+corresponding nine-level zero-response specialization are still open.
+Neither local finiteness nor compact resolvent alone closes that gap.
+No optimized control sector, finite-patch error, new spectral technique
+or mathematical originality is asserted. The Comparator selection remains
+the original §4.40 theorem; §6.8 records the next assessment target.
+
 ## 5. Building and verification
 
-The canonical import list is maintained in [`SpectralGeometry.lean`](SpectralGeometry.lean). It currently imports **77 Lean modules**: eleven analytic and window modules, four finite-dimensional geometry modules, and sixty-two operator/spectral modules (including domain-generic interfaces).
+The canonical import list is maintained in [`SpectralGeometry.lean`](SpectralGeometry.lean). It currently imports **80 Lean modules**: eleven analytic and window modules, four finite-dimensional geometry modules, and sixty-five infinite geometry/operator/spectral modules (including domain-generic interfaces).
 
 - **Analytic core, indexed points and certified windows (11):**
   - [`CanonicalProduct.lean`](SpectralGeometry/CanonicalProduct.lean)
@@ -2328,6 +2447,11 @@ The canonical import list is maintained in [`SpectralGeometry.lean`](SpectralGeo
   - [`FullSpectralZeroCounts.lean`](SpectralGeometry/FullSpectralZeroCounts.lean)
   - [`LinearOnsiteZeroCertificate.lean`](SpectralGeometry/LinearOnsiteZeroCertificate.lean)
 
+- **Explicit octagonal vertices, graph and confined operator (3):**
+  - [`AmmannBeenkerCutProject.lean`](SpectralGeometry/AmmannBeenkerCutProject.lean)
+  - [`AmmannBeenkerGraph.lean`](SpectralGeometry/AmmannBeenkerGraph.lean)
+  - [`AmmannBeenkerOperator.lean`](SpectralGeometry/AmmannBeenkerOperator.lean)
+
 - **Bounded spectral errors and full zero-cluster certificates (2):**
   - [`InfiniteBoundedSpectralStability.lean`](SpectralGeometry/InfiniteBoundedSpectralStability.lean)
   - [`InfiniteFullSpectralCluster.lean`](SpectralGeometry/InfiniteFullSpectralCluster.lean)
@@ -2352,7 +2476,7 @@ one [`comparator.json`](comparator.json), one
 Comparator selects **one theorem**, the per-eigenspace low-energy multiplicity
 bound of §4.40, together with 16 independently reproduced definitions and type abbreviations needed to state it.
 The toolchain's Lean, NanoDa and con-ron kernels verify the selected
-comparison. The separate Lean build still covers **all 77 mathematical
+comparison. The separate Lean build still covers **all 80 mathematical
 source modules**; earlier compact-resolvent, real-spectrum and ordered
 enumeration theorems remain compiled prerequisites but are not individually
 compared in this submission. The metadata records the first identified
@@ -2395,6 +2519,15 @@ successful full build; any submitted commit must pass its own checks.
 Unchecked items are open proof obligations or exploratory questions. P2, P3
 and P4 denote research phases, not theorem numbers.
 
+**Active dependency path.** The abstract spectral response (§6.2) and its
+analytic bridge (§6.3) are available. The explicit graph and a nonempty
+nine-level spectral response are now proved in §6.4. The next task is a
+quantitative planar counting/summability argument for that graph, followed
+by its full-product zero-response instantiation. Model-specific cofactor
+and radius certificates can follow that construction. The complex Green
+matrix interface in §6.1 serves §6.5; it is not a prerequisite for this
+spectral-product path. Arbitrary noncircular contours are a separate extension.
+
 ### 6.1. P2 — Spectral foundations and the complex-resolvent interface
 
 **Formalized foundations**
@@ -2419,16 +2552,16 @@ and P4 denote research phases, not theorem numbers.
   exact, injective infinite tag enumeration; prove qualitative divergence
   under the stated lower-bound and infinitude hypotheses (§§4.36–4.38).
 
-**Open interface for the analytic response theorem**
+**Open complex-resolvent interface for relative products (§6.5)**
 
 - [ ] Construct the required complexification and complex shifted inverse
   on the natural domain, and relate it to the verified real spectral data.
 - [ ] Prove the resolvent identities, analyticity and compression facts
   needed to define $G_S(z)$. The real completeness theorem is not by
   itself this complex-resolvent interface.
-- [ ] Keep finite, empty and infinite spectral cases distinct. Establish
-  lower boundedness and infinitude for the concrete model before using
-  the global infinite enumeration.
+- [x] Establish infinitude and a positive lower bound before invoking the
+  infinite enumeration for the explicit octagonal vertex graph (§§4.68–4.70).
+  Finite and empty models continue to use the separate existing interfaces.
 
 ### 6.2. P2 — Quantitative observation and control of low-energy levels
 
@@ -2553,8 +2686,9 @@ a finite onsite intervention has a controlled effect on every selected low
 ordered level. Sections 4.52 and 4.59 transfer the respective norm-penalty and
 positive-interaction responses to the indexed zeros of both full spectral
 products. All the listed abstract obligations of this subsection are proved
-under their stated hypotheses. An application must still establish a nonempty
-target window and its geometric hypotheses (§6.4). Local scalar analytic
+under their stated hypotheses. Sections 4.68–4.70 now establish an explicit
+vertex graph and a nonempty nine-level window for §6.4. Its geometric
+summability remains an application-specific obligation. Local scalar analytic
 certificates and exact disk counts are now available in §6.3, together
 with a numerical worked onsite certificate and quantitative tails for its
 nonnegative interacting family (§§4.66–4.67). Interacting geometric
@@ -2565,185 +2699,107 @@ the unchanged Comparator-selected theorem of §4.40.
 
 ### 6.3. P3 — Full spectral products and their exact zero divisors
 
-**Formalized analytic inputs**
+**Verified analytic package**
 
-- [x] Define the paired canonical product and prove compact-uniform
-  convergence and zero localization for an admissible positive sequence
-  (CanonicalProduct.lean, §2).
-- [x] Prove admissibility from inverse-square summability, with onsite
-  growth examples (§§4.4–4.5), the signed-correction full-spectrum transfer
-  (§4.48) and the positive-interaction alternative (§4.58).
-- [x] Package positive ordered full levels as an admissible sequence under
-  the explicit lower-gap, properness, onsite-ordering and summability
-  hypotheses of §4.48. Sections 4.44 and 4.47 supply exact multiplicity
-  indexing and the infinite-site existence conditions. Section 4.57 now
-  constructs the onsite ordering; §4.58 supplies the stronger gap and
-  summability package for nonnegative interactions.
+- [x] Construct entire normalized paired products from positive levels
+  with summable inverse squares; identify all zeros and their exact
+  geometric spectral multiplicities, with fixed $c,d$, $d\ne0$
+  (§§2.4, 4.49, 4.51). The prescribed line is part of the definition.
+- [x] Transfer finite-sector response to indexed full-product zeros,
+  including repeated levels and the positive-interaction coefficient
+  $(R-E)/(R-v_0)$ (§§4.50–4.52, 4.59). The abstract theorem remains
+  conditional on the selected baseline level being below $E$.
+- [x] Certify separated zero windows under independently bounded operator
+  errors, preserving total multiplicity with boundary exclusion
+  (§§4.53–4.56), including empty windows and repeated levels.
+- [x] Prove scalar truncation-error bounds, local cofactor-based location
+  estimates and exact disk counts for analytic approximants
+  (§§4.60–4.65). Rouché gives count $m$ under
+  $\varepsilon<C\rho^m$; sufficiently long exact partial products qualify.
+  The disk case includes zero-free disks and several or repeated zeros.
+- [x] Supply the numerical onsite certificate and linear-growth tail rates
+  of §§4.66–4.67: radius $1/4$, cofactor bound $1/5$, sufficient cutoff
+  $16384$, truncation error $1/50$, additional boundary budget $1/100$,
+  and zero distance at most $3/20$. The tail rates also hold for that
+  linear onsite potential with symmetric nonnegative bounded interactions.
 
-**Verified analytic consequences (§§2.4 and 4.49)**
+**Application-dependent work**
 
-- [x] Prove that $F_H$ and $D_H$ are entire and identify every zero
-  and its order. The exact tag enumeration transfers the original geometric
-  spectral multiplicities to exact zero orders, including repeated levels.
-- [x] Use fixed $c,d$ with $d\ne0$ and normalization $D_H(c)=1$.
-  Prove the paired symmetry $D_H(2c-s)=D_H(s)$ and the affine-coordinate
-  identity. These identities hold for every member of an admissible family;
-  the line $c+d\mathbb R$ is prescribed by its definition.
-
-**Verified indexed zero response (§§4.50–4.52 and 4.59); geometric instantiation remains open**
-
-- [x] Transfer the finite-sector response theorem of §6.2 to the actual
-  indexed zeros of both full spectral products, with fixed $c,d$,
-  operator-specific geometric orders, the oriented identities, and the
-  two-sided bound $|d|\kappa\tau\le|z_n^\pm(\tau)-z_n^\pm(0)|\le|d|\tau$.
-  For $\tau>0$ every selected indexed zero moves, but common locations
-  from different indices at different parameters are not excluded.
-  The statement is conditional on $\lambda_n(H)\le E$ and does not prove
-  that such an index exists.
-- [x] For nonnegative interactions, derive the sharper
-  $\kappa=(R-E)/(R-v_0)$ under $V\ge v_0>0$, $E<R$ and
-  $0\le\tau\le R-v_0$, without a small interaction-norm assumption or
-  a supplied onsite ordering (§4.59). Both products retain their actual
-  operator-specific geometric zero orders. Properness, onsite summability
-  and the finite sector's exterior lower bound remain explicit inputs.
-
-**Certified operator-error windows and scalar analytic approximation**
-
-- [x] Under an independently supplied bounded-operator error certificate,
-  derive the all-index level and zero errors and certify the exact total
-  zero multiplicity in a separated window (§§4.53–4.56). Neighboring
-  reference levels certify both boundary cuts; separation of all remaining
-  indices and exclusion of boundary zeros are proved. Each reflected
-  segment has exactly the stated order sum, including empty windows and
-  repeated levels.
-- [x] Derive local zero-location certificates from scalar analytic
-  approximation on a disk boundary (§4.60). Finite positive zero order
-  supplies a reference disk and a cofactor lower bound. Under the stated
-  error threshold, prove existence of an interior zero, exclusion of
-  boundary zeros and the multiplicity-dependent power bound for every
-  approximating zero in the disk. Section 4.62 identifies the exponent
-  with the full operator's geometric multiplicity. No simple-root
-  assumption is imposed. Sections 4.64–4.65 add the exact count, with
-  the relaxed smallness condition documented below.
-- [x] Derive an explicit uniform scalar error for truncating a fixed
-  canonical product from its inverse-square tail (§4.61). Prove convergence
-  of this error to zero, permit independent upper bounds for the total
-  sum and tail, and add a separately certified finite-approximation error.
-  Sections 4.62 and 4.65 combine this error with the local location and
-  exact-count certificates, respectively. All sufficiently long exact
-  partial products have the full local count (§4.65).
-- [x] Prove exact total zero-multiplicity conservation for general analytic
-  approximants under explicit **circular-contour** hypotheses (§§4.63–4.65).
-  For $R>0$, analyticity near the closed disk and $|g-f|<|f|$ on its
-  boundary, the disk argument principle and Rouché's theorem give equal
-  total interior orders. This includes zero-free disks and disks with
-  several or repeated zeros. For a local control of order $m$, the error
-  condition $\varepsilon<C\rho^m$ gives exactly $m$ zeros counted with
-  multiplicity, boundary exclusion and the previous power location bound.
-  The spectral specialization identifies $m$ with the actual geometric
-  multiplicity. A version for arbitrary noncircular contours has not been
-  formalized; the proved disk case supplies the local certificates.
-- [x] Supply concrete numerical cofactor bounds, isolation radii and
-  inverse-square tails in a worked onsite application (§§4.66–4.67).
-  For $V(n)=n+1$, $B=0$, the full-spectrum identification is proved and
-  the first positive zero has radius $1/4$ and an entire cofactor with
-  modulus at least $1/5$ throughout the closed disk. For $N\ge16384$,
-  the product tail error is at most $1/50$; an additional boundary error
-  $1/100$ gives count one, boundary exclusion and distance at most $3/20$.
-  The cutoff is sufficient, not claimed optimal.
-- [x] Transfer the numerical tails $T_N\le1/N$ and $E_N(A)\le324/N$
-  to the complete spectrum of this linear onsite potential with any
-  symmetric nonnegative bounded interaction, under the cutoff/coordinate
-  restrictions of §4.66. The ordering and eigenbasis are constructed.
-- [ ] Supply corresponding cofactor and isolation-radius certificates for
-  the interacting geometric model of §6.4. The onsite example does not
-  establish those data for general interactions, even when a numerical
-  tail bound is available. Noncircular contour counts are not formalized;
-  finite-patch operator/resolvent error certificates remain open in §6.6.
+- [ ] Instantiate the full-product theorem for the explicit graph of
+  §6.4 after proving its onsite inverse-square summability. Its nine
+  controlled spectral levels are now proved in §4.70; the associated
+  nine-level zero statement is not yet an application theorem in Lean.
+- [ ] Derive numerical cofactor and isolation-radius certificates for
+  this interacting geometric product. The linear onsite constants cannot
+  be transferred unchanged to it.
+- [ ] Extend counting to noncircular contours if an application needs
+  them. This does not block §6.4. Finite-patch error certificates remain
+  the separate task of §6.6.
 
 ### 6.4. P4 — A confined Ammann–Beenker model and a finite intervention
 
-The proposed first concrete application uses **vertices**, rather than tiles,
-of an eightfold-symmetric Ammann–Beenker tiling, with edge length one and
-the origin at a vertex with eight neighbors. Its algebraic cut-and-project
-construction is described in
-[Beenker's report](https://pure.tue.nl/ws/files/4269555/253166.pdf).
-No named aperiodic tiling is currently formalized in Jules.
+The application uses the **explicit centered octagonal cut-and-project
+vertex graph** of §§4.68–4.70. The lattice projections, open-window
+boundary convention and coordinate-step adjacency are defined in Lean.
+The relation to the standard Ammann–Beenker construction is documented in
+§4.68; a polygonal covering or aperiodicity theorem is not silently assumed.
 
-The model to construct is
-```math
-(H\psi)(x)
-=(1+|x|^2)\psi(x)
-+\frac1{16}\sum_{y\sim x}\bigl(\psi(x)-\psi(y)\bigr).
-```
+**Completed geometric and spectral construction**
 
-**Open geometric and operator obligations**
-
-- [ ] Define the chosen infinite vertex set, its embedding and edge
-  relation, including the window/boundary conventions in the
-  cut-and-project construction. Verify the required central patch.
-- [ ] Prove uniform discreteness, local finiteness and degree at most
-  eight. Use the lifted $\mathbb Z^4$ coordinates to construct eight
-  involutive matching colors by direction and coordinate parity, fixing
-  sites whose partner is absent. Prove that these matchings represent
-  exactly the chosen edge relation.
-- [ ] Verify that the interaction is nonnegative and has norm at most
-  one, so that the full operator has lower bound one on its natural
-  domain. This example need not satisfy the stronger sufficient
-  condition $V>\|B\|$ to be positive. The abstract positive-interaction
-  gap and matching-Laplacian package are now proved in §4.58; their
-  geometric hypotheses still have to be verified for this vertex model.
-- [ ] Prove properness of $V(x)=1+|x|^2$ and a quantitative two-dimensional
-  vertex-counting bound. Transfer the resulting onsite growth to
-  full-spectrum summability using the verified comparison/transfer lemmas
-  in §§4.46–4.48 and the positive-interaction package of §4.58. Once
-  properness and infinitude are verified, §4.57 supplies the sorted
-  onsite bijection. The positive-Laplacian gap then uses $v_0=1$;
-  it does not require the stronger condition $v_0>\|B\|$.
-- [ ] Verify compact-resolvent hypotheses at an appropriate real shift
-  and verify the onsite lower bound and infinite vertex type needed to
-  invoke the global ordered-spectrum existence result of §4.47.
-
-**Open worked finite-sector application**
-
-Let
-```math
-S=\{x:|x|\le2\},\qquad H_\tau=H+\tau P_S.
-```
-
-- [ ] Prove that $S$ is finite and that the intervention is a bounded,
-  finite-rank positive perturbation.
-- [ ] Verify the sector and positivity hypotheses needed to instantiate
-  §4.58's form bound $H\ge5I-4P_S$ and sharpened estimate
+- [x] Define the accepted integer lifts, injective physical embedding and
+  undirected unit-length coordinate edges. Prove infinitude by silver-unit
+  inflation and finiteness within every bounded physical radius (§4.68).
+- [x] Verify the central star with exactly eight unit-distance neighbors,
+  degree at most eight everywhere, and the exact eight-color involutive
+  matching representation, with no repeated nontrivial edges (§4.69).
+- [x] Construct the full interaction and verify its coordinate formula,
+  positivity, symmetry and norm at most one:
   ```math
-  \frac{\tau}{2}
-  \le\lambda_n(H_\tau)-\lambda_n(H)
-  \le\tau,\qquad
-  \lambda_n(H)\le3,\quad 0\le\tau\le4.
+  (H\psi)(x)=(1+|p(x)|^2)\psi(x)
+    +\frac1{16}\sum_{y\sim x}(\psi(x)-\psi(y)).
   ```
-  The norm-penalty estimate remains available in §4.46; the sharper abstract
-  form bound and response are now proved in §4.58. This concrete target
-  still needs the verified geometric sector and interaction representation.
-- [ ] Verify that the central vertex and its eight unit-distance neighbors
-  give a nine-dimensional trial space with energy at most three.
-  Consequently prove that the application controls at least nine levels
-  counted with multiplicity, rather than an unspecified possibly empty
-  energy window.
-- [ ] Instantiate the entire-product and exact-multiplicity theorem of §4.49
-  once the model's hypotheses above are verified, then obtain the indexed
-  zero-displacement bounds on the prescribed line. The abstract analytic
-  response bridges are proved in §§4.52 and 4.59, with the latter giving
-  the coefficient $1/2$ here. The model-specific geometric inputs,
-  summability and low-energy nonemptiness still need verification; the
-  abstract positive-gap theorem is available in §4.58.
-- [ ] Investigate whether the tiling's geometry permits a smaller
-  observation/intervention set with a proved quantitative guarantee.
-  This is a separate research question, not a consequence of
-  aperiodicity or of the disk estimate.
+- [x] Prove $V\ge1$, properness, finiteness of
+  $S=\{x:|p(x)|\le2\}$ and $V\ge5$ outside it. Use the existing
+  natural-domain, self-adjoint compact-resolvent construction to obtain
+  the ordered full eigenbases (§4.70).
+- [x] Prove that the nine central sites have onsite energy at most two;
+  the variational comparison gives $\lambda_8(H)\le3$. Construct the
+  spectra for $H_\tau=H+\tau P_S$, preserve the lower bound one, and prove
+  ```math
+  \frac\tau2\le\lambda_n(H_\tau)-\lambda_n(H)\le\tau,
+  \qquad n<9,\quad 0\le\tau\le4.
+  ```
+  This counts multiplicities and supplies a genuinely nonempty window.
 
-All displayed model-specific conclusions in this subsection are targets to
-verify, not results already checked in Lean. The model and the general
-lifting argument do not by themselves establish mathematical novelty.
+**Next dependency: geometric summability, then zeros**
+
+- [ ] Prove a uniform separation estimate and a quantitative
+  two-dimensional vertex-counting bound. The finite-coordinate box in
+  §4.68 proves local finiteness, not the required planar growth rate.
+- [ ] Deduce $\sum_x(1+|p(x)|^2)^{-2}<\infty$ and transfer it to the
+  positive interacting spectra, including the whole intervention
+  interval, using §4.58. The already constructed ordering and positive
+  gap may be reused; compact resolvent alone is insufficient.
+- [ ] Apply §4.59 with $v_0=1$, $R=5$, $E=3$ to obtain the actual entire
+  products, exact geometric zero orders and indexed displacement bounds
+  with coefficient $1/2$ for at least nine levels on each prescribed
+  reflected branch. Then supply the model-specific scalar certificates
+  retained in §6.3.
+
+**Further geometric and research questions**
+
+- [ ] Formalize global rotational symmetry, polygonal tiling coverage and
+  aperiodicity when these properties are part of a claimed application.
+  The present spectral theorem is about the explicitly defined graph.
+- [ ] Investigate whether the geometry permits a smaller intervention
+  sector or stronger quantitative bounds than the generic form argument.
+  This is a possible research contribution, not a consequence of the
+  existing nine-level estimate.
+
+The checked graph and spectral statements are source results. The remaining
+zero-product statements and geometric properties are open. Their eventual
+formalization must still be distinguished from mathematical novelty and
+the Palomar selection process in §6.8.
 
 ### 6.5. Local geometric defects and relative spectral products
 
@@ -2867,7 +2923,7 @@ theorem, and carries no asserted connection to the Riemann zeta function.
 
 **Assessment and future selection**
 
-The source results of §§4.41–4.67 now include simultaneous observation,
+The source results of §§4.41–4.70 now include simultaneous observation,
 total counting, an abstract finite-sector response, entire full spectral
 products with exact geometric zero multiplicities, indexed finite-sector
 zero displacement, separated zero-cluster certificates under bounded
@@ -2883,8 +2939,20 @@ numerical tail rates, their transfer to a nonnegative interacting family,
 and a complete rational zero certificate for a worked onsite model.
 Cofactor/radius certificates for interacting geometric models,
 noncircular contour counts and finite-patch errors remain open. These
-results do not change the selected §4.40 statement, establish a concrete geometric
-application or certify originality or independent research interest.
+results do not change the selected §4.40 statement or certify originality
+or independent research interest. Sections 4.68–4.70 now add an explicit
+infinite octagonal graph and a nonempty nine-level spectral response.
+The geometric full-product specialization still needs summability.
+
+The maintainer reported that Palomar's automatic review found the original
+selected eigenspace bound insufficient as a standalone research result.
+That assessment must not be answered by attributing later unselected
+conclusions to it. The next candidate to assess is the concrete response
+and its eventual zero-product specialization, with all claimed geometric
+properties and numerical consequences included in the selected statement.
+The nine-level source theorem is available; a new selection is deferred
+pending the remaining full-product application and a precise comparison
+with the spectral-lifting literature.
 
 - [ ] Assess the selected result's research interest on its actual
   mathematical content and demonstrated uses. Its role in a larger
