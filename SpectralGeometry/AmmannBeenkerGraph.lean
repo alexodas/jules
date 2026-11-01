@@ -30,7 +30,7 @@ theorem latticeMate_involutive (c : Color) : Function.Involutive (latticeMate c)
   · subst j
     simp only [latticeMate, Pi.add_apply, ite_apply, basis, Pi.single_apply, Pi.neg_apply]
     split_ifs <;> simp_all <;> omega
-  · simp [latticeMate, ite_apply, basis, Pi.single_apply, hj, Ne.symm hj]
+  · simp [latticeMate, ite_apply, basis, hj]
 
 theorem latticeMate_color_injective (n : Lattice) :
     Function.Injective (fun c => latticeMate c n) := by
@@ -40,12 +40,12 @@ theorem latticeMate_color_injective (n : Lattice) :
   have hi : i = j := by
     by_contra hij
     have he := congrFun h i
-    simp [latticeMate, ite_apply, basis, Pi.single_apply, hij, Ne.symm hij] at he
-    split_ifs at he <;> omega
+    simp [latticeMate, ite_apply, basis, hij] at he
+    split_ifs at he; omega
   subst j
   have he := congrFun h i
   simp only [latticeMate, Pi.add_apply, ite_apply, basis, Pi.single_apply,
-    if_pos rfl, Pi.neg_apply, Prod.fst, Prod.snd] at he
+    Pi.neg_apply] at he
   have hpq : p = q := by
     apply Fin.ext
     split_ifs at he <;> omega
@@ -90,7 +90,7 @@ theorem mate_origin_ne (c : Color) : mate c origin ≠ origin := by
   intro h
   have hn := mate_origin_norm c
   rw [h] at hn
-  simpa [position, origin] using hn
+  simp [position, origin] at hn
 
 theorem mate_origin_injective : Function.Injective (fun c => mate c origin) :=
   fun c _ h => mate_color_unique (mate_origin_ne c) h
@@ -103,8 +103,12 @@ theorem mate_origin_injective : Function.Injective (fun c => mate c origin) :=
   ∃ i : Fin 4, w.val = v.val + basis i ∨ w.val = v.val - basis i
 
 theorem adjacent_irrefl (v : Vertex) : ¬ Adjacent v v := by
-  rintro ⟨i, h | h⟩ <;> have hi := congrFun h i <;>
-    simp [basis, Pi.single_apply] at hi <;> omega
+  rintro ⟨i, h | h⟩
+  · have hi := congrFun h i
+    simp [basis] at hi
+  · have hi := congrFun h i
+    simp [basis] at hi
+    omega
 
 theorem adjacent_symm {v w : Vertex} (h : Adjacent v w) : Adjacent w v := by
   rcases h with ⟨i, h | h⟩
@@ -202,6 +206,40 @@ theorem interaction_symmetric (x y : TileHilbert Vertex) :
     inner ℝ (interaction x) y = inner ℝ x (interaction y) :=
   (infiniteLocalMatchingLaplacian_symmetric 8 matching8 (fun _ => 1 / 16)
     matching8_involutive x y).symm
+
+
+theorem sum_colors_eq_neighbors (f : Vertex → ℝ) (v : Vertex) :
+    (∑ c : Color, (f v - f (mate c v))) = ∑ w ∈ neighbors v, (f v - f w) := by
+  classical
+  let t : Finset Color := Finset.univ.filter (fun c => mate c v ≠ v)
+  have hi : t.image (fun c => mate c v) = neighbors v := by
+    ext w
+    simp only [t, neighbors, Finset.mem_image, Finset.mem_filter, Finset.mem_univ,
+      true_and, Finset.mem_erase]
+    constructor
+    · rintro ⟨c, hc, rfl⟩
+      exact ⟨hc, c, rfl⟩
+    · rintro ⟨hw, c, rfl⟩
+      exact ⟨c, hw, rfl⟩
+  have hs : (∑ c : Color, (f v - f (mate c v))) = ∑ c ∈ t, (f v - f (mate c v)) := by
+    rw [Finset.sum_filter]
+    apply Finset.sum_congr rfl
+    intro c _
+    by_cases h : mate c v = v <;> simp [h]
+  rw [hs, ← hi, Finset.sum_image]
+  intro c hc d _ h
+  exact mate_color_unique (Finset.mem_filter.mp hc).2 h
+
+theorem interaction_apply (f : TileHilbert Vertex) (v : Vertex) :
+    interaction f v = (1 / 16 : ℝ) * ∑ w ∈ neighbors v, (f v - f w) := by
+  have he : (∑ i : Fin 8, (f v - f (matching8 i v))) =
+      ∑ c : Color, (f v - f (mate c v)) :=
+    (finProdFinEquiv.symm.sum_comp (fun c : Color => f v - f (mate c v)))
+  simp only [interaction, infiniteLocalMatchingLaplacian, sum_apply, smul_apply,
+    lp.coeFn_sum, Finset.sum_apply, lp.coeFn_smul, Pi.smul_apply, smul_eq_mul,
+    infiniteMatchingLaplacian_apply]
+  rw [← Finset.mul_sum, he, sum_colors_eq_neighbors]
+
 
 end
 end SpectralGeometry.AmmannBeenker

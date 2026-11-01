@@ -22,8 +22,7 @@ noncomputable section
 @[expose] def potential (v : Vertex) : ℝ := 1 + ‖position v‖ ^ 2
 
 theorem potential_lower (v : Vertex) : 1 ≤ potential v := by
-  unfold potential
-  positivity
+  exact le_add_of_nonneg_right (sq_nonneg _)
 
 theorem potential_proper (R : ℝ) : (infiniteOnsiteLowEnergyTiles potential R).Finite := by
   apply (finite_norm_sublevel (|R| + 1)).subset
@@ -46,7 +45,7 @@ theorem centralStar_potential_le {v : Vertex} (hv : v ∈ centralStar) : potenti
     simp [potential, position, origin]
   · have he := adjacent_unit_length ((mem_neighbors_iff origin v).mp h)
     have hn : ‖position v‖ = 1 := by simpa [position, origin, dist_comm] using he
-    simp [potential, hn]
+    norm_num [potential, hn]
 
 @[expose] def sector : Finset Vertex := (finite_norm_sublevel 2).toFinset
 
@@ -88,27 +87,35 @@ theorem exists_nine_level_response :
     ∃ ev : ℕ → ℝ, Monotone ev ∧
       Nonempty (DomainEigenbasis (infiniteOnsiteDomain potential)
         (onsitePlusBounded potential interaction) ev) ∧
+      (∀ n : ℕ, 1 ≤ ev n) ∧
       (∀ n : ℕ, n < 9 → ev n ≤ 3) ∧
       ∀ τ : ℝ, 0 ≤ τ → τ ≤ 4 →
         ∃ μ : ℕ → ℝ, Monotone μ ∧
           Nonempty (DomainEigenbasis (infiniteOnsiteDomain potential)
             (onsitePlusBounded potential (interaction + τ • finiteSectorProjection sector)) μ) ∧
+          (∀ n : ℕ, 1 ≤ μ n) ∧
           (∀ n : ℕ, n < 9 → τ / 2 ≤ μ n - ev n ∧ μ n - ev n ≤ τ) := by
   obtain ⟨e, he⟩ := infiniteOnsite_exists_monotone_equiv potential potential_proper
   obtain ⟨ev, hev, ⟨b⟩⟩ := onsitePlusBounded_exists_orderedEigenbasis
     potential 1 potential_lower potential_proper interaction interaction_symmetric
+  have hgap : ∀ n : ℕ, 1 ≤ ev n := fun n =>
+    (potential_lower (e n)).trans (onsitePlusBounded_ordered_ge_onsite_of_nonneg
+      potential interaction interaction_symmetric interaction_nonneg e he ev hev b n)
   have hl : ∀ n : ℕ, n < 9 → ev n ≤ 3 := by
     intro n hn
     have hb := (onsitePlusBounded_ordered_comparison potential interaction
       interaction_symmetric e he ev hev b 8).2
     have ho := hev (show n ≤ 8 by omega)
     linarith [ninth_onsite_le e he, interaction_norm_le]
-  refine ⟨ev, hev, ⟨b⟩, hl, ?_⟩
+  refine ⟨ev, hev, ⟨b⟩, hgap, hl, ?_⟩
   intro τ ht ht4
   have hsym := finiteSectorCorrection_symmetric interaction interaction_symmetric sector τ
   obtain ⟨μ, hμ, ⟨bt⟩⟩ := onsitePlusBounded_exists_orderedEigenbasis
     potential 1 potential_lower potential_proper _ hsym
-  refine ⟨μ, hμ, ⟨bt⟩, ?_⟩
+  have hgapμ : ∀ n : ℕ, 1 ≤ μ n := fun n => (hgap n).trans
+    (finiteSector_ordered_mono potential interaction interaction_symmetric sector
+      τ ht ev μ hev hμ b bt n)
+  refine ⟨μ, hμ, ⟨bt⟩, hgapμ, ?_⟩
   intro n hn
   have hr := finiteSector_ordered_response_of_nonneg potential interaction interaction_symmetric
     interaction_nonneg 1 5 3 potential_lower (by norm_num) sector potential_outside_sector
