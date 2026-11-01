@@ -28,12 +28,34 @@ theorem latticeMate_involutive (c : Color) : Function.Involutive (latticeMate c)
   have hp := c.2.isLt
   by_cases hj : j = c.1
   · subst j
-    simp only [latticeMate, Pi.add_apply, Pi.single_apply, basis, Pi.neg_apply]
+    simp only [latticeMate, Pi.add_apply, ite_apply, basis, Pi.single_apply, Pi.neg_apply]
     split_ifs <;> simp_all <;> omega
-  · simp [latticeMate, basis, Pi.single_apply, hj, Ne.symm hj]
+  · simp [latticeMate, ite_apply, basis, Pi.single_apply, hj, Ne.symm hj]
+
+theorem latticeMate_color_injective (n : Lattice) :
+    Function.Injective (fun c => latticeMate c n) := by
+  rintro ⟨i, p⟩ ⟨j, q⟩ h
+  have hp := p.isLt
+  have hq := q.isLt
+  have hi : i = j := by
+    by_contra hij
+    have he := congrFun h i
+    simp [latticeMate, ite_apply, basis, Pi.single_apply, hij, Ne.symm hij] at he
+    split_ifs at he <;> omega
+  subst j
+  have he := congrFun h i
+  simp only [latticeMate, Pi.add_apply, ite_apply, basis, Pi.single_apply,
+    if_pos rfl, Pi.neg_apply, Prod.fst, Prod.snd] at he
+  have hpq : p = q := by
+    apply Fin.ext
+    split_ifs at he <;> omega
+  subst q
+  rfl
 
 @[expose] def mate (c : Color) (v : Vertex) : Vertex :=
-  if h : Admitted (latticeMate c v.val) then ⟨latticeMate c v.val, h⟩ else v
+  by
+    classical
+    exact if h : Admitted (latticeMate c v.val) then ⟨latticeMate c v.val, h⟩ else v
 
 theorem mate_involutive (c : Color) : Function.Involutive (mate c) := by
   intro v
@@ -42,8 +64,36 @@ theorem mate_involutive (c : Color) : Function.Involutive (mate c) := by
       rw [latticeMate_involutive c]
       exact v.property
     apply Subtype.ext
-    simp [mate, h, hh, latticeMate_involutive c]
+    simp [mate, h, hh]
+    exact latticeMate_involutive c v.val
   · simp [mate, h]
+
+theorem mate_color_unique {v : Vertex} {c d : Color}
+    (hne : mate c v ≠ v) (heq : mate c v = mate d v) : c = d := by
+  have hc : Admitted (latticeMate c v.val) := by
+    by_contra h
+    exact hne (by simp [mate, h])
+  have hd : Admitted (latticeMate d v.val) := by
+    by_contra h
+    exact hne (by rw [heq]; simp [mate, h])
+  apply latticeMate_color_injective v.val
+  have h := congrArg Subtype.val heq
+  simpa [mate, hc, hd] using h
+
+theorem mate_origin_norm (c : Color) : ‖position (mate c origin)‖ = 1 := by
+  rcases c with ⟨i, p⟩
+  fin_cases p <;>
+    simp [position, mate, origin, latticeMate, basis_admitted,
+      admitted_neg, physical_basis_norm]
+
+theorem mate_origin_ne (c : Color) : mate c origin ≠ origin := by
+  intro h
+  have hn := mate_origin_norm c
+  rw [h] at hn
+  simpa [position, origin] using hn
+
+theorem mate_origin_injective : Function.Injective (fun c => mate c origin) :=
+  fun c _ h => mate_color_unique (mate_origin_ne c) h
 
 @[expose] def matching (c : Color) : Vertex ≃ Vertex :=
   ⟨mate c, mate c, mate_involutive c, mate_involutive c⟩
@@ -54,7 +104,7 @@ theorem mate_involutive (c : Color) : Function.Involutive (mate c) := by
 
 theorem adjacent_irrefl (v : Vertex) : ¬ Adjacent v v := by
   rintro ⟨i, h | h⟩ <;> have hi := congrFun h i <;>
-    simp [basis, Pi.single_apply] at hi
+    simp [basis, Pi.single_apply] at hi <;> omega
 
 theorem adjacent_symm {v w : Vertex} (h : Adjacent v w) : Adjacent w v := by
   rcases h with ⟨i, h | h⟩
@@ -73,14 +123,15 @@ theorem adjacent_unit_length {v w : Vertex} (h : Adjacent v w) :
 
 theorem mate_adjacent {c : Color} {v : Vertex} (h : mate c v ≠ v) :
     Adjacent v (mate c v) := by
-  unfold mate at h ⊢
-  split_ifs with ha
-  · refine ⟨c.1, ?_⟩
+  by_cases ha : Admitted (latticeMate c v.val)
+  · have he : (mate c v).val = latticeMate c v.val := by simp [mate, ha]
+    refine ⟨c.1, ?_⟩
+    rw [he]
     unfold latticeMate
     split_ifs
     · exact Or.inl rfl
     · exact Or.inr (by simp [sub_eq_add_neg])
-  · exact (h rfl).elim
+  · exact (h (by simp [mate, ha])).elim
 
 theorem adjacent_exists_mate {v w : Vertex} (h : Adjacent v w) :
     ∃ c : Color, mate c v = w := by
@@ -112,17 +163,26 @@ theorem mem_neighbors_iff (v w : Vertex) : w ∈ neighbors v ↔ Adjacent v w :=
     simpa [hc] using mate_adjacent (c := c) (v := v) (by simpa [hc] using hne)
   · intro h
     refine ⟨?_, adjacent_exists_mate h⟩
-    rintro rfl
+    intro heq
+    subst w
     exact adjacent_irrefl v h
 
 theorem neighbors_card_le (v : Vertex) : (neighbors v).card ≤ 8 := by
   exact (Finset.card_erase_le).trans (Finset.card_image_le.trans (by simp [Color]))
 
+/-- The origin has exactly eight distinct neighbors, all at unit distance. -/
+theorem origin_neighbors_card : (neighbors origin).card = 8 := by
+  have h : origin ∉ Finset.univ.image (fun c : Color => mate c origin) := by
+    simpa only [Finset.mem_image, Finset.mem_univ, true_and, not_exists] using mate_origin_ne
+  rw [neighbors, Finset.erase_eq_of_notMem h,
+    Finset.card_image_of_injective _ mate_origin_injective]
+  simp [Color]
+
 @[expose] def matching8 (i : Fin 8) : Vertex ≃ Vertex :=
   matching (finProdFinEquiv.symm i)
 
 theorem matching8_involutive (i : Fin 8) (v : Vertex) : matching8 i (matching8 i v) = v :=
-  mate_involutive _ _
+  mate_involutive (finProdFinEquiv.symm i) v
 
 /-- The concrete interaction with the roadmap's edge weight 1/16. -/
 @[expose] def interaction : TileHilbert Vertex →L[ℝ] TileHilbert Vertex :=

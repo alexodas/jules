@@ -38,8 +38,8 @@ theorem alpha_bounds : 1 / 2 < alpha ∧ alpha < 1 := by
 @[expose] def internal (n : Lattice) : ℂ :=
   ⟨n 0 - alpha * (n 1 - n 3), -(n 2 : ℝ) + alpha * (n 1 + n 3)⟩
 
-@[simp] theorem physical_zero : physical 0 = 0 := by simp [physical]
-@[simp] theorem internal_zero : internal 0 = 0 := by simp [internal]
+@[simp] theorem physical_zero : physical 0 = 0 := by apply Complex.ext <;> simp [physical]
+@[simp] theorem internal_zero : internal 0 = 0 := by apply Complex.ext <;> simp [internal]
 
 @[simp] theorem physical_add (m n : Lattice) : physical (m + n) = physical m + physical n := by
   apply Complex.ext <;> simp [physical] <;> ring
@@ -77,8 +77,14 @@ theorem physical_injective : Function.Injective physical := by
     push_cast; linarith)
   have h2 := integer_coefficients (m 2 - n 2) (m 1 + m 3 - (n 1 + n 3)) (by
     push_cast; linarith)
+  rcases h0 with ⟨h00, h01⟩
+  rcases h2 with ⟨h20, h21⟩
   funext i
-  fin_cases i <;> simp_all only [Fin.zero_eta, Fin.isValue] <;> omega
+  fin_cases i
+  · change m 0 = n 0; omega
+  · change m 1 = n 1; omega
+  · change m 2 = n 2; omega
+  · change m 3 = n 3; omega
 
 theorem internal_injective : Function.Injective internal := by
   intro m n h
@@ -90,8 +96,14 @@ theorem internal_injective : Function.Injective internal := by
     push_cast; linarith)
   have h2 := integer_coefficients (n 2 - m 2) (m 1 + m 3 - (n 1 + n 3)) (by
     push_cast; linarith)
+  rcases h0 with ⟨h00, h01⟩
+  rcases h2 with ⟨h20, h21⟩
   funext i
-  fin_cases i <;> simp_all only [Fin.zero_eta, Fin.isValue] <;> omega
+  fin_cases i
+  · change m 0 = n 0; omega
+  · change m 1 = n 1; omega
+  · change m 2 = n 2; omega
+  · change m 3 = n 3; omega
 
 /-- Open octagon; boundary points are excluded by definition. -/
 @[expose] def Window (z : ℂ) : Prop :=
@@ -107,7 +119,10 @@ theorem position_injective : Function.Injective position := fun _ _ h =>
   Subtype.ext (physical_injective h)
 
 theorem window_neg {z : ℂ} (h : Window z) : Window (-z) := by
-  simpa only [Window, Complex.neg_re, Complex.neg_im, ← neg_add, ← neg_sub, abs_neg] using h
+  change |-z.re| < _ ∧ |-z.im| < _ ∧ |-z.re + -z.im| < _ ∧ |-z.re - -z.im| < _
+  rw [show -z.re + -z.im = -(z.re + z.im) by ring,
+    show -z.re - -z.im = -(z.re - z.im) by ring]
+  simpa only [Window, abs_neg] using h
 
 theorem admitted_zero : Admitted 0 := by
   have ha := alpha_bounds
@@ -129,7 +144,7 @@ theorem basis_admitted (i : Fin 4) : Admitted (basis i) := by
       abs_of_pos hap, abs_of_neg han,
       abs_of_nonneg (show 0 ≤ alpha + alpha by linarith),
       abs_of_neg (show -alpha - alpha < 0 by linarith)] <;>
-    repeat' apply And.intro <;> linarith
+    (repeat' constructor) <;> linarith
 
 theorem physical_basis_norm (i : Fin 4) : ‖physical (basis i)‖ = 1 := by
   have ha := alpha_sq
@@ -221,7 +236,13 @@ theorem coordinate_bound {n : Lattice} (h : Admitted n) {R : ℝ}
   have hc := sq_nonneg (n 2 : ℝ)
   have hd := sq_nonneg (n 3 : ℝ)
   have hsq : (n i : ℝ) ^ 2 ≤ (R + 3) ^ 2 := by
-    fin_cases i <;> nlinarith
+    have hsum : 2 * ((n 0 : ℝ) ^ 2 + (n 1 : ℝ) ^ 2 + (n 2 : ℝ) ^ 2 +
+        (n 3 : ℝ) ^ 2) < R ^ 2 + 8 := by linarith
+    fin_cases i
+    · change (n 0 : ℝ) ^ 2 ≤ (R + 3) ^ 2; nlinarith
+    · change (n 1 : ℝ) ^ 2 ≤ (R + 3) ^ 2; nlinarith
+    · change (n 2 : ℝ) ^ 2 ≤ (R + 3) ^ 2; nlinarith
+    · change (n 3 : ℝ) ^ 2 ≤ (R + 3) ^ 2; nlinarith
   simpa [abs_of_nonneg (by linarith : 0 ≤ R + 3)] using sq_le_sq.mp hsq
 
 /-- Physical bounded subsets of the accepted vertex set are finite. -/
