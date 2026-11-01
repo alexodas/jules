@@ -1,7 +1,7 @@
 # Palomar candidate — finite observation and low-energy eigenspace multiplicity
 
-The candidate **mathematical result** is one theorem from the 46-module
-Lean 4 project, not a count of formalized lemmas. Comparator selects
+The candidate **mathematical result** is one theorem from the
+Lean 4 project documented in README §5, not a count of formalized lemmas. Comparator selects
 `SpectralGeometry.infiniteLocalMatching_full_eigenspace_finrank_le_lowEnergyTiles`
 in [`SpectralGeometry/InfiniteLocalFullLowEnergyCounting.lean`](SpectralGeometry/InfiniteLocalFullLowEnergyCounting.lean).
 The theorem was proved in the source development before this packaging work.
@@ -61,8 +61,9 @@ discrete Schrödinger operators, spectral theory of graph operators,
 finite-dimensional detection of low-energy states, and rigorous/formal
 operator theory. The finite observation sector supplies an input to the
 program on quantitative spectral response and associated zeros described
-below. Multi-eigenspace counting remains one of its open intermediate
-goals in [README §6.2](README.md#62-p2--quantitative-observation-and-control-of-low-energy-levels).
+below. Simultaneous observation, total counting and quantitative spectral
+response are now formalized in [README §6.2](README.md#62-p2--quantitative-observation-and-control-of-low-energy-levels),
+but are outside this selected statement.
 
 **Scope and difficulty.** The proof uses the quadratic-form inequality
 for vectors vanishing on low-potential coordinates: their Rayleigh
@@ -91,29 +92,49 @@ selected substantive observation milestone: the finite sector `{t : V(t) ≤ R}`
 distinguishes all vectors in each qualifying fixed-eigenvalue eigenspace.
 
 The [README roadmap](README.md#6-roadmap-proof-status-and-next-steps)
-sets out the subsequent **open proof obligations**:
+distinguishes the following source results from the remaining applications:
 
-1. Establish quantitative observation on the whole low-energy spectral
-   subspace, including combinations of distinct eigenspaces, and derive
-   multiplicity-aware counting and indexed spectral comparison. These
-   stronger goals use the self-adjoint setting; the separate
-   per-eigenspace bounds cannot simply be summed.
-2. Prove bounds on how ordered eigenvalues, counted with multiplicity,
-   move under positive onsite interventions supported on a finite
-   observation sector. Verify the gap and summability hypotheses needed
-   for the full interacting spectral products.
-3. Construct the normalized products using the same prescribed affine
-   line, prove their exact zero multiplicities, and transfer the spectral
-   displacement estimates to the corresponding indexed zeros. Choosing
-   the line does not itself establish new spectral information.
-4. Analyze verified finite-support changes of site energies or couplings
-   through complex compressed resolvents and relative determinants, and
-   certify finite-patch approximations with explicit error bounds.
+1. Quantitative observation on the full low-energy subspace, total
+   multiplicity counting and indexed min–max comparison are proved
+   (§§4.41–4.48).
+2. Entire full spectral products, exact geometric zero orders and
+   finite-sector indexed zero response are proved under explicit
+   positivity/summability hypotheses (§§4.49–4.59).
+3. Scalar analytic approximation, disk zero counts, numerical tails and
+   the worked linear onsite certificate are proved (§§4.60–4.67).
+4. The explicit octagonal cut-and-project vertex graph, its matching
+   interaction and a concrete response for nine low ordered levels are
+   proved (§§4.68–4.70). Geometric inverse-square summability and the
+   resulting full-product application remain open.
+5. Complex compressed resolvents, relative determinants and certified
+   finite-patch errors remain separate obligations (§§6.1, 6.5–6.6).
 
-The [confined Ammann–Beenker model proposed in README §6.4](README.md#64-p4--a-confined-ammannbeenker-model-and-a-finite-intervention)
-is a concrete application to construct and verify. Its geometry,
-operator hypotheses and response estimates have not been formalized.
-The present candidate does not depend on that proposed construction.
+**Next candidate under assessment.** The source declaration
+`SpectralGeometry.AmmannBeenker.exists_nine_level_response` constructs
+complete ordered spectra for the explicit graph with onsite energy
+`1 + |p(x)|²` and graph-Laplacian edge weight `1/16`. The first nine
+baseline levels are at most three, all levels stay at least one, and
+the finite intervention on `|p(x)| ≤ 2` gives
+`τ/2 ≤ λₙ(Hτ) − λₙ(H) ≤ τ` for `n < 9` and `0 ≤ τ ≤ 4`.
+The nonempty window and operator inputs are derived, not supplied.
+This theorem is compiled source, **not a new Comparator selection**.
+
+The corresponding geometric entire-product/zero-response theorem still
+requires onsite summability. Polygonal coverage, aperiodicity and global
+rotational symmetry are not conclusions of the present graph theorem.
+The current selection is retained while those claims and the proposed
+research contribution are assessed; the next action is not to resubmit
+the old theorem with a broader motivation alone.
+
+The maintainer supplied an automatic Palomar review finding the selected
+single-eigenspace argument insufficient as a standalone research result.
+The later source results address several missing consequences, but do
+not enlarge the current compared statement. Spectral lifting under
+positive perturbations has an established literature, for example
+[Nakić–Täufer–Tautenhahn–Veselić (2020)](https://doi.org/10.4171/JST/314).
+No exhaustive priority comparison or originality claim for the concrete
+nine-level result has been made. Its proof composes verified geometric
+inputs with classical form/min–max arguments.
 
 Restriction injectivity alone provides neither a numerical reconstruction
 algorithm nor a quantitative stability constant, eigenvalue-displacement
