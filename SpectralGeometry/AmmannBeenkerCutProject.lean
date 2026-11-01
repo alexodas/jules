@@ -42,13 +42,13 @@ theorem alpha_bounds : 1 / 2 < alpha ∧ alpha < 1 := by
 @[simp] theorem internal_zero : internal 0 = 0 := by simp [internal]
 
 @[simp] theorem physical_add (m n : Lattice) : physical (m + n) = physical m + physical n := by
-  ext <;> simp [physical] <;> ring
+  apply Complex.ext <;> simp [physical] <;> ring
 @[simp] theorem internal_add (m n : Lattice) : internal (m + n) = internal m + internal n := by
-  ext <;> simp [internal] <;> ring
+  apply Complex.ext <;> simp [internal] <;> ring
 @[simp] theorem physical_neg (n : Lattice) : physical (-n) = -physical n := by
-  ext <;> simp [physical] <;> ring
+  apply Complex.ext <;> simp [physical] <;> ring
 @[simp] theorem internal_neg (n : Lattice) : internal (-n) = -internal n := by
-  ext <;> simp [internal] <;> ring
+  apply Complex.ext <;> simp [internal] <;> ring
 @[simp] theorem physical_sub (m n : Lattice) : physical (m - n) = physical m - physical n := by
   simp [sub_eq_add_neg]
 @[simp] theorem internal_sub (m n : Lattice) : internal (m - n) = internal m - internal n := by
@@ -78,7 +78,7 @@ theorem physical_injective : Function.Injective physical := by
   have h2 := integer_coefficients (m 2 - n 2) (m 1 + m 3 - (n 1 + n 3)) (by
     push_cast; linarith)
   funext i
-  fin_cases i <;> simp_all <;> omega
+  fin_cases i <;> simp_all only [Fin.zero_eta, Fin.isValue] <;> omega
 
 theorem internal_injective : Function.Injective internal := by
   intro m n h
@@ -91,7 +91,7 @@ theorem internal_injective : Function.Injective internal := by
   have h2 := integer_coefficients (n 2 - m 2) (m 1 + m 3 - (n 1 + n 3)) (by
     push_cast; linarith)
   funext i
-  fin_cases i <;> simp_all <;> omega
+  fin_cases i <;> simp_all only [Fin.zero_eta, Fin.isValue] <;> omega
 
 /-- Open octagon; boundary points are excluded by definition. -/
 @[expose] def Window (z : ℂ) : Prop :=
@@ -107,7 +107,7 @@ theorem position_injective : Function.Injective position := fun _ _ h =>
   Subtype.ext (physical_injective h)
 
 theorem window_neg {z : ℂ} (h : Window z) : Window (-z) := by
-  simpa [Window, neg_add_neg, ← neg_add, ← neg_sub] using h
+  simpa only [Window, Complex.neg_re, Complex.neg_im, ← neg_add, ← neg_sub, abs_neg] using h
 
 theorem admitted_zero : Admitted 0 := by
   have ha := alpha_bounds
@@ -122,10 +122,14 @@ theorem admitted_neg {n : Lattice} (h : Admitted n) : Admitted (-n) := by
 
 theorem basis_admitted (i : Fin 4) : Admitted (basis i) := by
   have ha := alpha_bounds
+  have hap : 0 < alpha := by linarith
+  have han : -alpha < 0 := by linarith
   fin_cases i <;>
     norm_num [Admitted, Window, internal, basis, Pi.single_apply,
-      abs_of_pos (by linarith : 0 < alpha), abs_of_neg (by linarith : -alpha < 0)] <;>
-    repeat' constructor <;> linarith
+      abs_of_pos hap, abs_of_neg han,
+      abs_of_nonneg (show 0 ≤ alpha + alpha by linarith),
+      abs_of_neg (show -alpha - alpha < 0 by linarith)] <;>
+    repeat' apply And.intro <;> linarith
 
 theorem physical_basis_norm (i : Fin 4) : ‖physical (basis i)‖ = 1 := by
   have ha := alpha_sq
@@ -140,11 +144,11 @@ theorem physical_basis_norm (i : Fin 4) : ‖physical (basis i)‖ = 1 := by
 
 theorem physical_inflate (n : Lattice) :
     physical (inflate n) = ((1 + 2 * alpha : ℝ) : ℂ) * physical n := by
-  ext <;> simp [physical, inflate] <;> ring_nf <;> rw [alpha_sq] <;> ring
+  apply Complex.ext <;> simp [physical, inflate] <;> ring_nf <;> rw [alpha_sq] <;> ring
 
 theorem internal_inflate (n : Lattice) :
     internal (inflate n) = ((1 - 2 * alpha : ℝ) : ℂ) * internal n := by
-  ext <;> simp [internal, inflate] <;> ring_nf <;> rw [alpha_sq] <;> ring
+  apply Complex.ext <;> simp [internal, inflate] <;> ring_nf <;> rw [alpha_sq] <;> ring
 
 theorem window_mul_real {z : ℂ} (h : Window z) {t : ℝ} (ht : |t| ≤ 1) :
     Window ((t : ℂ) * z) := by
@@ -216,12 +220,9 @@ theorem coordinate_bound {n : Lattice} (h : Admitted n) {R : ℝ}
   have hb := sq_nonneg (n 1 : ℝ)
   have hc := sq_nonneg (n 2 : ℝ)
   have hd := sq_nonneg (n 3 : ℝ)
-  apply abs_le.mpr
-  fin_cases i <;> constructor <;> nlinarith [sq_nonneg (R + 3 + (n 0 : ℝ)),
-    sq_nonneg (R + 3 - (n 0 : ℝ)), sq_nonneg (R + 3 + (n 1 : ℝ)),
-    sq_nonneg (R + 3 - (n 1 : ℝ)), sq_nonneg (R + 3 + (n 2 : ℝ)),
-    sq_nonneg (R + 3 - (n 2 : ℝ)), sq_nonneg (R + 3 + (n 3 : ℝ)),
-    sq_nonneg (R + 3 - (n 3 : ℝ))]
+  have hsq : (n i : ℝ) ^ 2 ≤ (R + 3) ^ 2 := by
+    fin_cases i <;> nlinarith
+  simpa [abs_of_nonneg (by linarith : 0 ≤ R + 3)] using sq_le_sq.mp hsq
 
 /-- Physical bounded subsets of the accepted vertex set are finite. -/
 theorem finite_norm_sublevel (R : ℝ) : {v : Vertex | ‖position v‖ ≤ R}.Finite := by
@@ -231,7 +232,7 @@ theorem finite_norm_sublevel (R : ℝ) : {v : Vertex | ‖position v‖ ≤ R}.F
     have hf : {n : Lattice | ∀ i, n i ∈ Set.Icc (-N) N}.Finite :=
       Set.Finite.pi' (fun _ => Set.finite_Icc _ _)
     have hpre : {v : Vertex | ∀ i, v.val i ∈ Set.Icc (-N) N}.Finite :=
-      hf.preimage Subtype.val_injective
+      hf.preimage Subtype.val_injective.injOn
     apply hpre.subset
     intro v hv i
     have hb := abs_le.mp (coordinate_bound v.property hR hv i)
@@ -243,7 +244,7 @@ theorem finite_norm_sublevel (R : ℝ) : {v : Vertex | ‖position v‖ ≤ R}.F
       exact_mod_cast hu
   · have he : {v : Vertex | ‖position v‖ ≤ R} = ∅ := by
       ext v
-      simp only [Set.mem_setOf_eq, Set.mem_empty_iff_false, iff_false]
+      simp only [Set.mem_ofPred_eq, Set.mem_empty_iff_false, iff_false]
       intro h
       exact hR ((norm_nonneg _).trans h)
     rw [he]
