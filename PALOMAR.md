@@ -1,9 +1,9 @@
-# Palomar candidate — nine-level response on an octagonal graph
+# Palomar candidate — exact geometric spectral products and nine-level zero response
 
 The selected theorem is
-`SpectralGeometry.AmmannBeenker.exists_nine_level_response` in
-[`AmmannBeenkerOperator.lean`](SpectralGeometry/AmmannBeenkerOperator.lean),
-documented in README §4.70.
+`SpectralGeometry.AmmannBeenker.exists_nine_level_fullProducts` in
+[`AmmannBeenkerSpectralProducts.lean`](SpectralGeometry/AmmannBeenkerSpectralProducts.lean),
+documented in README §§4.71–4.72.
 
 ## Mathematical statement
 
@@ -31,19 +31,45 @@ interaction norm at most one, positivity/symmetry, properness and V≥5
 outside S. The natural-domain self-adjoint compact-resolvent construction
 supplies the complete ordered spectra.
 
+For any fixed center $c\in\mathbb C$ and direction $d\ne0$, the theorem
+also derives inverse-square summability of both complete spectra and proves
+`HasExactFullSpectralProduct` for each operator. Thus
+```math
+D_τ(s)=\prod_{n\ge0}\left(1-\frac{(s-c)^2}{d^2μ_{τ,n}^2}\right)
+```
+is entire, its zeros are exactly the reflected full real bounded-inverse
+spectrum, and its analytic zero orders are the geometric eigenspace
+multiplicities of that same operator. With $z_n^\pm(τ)=c\pm dμ_{τ,n}$,
+```math
+z_n^\pm(τ)-z_n^\pm(0)=\pm d(μ_{τ,n}-λ_n),
+\qquad |d|\fracτ2≤|z_n^\pm(τ)-z_n^\pm(0)|≤|d|τ
+\quad(n<9,\ 0≤τ≤4).
+```
+All indexed points are zeros of their respective products, and each indexed
+branch moves when τ>0. Repeated levels are allowed: nine multiplicity slots
+need not be nine distinct locations, and zero sets at different parameters
+need not be disjoint. The common natural domain and affine data are fixed;
+the compact-resolvent witnessing shift may vary with τ.
+
+The geometric summability is proved, not assumed. An injective code by two
+integer coordinates and two residues in {-2,-1,0,1,2} yields
+$\#\{|p(x)|≤R\}≤25(2\lceil R+3\rceil+1)^2$ for R≥0, and a product-of-series
+majorant proves $\sum_x V(x)^{-2}<\infty$. Positivity and the variational
+comparison transfer this to the full spectra throughout the intervention.
+
 ## Research motivation and scope
 
-The result is an explicit infinite geometric example in which a finite
-positive intervention moves at least nine ordered levels by a uniform
-fraction of its strength. The contribution to assess is the complete
-application with derived geometric/operator inputs and quantitative
-multiplicity-aware conclusions. Its form and min–max methods are classical;
+The result connects a concrete finite intervention in an infinite geometric
+operator to quantitatively controlled motion of exact full-product zeros
+on an arbitrary prescribed affine line. The contribution to assess is the
+complete application with derived geometry, summability, operator inputs,
+a nonempty window and operator-specific geometric zero multiplicities. Its form and min–max methods are classical;
 positive spectral lifting is an established topic.
 
 Polygonal tiling coverage, aperiodicity, global rotational symmetry,
-optimality of the sector/constants, finite-patch errors and CUE statistics
-are not conclusions. Geometric inverse-square summability and the resulting
-entire-product zero-response application remain roadmap obligations.
+uniform vertex separation, optimality of the sector/constants, numerical
+cofactor/radius certificates, relative determinants, finite-patch errors and
+CUE statistics are not conclusions.
 Choosing an affine line for spectral zeros is not by itself a novelty claim.
 No relation to Riemann zeta zeros is asserted.
 
@@ -79,8 +105,10 @@ No human mathematical peer review or exhaustive provenance audit is claimed.
 
 Challenge imports only Mathlib and independently states the model, natural
 domain, eigenbasis structure and theorem. Solution imports the proved source.
-The single Comparator selects one theorem and 27 supporting declarations
-(26 definitions/abbreviations and the eigenbasis structure). Challenge-only
+The Comparator selects the main theorem and four supporting witness lemmas:
+matching involutivity, finite radius sublevels, onsite properness and
+finite-dimensional compact-resolvent eigenspaces. All model definitions
+and the eigenbasis structure are compared transitively, with no definition holes. Challenge-only
 proposition placeholders are not substantive proofs. Lean, NanoDa and con-ron
 must check the comparison; the complete source library is also built.
 Toolchain and dependencies are pinned.

@@ -6,10 +6,11 @@ on a prescribed complex line.**
 
 ## Current status
 
-The selected result is the **concrete nine-level finite-sector response**
-of §4.70 on the explicit infinite octagonal vertex graph. It constructs
-complete ordered eigenbases, proves a nonempty low-energy window and bounds
-the response to a finite positive intervention, counting multiplicities.
+The selected result is the **concrete nine-level full-product zero response**
+of §4.72 on the explicit infinite octagonal vertex graph. It constructs
+complete ordered spectra and entire products with exact geometric zero
+multiplicities, and bounds the response of nine indexed zeros on each
+reflected branch to a finite positive intervention.
 The foundational observation and analytic results remain documented below.
 
 | Part of the program | Status |
@@ -27,7 +28,8 @@ The foundational observation and analytic results remain documented below.
 | Scalar analytic approximation and local zero certificates with multiplicities | Formalized in §§4.60–4.65: explicit product-tail errors, multiplicity-dependent location bounds and exact total zero counts under a strict circular-boundary error; no simplicity assumption |
 | Numerical tail rates and a worked scalar zero certificate | Formalized in §§4.66–4.67: explicit radius, cofactor bound and cutoff for the linear onsite model; numerical tail bounds also hold after symmetric nonnegative bounded interactions |
 | Explicit octagonal cut-and-project vertex graph and nine-level finite-sector response | Formalized in §§4.68–4.70: infinite embedded vertices, exact central star, matching Laplacian and a nonempty controlled window |
-| Geometric full-product instantiation, relative products and certified finite-patch zero response | Remaining obligations in §§6.4–6.6; geometric growth/summability is the next dependency |
+| Planar vertex counting, geometric summability and full-product zero response | Formalized in §§4.71–4.72 for the explicit graph, with a nonempty nine-level window and no supplied summability hypothesis |
+| Relative products and certified finite-patch zero response | Remaining obligations in §§6.5–6.6; geometric scalar cofactor/radius certificates also remain open |
 
 The research objective is an end-to-end statement relating an explicitly defined
 local geometric modification to a quantitatively controlled change in a
@@ -52,10 +54,11 @@ growth gives an explicit tail rate, also for that onsite potential with a
 symmetric nonnegative bounded interaction. An explicit octagonal vertex graph
 now supplies a concrete spectral application: at least nine ordered levels
 are controlled by a finite onsite intervention, with positive gap preserved.
-Its geometric inverse-square summability and full-product instantiation,
-cofactor/radius certificates, finite-patch approximation and statistical
-results remain open. Counting on arbitrary noncircular contours is not
-formalized. Comparator selects the concrete nine-level response of §4.70;
+Its planar counting bound, onsite and full-spectrum inverse-square
+summability, and exact entire-product zero-response instantiation are now
+proved. Geometric cofactor/radius certificates, finite-patch approximation
+and statistical results remain open. Counting on arbitrary noncircular contours is not
+formalized. Comparator selects the concrete nine-level full-product response of §4.72;
 §6.8 records its scope and verification requirements.
 
 The chosen affine line is part of the definition of the analytic family.
@@ -166,10 +169,11 @@ quantitative tail estimates apply to its full spectrum with a symmetric
 nonnegative bounded interaction, while the explicit cofactor and radius
 are proved for the onsite model. Sections 4.68–4.70 now construct the
 octagonal cut-and-project vertex graph and prove a concrete response for
-its first nine ordered levels. The geometric full-product application still
-requires the growth/summability step of §6.4.
+its first nine ordered levels. Sections 4.71–4.72 prove the geometric
+counting/summability inputs and the exact entire-product zero response,
+with the same positive gap and multiplicities throughout the intervention.
 
-The selected concrete response of §4.70 uses these source results under
+The selected concrete full-product response of §4.72 uses these source results under
 its verified geometric hypotheses. They do not provide a numerical reconstruction
 algorithm or independent control of several zeros. The relative
 determinant identity in §6.5 is a separate proof obligation; it does not follow
@@ -289,6 +293,8 @@ quantitative analytic displacement statement for positive finite-sector
 perturbations; §4.59 proves its sharper positive-interaction version.
 No complex resolvent is needed for this scalar product construction; the
 complex-resolvent interface required for relative determinants remains open.
+For the explicit octagonal graph, §§4.71–4.72 now derive the summability
+inputs and instantiate the entire full products throughout 0≤τ≤4.
 
 ### 2.2. A common analytic coordinate for geometric operators
 
@@ -331,6 +337,10 @@ a nonempty energy window or disjoint zero sets.
 For nonnegative $B$, §4.59 proves the same type of conclusion with the sharper
 $\kappa=(R-E)/(R-v_0)>0$ under $E<R$, again with the explicit interval
 $0\le\tau\le R-v_0$ and without asserting a nonempty target window.
+Section 4.72 supplies a concrete application with at least nine indexed
+levels on each branch, coefficient $1/2$, and summability derived from the
+geometric model. Different indices may coincide; nine slots do not assert
+nine distinct zero locations.
 
 ### 2.3. Target: a relative product for a finite geometric defect
 
@@ -1483,7 +1493,7 @@ m_H(\lambda)=\dim E_\lambda(H)\le \#\{t:V(t)\le R\}.
 
 This last theorem controls the **dimension of a complete eigenspace** rather than only detecting one eigenvector. It holds without requiring a global indexed onsite-eigenvalue sequence or a new complex-spectrum construction.
 
-**Scope and subsequent strengthening:** the inequality above applies to *one eigenspace at a time* and cannot simply be summed over distinct eigenvalues. Sections 4.41–4.43 now control the **direct sum of all low-energy eigenspaces** using symmetry, orthogonality and one dimension comparison with the finite onsite sector. Sections 4.44–4.48 prove the ordered-level comparison, finite-sector response and sufficient interacting inverse-square summability. These are separate source results; this section records the foundational single-eigenspace theorem. The concrete tiling instantiation remains open (§6.4).
+**Scope and subsequent strengthening:** the inequality above applies to *one eigenspace at a time* and cannot simply be summed over distinct eigenvalues. Sections 4.41–4.43 now control the **direct sum of all low-energy eigenspaces** using symmetry, orthogonality and one dimension comparison with the finite onsite sector. Sections 4.44–4.48 prove the ordered-level comparison, finite-sector response and sufficient interacting inverse-square summability. These are separate source results; this section records the foundational single-eigenspace theorem. The explicit vertex-graph application is proved in §§4.68–4.72; global tiling coverage and aperiodicity remain open (§6.4).
 
 ### 4.41. Simultaneous spectral subspaces on the natural domain
 
@@ -1707,7 +1717,7 @@ finite/empty spectral cases remain separate. Repeated levels are allowed and
 produce the exact original geometric multiplicity at each paired zero.
 Normalization and symmetry use the same arbitrary fixed $c,d$ throughout a
 family. The formal indexed zero-displacement estimate is now proved in §4.52;
-the concrete geometric instantiation of §6.4 remains open.
+the concrete geometric instantiation is proved in §4.72.
 
 
 ### 4.50. Algebraic identities for indexed spectral points
@@ -1955,9 +1965,8 @@ simple eigenvalues and $v_0>\|B\|$ are not hypotheses of this application.
 For $v_0=1$, $R=5$, $E=3$, the coefficient is $1/2$. Sections 4.68–4.70
 now construct the centered octagonal vertex set, matching interaction and
 finite sector, and prove $\lambda_8(H)\le3$ from nine distinct central sites.
-Thus that spectral application has a nonempty window. Applying this
-full-product theorem to it still requires geometric inverse-square
-summability. The abstract theorem itself does not assume or prove window
+Sections 4.71–4.72 now prove its inverse-square summability and exact
+full-product application, with a nonempty nine-level window. The abstract theorem itself does not assume or prove window
 nonemptiness, and does not exclude common zero locations arising from
 different indices at different parameters. Relative products and certified
 finite-patch approximation remain separate obligations.
@@ -2156,7 +2165,7 @@ These results supply the disk-counting step of §6.3. Sections 4.66–4.67
 provide numerical data for a worked onsite example. Cofactor/radius
 certificates for interacting geometric models and finite-patch
 operator/resolvent errors remain to be supplied. Counting on noncircular
-contours is outside this interface. The concrete response selected for Palomar is documented in §4.70.
+contours is outside this interface. The concrete full-product response selected for Palomar is documented in §4.72.
 
 ### 4.66. Numerical tail rates and finite-factor lower certificates
 
@@ -2347,17 +2356,83 @@ may depend on $\tau$. Repeated levels are counted through complete
 orthonormal eigenbases; simplicity is not assumed. The proof uses the
 positive sector form bound and the verified min–max comparison.
 
-This is a concrete **spectral** consequence. Inverse-square summability
-for this geometric potential, its full canonical product and the
-corresponding nine-level zero-response specialization are still open.
-Neither local finiteness nor compact resolvent alone closes that gap.
-No optimized control sector, finite-patch error, new spectral technique
-or mathematical originality is asserted. This is the Comparator-selected theorem; §6.8 records its scope
-and research-interest assessment obligations.
+This is the concrete spectral foundation for the stronger full-product
+result of §4.72. Section 4.71 derives geometric inverse-square summability;
+local finiteness or compact resolvent alone would not supply it. No
+optimal sector, finite-patch error or new spectral technique is asserted.
+
+### 4.71. Planar vertex counting and geometric inverse-square summability
+
+[AmmannBeenkerSummability.lean](SpectralGeometry/AmmannBeenkerSummability.lean)
+constructs an injective `planarCode` into
+$(\mathbb Z^2)\times\{-2,-1,0,1,2\}^2$. The free coordinates are
+$(n_1,n_3)$; the residues subtract the integer floors of
+$\alpha(n_1-n_3)$ and $\alpha(n_1+n_3)$ from $n_0$ and $n_2$.
+The window bounds each residue. No uniform-separation hypothesis is supplied.
+
+`radius_count_le` proves for every $R\ge0$, with $N=\lceil R+3\rceil$,
+```math
+\#\{x:|p(x)|\le R\}\le25(2N+1)^2.
+```
+This is an explicit quadratic upper bound, not an asymptotic density law.
+`planar_energy_bound` proves
+$1+n_1^2+n_3^2\le5V(x)$. Hence
+```math
+\frac1{V(x)^2}\le
+\frac{25}{(1+n_1^2)(1+n_3^2)}.
+```
+The product of two convergent integer series, together with the finite
+residue code, gives `potential_invSq_summable`:
+$\sum_{x\in\mathrm{Vertex}}V(x)^{-2}<\infty$. This is summability of
+the actual geometric potential; it assumes neither a sorted enumeration
+nor a spectral growth estimate. The bound is not optimized. A separate
+uniform-separation estimate is not proved or needed for this argument.
+
+### 4.72. Exact geometric full products and nine-level zero response
+
+[AmmannBeenkerSpectralProducts.lean](SpectralGeometry/AmmannBeenkerSpectralProducts.lean)
+proves the selected theorem `AmmannBeenker.exists_nine_level_fullProducts`.
+For arbitrary fixed $c,d\in\mathbb C$ with $d\ne0$, it constructs
+complete monotone natural-domain eigenbases for $H$ and $H_\tau=H+\tau P_S$,
+with $V(x)=1+|p(x)|^2$, matching edge weight $1/16$ and $S=\{|p(x)|\le2\}$.
+All baseline and perturbed levels are at least one; $\lambda_n(H)\le3$
+for $n<9$. Both full spectra are inverse-square summable.
+
+`HasExactFullSpectralProduct` is proved for each operator: its canonical
+product is entire, its zeros are exactly the reflected full real
+bounded-inverse spectrum, and its analytic orders are the geometric
+eigenspace multiplicities of that same operator. In particular,
+```math
+D_\tau(s)=\prod_{n\ge0}\left(1-
+\frac{(s-c)^2}{d^2\lambda_n(H_\tau)^2}\right),
+\qquad z_n^\pm(\tau)=c\pm d\lambda_n(H_\tau).
+```
+For $0\le\tau\le4$ and $n<9$, the theorem retains the spectral bounds
+$\tau/2\le\lambda_n(H_\tau)-\lambda_n(H)\le\tau$ and proves
+```math
+z_n^\pm(\tau)-z_n^\pm(0)
+ =\pm d\bigl(\lambda_n(H_\tau)-\lambda_n(H)\bigr),
+\qquad |d|\frac\tau2\le|z_n^\pm(\tau)-z_n^\pm(0)|\le|d|\tau.
+```
+The four indexed points are zeros of their own products, and both indexed
+branches move for $\tau>0$. Repetitions and crossings are allowed: these
+are nine multiplicity slots on each branch, not a claim of nine distinct
+locations or disjoint zero sets at different parameters.
+
+Only the affine data $c,d$ and $d\ne0$ are supplied. Infinitude, properness,
+self-adjoint natural-domain construction, compact shifted resolvents,
+positive gaps, spectral enumeration, geometric summability and the nonempty
+window come from verified source results. The common domain and affine data
+are unchanged along the interval; a resolvent shift may depend on $\tau$.
+Normalization and reflected symmetry follow from the existing canonical
+product theorems (§2.4). Uniform vertex separation, polygonal coverage,
+aperiodicity, optimal constants, numerical cofactor/radius data, relative
+determinants and finite-patch errors are not conclusions. Formal verification
+is distinct from originality or research-interest assessment.
 
 ## 5. Building and verification
 
-The canonical import list is maintained in [`SpectralGeometry.lean`](SpectralGeometry.lean). It currently imports **80 Lean modules**: eleven analytic and window modules, four finite-dimensional geometry modules, and sixty-five infinite geometry/operator/spectral modules (including domain-generic interfaces).
+The canonical import list is maintained in [`SpectralGeometry.lean`](SpectralGeometry.lean). It currently imports **82 Lean modules**: eleven analytic and window modules, four finite-dimensional geometry modules, and sixty-seven infinite geometry/operator/spectral modules (including domain-generic interfaces).
 
 - **Analytic core, indexed points and certified windows (11):**
   - [`CanonicalProduct.lean`](SpectralGeometry/CanonicalProduct.lean)
@@ -2445,10 +2520,12 @@ The canonical import list is maintained in [`SpectralGeometry.lean`](SpectralGeo
   - [`FullSpectralZeroCounts.lean`](SpectralGeometry/FullSpectralZeroCounts.lean)
   - [`LinearOnsiteZeroCertificate.lean`](SpectralGeometry/LinearOnsiteZeroCertificate.lean)
 
-- **Explicit octagonal vertices, graph and confined operator (3):**
+- **Explicit octagonal geometry, operator and spectral products (5):**
   - [`AmmannBeenkerCutProject.lean`](SpectralGeometry/AmmannBeenkerCutProject.lean)
   - [`AmmannBeenkerGraph.lean`](SpectralGeometry/AmmannBeenkerGraph.lean)
   - [`AmmannBeenkerOperator.lean`](SpectralGeometry/AmmannBeenkerOperator.lean)
+  - [`AmmannBeenkerSummability.lean`](SpectralGeometry/AmmannBeenkerSummability.lean)
+  - [`AmmannBeenkerSpectralProducts.lean`](SpectralGeometry/AmmannBeenkerSpectralProducts.lean)
 
 - **Bounded spectral errors and full zero-cluster certificates (2):**
   - [`InfiniteBoundedSpectralStability.lean`](SpectralGeometry/InfiniteBoundedSpectralStability.lean)
@@ -2472,11 +2549,12 @@ treated as an independently proved library.
 one [`comparator.json`](comparator.json), one
 [`Challenge.lean`](Challenge.lean) and one [`Solution.lean`](Solution.lean).
 Comparator selects **one theorem**,
-`SpectralGeometry.AmmannBeenker.exists_nine_level_response` (§4.70),
-with 27 independently reproduced supporting declarations: 26 definitions
-or abbreviations and the eigenbasis structure. Lean, NanoDa and con-ron
+`SpectralGeometry.AmmannBeenker.exists_nine_level_fullProducts` (§4.72),
+with four supporting witness lemmas: matching involutivity, finite radius
+sublevels, onsite properness and finite-dimensional resolvent eigenspaces. All model definitions and the
+eigenbasis structure are compared transitively, with no definition holes. Lean, NanoDa and con-ron
 must verify the comparison on the exact submission commit. The separate
-Lean build covers **all 80 mathematical source modules**. The source
+Lean build covers **all 82 mathematical source modules**. The source
 presentation and geometric/operator-theory background are distinguished
 in the metadata; mathematical priority and novelty are not asserted.
 
@@ -2515,14 +2593,15 @@ successful full build; any submitted commit must pass its own checks.
 Unchecked items are open proof obligations or exploratory questions. P2, P3
 and P4 denote research phases, not theorem numbers.
 
-**Active dependency path.** The abstract spectral response (§6.2) and its
-analytic bridge (§6.3) are available. The explicit graph and a nonempty
-nine-level spectral response are now proved in §6.4. The next task is a
-quantitative planar counting/summability argument for that graph, followed
-by its full-product zero-response instantiation. Model-specific cofactor
-and radius certificates can follow that construction. The complex Green
-matrix interface in §6.1 serves §6.5; it is not a prerequisite for this
-spectral-product path. Arbitrary noncircular contours are a separate extension.
+**Active dependency path.** Abstract spectral response (§6.2), the analytic
+bridge (§6.3), and the explicit geometric full-product application (§6.4)
+are proved. The next numerical task is a scalar cofactor/isolation-radius
+certificate for this interacting geometric product, followed by a certified
+truncation cutoff. The planar finite-residue code already supplies the
+summability input; uniform separation is a separate geometric refinement.
+The complex Green-matrix interface in §6.1 serves relative determinants in
+§6.5, and finite-patch operator errors remain in §6.6. Neither is a hidden
+hypothesis of the proved geometric product theorem.
 
 ### 6.1. P2 — Spectral foundations and the complex-resolvent interface
 
@@ -2683,14 +2762,14 @@ ordered level. Sections 4.52 and 4.59 transfer the respective norm-penalty and
 positive-interaction responses to the indexed zeros of both full spectral
 products. All the listed abstract obligations of this subsection are proved
 under their stated hypotheses. Sections 4.68–4.70 now establish an explicit
-vertex graph and a nonempty nine-level window for §6.4. Its geometric
-summability remains an application-specific obligation. Local scalar analytic
+vertex graph and a nonempty nine-level window for §6.4. Sections 4.71–4.72
+now prove geometric summability and exact full-product zero response. Local scalar analytic
 certificates and exact disk counts are now available in §6.3, together
 with a numerical worked onsite certificate and quantitative tails for its
 nonnegative interacting family (§§4.66–4.67). Interacting geometric
 cofactor/radius data and finite-patch approximation certificates remain
 open in §§6.3 and 6.6; noncircular contours are not covered by the disk theorem.
-The selected concrete theorem of §4.70 uses this spectral infrastructure;
+The selected concrete theorem of §4.72 uses this spectral infrastructure;
 analytic-product consequences have their own hypotheses.
 
 ### 6.3. P3 — Full spectral products and their exact zero divisors
@@ -2721,10 +2800,9 @@ analytic-product consequences have their own hypotheses.
 
 **Application-dependent work**
 
-- [ ] Instantiate the full-product theorem for the explicit graph of
-  §6.4 after proving its onsite inverse-square summability. Its nine
-  controlled spectral levels are now proved in §4.70; the associated
-  nine-level zero statement is not yet an application theorem in Lean.
+- [x] Instantiate the full-product theorem for the explicit graph of
+  §6.4, with geometric summability and a nine-level zero-response
+  conclusion derived in §§4.71–4.72.
 - [ ] Derive numerical cofactor and isolation-radius certificates for
   this interacting geometric product. The linear onsite constants cannot
   be transferred unchanged to it.
@@ -2767,20 +2845,31 @@ The relation to the standard Ammann–Beenker construction is documented in
   ```
   This counts multiplicities and supplies a genuinely nonempty window.
 
-**Next dependency: geometric summability, then zeros**
+**Completed planar counting, summability and full-product application**
 
-- [ ] Prove a uniform separation estimate and a quantitative
-  two-dimensional vertex-counting bound. The finite-coordinate box in
-  §4.68 proves local finiteness, not the required planar growth rate.
-- [ ] Deduce $\sum_x(1+|p(x)|^2)^{-2}<\infty$ and transfer it to the
-  positive interacting spectra, including the whole intervention
-  interval, using §4.58. The already constructed ordering and positive
-  gap may be reused; compact resolvent alone is insufficient.
-- [ ] Apply §4.59 with $v_0=1$, $R=5$, $E=3$ to obtain the actual entire
-  products, exact geometric zero orders and indexed displacement bounds
-  with coefficient $1/2$ for at least nine levels on each prescribed
-  reflected branch. Then supply the model-specific scalar certificates
-  retained in §6.3.
+- [x] Prove an injective finite-residue planar code and the explicit
+  bound $\#\{|p(x)|\le R\}\le25(2\lceil R+3\rceil+1)^2$ for $R\ge0$.
+  This supplies the required planar growth bound without assuming or
+  proving uniform separation (§4.71).
+- [x] Prove $\sum_x(1+|p(x)|^2)^{-2}<\infty$ and transfer it to the
+  positive complete interacting spectra throughout $0\le\tau\le4$,
+  retaining the lower bound one (§§4.71–4.72).
+- [x] Construct entire full products with exact operator-specific
+  geometric zero orders and prove indexed displacements between
+  $|d|\tau/2$ and $|d|\tau$ for nine slots on each reflected branch,
+  including both interval endpoints (§4.72).
+
+**Next application tasks**
+
+- [ ] Derive an isolation radius and a nonzero analytic-cofactor lower
+  certificate for a specified geometric spectral level or cluster.
+  Account for multiplicity; do not assume simple spectrum.
+- [ ] Combine these data with a quantitative spectral-tail bound to
+  certify a finite-product cutoff and exact disk zero count (§6.3).
+  The onsite constants of §4.67 do not automatically apply here.
+- [ ] Prove a uniform vertex-separation estimate if needed for sharper
+  geometric estimates; it is not a prerequisite for the established
+  summability and full-product application.
 
 **Further geometric and research questions**
 
@@ -2792,10 +2881,10 @@ The relation to the standard Ammann–Beenker construction is documented in
   This is a possible research contribution, not a consequence of the
   existing nine-level estimate.
 
-The checked graph and spectral statements are source results. The remaining
-zero-product statements and geometric properties are open. Their eventual
-formalization must still be distinguished from mathematical novelty and
-the Palomar selection process in §6.8.
+The graph, planar count, summability and exact full-product response are
+proved source results. The remaining geometric and numerical certificates
+are open. Their status is distinct from mathematical novelty and the
+research-interest assessment in §6.8.
 
 ### 6.5. Local geometric defects and relative spectral products
 
@@ -2905,10 +2994,11 @@ theorem, and carries no asserted connection to the Riemann zeta function.
 
 **Current selected result**
 
-- [x] Select `SpectralGeometry.AmmannBeenker.exists_nine_level_response`
-  (§4.70): complete ordered natural-domain eigenbases, positive gaps,
-  a nonempty nine-level window and response between τ/2 and τ on 0≤τ≤4.
-  The geometric/operator inputs are derived, and multiplicities retained.
+- [x] Select `SpectralGeometry.AmmannBeenker.exists_nine_level_fullProducts`
+  (§4.72): complete ordered spectra, positive gaps, geometric summability,
+  entire full products with exact geometric zero orders and quantitative
+  response for nine slots on each branch on 0≤τ≤4.
+  The geometric/operator inputs and nonempty window are derived.
 - [x] Supply the Mathlib-only independent Challenge, source-backed Solution,
   supporting definitions and single root Comparator configuration.
 - [x] State the open-window convention and distinguish the vertex graph
@@ -2922,8 +3012,9 @@ min–max methods are classical, and spectral lifting has established
 antecedents. Formal checking does not establish mathematical originality
 or standalone research significance.
 
-- [ ] Complete geometric summability and the full-product application
-  (§6.4) before including those conclusions in the selected theorem.
+- [x] Include the proved geometric summability and full-product application
+  (§§4.71–4.72) in the selected statement. The independent configuration
+  includes four supporting witness lemmas and no definition holes.
 - [ ] Compare the exact hypotheses/conclusions with the literature and
   obtain expert assessment of research interest.
 - [ ] Supply scalar cofactor/radius and finite-patch certificates when

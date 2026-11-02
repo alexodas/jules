@@ -1,8 +1,8 @@
 {
   "version": "v0.4",
   "project": {
-    "name": "Jules Spectral Geometry — nine-level response on an octagonal graph",
-    "description": "The selected theorem constructs complete ordered natural-domain eigenbases for the explicit infinite octagonal vertex graph with V(x)=1+|p(x)|² and edge weight 1/16. For S={x:|p(x)|≤2}, all levels of H and H+τP_S are at least one, the first nine baseline levels are at most three, and τ/2≤μ_n−λ_n≤τ for n<9 and 0≤τ≤4. Infinitude, properness and the nonempty window are derived; repeated levels are allowed. Geometric full products, polygonal coverage, aperiodicity and finite-patch certificates are outside this selection.",
+    "name": "Jules Spectral Geometry — exact geometric products and nine-level zero response",
+    "description": "For the explicit infinite octagonal vertex graph with V(x)=1+|p(x)|², matching edge weight 1/16 and S={x:|p(x)|≤2}, construct complete monotone natural-domain spectra for H and H+τP_S, all levels at least one, and a nine-level baseline window below three. Derive geometric onsite and full-spectrum inverse-square summability. For arbitrary fixed c,d in ℂ with d≠0, obtain entire canonical products with exact full real bounded-inverse spectral zero sets and operator-specific geometric zero multiplicities. For n<9 and 0≤τ≤4, retain τ/2≤μ_n−λ_n≤τ and prove oriented indexed zero differences ±d(μ_n−λ_n), with norm between |d|τ/2 and |d|τ and nonzero motion for τ>0. Repetitions and crossings are permitted. Geometric, operator, summability and nonempty-window inputs are derived.",
     "authors": [
       "Alessandro Odasso"
     ],
@@ -25,14 +25,14 @@
   },
   "sources": [
     {
-      "title": "Nine-level response on the explicit octagonal vertex graph",
+      "title": "Exact full spectral products and nine-level zero response for the explicit octagonal graph",
       "authors": [
         "Alessandro Odasso"
       ],
       "type": "original-proof",
       "relationship": "other",
-      "id": "https://github.com/alexodas/jules/blob/main/SpectralGeometry/AmmannBeenkerOperator.lean",
-      "note": "The precise statement is recorded in the AI-assisted Jules development under the maintainer’s direction. This identifies its presentation, not verified mathematical priority or novelty. The methods combine explicit geometric inputs with classical form and min–max arguments."
+      "id": "https://github.com/alexodas/jules/blob/main/SpectralGeometry/AmmannBeenkerSpectralProducts.lean",
+      "note": "The precise statement and proof are recorded in the AI-assisted Jules development under the maintainer’s direction. The proof combines explicit geometric counting and summability with established form, min–max and canonical-product arguments. This source classification identifies that presentation; it does not certify mathematical priority, a new analytic technique or standalone research interest."
     },
     {
       "title": "Perturbation Theory for Linear Operators",
@@ -76,7 +76,7 @@
     }
   ],
   "status": {
-    "scope": "One selected theorem, SpectralGeometry.AmmannBeenker.exists_nine_level_response, with 27 independent supporting declarations. Complete ordered natural-domain eigenbases, positive gaps, a nine-level window and response bounds are conclusions. The full mathematical library is compiled separately. Geometric full-product zero response remains outside the selection.",
+    "scope": "One main theorem, SpectralGeometry.AmmannBeenker.exists_nine_level_fullProducts, and four supporting witness lemmas: matching involutivity, finite radius sublevels, onsite properness and finite-dimensional compact-resolvent eigenspaces. All concrete model definitions are compared transitively with no definition holes. The entire 82-module mathematical library is built. The selected result constructs complete spectra, geometric summability, exact entire full products and a nine-slot indexed zero response on each branch throughout 0≤τ≤4.",
     "sorry_count": 0,
     "sorry_in_definitions": 0,
     "axioms": [
@@ -101,22 +101,22 @@
     "notes": "The initial non-formal research idea and the direction of the Jules project originated with Alessandro Odasso. Odasso does not identify as a mathematician; his stated motivation is to investigate how large language models can be used in scientific work. According to the responsible maintainer, he used OpenAI GPT-6 throughout development of the GitHub repository, including the Lean formalization and its associated repository work. The human originated the informal idea and directed the project; GPT-6 was the AI assistant used for technical development. This is a disclosure of the human/AI workflow, not proof of mathematical originality, not a claim that the human independently wrote all Lean proofs, and not independent evidence that every historical interaction is recoverable. The checked mathematical statements are verified by Lean/Comparator, not by the AI's authority. Costs were not tracked. Challenge-only sorry placeholders are never treated as proofs in Solution."
   },
   "fidelity": {
-    "divergences": "The open window and excluded boundary, coordinate-step adjacency, weight 1/16, potential 1+|p(x)|² and sector |p(x)|≤2 are explicit. The theorem constructs complete ordered spectra and bounds their first nine responses on 0≤τ≤4. It does not assert polygonal coverage, aperiodicity, simple eigenvalues, optimal constants or finite-patch error certification."
+    "divergences": "The open octagonal window, excluded boundary, coordinate-step adjacency, edge weight 1/16, potential 1+|p(x)|², finite sector |p(x)|≤2 and common natural domain are explicit. c and nonzero d are arbitrary and fixed during the intervention. Exact zero orders belong to each product’s own operator. Repeated levels and crossings are allowed; nine slots do not imply nine distinct locations or disjoint zero sets. Polygonal coverage, aperiodicity, uniform separation, rotational symmetry, optimal constants, numerical cofactor/radius certificates, relative determinants and finite-patch errors are not claimed."
   },
   "review": {
     "status": "AI-assisted formalization; mathematical originality unconfirmed; no human mathematical peer review",
     "reviewers": [],
-    "notes": "Assess the explicit infinite geometric application with derived operator and nonempty-window inputs, complete spectra and multiplicity-aware response. Positive spectral lifting and form/min–max methods have established antecedents. Geometric summability and the full-product application remain open. Mechanical verification and research-interest assessment are distinct. Recheck all kernels on the exact immutable submission commit."
+    "notes": "Assess the end-to-end concrete geometric application: finite intervention, derived planar counting and summability, complete spectra, exact operator-specific entire-product divisors and quantitative indexed zero motion for a nonempty window. The form/min–max, spectral-lifting and canonical-product methods have classical antecedents. Choosing a prescribed line alone is not an originality claim. Precise literature comparison and expert assessment remain open. Mechanical verification is distinct from research significance and must pass on the exact immutable submission commit."
   },
   "alignment": {
     "namespace": "SpectralGeometry.AmmannBeenker",
     "statements": [
       {
-        "source": "Concrete octagonal graph and nine-level response, README §§4.68–4.70",
-        "lean": "SpectralGeometry.AmmannBeenker.exists_nine_level_response",
-        "module": "SpectralGeometry.AmmannBeenkerOperator",
-        "status": "Complete source proof; independent Comparator checks must pass on the submission commit.",
-        "note": "Complete ordered eigenbases, positive gaps, a nonempty nine-level window and finite-sector response; no simplicity assumption."
+        "source": "Geometric counting, summability and exact full-product response, README §§4.71–4.72",
+        "lean": "SpectralGeometry.AmmannBeenker.exists_nine_level_fullProducts",
+        "module": "SpectralGeometry.AmmannBeenkerSpectralProducts",
+        "status": "Complete Lean source proof; independent statement and kernel checks must pass on the submission commit.",
+        "note": "All inputs except affine center/direction are derived for the explicit operator. The conclusion includes complete ordered eigenbases, positive gaps, inverse-square summability, exact entire-product geometric zero orders and nine-slot indexed response on each branch."
       }
     ]
   },
