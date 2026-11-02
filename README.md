@@ -2558,6 +2558,10 @@ Lean build covers **all 82 mathematical source modules**. The source
 presentation and geometric/operator-theory background are distinguished
 in the metadata; mathematical priority and novelty are not asserted.
 
+Challenge mirrors the source module boundaries when generating auxiliary
+proof names: only Lean's module-local auxiliary-proof cache is reset between
+blocks. Kernel declarations and the full definition comparison are unchanged.
+
 **Human/AI development provenance:** Alessandro Odasso originated the initial
 non-formal research idea and directs the project. He does not identify as a
 mathematician; his motivation is exploring LLMs in scientific research. By his

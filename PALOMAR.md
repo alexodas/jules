@@ -113,6 +113,11 @@ proposition placeholders are not substantive proofs. Lean, NanoDa and con-ron
 must check the comparison; the complete source library is also built.
 Toolchain and dependencies are pinned.
 
+Challenge groups its independent declarations by source module and resets
+only Lean's module-local auxiliary-proof cache between groups. This keeps
+generated helper names aligned with separate source compilation; it does
+not change kernel declarations or relax any Comparator checks.
+
 ```sh
 python3 scripts/check-palomar-layout.py
 python3 scripts/check-lean-sources.py
