@@ -5,54 +5,74 @@ public import Mathlib
 public section
 
 /-!
-# Low-energy geometric multiplicity bound for an infinite interacting operator
+# Concrete nine-level finite-sector spectral response
 
-For the genuine full matching-family operator H = M_V + B on real ℓ²(Tile),
-a low-lying eigenspace has dimension at most the number of tiles with onsite
-potential ≤ R. The potential may be unbounded and the tile set infinite.
-B includes bounded infinite matching interactions and a bounded perturbation.
-
-Research motivation: an infinite geometric operator may possess low-energy
-eigenvectors spread over infinitely many coordinates. Nevertheless, a whole
-fixed-eigenvalue eigenspace can be recovered injectively from the finite set
-of sites with V(t) ≤ R when λ < R - ‖B‖. Thus its geometric multiplicity
-has a quantitative upper bound determined by a finite onsite sublevel set.
-The bounded interaction need not be self-adjoint for this particular claim.
-
-This statement is *per eigenspace*, not a bound on the sum of multiplicities
-over distinct eigenvalues. It assumes onsite finite sublevel sets, a regular
-resolvent shift with a unit onsite gap and a Neumann-series smallness bound,
-and eigenvalue < R - ‖B‖ away from that shift. It neither establishes
-index-wise min--max comparison nor inverse-square spectral summability.
-
-Provenance and significance: a focused, non-exhaustive literature search
-did not locate the exact statement under these hypotheses. Possible
-originality is a hypothesis, not verified mathematical priority.
-Related Schrödinger spectral-counting research and Kato's perturbation
-theory are background; the proof uses a standard quadratic-form idea.
-The intended research audience is discrete/operator spectral theory and
-formal methods in infinite-dimensional analysis. No particular aperiodic
-tiling is instantiated.
-
-This independent Challenge deliberately leaves the main theorem as a sorry.
-A proof-irrelevant finite-dimensionality witness inside the multiplicity
-definition is also a Challenge-only placeholder; the proved Solution
-supplies the genuine compact-resolvent theorem. Neither placeholder is
-admitted as part of the substantive source library.
+The independent statement specifies the octagonal vertex graph, its matching
+Laplacian, natural domain and complete ordered eigenbases. Only supporting
+proposition witnesses and the target theorem have Challenge placeholders.
+Solution imports the fully proved source; these placeholders are not proofs.
 -/
 
 namespace SpectralGeometry
+
+noncomputable section
 
 @[expose] abbrev TileHilbert (Tile : Type*) : Type _ :=
   lp (fun _ : Tile => ℝ) 2
 
 variable {Tile : Type*}
 
-abbrev OnsiteEnd (Tile : Type*) :=
-  TileHilbert Tile →L[ℝ] TileHilbert Tile
+@[expose] noncomputable def infiniteOnsiteDomain
+    (V : Tile → ℝ) : Submodule ℝ (TileHilbert Tile) where
+  carrier := {ψ | Memℓp (fun t : Tile => V t * ψ t) 2}
+  zero_mem' := by
+    have hz : Memℓp (fun _ : Tile => (0 : ℝ)) 2 := zero_mem_ℓp'
+    simpa using hz
+  add_mem' := by
+    intro f g hf hg
+    have h : Memℓp
+        ((fun t : Tile => V t * f t) + fun t : Tile => V t * g t) 2 :=
+      hf.add hg
+    change Memℓp (fun t : Tile => V t * (f + g) t) 2
+    have heq :
+        (fun t : Tile => V t * (f + g) t) =
+          ((fun t : Tile => V t * f t) + fun t : Tile => V t * g t) := by
+      funext t
+      simp [mul_add]
+    rw [heq]
+    exact h
+  smul_mem' := by
+    intro a f hf
+    have h : Memℓp (fun t : Tile => a * (V t * f t)) 2 :=
+      hf.const_mul a
+    change Memℓp (fun t : Tile => V t * (a • f) t) 2
+    have heq :
+        (fun t : Tile => V t * (a • f) t) =
+          (fun t : Tile => a * (V t * f t)) := by
+      funext t
+      simp only [lp.coeFn_smul, Pi.smul_apply, smul_eq_mul]
+      ring
+    rw [heq]
+    exact h
 
-@[expose] def infiniteOnsiteLowEnergyTiles (V : Tile → ℝ) (R : ℝ) :
-    Set Tile := {t | V t ≤ R}
+@[expose] noncomputable def infiniteOnsiteOperator
+    (V : Tile → ℝ) :
+    (infiniteOnsiteDomain V) →ₗ[ℝ] TileHilbert Tile where
+  toFun := fun ψ =>
+    ⟨(fun t : Tile => V t * ψ.1 t : PreLp (fun _ : Tile => ℝ)), ψ.2⟩
+  map_add' := by
+    intro f g
+    apply lp.ext
+    funext t
+    change V t * (f.1 t + g.1 t) =
+      V t * f.1 t + V t * g.1 t
+    ring
+  map_smul' := by
+    intro a f
+    apply lp.ext
+    funext t
+    change V t * (a * f.1 t) = a * (V t * f.1 t)
+    ring
 
 @[expose] noncomputable def infiniteOnsiteDiagonalContraction
     (c : Tile → ℝ) (hc : ∀ t : Tile, ‖c t‖ ≤ 1) :
@@ -89,21 +109,7 @@ abbrev OnsiteEnd (Tile : Type*) :=
           _ = ‖f t‖ := one_mul _)
       _ = 1 * ‖f‖ := (one_mul _).symm)
 
-theorem onsiteUnitGap_inverse_norm_le_one
-    (V : Tile → ℝ) (a : ℝ) (hgap : ∀ t, 1 ≤ V t - a)
-    (t : Tile) : ‖(V t - a)⁻¹‖ ≤ 1 := by
-  have hp : 0 < V t - a := lt_of_lt_of_le (by norm_num) (hgap t)
-  rw [Real.norm_eq_abs, abs_of_pos (inv_pos.mpr hp)]
-  have h := one_div_le_one_div_of_le (by norm_num : (0 : ℝ) < 1) (hgap t)
-  simpa [one_div] using h
-
-@[expose] noncomputable def infiniteOnsiteResolventCLM
-    (V : Tile → ℝ) (a : ℝ) (hgap : ∀ t, 1 ≤ V t - a) :
-    TileHilbert Tile →L[ℝ] TileHilbert Tile :=
-  infiniteOnsiteDiagonalContraction
-    (fun t => (V t - a)⁻¹) (onsiteUnitGap_inverse_norm_le_one V a hgap)
-
-section MatchingOperatorDefinitions
+section Matching
 
 variable [DecidableEq Tile]
 
@@ -161,113 +167,98 @@ variable [DecidableEq Tile]
     TileHilbert Tile →L[ℝ] TileHilbert Tile :=
   ∑ i : Fin D, w i • infiniteMatchingLaplacian (σ i)
 
-@[expose] noncomputable def infiniteLocalBoundedCorrection
-    (D : ℕ) (σ : Fin D → Tile ≃ Tile) (w : Fin D → ℝ)
-    (P : TileHilbert Tile →L[ℝ] TileHilbert Tile)
-    (ε shift : ℝ) :
+@[expose] def finiteSectorProjection (F : Finset Tile) :
     TileHilbert Tile →L[ℝ] TileHilbert Tile :=
-  infiniteLocalMatchingLaplacian D σ w + ε • P +
-    shift • ContinuousLinearMap.id ℝ (TileHilbert Tile)
+  infiniteOnsiteDiagonalContraction (fun t => if t ∈ F then 1 else 0)
+    (fun t => by split_ifs <;> norm_num)
 
-end MatchingOperatorDefinitions
+@[expose] def onsitePlusBounded (V : Tile → ℝ) (B : TileHilbert Tile →L[ℝ] TileHilbert Tile) :
+    infiniteOnsiteDomain V →ₗ[ℝ] TileHilbert Tile :=
+  infiniteOnsiteOperator V + B.toLinearMap.comp (infiniteOnsiteDomain V).subtype
 
--- Match the source: the general bounded resolvent and its unit require no
--- decidable equality on Tile; only the matching-specific layers do.
+end Matching
 
-@[expose] noncomputable def infiniteBoundedOnsiteCorrectionUnit
-    (V : Tile → ℝ) (a : ℝ) (hgap : ∀ t, 1 ≤ V t - a)
-    (B : OnsiteEnd Tile)
-    (hsmall : ‖B.comp (infiniteOnsiteResolventCLM V a hgap)‖ < 1) :
-    (OnsiteEnd Tile)ˣ :=
-  Units.oneSub (-(B.comp (infiniteOnsiteResolventCLM V a hgap)))
-    (by simpa only [norm_neg] using hsmall)
+section Eigenbasis
 
-@[expose] noncomputable def infiniteBoundedOnsiteResolvent
-    (V : Tile → ℝ) (a : ℝ) (hgap : ∀ t, 1 ≤ V t - a)
-    (B : OnsiteEnd Tile)
-    (hsmall : ‖B.comp (infiniteOnsiteResolventCLM V a hgap)‖ < 1) :
-    OnsiteEnd Tile :=
-  (infiniteOnsiteResolventCLM V a hgap).comp
-    (↑((infiniteBoundedOnsiteCorrectionUnit V a hgap B hsmall)⁻¹) :
-      OnsiteEnd Tile)
+variable {H : Type*} [NormedAddCommGroup H] [InnerProductSpace ℝ H]
 
-variable [DecidableEq Tile]
+structure DomainEigenbasis {ι : Type*} (d : Submodule ℝ H) (A : d →ₗ[ℝ] H)
+    (ev : ι → ℝ) where
+  basis : HilbertBasis ι ℝ H
+  mem_domain : ∀ i, basis i ∈ d
+  eigen : ∀ i, A ⟨basis i, mem_domain i⟩ = ev i • basis i
 
-abbrev FullEnd (Tile : Type*) :=
-  TileHilbert Tile →L[ℝ] TileHilbert Tile
+end Eigenbasis
 
-@[expose] noncomputable def infiniteLocalMatchingFullEigenspace
-    (D : ℕ) (V : Tile → ℝ) (σ : Fin D → Tile ≃ Tile)
-    (w : Fin D → ℝ) (P : FullEnd Tile)
-    (ε shift a : ℝ) (hgap : ∀ t, 1 ≤ V t - a)
-    (hsmall : ‖(infiniteLocalBoundedCorrection D σ w P ε shift).comp
-      (infiniteOnsiteResolventCLM V a hgap)‖ < 1)
-    (eigenvalue : ℝ) (_hne : eigenvalue ≠ a) :
-    Submodule ℝ (TileHilbert Tile) :=
-  Module.End.eigenspace
-    (infiniteBoundedOnsiteResolvent V a hgap
-      (infiniteLocalBoundedCorrection D σ w P ε shift) hsmall).toLinearMap
-    (eigenvalue - a)⁻¹
+namespace AmmannBeenker
 
-abbrev MultiplicityEnd (Tile : Type*) :=
-  TileHilbert Tile →L[ℝ] TileHilbert Tile
+abbrev Lattice := Fin 4 → ℤ
 
-/-- Challenge-only signature: finite eigenspace dimension supplied by the
-proven compact-resolvent result in Solution. The placeholder is not a proof. -/
-theorem infiniteLocalMatchingFullEigenspace_finiteDimensional
-    (D : ℕ) (V : Tile → ℝ) (σ : Fin D → Tile ≃ Tile)
-    (w : Fin D → ℝ) (P : FullEnd Tile)
-    (ε shift a : ℝ) (hgap : ∀ t, 1 ≤ V t - a)
-    (hproper : ∀ R : ℝ, (infiniteOnsiteLowEnergyTiles V R).Finite)
-    (hsmall : ‖(infiniteLocalBoundedCorrection D σ w P ε shift).comp
-      (infiniteOnsiteResolventCLM V a hgap)‖ < 1)
-    (eigenvalue : ℝ) (hne : eigenvalue ≠ a) :
-    FiniteDimensional ℝ
-      (infiniteLocalMatchingFullEigenspace
-        D V σ w P ε shift a hgap hsmall eigenvalue hne) := by
+@[expose] def alpha : ℝ := Real.sqrt 2 / 2
+
+@[expose] def physical (n : Lattice) : ℂ :=
+  ⟨n 0 + alpha * (n 1 - n 3), n 2 + alpha * (n 1 + n 3)⟩
+
+@[expose] def internal (n : Lattice) : ℂ :=
+  ⟨n 0 - alpha * (n 1 - n 3), -(n 2 : ℝ) + alpha * (n 1 + n 3)⟩
+
+@[expose] def Window (z : ℂ) : Prop :=
+  |z.re| < 1 / 2 + alpha ∧ |z.im| < 1 / 2 + alpha ∧
+    |z.re + z.im| < 1 + alpha ∧ |z.re - z.im| < 1 + alpha
+
+@[expose] def Admitted (n : Lattice) : Prop := Window (internal n)
+
+@[expose] def Vertex := {n : Lattice // Admitted n}
+
+instance : DecidableEq Vertex := Classical.decEq _
+
+@[expose] def position (v : Vertex) : ℂ := physical v.val
+
+@[expose] def basis (i : Fin 4) : Lattice := Pi.single i 1
+
+abbrev Color := Fin 4 × Fin 2
+
+@[expose] def latticeMate (c : Color) (n : Lattice) : Lattice :=
+  n + if n c.1 % 2 = (c.2 : ℕ) then basis c.1 else -basis c.1
+
+@[expose] def mate (c : Color) (v : Vertex) : Vertex :=
+  by
+    classical
+    exact if h : Admitted (latticeMate c v.val) then ⟨latticeMate c v.val, h⟩ else v
+
+theorem mate_involutive (c : Color) : Function.Involutive (mate c) := by
   sorry
 
-@[expose] noncomputable def infiniteLocalMatchingFullMultiplicity
-    (D : ℕ) (V : Tile → ℝ) (σ : Fin D → Tile ≃ Tile)
-    (w : Fin D → ℝ) (P : MultiplicityEnd Tile)
-    (ε shift a : ℝ) (hgap : ∀ t, 1 ≤ V t - a)
-    (hproper : ∀ R : ℝ, (infiniteOnsiteLowEnergyTiles V R).Finite)
-    (hsmall : ‖(infiniteLocalBoundedCorrection D σ w P ε shift).comp
-      (infiniteOnsiteResolventCLM V a hgap)‖ < 1)
-    (eigenvalue : ℝ) : ℕ := by
-  classical
-  by_cases hne : eigenvalue ≠ a
-  · let E : Submodule ℝ (TileHilbert Tile) :=
-      infiniteLocalMatchingFullEigenspace
-        D V σ w P ε shift a hgap hsmall eigenvalue hne
-    haveI : FiniteDimensional ℝ E :=
-      infiniteLocalMatchingFullEigenspace_finiteDimensional
-        D V σ w P ε shift a hgap hproper hsmall eigenvalue hne
-    exact Module.finrank ℝ E
-  · exact 0
+@[expose] def matching (c : Color) : Vertex ≃ Vertex :=
+  ⟨mate c, mate c, mate_involutive c, mate_involutive c⟩
 
-abbrev CountEnd (Tile : Type*) :=
-  TileHilbert Tile →L[ℝ] TileHilbert Tile
+@[expose] def matching8 (i : Fin 8) : Vertex ≃ Vertex :=
+  matching (finProdFinEquiv.symm i)
 
-set_option maxHeartbeats 8000000
+@[expose] def interaction : TileHilbert Vertex →L[ℝ] TileHilbert Vertex :=
+  infiniteLocalMatchingLaplacian 8 matching8 (fun _ => 1 / 16)
 
-/-- Multiplicity of one low-energy full-operator real eigenspace is bounded
-by the number of onsite tiles below a fixed finite-energy threshold.
-The statement neither counts distinct eigenvalues nor sums over levels. -/
-theorem infiniteLocalMatching_full_eigenspace_finrank_le_lowEnergyTiles
-    (D : ℕ) (V : Tile → ℝ) (σ : Fin D → Tile ≃ Tile)
-    (w : Fin D → ℝ) (P : CountEnd Tile)
-    (ε shift a R eigenvalue : ℝ)
-    (hgap : ∀ t, 1 ≤ V t - a)
-    (hproper : ∀ S : ℝ, (infiniteOnsiteLowEnergyTiles V S).Finite)
-    (hsmall : ‖(infiniteLocalBoundedCorrection D σ w P ε shift).comp
-      (infiniteOnsiteResolventCLM V a hgap)‖ < 1)
-    (hne : eigenvalue ≠ a)
-    (heigenvalue :
-      eigenvalue < R - ‖infiniteLocalBoundedCorrection D σ w P ε shift‖) :
-    infiniteLocalMatchingFullMultiplicity
-        D V σ w P ε shift a hgap hproper hsmall eigenvalue ≤
-      (hproper R).toFinset.card  := by
-  sorry -- Independent statement only; Solution imports the original complete Lean proof
+theorem finite_norm_sublevel (R : ℝ) : {v : Vertex | ‖position v‖ ≤ R}.Finite := by
+  sorry
 
+@[expose] def potential (v : Vertex) : ℝ := 1 + ‖position v‖ ^ 2
+
+@[expose] def sector : Finset Vertex := (finite_norm_sublevel 2).toFinset
+
+theorem exists_nine_level_response :
+    ∃ ev : ℕ → ℝ, Monotone ev ∧
+      Nonempty (DomainEigenbasis (infiniteOnsiteDomain potential)
+        (onsitePlusBounded potential interaction) ev) ∧
+      (∀ n : ℕ, 1 ≤ ev n) ∧
+      (∀ n : ℕ, n < 9 → ev n ≤ 3) ∧
+      ∀ τ : ℝ, 0 ≤ τ → τ ≤ 4 →
+        ∃ μ : ℕ → ℝ, Monotone μ ∧
+          Nonempty (DomainEigenbasis (infiniteOnsiteDomain potential)
+            (onsitePlusBounded potential (interaction + τ • finiteSectorProjection sector)) μ) ∧
+          (∀ n : ℕ, 1 ≤ μ n) ∧
+          (∀ n : ℕ, n < 9 → τ / 2 ≤ μ n - ev n ∧ μ n - ev n ≤ τ) := by
+  sorry
+
+end AmmannBeenker
+end
 end SpectralGeometry
