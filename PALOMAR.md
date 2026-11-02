@@ -1,227 +1,89 @@
-# Palomar candidate — finite observation and low-energy eigenspace multiplicity
+# Palomar candidate — nine-level response on an octagonal graph
 
-The candidate **mathematical result** is one theorem from the
-Lean 4 project documented in README §5, not a count of formalized lemmas. Comparator selects
-`SpectralGeometry.infiniteLocalMatching_full_eigenspace_finrank_le_lowEnergyTiles`
-in [`SpectralGeometry/InfiniteLocalFullLowEnergyCounting.lean`](SpectralGeometry/InfiniteLocalFullLowEnergyCounting.lean).
-The theorem was proved in the source development before this packaging work.
-It is the first selected substantive milestone of the
-[Jules research program](README.md#12-first-substantive-milestone-finite-coordinate-observation).
+The selected theorem is
+`SpectralGeometry.AmmannBeenker.exists_nine_level_response` in
+[`AmmannBeenkerOperator.lean`](SpectralGeometry/AmmannBeenkerOperator.lean),
+documented in README §4.70.
 
-## Research question
+## Mathematical statement
 
-When an infinite collection of geometric sites carries an unbounded onsite
-energy `V` together with bounded interactions, how much of a **complete
-low-energy eigenspace** can be observed in the finitely many sites where
-the onsite potential is small? Can the dimension of that eigenspace be
-bounded even when the ambient Hilbert space has infinitely many coordinates?
+The vertices are the accepted integer lifts in the explicit open octagonal
+cut-and-project construction of README §4.68. The physical projection is
+injective, the graph is infinite and has degree at most eight; edges join
+lifts differing by a signed standard basis vector. The boundary convention
+and physical/internal projections are independently defined in Challenge.
 
-Let `H = M_V + B` on the natural multiplication domain in the real
-Hilbert space `ℓ²(Tile)`. Here `B` is the full bounded correction: a
-finite-color matching-family interaction on the *infinite* tile space,
-a bounded perturbation and an optional scalar shift.
-
-The compared Lean theorem states the following necessary-condition bound,
-retaining all its explicit hypotheses:
-
+On real ℓ² of the vertices, put V(x)=1+|p(x)|² and use the natural domain
+D(V)={ψ∈ℓ²:Vψ∈ℓ²}. The operator and finite intervention are
 ```math
-\lambda<R-\|B\|,\quad \lambda\ne a
-\quad\Longrightarrow\quad
-\dim E_\lambda(H)\le\#\{t:V(t)\le R\}.
+(Hψ)(x)=V(x)ψ(x)+\frac1{16}\sum_{y\sim x}(ψ(x)-ψ(y)),
+\qquad H_τ=H+τP_S,\qquad S=\{x:|p(x)|≤2\}.
 ```
+The theorem constructs complete nondecreasing Hilbert eigenbases for H
+and Hτ on that common domain, with ordered levels λ and μτ satisfying
+```math
+λ_n≥1,\quad λ_n≤3\ (n<9),\quad μ_{τ,n}≥1,
+\qquad \fracτ2≤μ_{τ,n}-λ_n≤τ\quad(n<9,\ 0≤τ≤4).
+```
+Multiplicity is retained; no eigenvalue simplicity or nonempty spectral
+window is assumed. The source proves nine distinct central sites with V≤2,
+interaction norm at most one, positivity/symmetry, properness and V≥5
+outside S. The natural-domain self-adjoint compact-resolvent construction
+supplies the complete ordered spectra.
 
-We assume that every onsite sublevel set is finite, `V(t)-a≥1`
-for every site, and `‖B ∘ R_a‖ < 1` for the onsite resolvent `R_a`.
-These conditions identify a bounded compact shifted inverse and ensure
-that the eigenspace of the full operator on its natural domain has a
-well-defined finite geometric multiplicity. The theorem does **not**
-assume that the bounded correction is symmetric or self-adjoint.
-In the Lean statement `E_λ(H)` is represented by the equivalent
-eigenspace of the compact shifted resolvent, with the equality to
-natural-domain eigenvectors proved in the source development.
+## Research motivation and scope
 
-## Why this particular result may interest researchers
+The result is an explicit infinite geometric example in which a finite
+positive intervention moves at least nine ordered levels by a uniform
+fraction of its strength. The contribution to assess is the complete
+application with derived geometric/operator inputs and quantitative
+multiplicity-aware conclusions. Its form and min–max methods are classical;
+positive spectral lifting is an established topic.
 
-**Finite-coordinate observability.** Even in an infinite Hilbert space,
-restriction to the finite set `{t : V(t) ≤ R}` is injective on the
-*entire eigenspace at one sufficiently low spectral level*, not just
-nonzero on one eigenvector. Thus its geometric multiplicity has an
-explicit upper bound in terms of a geometric/potential sublevel count.
+Polygonal tiling coverage, aperiodicity, global rotational symmetry,
+optimality of the sector/constants, finite-patch errors and CUE statistics
+are not conclusions. Geometric inverse-square summability and the resulting
+entire-product zero-response application remain roadmap obligations.
+Choosing an affine line for spectral zeros is not by itself a novelty claim.
+No relation to Riemann zeta zeros is asserted.
 
-**Robustness under bounded interactions.** The threshold has an explicit
-perturbation penalty `‖B‖`. The operator includes infinitely many
-geometric interaction edges represented by a finite family of bounded
-matching operators. The proof applies without assuming
-the bounded correction is symmetric. Its conclusion concerns geometric
-multiplicity, not orthogonal spectral projections for a non-self-adjoint
-operator.
+## Sources and assessment
 
-**Research context.** The relevant audience includes specialists in
-discrete Schrödinger operators, spectral theory of graph operators,
-finite-dimensional detection of low-energy states, and rigorous/formal
-operator theory. The finite observation sector supplies an input to the
-program on quantitative spectral response and associated zeros described
-below. Simultaneous observation, total counting and quantitative spectral
-response are now formalized in [README §6.2](README.md#62-p2--quantitative-observation-and-control-of-low-energy-levels),
-but are outside this selected statement.
+- F. P. M. Beenker, *Algebraic theory of non-periodic tilings of the plane
+  by two simple building blocks: a square and a rhombus* (1982),
+  [report](https://pure.tue.nl/ws/files/4269555/253166.pdf): geometric background.
+- T. Kato, *Perturbation Theory for Linear Operators*,
+  [DOI](https://doi.org/10.1007/978-3-642-66282-9): spectral background.
+- I. Nakić, M. Täufer, M. Tautenhahn and I. Veselić, *Unique continuation
+  and lifting of spectral band edges of Schrödinger operators on unbounded
+  domains* (2020), [DOI](https://doi.org/10.4171/JST/314): spectral-lifting background.
+- [Mathlib4](https://github.com/leanprover-community/mathlib4): formal infrastructure.
 
-**Scope and difficulty.** The proof uses the quadratic-form inequality
-for vectors vanishing on low-potential coordinates: their Rayleigh
-numerator is at least `(R-‖B‖)‖ψ‖²`. An eigenvector with
-`λ<R-‖B‖` therefore cannot vanish on those coordinates. Applying
-this observation to the kernel of the coordinate restriction on the
-whole fixed-λ eigenspace proves injectivity and the dimension bound.
-This is a transparent standard-style argument, not a claimed new
-analytic technique. Its generality does *not* rely on a named
-aperiodic tiling, tile-dependent interactions, or all bounded-degree
-graphs being represented by matching colors.
-
-The theorem does **not** estimate the total number of eigenvalues
-below a threshold, prove an index-wise min–max comparison or
-inverse-square summability, supply a specific Penrose/Ammann–Beenker
-model, or imply any statement about the zeros of the Riemann zeta
-function.
-
-## Role in the research program
-
-The wider objective is to relate an explicitly specified finite local
-change in a confined infinite geometric operator to a quantitatively
-controlled change in its spectrum and the zeros of an associated
-normalized spectral product. The current theorem supplies the first
-selected substantive observation milestone: the finite sector `{t : V(t) ≤ R}`
-distinguishes all vectors in each qualifying fixed-eigenvalue eigenspace.
-
-The [README roadmap](README.md#6-roadmap-proof-status-and-next-steps)
-distinguishes the following source results from the remaining applications:
-
-1. Quantitative observation on the full low-energy subspace, total
-   multiplicity counting and indexed min–max comparison are proved
-   (§§4.41–4.48).
-2. Entire full spectral products, exact geometric zero orders and
-   finite-sector indexed zero response are proved under explicit
-   positivity/summability hypotheses (§§4.49–4.59).
-3. Scalar analytic approximation, disk zero counts, numerical tails and
-   the worked linear onsite certificate are proved (§§4.60–4.67).
-4. The explicit octagonal cut-and-project vertex graph, its matching
-   interaction and a concrete response for nine low ordered levels are
-   proved (§§4.68–4.70). Geometric inverse-square summability and the
-   resulting full-product application remain open.
-5. Complex compressed resolvents, relative determinants and certified
-   finite-patch errors remain separate obligations (§§6.1, 6.5–6.6).
-
-**Next candidate under assessment.** The source declaration
-`SpectralGeometry.AmmannBeenker.exists_nine_level_response` constructs
-complete ordered spectra for the explicit graph with onsite energy
-`1 + |p(x)|²` and graph-Laplacian edge weight `1/16`. The first nine
-baseline levels are at most three, all levels stay at least one, and
-the finite intervention on `|p(x)| ≤ 2` gives
-`τ/2 ≤ λₙ(Hτ) − λₙ(H) ≤ τ` for `n < 9` and `0 ≤ τ ≤ 4`.
-The nonempty window and operator inputs are derived, not supplied.
-This theorem is compiled source, **not a new Comparator selection**.
-
-The corresponding geometric entire-product/zero-response theorem still
-requires onsite summability. Polygonal coverage, aperiodicity and global
-rotational symmetry are not conclusions of the present graph theorem.
-The current selection is retained while those claims and the proposed
-research contribution are assessed; the next action is not to resubmit
-the old theorem with a broader motivation alone.
-
-The maintainer supplied an automatic Palomar review finding the selected
-single-eigenspace argument insufficient as a standalone research result.
-The later source results address several missing consequences, but do
-not enlarge the current compared statement. Spectral lifting under
-positive perturbations has an established literature, for example
-[Nakić–Täufer–Tautenhahn–Veselić (2020)](https://doi.org/10.4171/JST/314).
-No exhaustive priority comparison or originality claim for the concrete
-nine-level result has been made. Its proof composes verified geometric
-inputs with classical form/min–max arguments.
-
-Restriction injectivity alone provides neither a numerical reconstruction
-algorithm nor a quantitative stability constant, eigenvalue-displacement
-bound or relative-determinant identity. Those conclusions require
-additional proofs and are outside the current Comparator selection.
-The research interest of the selected theorem must still be assessed on
-its own mathematical content and demonstrated uses; its role in this
-program does not by itself establish novelty or standalone significance.
+The precise statement is recorded in the Jules source. The `original-proof`
+classification records that presentation, not verified priority or a novel
+proof technique. Precise literature comparison and expert assessment of
+standalone research interest remain necessary. Mechanical checking is not
+editorial acceptance.
 
 ## Human origin and AI-assisted development
 
-The **initial informal research idea** came from **Alessandro Odasso**.
-He does not identify as a mathematician; his interest is in exploring
-the use of large language models for scientific research. He initiated
-and directed this project and is the responsible human maintainer.
+Alessandro Odasso originated the informal project idea, directs the work
+and is the responsible maintainer. He does not identify as a mathematician;
+his stated interest is exploring LLMs in scientific research. According to
+his account, OpenAI GPT-6 assisted throughout the GitHub/Lean development.
+The AI is a development assistant, not a human mathematical coauthor.
+Human responsibility does not imply independent authorship of every proof.
+No human mathematical peer review or exhaustive provenance audit is claimed.
 
-**Development method (maintainer's account):** Alessandro Odasso used
-**OpenAI GPT-6 throughout the GitHub development of Jules**, including
-the Lean mathematical formalization and associated repository work.
-GPT-6 is credited as an AI development assistant, **not** as a human
-mathematical coauthor. Naming Odasso under `project.authors` and as
-maintainer reflects human project direction and responsibility; it
-does not mean that he independently authored all formal proofs.
+## Independent statement verification
 
-This description is reported by the maintainer; it does not imply a
-complete independently audited log of historical prompts. Lean and the
-independent Comparator provide mechanical checking, not a guarantee
-of originality, research significance or human peer review.
-
-## Origin, literature and the novelty hypothesis
-
-This exact theorem was first **identified** in the Jules Lean source
-development. A **focused, non-exhaustive literature search** conducted
-for this preparation on 27 October 2026 considered low-energy spectral
-subspaces, onsite potentials, discrete Schrödinger bounds, graph
-operators and eigenvalue/multiplicity counting. It did **not identify an
-earlier publication of the same precise statement and hypotheses**.
-That observation motivates **possible originality**, not verified
-priority or a claim that all related mathematics is new. We welcome
-correction if an earlier equivalent formulation is found.
-
-The background literature includes:
-
-- Tosio Kato, *Perturbation Theory for Linear Operators*, for general
-  principles of bounded perturbations and spectral theory
-  (DOI: https://doi.org/10.1007/978-3-642-66282-9).
-- Sven Bachmann, Richard Froese and Severin Schraven, *Counting
-  eigenvalues of Schrödinger operators using the landscape function*,
-  *Journal of Spectral Theory* **13** (2023), 1445–1472,
-  DOI: https://doi.org/10.4171/JST/488. Their results compare the
-  ranks of spectral projections with sublevel volumes of an effective
-  potential, in a different setting and with different hypotheses.
-  They demonstrate that spectral-counting estimates are an active,
-  developed subject; we do not claim to extend their results.
-- Mathlib4, as **background formal-library infrastructure**, not the
-  publication or mathematical source of the selected bound.
-
-Accordingly, `formalization.yaml` gives the formalization's
-first-identified statement the source classification
-`type: original-proof`, `relationship: other`; the mathematical
-literature and Mathlib receive `relationship: background`.
-An earlier equivalent theorem would require changing that declaration
-and citing the real source with the appropriate relationship.
-There has been **no expert priority review** and no novelty certificate.
-
-## Verification and exact submission scope
-
-The selected theorem is a **per-eigenspace** dimension estimate, rather
-than a global eigenvalue-counting or ordered-spectrum comparison theorem.
-Its motivation is finite-coordinate observability for the full
-interacting operator. The proof uses standard quadratic-form and
-restriction arguments; novelty and research-level significance have
-not been independently established. Passing mechanical checks does
-not, by itself, imply editorial acceptance.
-
-- `Challenge.lean` imports only Mathlib, independently states the
-  theorem and its necessary definitions, and contains deliberate
-  Challenge-only `sorry` placeholders.
-- `Solution.lean` imports the unchanged, fully proved source theorem
-  and its dependency closure.
-- The single root `comparator.json` names **one theorem and 16
-  supporting definitions/type abbreviations**. It does not certify
-  the remaining mathematical modules against independent statements.
-- `lean-toolchain` and `lake-manifest.json` fix the environment;
-  the full substantive source library is still compiled by Lean.
-
-Reproducible checks from repository root:
+Challenge imports only Mathlib and independently states the model, natural
+domain, eigenbasis structure and theorem. Solution imports the proved source.
+The single Comparator selects one theorem and 27 supporting declarations
+(26 definitions/abbreviations and the eigenbasis structure). Challenge-only
+proposition placeholders are not substantive proofs. Lean, NanoDa and con-ron
+must check the comparison; the complete source library is also built.
+Toolchain and dependencies are pinned.
 
 ```sh
 python3 scripts/check-palomar-layout.py
@@ -235,11 +97,6 @@ lake build SpectralGeometry Challenge Solution
 bash scripts/verify-comparator.sh
 ```
 
-Both Lean/Mathlib and the independent Palomar Comparator must succeed
-on the **exact commit being submitted**. Passing checks on one commit
-does not validate subsequent metadata, Challenge or packaging edits.
-Consult the repository's [GitHub Actions history](https://github.com/alexodas/jules/actions)
-for the status of the chosen commit, rather than relying on a particular
-pull-request number or earlier build.
-A Palomar submission must refer to a public, immutable **40-character
-commit SHA** and is not performed automatically.
+Use a public immutable 40-character commit SHA with all required checks
+passing; see [GitHub Actions](https://github.com/alexodas/jules/actions).
+Preparing the package does not automatically submit it to Palomar.

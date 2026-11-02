@@ -6,18 +6,17 @@ on a prescribed complex line.**
 
 ## Current status
 
-The first substantive milestone selected for independent statement verification
-is a **finite-coordinate observability theorem for a complete low-energy
-eigenspace** of an infinite interacting operator. It identifies a finite set of
-sites whose coordinates distinguish every vector in that eigenspace and bounds
-its geometric multiplicity. The theorem is proved in the source library and is
-the single mathematical result selected by the root Comparator configuration.
+The selected result is the **concrete nine-level finite-sector response**
+of §4.70 on the explicit infinite octagonal vertex graph. It constructs
+complete ordered eigenbases, proves a nonempty low-energy window and bounds
+the response to a finite positive intervention, counting multiplicities.
+The foundational observation and analytic results remain documented below.
 
 | Part of the program | Status |
 | --- | --- |
 | Natural-domain operators, bounded matching interactions, conditional self-adjointness and compact resolvents | Formalized under the explicit hypotheses documented in §4 |
 | Real spectral completeness, exact geometric multiplicities, ordered infinite enumeration and qualitative divergence | Formalized under the additional hypotheses of §§4.23–4.38 |
-| Finite-coordinate detection and the multiplicity bound for one low-energy eigenspace | Formalized in §4.40; selected for independent statement verification |
+| Finite-coordinate detection and the multiplicity bound for one low-energy eigenspace | Formalized in §4.40; foundational observation result |
 | Simultaneous quantitative observation and total low-energy multiplicity counting | Formalized in §§4.41–4.43, with symmetry for simultaneous spectral control |
 | Variational characterization, ordered onsite comparison and finite-sector eigenvalue response | Formalized in §§4.44–4.47 with complete eigenbases, exact multiplicities and explicit infinite-indexing conditions |
 | Positive full-spectrum inverse-square summability and its preservation under nonnegative finite-sector interventions | Formalized under §4.48's signed-correction criterion and §4.58's positive-interaction criterion |
@@ -32,7 +31,7 @@ the single mathematical result selected by the root Comparator configuration.
 
 The research objective is an end-to-end statement relating an explicitly defined
 local geometric modification to a quantitatively controlled change in a
-spectral product and its zeros. The current observation theorem supplies a
+spectral product and its zeros. The observation theorem of §4.40 supplies a
 finite observation sector for this program. The subsequent abstract spectral
 response is now proved separately. The analytic product is entire and records
 the exact full spectral multiplicities under the stated positivity and
@@ -56,8 +55,8 @@ are controlled by a finite onsite intervention, with positive gap preserved.
 Its geometric inverse-square summability and full-product instantiation,
 cofactor/radius certificates, finite-patch approximation and statistical
 results remain open. Counting on arbitrary noncircular contours is not
-formalized. The
-Comparator selection still contains only the original single-eigenspace theorem.
+formalized. Comparator selects the concrete nine-level response of §4.70;
+§6.8 records its scope and verification requirements.
 
 The chosen affine line is part of the definition of the analytic family.
 Originality and research significance must come from the geometric and spectral
@@ -117,7 +116,7 @@ agree everywhere. The result observes the entire eigenspace, not merely one
 chosen eigenvector. It concerns geometric multiplicity and does not require
 the bounded correction to be symmetric.
 
-The compared Lean declaration is
+The foundational Lean declaration is
 [SpectralGeometry.infiniteLocalMatching_full_eigenspace_finrank_le_lowEnergyTiles](SpectralGeometry/InfiniteLocalFullLowEnergyCounting.lean).
 It assumes finite onsite sublevel sets, a real shift $a$ with
 $V(t)-a\ge1$, the onsite resolvent $R_a^{\mathrm{on}}=(M_V-aI)^{-1}$,
@@ -170,13 +169,13 @@ octagonal cut-and-project vertex graph and prove a concrete response for
 its first nine ordered levels. The geometric full-product application still
 requires the growth/summability step of §6.4.
 
-These are additional source theorems, not additions to the current
-Comparator-selected statement. They do not provide a numerical reconstruction
+The selected concrete response of §4.70 uses these source results under
+its verified geometric hypotheses. They do not provide a numerical reconstruction
 algorithm or independent control of several zeros. The relative
 determinant identity in §6.5 is a separate proof obligation; it does not follow
 from this theorem alone.
 
-This is the first selected substantive milestone of the program, supported by
+This is the first substantive observation milestone of the program, supported by
 the operator-theoretic results catalogued in §§3–4. Its position in the program
 does not assert mathematical priority, a new proof technique or an independent
 research-interest assessment. The proof mechanism is a standard
@@ -1484,7 +1483,7 @@ m_H(\lambda)=\dim E_\lambda(H)\le \#\{t:V(t)\le R\}.
 
 This last theorem controls the **dimension of a complete eigenspace** rather than only detecting one eigenvector. It holds without requiring a global indexed onsite-eigenvalue sequence or a new complex-spectrum construction.
 
-**Scope and subsequent strengthening:** the inequality above applies to *one eigenspace at a time* and cannot simply be summed over distinct eigenvalues. Sections 4.41–4.43 now control the **direct sum of all low-energy eigenspaces** using symmetry, orthogonality and one dimension comparison with the finite onsite sector. Sections 4.44–4.48 prove the ordered-level comparison, finite-sector response and sufficient interacting inverse-square summability. These are separate source results; this section remains the unchanged Comparator-selected single-eigenspace theorem. The concrete tiling instantiation remains open (§6.4).
+**Scope and subsequent strengthening:** the inequality above applies to *one eigenspace at a time* and cannot simply be summed over distinct eigenvalues. Sections 4.41–4.43 now control the **direct sum of all low-energy eigenspaces** using symmetry, orthogonality and one dimension comparison with the finite onsite sector. Sections 4.44–4.48 prove the ordered-level comparison, finite-sector response and sufficient interacting inverse-square summability. These are separate source results; this section records the foundational single-eigenspace theorem. The concrete tiling instantiation remains open (§6.4).
 
 ### 4.41. Simultaneous spectral subspaces on the natural domain
 
@@ -2157,8 +2156,7 @@ These results supply the disk-counting step of §6.3. Sections 4.66–4.67
 provide numerical data for a worked onsite example. Cofactor/radius
 certificates for interacting geometric models and finite-patch
 operator/resolvent errors remain to be supplied. Counting on noncircular
-contours is outside this interface. The current Palomar candidate remains
-the single-eigenspace theorem of §4.40.
+contours is outside this interface. The concrete response selected for Palomar is documented in §4.70.
 
 ### 4.66. Numerical tail rates and finite-factor lower certificates
 
@@ -2354,8 +2352,8 @@ for this geometric potential, its full canonical product and the
 corresponding nine-level zero-response specialization are still open.
 Neither local finiteness nor compact resolvent alone closes that gap.
 No optimized control sector, finite-patch error, new spectral technique
-or mathematical originality is asserted. The Comparator selection remains
-the original §4.40 theorem; §6.8 records the next assessment target.
+or mathematical originality is asserted. This is the Comparator-selected theorem; §6.8 records its scope
+and research-interest assessment obligations.
 
 ## 5. Building and verification
 
@@ -2473,16 +2471,14 @@ treated as an independently proved library.
 **Palomar / independent statement verification:** the repository has
 one [`comparator.json`](comparator.json), one
 [`Challenge.lean`](Challenge.lean) and one [`Solution.lean`](Solution.lean).
-Comparator selects **one theorem**, the per-eigenspace low-energy multiplicity
-bound of §4.40, together with 16 independently reproduced definitions and type abbreviations needed to state it.
-The toolchain's Lean, NanoDa and con-ron kernels verify the selected
-comparison. The separate Lean build still covers **all 80 mathematical
-source modules**; earlier compact-resolvent, real-spectrum and ordered
-enumeration theorems remain compiled prerequisites but are not individually
-compared in this submission. The metadata records the first identified
-source of the precise formalized statement, while Mathlib and relevant
-operator-theory literature are explicitly identified as background.
-Mathematical priority and novelty are not asserted.
+Comparator selects **one theorem**,
+`SpectralGeometry.AmmannBeenker.exists_nine_level_response` (§4.70),
+with 27 independently reproduced supporting declarations: 26 definitions
+or abbreviations and the eigenbasis structure. Lean, NanoDa and con-ron
+must verify the comparison on the exact submission commit. The separate
+Lean build covers **all 80 mathematical source modules**. The source
+presentation and geometric/operator-theory background are distinguished
+in the metadata; mathematical priority and novelty are not asserted.
 
 **Human/AI development provenance:** Alessandro Odasso originated the initial
 non-formal research idea and directs the project. He does not identify as a
@@ -2508,7 +2504,7 @@ requests and changes to `main`. Both must be green before merging.
 
 The program's central objective is a **quantitative response theorem for the
 zeros associated with an explicitly specified local geometric change**.
-The finite-coordinate eigenspace theorem of §4.40 is its first selected proved
+The finite-coordinate eigenspace theorem of §4.40 is its first proved observation
 milestone. The subsequent milestones turn observation into quantitative
 spectral response and then into a certified comparison of analytic products.
 
@@ -2694,8 +2690,8 @@ with a numerical worked onsite certificate and quantitative tails for its
 nonnegative interacting family (§§4.66–4.67). Interacting geometric
 cofactor/radius data and finite-patch approximation certificates remain
 open in §§6.3 and 6.6; noncircular contours are not covered by the disk theorem.
-These source results are **not** part of
-the unchanged Comparator-selected theorem of §4.40.
+The selected concrete theorem of §4.70 uses this spectral infrastructure;
+analytic-product consequences have their own hypotheses.
 
 ### 6.3. P3 — Full spectral products and their exact zero divisors
 
@@ -2909,68 +2905,33 @@ theorem, and carries no asserted connection to the Riemann zeta function.
 
 **Current selected result**
 
-- [x] Select the first substantive observation milestone of §4.40:
-  the geometric multiplicity bound for one low-energy real eigenspace.
-  The single root Comparator configuration compares that theorem and
-  sixteen supporting definitions/type abbreviations.
-- [x] Supply the independent Challenge, the source-backed Solution and
-  provenance metadata. The selected statement's comparison has been
-  reported as passing Lean, NanoDa and con-ron; the complete source
-  library remains a separate build obligation.
-- [x] Distinguish the first identified source of the precise formal
-  statement from the operator-theory and Mathlib background. The
-  source classification does not certify mathematical priority.
+- [x] Select `SpectralGeometry.AmmannBeenker.exists_nine_level_response`
+  (§4.70): complete ordered natural-domain eigenbases, positive gaps,
+  a nonempty nine-level window and response between τ/2 and τ on 0≤τ≤4.
+  The geometric/operator inputs are derived, and multiplicities retained.
+- [x] Supply the Mathlib-only independent Challenge, source-backed Solution,
+  supporting definitions and single root Comparator configuration.
+- [x] State the open-window convention and distinguish the vertex graph
+  from unproved polygonal coverage, aperiodicity and rotational symmetry.
 
-**Assessment and future selection**
+**Research-interest assessment and verification**
 
-The source results of §§4.41–4.70 now include simultaneous observation,
-total counting, an abstract finite-sector response, entire full spectral
-products with exact geometric zero multiplicities, indexed finite-sector
-zero displacement, separated zero-cluster certificates under bounded
-operator error, onsite ordering from properness, a sharper positive-
-interaction spectral and zero-response family, explicit scalar product-tail
-errors, and local analytic zero certificates using the exact spectral
-multiplicity as exponent. The disk argument principle and Rouché theorem
-now also certify exact scalar-approximation counts with the original
-spectral multiplicity, including repeated zeros. These are formalized
-classical analytic tools and their spectral application; their compilation
-does not establish mathematical originality. Sections 4.66–4.67 add
-numerical tail rates, their transfer to a nonnegative interacting family,
-and a complete rational zero certificate for a worked onsite model.
-Cofactor/radius certificates for interacting geometric models,
-noncircular contour counts and finite-patch errors remain open. These
-results do not change the selected §4.40 statement or certify originality
-or independent research interest. Sections 4.68–4.70 now add an explicit
-infinite octagonal graph and a nonempty nine-level spectral response.
-The geometric full-product specialization still needs summability.
+The contribution to assess is the explicit infinite geometric application
+with complete, quantitative, multiplicity-aware conclusions. The form and
+min–max methods are classical, and spectral lifting has established
+antecedents. Formal checking does not establish mathematical originality
+or standalone research significance.
 
-The maintainer reported that Palomar's automatic review found the original
-selected eigenspace bound insufficient as a standalone research result.
-That assessment must not be answered by attributing later unselected
-conclusions to it. The next candidate to assess is the concrete response
-and its eventual zero-product specialization, with all claimed geometric
-properties and numerical consequences included in the selected statement.
-The nine-level source theorem is available; a new selection is deferred
-pending the remaining full-product application and a precise comparison
-with the spectral-lifting literature.
-
-- [ ] Assess the selected result's research interest on its actual
-  mathematical content and demonstrated uses. Its role in a larger
-  program does not alone establish the significance of a standalone
-  submission.
-- [ ] Before a new flagship claim is formalized as a submission target,
-  compare its precise hypotheses and conclusions with the relevant
-  literature and identify the proposed contribution.
-- [ ] Select a stronger response theorem only after its substantive
-  source proof, geometric application and stated quantitative
-  consequences have been verified. A planned consequence must not be
-  described as part of the present submission.
-- [ ] When the selected theorem actually changes, update PALOMAR.md,
-  formalization.yaml, Challenge.lean and comparator.json consistently.
-  Until then they continue to describe the existing §4.40 theorem.
-- [ ] Use a public immutable 40-character commit SHA whose complete
-  required Lean and Comparator checks pass. Mechanical verification,
-  research-interest assessment and mathematical novelty are distinct.
+- [ ] Complete geometric summability and the full-product application
+  (§6.4) before including those conclusions in the selected theorem.
+- [ ] Compare the exact hypotheses/conclusions with the literature and
+  obtain expert assessment of research interest.
+- [ ] Supply scalar cofactor/radius and finite-patch certificates when
+  those numerical applications are claimed (§§6.3 and 6.6).
+- [ ] Use a public immutable 40-character commit SHA whose complete Lean,
+  NanoDa, con-ron and metadata checks pass. Keep PALOMAR.md,
+  formalization.yaml, Challenge.lean, Solution.lean and comparator.json
+  aligned with the exact selected statement.
 
 **Maintenance rule:** document each new proved result in §4, its roadmap
 entry and the canonical §5 module list. Mark a proof obligation complete only
