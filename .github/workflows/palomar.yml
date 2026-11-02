@@ -36,6 +36,13 @@ jobs:
         run: lake exe cache get
       - name: Build complete mathematical library and Comparator modules
         run: lake build SpectralGeometry Challenge Solution
+      - name: Inspect elaborated sector definitions
+        run: |
+          for module in Challenge Solution; do
+            printf 'import %s\nset_option pp.all true\n#print SpectralGeometry.AmmannBeenker.sector\nrun_meta do\n  let info ← Lean.getConstInfo `SpectralGeometry.AmmannBeenker.sector\n  Lean.logInfo m!"sector height: {info.hints.getHeightEx}"\n' "$module" > .lake/PalomarSectorDiagnostics.lean
+            echo "Declaration in $module"
+            lake env lean .lake/PalomarSectorDiagnostics.lean
+          done
       - name: Compare selected concrete spectral-response theorem with bundled kernels
         run: |
           sudo apt-get update -qq >/dev/null
