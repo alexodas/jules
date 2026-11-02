@@ -29,10 +29,10 @@ run_elab Lean.modifyEnv fun env => Lean.Meta.auxLemmasExt.modifyState env (fun _
 
 section
 
-variable {Tile : Type*}
-
 @[expose] abbrev TileHilbert (Tile : Type*) : Type _ :=
   lp (fun _ : Tile => ℝ) 2
+
+variable {Tile : Type*}
 
 @[expose] noncomputable def infiniteOnsiteDomain
     (V : Tile → ℝ) : Submodule ℝ (TileHilbert Tile) where
