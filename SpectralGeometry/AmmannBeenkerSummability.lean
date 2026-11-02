@@ -66,6 +66,39 @@ theorem planarCode_injective : Function.Injective planarCode := by
   · change v.val 2 = w.val 2; omega
   · exact h3
 
+/-- An explicit planar growth bound. No asymptotic density is assumed. -/
+theorem radius_count_le (R : ℝ) (hR : 0 ≤ R) :
+    (finite_norm_sublevel R).toFinset.card ≤
+      25 * (2 * ⌈R + 3⌉ + 1).toNat ^ 2 := by
+  classical
+  let N : ℤ := ⌈R + 3⌉
+  let I : Finset ℤ := Finset.Icc (-N) N
+  let grid : Finset ((ℤ × ℤ) × (WindowResidue × WindowResidue)) :=
+    (I.product I).product Finset.univ
+  have hm : Set.MapsTo planarCode (↑(finite_norm_sublevel R).toFinset) ↑grid := by
+    intro v hv
+    have hvR : ‖position v‖ ≤ R := by simpa using hv
+    have hc (i : Fin 4) : v.val i ∈ I := by
+      have hb := abs_le.mp (coordinate_bound v.property hR hvR i)
+      have hN : R + 3 ≤ (N : ℝ) := Int.le_ceil _
+      apply Finset.mem_Icc.mpr
+      constructor
+      · have h : -(N : ℝ) ≤ (v.val i : ℝ) := by linarith
+        exact_mod_cast h
+      · have h : (v.val i : ℝ) ≤ (N : ℝ) := by linarith
+        exact_mod_cast h
+    exact Finset.mem_product.mpr ⟨Finset.mem_product.mpr ⟨hc 1, hc 3⟩,
+      Finset.mem_univ _⟩
+  have hb := Finset.card_le_card_of_injOn planarCode hm planarCode_injective.injOn
+  have hI : I.card = (2 * N + 1).toNat := by
+    rw [Int.card_Icc]
+    congr 1
+    ring
+  have hr : Fintype.card WindowResidue = 5 := by
+    simp [WindowResidue, Int.card_Icc]
+  simpa [grid, Finset.card_product, hI, Fintype.card_prod, hr, N,
+    pow_two, mul_comm, mul_left_comm, mul_assoc] using hb
+
 /-- The planar coordinates grow at most quadratically with onsite energy. -/
 theorem planar_energy_bound (v : Vertex) :
     1 + (v.val 1 : ℝ) ^ 2 + (v.val 3 : ℝ) ^ 2 ≤ 5 * potential v := by
