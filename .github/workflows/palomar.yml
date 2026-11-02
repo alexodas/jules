@@ -37,9 +37,13 @@ jobs:
       - name: Build complete mathematical library and Comparator modules
         run: lake build SpectralGeometry Challenge Solution
       - name: Compare selected concrete spectral-response theorem with bundled kernels
+        id: comparator
         run: |
           sudo apt-get update -qq >/dev/null
           sudo apt-get install -y -qq bubblewrap >/dev/null
           # PalomarTemplate's AppArmor adjustment is confined to this disposable runner.
           sudo sysctl -w kernel.apparmor_restrict_unprivileged_userns=0
           timeout --signal=TERM --kill-after=30s 1800 bash scripts/verify-comparator.sh
+      - name: Diagnose declaration differences after comparison failure
+        if: failure() && steps.comparator.outcome == 'failure'
+        run: python3 scripts/diagnose-comparator.py
