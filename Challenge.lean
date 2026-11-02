@@ -5,10 +5,11 @@ public import Mathlib
 public section
 
 /-!
-# Concrete nine-level finite-sector spectral response
+# Exact full spectral products and nine-level geometric zero response
 
 The independent statement specifies the octagonal vertex graph, its matching
-Laplacian, natural domain and complete ordered eigenbases. Only supporting
+Laplacian, natural domain, complete ordered eigenbases and exact entire
+spectral products, including operator-specific geometric zero orders. Only supporting
 proposition witnesses and the target theorem have Challenge placeholders.
 Solution imports the fully proved source; these placeholders are not proofs.
 -/
@@ -190,6 +191,163 @@ structure DomainEigenbasis {ι : Type*} (d : Submodule ℝ H) (A : d →ₗ[ℝ]
 
 end Eigenbasis
 
+section SpectralInterfaces
+
+abbrev OnsiteEnd (Tile : Type*) :=
+  TileHilbert Tile →L[ℝ] TileHilbert Tile
+
+@[expose] def infiniteOnsiteLowEnergyTiles (V : Tile → ℝ) (R : ℝ) :
+    Set Tile := {t | V t ≤ R}
+
+theorem onsiteUnitGap_inverse_norm_le_one
+    (V : Tile → ℝ) (a : ℝ) (hgap : ∀ t, 1 ≤ V t - a)
+    (t : Tile) : ‖(V t - a)⁻¹‖ ≤ 1 := by
+  have hp : 0 < V t - a := lt_of_lt_of_le (by norm_num) (hgap t)
+  rw [Real.norm_eq_abs, abs_of_pos (inv_pos.mpr hp)]
+  have h := one_div_le_one_div_of_le (by norm_num : (0 : ℝ) < 1) (hgap t)
+  simpa [one_div] using h
+
+@[expose] noncomputable def infiniteOnsiteResolventCLM
+    (V : Tile → ℝ) (a : ℝ) (hgap : ∀ t, 1 ≤ V t - a) :
+    TileHilbert Tile →L[ℝ] TileHilbert Tile :=
+  infiniteOnsiteDiagonalContraction
+    (fun t => (V t - a)⁻¹) (onsiteUnitGap_inverse_norm_le_one V a hgap)
+
+@[expose] noncomputable def infiniteBoundedOnsiteShift
+    (V : Tile → ℝ) (a : ℝ) (B : OnsiteEnd Tile)
+    (ψ : infiniteOnsiteDomain V) : TileHilbert Tile :=
+  infiniteOnsiteOperator V ψ - a • (ψ.1 : TileHilbert Tile) + B ψ.1
+
+@[expose] noncomputable def infiniteBoundedOnsiteCorrectionUnit
+    (V : Tile → ℝ) (a : ℝ) (hgap : ∀ t, 1 ≤ V t - a)
+    (B : OnsiteEnd Tile)
+    (hsmall : ‖B.comp (infiniteOnsiteResolventCLM V a hgap)‖ < 1) :
+    (OnsiteEnd Tile)ˣ :=
+  Units.oneSub (-(B.comp (infiniteOnsiteResolventCLM V a hgap)))
+    (by simpa only [norm_neg] using hsmall)
+
+@[expose] noncomputable def infiniteBoundedOnsiteResolvent
+    (V : Tile → ℝ) (a : ℝ) (hgap : ∀ t, 1 ≤ V t - a)
+    (B : OnsiteEnd Tile)
+    (hsmall : ‖B.comp (infiniteOnsiteResolventCLM V a hgap)‖ < 1) :
+    OnsiteEnd Tile :=
+  (infiniteOnsiteResolventCLM V a hgap).comp
+    (↑((infiniteBoundedOnsiteCorrectionUnit V a hgap B hsmall)⁻¹) :
+      OnsiteEnd Tile)
+
+variable [DecidableEq Tile]
+
+@[expose] noncomputable def infiniteLocalBoundedCorrection
+    (D : ℕ) (σ : Fin D → Tile ≃ Tile) (w : Fin D → ℝ)
+    (P : TileHilbert Tile →L[ℝ] TileHilbert Tile)
+    (ε shift : ℝ) :
+    TileHilbert Tile →L[ℝ] TileHilbert Tile :=
+  infiniteLocalMatchingLaplacian D σ w + ε • P +
+    shift • ContinuousLinearMap.id ℝ (TileHilbert Tile)
+
+abbrev FullEnd (Tile : Type*) :=
+  TileHilbert Tile →L[ℝ] TileHilbert Tile
+
+@[expose] noncomputable def infiniteLocalMatchingFullEigenspace
+    (D : ℕ) (V : Tile → ℝ) (σ : Fin D → Tile ≃ Tile)
+    (w : Fin D → ℝ) (P : FullEnd Tile)
+    (ε shift a : ℝ) (hgap : ∀ t, 1 ≤ V t - a)
+    (hsmall : ‖(infiniteLocalBoundedCorrection D σ w P ε shift).comp
+      (infiniteOnsiteResolventCLM V a hgap)‖ < 1)
+    (eigenvalue : ℝ) (_hne : eigenvalue ≠ a) :
+    Submodule ℝ (TileHilbert Tile) :=
+  Module.End.eigenspace
+    (infiniteBoundedOnsiteResolvent V a hgap
+      (infiniteLocalBoundedCorrection D σ w P ε shift) hsmall).toLinearMap
+    (eigenvalue - a)⁻¹
+
+theorem infiniteLocalMatchingFullEigenspace_finiteDimensional
+    (D : ℕ) (V : Tile → ℝ) (σ : Fin D → Tile ≃ Tile)
+    (w : Fin D → ℝ) (P : FullEnd Tile)
+    (ε shift a : ℝ) (hgap : ∀ t, 1 ≤ V t - a)
+    (hproper : ∀ R : ℝ, (infiniteOnsiteLowEnergyTiles V R).Finite)
+    (hsmall : ‖(infiniteLocalBoundedCorrection D σ w P ε shift).comp
+      (infiniteOnsiteResolventCLM V a hgap)‖ < 1)
+    (eigenvalue : ℝ) (hne : eigenvalue ≠ a) :
+    FiniteDimensional ℝ
+      (infiniteLocalMatchingFullEigenspace
+        D V σ w P ε shift a hgap hsmall eigenvalue hne) := by
+  sorry
+
+abbrev MultiplicityEnd (Tile : Type*) :=
+  TileHilbert Tile →L[ℝ] TileHilbert Tile
+
+@[expose] noncomputable def infiniteLocalMatchingFullMultiplicity
+    (D : ℕ) (V : Tile → ℝ) (σ : Fin D → Tile ≃ Tile)
+    (w : Fin D → ℝ) (P : MultiplicityEnd Tile)
+    (ε shift a : ℝ) (hgap : ∀ t, 1 ≤ V t - a)
+    (hproper : ∀ R : ℝ, (infiniteOnsiteLowEnergyTiles V R).Finite)
+    (hsmall : ‖(infiniteLocalBoundedCorrection D σ w P ε shift).comp
+      (infiniteOnsiteResolventCLM V a hgap)‖ < 1)
+    (eigenvalue : ℝ) : ℕ := by
+  classical
+  by_cases hne : eigenvalue ≠ a
+  · letI := infiniteLocalMatchingFullEigenspace_finiteDimensional
+      D V σ w P ε shift a hgap hproper hsmall eigenvalue hne
+    exact Module.finrank ℝ
+      (infiniteLocalMatchingFullEigenspace
+        D V σ w P ε shift a hgap hsmall eigenvalue hne)
+  · exact 0
+
+abbrev ShiftEnd (Tile : Type*) :=
+  TileHilbert Tile →L[ℝ] TileHilbert Tile
+
+@[expose] def infiniteBoundedOnsiteRealRegular
+    (V : Tile → ℝ) (B : ShiftEnd Tile) (b : ℝ) : Prop :=
+  ∃ Q : ShiftEnd Tile,
+    (∀ f : TileHilbert Tile,
+      ∃ ψ : infiniteOnsiteDomain V,
+        (ψ.1 : TileHilbert Tile) = Q f ∧
+          infiniteBoundedOnsiteShift V b B ψ = f) ∧
+    (∀ ψ : infiniteOnsiteDomain V,
+      Q (infiniteBoundedOnsiteShift V b B ψ) =
+        (ψ.1 : TileHilbert Tile))
+
+@[expose] def infiniteBoundedOnsiteRealSpectrum (V : Tile → ℝ)
+    (B : ShiftEnd Tile) : Set ℝ :=
+  {b | ¬ infiniteBoundedOnsiteRealRegular V B b}
+
+@[expose] def perturb (q : ℕ → ℝ) (center direction : ℂ) (n : ℕ) (s : ℂ) : ℂ :=
+  -(((s - center) / direction) ^ 2 / ((q n : ℂ) ^ 2))
+
+@[expose] def factor (q : ℕ → ℝ) (center direction : ℂ) (n : ℕ) (s : ℂ) : ℂ :=
+  1 + perturb q center direction n s
+
+@[expose] def canonicalProduct (q : ℕ → ℝ) (center direction : ℂ) (s : ℂ) : ℂ :=
+  ∏' n : ℕ, factor q center direction n s
+
+@[expose] def HasExactFullSpectralProduct (V : Tile → ℝ)
+    (B : TileHilbert Tile →L[ℝ] TileHilbert Tile)
+    (hproper : ∀ R : ℝ, (infiniteOnsiteLowEnergyTiles V R).Finite)
+    (ev : ℕ → ℝ) (c d : ℂ) : Prop :=
+  ∃ (a : ℝ) (hunit : ∀ t, 1 ≤ V t - a),
+    ∃ (hsmall : ‖(infiniteLocalBoundedCorrection 0
+      (fun i => Fin.elim0 i) (fun _ => 0) B 1 0).comp
+        (infiniteOnsiteResolventCLM V a hunit)‖ < 1),
+      Differentiable ℂ (canonicalProduct ev c d) ∧
+      (∀ s : ℂ, canonicalProduct ev c d s = 0 ↔
+        ∃ r ∈ infiniteBoundedOnsiteRealSpectrum V B,
+          s = c + d * (r : ℂ) ∨ s = c - d * (r : ℂ)) ∧
+      (∀ r : ℝ, 0 < r → ∀ sign : ℝ, sign = 1 ∨ sign = -1 →
+        analyticOrderAt (canonicalProduct ev c d)
+          (c + d * ((sign * r : ℝ) : ℂ)) =
+        (infiniteLocalMatchingFullMultiplicity 0 V
+          (fun i => Fin.elim0 i) (fun _ => 0) B 1 0
+          a hunit hproper hsmall r : ℕ∞))
+
+@[expose] def positiveSpectralPoint (ev : ℕ → ℝ) (c d : ℂ) (n : ℕ) : ℂ :=
+  c + d * (ev n : ℂ)
+
+@[expose] def negativeSpectralPoint (ev : ℕ → ℝ) (c d : ℂ) (n : ℕ) : ℂ :=
+  c - d * (ev n : ℂ)
+
+end SpectralInterfaces
+
 namespace AmmannBeenker
 
 abbrev Lattice := Fin 4 → ℤ
@@ -245,18 +403,44 @@ theorem finite_norm_sublevel (R : ℝ) : {v : Vertex | ‖position v‖ ≤ R}.F
 
 @[expose] def sector : Finset Vertex := (finite_norm_sublevel 2).toFinset
 
-theorem exists_nine_level_response :
+theorem potential_proper (R : ℝ) : (infiniteOnsiteLowEnergyTiles potential R).Finite := by
+  sorry
+
+theorem exists_nine_level_fullProducts (c d : ℂ) (hd : d ≠ 0) :
     ∃ ev : ℕ → ℝ, Monotone ev ∧
       Nonempty (DomainEigenbasis (infiniteOnsiteDomain potential)
         (onsitePlusBounded potential interaction) ev) ∧
       (∀ n : ℕ, 1 ≤ ev n) ∧
       (∀ n : ℕ, n < 9 → ev n ≤ 3) ∧
+      Summable (fun n => 1 / (ev n) ^ 2) ∧
+      HasExactFullSpectralProduct potential interaction potential_proper ev c d ∧
       ∀ τ : ℝ, 0 ≤ τ → τ ≤ 4 →
         ∃ μ : ℕ → ℝ, Monotone μ ∧
           Nonempty (DomainEigenbasis (infiniteOnsiteDomain potential)
             (onsitePlusBounded potential (interaction + τ • finiteSectorProjection sector)) μ) ∧
           (∀ n : ℕ, 1 ≤ μ n) ∧
-          (∀ n : ℕ, n < 9 → τ / 2 ≤ μ n - ev n ∧ μ n - ev n ≤ τ) := by
+          Summable (fun n => 1 / (μ n) ^ 2) ∧
+          HasExactFullSpectralProduct potential (interaction + τ • finiteSectorProjection sector)
+            potential_proper μ c d ∧
+          ∀ n : ℕ, n < 9 →
+            (τ / 2 ≤ μ n - ev n ∧ μ n - ev n ≤ τ) ∧
+            (canonicalProduct ev c d (positiveSpectralPoint ev c d n) = 0 ∧
+              canonicalProduct ev c d (negativeSpectralPoint ev c d n) = 0) ∧
+            (canonicalProduct μ c d (positiveSpectralPoint μ c d n) = 0 ∧
+              canonicalProduct μ c d (negativeSpectralPoint μ c d n) = 0) ∧
+            (positiveSpectralPoint μ c d n - positiveSpectralPoint ev c d n =
+                d * ((μ n - ev n : ℝ) : ℂ) ∧
+              negativeSpectralPoint μ c d n - negativeSpectralPoint ev c d n =
+                -d * ((μ n - ev n : ℝ) : ℂ)) ∧
+            ((‖d‖ * (τ / 2) ≤
+                ‖positiveSpectralPoint μ c d n - positiveSpectralPoint ev c d n‖ ∧
+              ‖positiveSpectralPoint μ c d n - positiveSpectralPoint ev c d n‖ ≤ ‖d‖ * τ) ∧
+             (‖d‖ * (τ / 2) ≤
+                ‖negativeSpectralPoint μ c d n - negativeSpectralPoint ev c d n‖ ∧
+              ‖negativeSpectralPoint μ c d n - negativeSpectralPoint ev c d n‖ ≤ ‖d‖ * τ)) ∧
+            (0 < τ →
+              positiveSpectralPoint μ c d n ≠ positiveSpectralPoint ev c d n ∧
+              negativeSpectralPoint μ c d n ≠ negativeSpectralPoint ev c d n) := by
   sorry
 
 end AmmannBeenker

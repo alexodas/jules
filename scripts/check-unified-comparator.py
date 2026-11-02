@@ -25,13 +25,15 @@ except (OSError, UnicodeError, ValueError) as error:
 if config.get("challenge_module") != "Challenge" or config.get("solution_module") != "Solution":
     errors.append("Comparator must use root Challenge and Solution modules")
 expected = [
+    "SpectralGeometry.infiniteLocalMatchingFullEigenspace_finiteDimensional",
     "SpectralGeometry.AmmannBeenker.mate_involutive",
     "SpectralGeometry.AmmannBeenker.finite_norm_sublevel",
-    "SpectralGeometry.AmmannBeenker.exists_nine_level_response",
+    "SpectralGeometry.AmmannBeenker.potential_proper",
+    "SpectralGeometry.AmmannBeenker.exists_nine_level_fullProducts"
 ]
 names = config.get("theorem_names")
 if names != expected:
-    errors.append("This Palomar candidate must select the concrete response and its two supporting witness lemmas")
+    errors.append("This Palomar candidate must select the geometric full-product response and its four supporting witness lemmas")
 if config.get("definition_names") != []:
     errors.append("Concrete model definitions must be compared by body, with no definition holes")
 for key in ("theorem_names", "definition_names"):

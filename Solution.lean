@@ -1,5 +1,5 @@
 module
 
-public import SpectralGeometry.AmmannBeenkerOperator
+public import SpectralGeometry.AmmannBeenkerSpectralProducts
 
-/-! The selected theorem and its dependencies are imported from the proved source. -/
+/-! The selected theorem and its dependencies come from the proved source. -/
