@@ -85,7 +85,7 @@ private theorem integer_weight_summable :
   intro n
   by_cases hn : n = 0
   · subst n; norm_num
-  · simp only [hn, if_false, zero_add]
+  · simp only [hn, ite_false, zero_add]
     apply one_div_le_one_div_of_le
     · exact sq_pos_of_ne_zero (by exact_mod_cast hn)
     · linarith
@@ -101,8 +101,8 @@ theorem potential_invSq_summable : Summable (fun v : Vertex => 1 / (potential v)
   have hf : Summable (fun _ : WindowResidue × WindowResidue => (1 : ℝ)) := by
     exact Summable.of_finite
   have hmajor := ((hp.mul_of_nonneg hf
-    (fun n => mul_nonneg (hg0 n.1) (hg0 n.2)) (fun _ => by norm_num)).mul_left 25)
-      .comp_injective planarCode_injective
+    (fun n => mul_nonneg (hg0 n.1) (hg0 n.2)) (fun _ => by norm_num)).mul_left 25).comp_injective
+      planarCode_injective
   apply Summable.of_nonneg_of_le (fun v => by positivity) _ hmajor
   intro v
   change 1 / (potential v) ^ 2 ≤ 25 * ((g (v.val 1) * g (v.val 3)) * 1)
@@ -118,8 +118,9 @@ theorem potential_invSq_summable : Summable (fun v : Vertex => 1 / (potential v)
       25 * (potential v) ^ 2 := by
     nlinarith [sq_nonneg ((v.val 1 : ℝ) ^ 2), sq_nonneg ((v.val 3 : ℝ) ^ 2),
       mul_nonneg (sq_nonneg (v.val 1 : ℝ)) (sq_nonneg (v.val 3 : ℝ))]
-  rw [mul_one, div_mul_div_comm, one_mul]
-  exact (div_le_div_iff₀ (sq_pos_of_pos hv) (mul_pos ha hb)).mpr (by simpa using hd)
+  rw [mul_one, div_mul_div_comm, one_mul, mul_one_div]
+  apply (div_le_div_iff₀ (sq_pos_of_pos hv) (mul_pos ha hb)).mpr
+  simpa using hd
 
 end
 end SpectralGeometry.AmmannBeenker

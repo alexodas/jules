@@ -80,6 +80,7 @@ public import SpectralGeometry.LinearOnsiteZeroCertificate
 public import SpectralGeometry.AmmannBeenkerCutProject
 public import SpectralGeometry.AmmannBeenkerGraph
 public import SpectralGeometry.AmmannBeenkerOperator
+public import SpectralGeometry.AmmannBeenkerSummability
 
 public section
 
