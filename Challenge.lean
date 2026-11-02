@@ -173,13 +173,20 @@ abbrev OnsiteEnd (Tile : Type*) :=
     (ψ : infiniteOnsiteDomain V) : TileHilbert Tile :=
   infiniteOnsiteOperator V ψ - a • (ψ.1 : TileHilbert Tile) + B ψ.1
 
+theorem infiniteBoundedOnsiteCorrection_norm_neg_lt_one
+    (V : Tile → ℝ) (a : ℝ) (hgap : ∀ t, 1 ≤ V t - a)
+    (B : OnsiteEnd Tile)
+    (hsmall : ‖B.comp (infiniteOnsiteResolventCLM V a hgap)‖ < 1) :
+    ‖-(B.comp (infiniteOnsiteResolventCLM V a hgap))‖ < 1 := by
+  simpa only [norm_neg] using hsmall
+
 @[expose] noncomputable def infiniteBoundedOnsiteCorrectionUnit
     (V : Tile → ℝ) (a : ℝ) (hgap : ∀ t, 1 ≤ V t - a)
     (B : OnsiteEnd Tile)
     (hsmall : ‖B.comp (infiniteOnsiteResolventCLM V a hgap)‖ < 1) :
     (OnsiteEnd Tile)ˣ :=
   Units.oneSub (-(B.comp (infiniteOnsiteResolventCLM V a hgap)))
-    (by simpa only [norm_neg] using hsmall)
+    (infiniteBoundedOnsiteCorrection_norm_neg_lt_one V a hgap B hsmall)
 
 @[expose] noncomputable def infiniteBoundedOnsiteResolvent
     (V : Tile → ℝ) (a : ℝ) (hgap : ∀ t, 1 ≤ V t - a)
@@ -269,7 +276,14 @@ run_elab Lean.modifyEnv fun env => Lean.Meta.auxLemmasExt.modifyState env (fun _
 
 section
 
-variable {Tile : Type*} [DecidableEq Tile]
+variable {Tile : Type*}
+
+@[expose] def infiniteOnsiteGraph (V : Tile → ℝ) :
+    Set (TileHilbert Tile × TileHilbert Tile) :=
+  Set.range (fun ψ : infiniteOnsiteDomain V =>
+    ((ψ.1 : TileHilbert Tile), infiniteOnsiteOperator V ψ))
+
+variable [DecidableEq Tile]
 
 @[expose] noncomputable def infiniteLocalBoundedCorrection
     (D : ℕ) (σ : Fin D → Tile ≃ Tile) (w : Fin D → ℝ)
