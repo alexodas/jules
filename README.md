@@ -1788,9 +1788,11 @@ not an assumed response estimate or a new condition
 $v_0>\|B+\tau P_F\|$. Both interval endpoints are included. The theorem
 does not assert that the energy window is nonempty, rule out zero collisions
 between *different* indices and parameter values, or select a global
-eigenvector family depending on $\tau$. The geometric Ammann–Beenker
-instantiation, relative determinant and certified finite-patch approximation
-remain open. Small signed-error stability and separated zero-window
+eigenvector family depending on $\tau$. The concrete Ammann–Beenker
+full-product response is proved in §4.72 using the positive-interaction
+framework of §§4.58–4.59, which preserves the onsite gap. Relative
+determinants and certified finite-patch approximation remain open.
+Small signed-error stability and separated zero-window
 certificates are proved in §§4.53–4.56 under their additional norm and
 boundary-margin hypotheses. They do not restrict the positive-response
 interval already verified in this section.
@@ -2073,7 +2075,10 @@ certifies persistence and local location, not equality of total zero
 multiplicity, an index matching, or a finite-patch error. Section 4.65 adds
 the exact disk count using the same local controls and tail budget.
 Section 4.67 supplies numerical cofactor and tail bounds for a worked
-linear onsite model. The interacting geometric application remains open.
+linear onsite model. For the explicit octagonal graph, §4.72 proves the
+full-product indexed zero response. A model-specific local approximation
+certificate with numerical cofactor/radius bounds and a truncation cutoff
+remains to be supplied (§6.4).
 
 ### 4.63. Finite disk zero counts and the argument principle
 
@@ -2999,10 +3004,12 @@ theorem, and carries no asserted connection to the Riemann zeta function.
 **Current selected result**
 
 - [x] Select `SpectralGeometry.AmmannBeenker.exists_nine_level_fullProducts`
-  (§4.72): complete ordered spectra, positive gaps, geometric summability,
-  entire full products with exact geometric zero orders and quantitative
-  response for nine slots on each branch on 0≤τ≤4.
-  The geometric/operator inputs and nonempty window are derived.
+  (§4.72): complete ordered spectra, positive gaps, inverse-square summability
+  of both full spectra, entire full products with exact geometric zero orders
+  and quantitative response for nine slots on each branch on 0≤τ≤4.
+  Geometric onsite summability is proved in §4.71 and used as a supporting
+  input to the proof. The geometric/operator inputs and nonempty window
+  are derived.
 - [x] Supply the Mathlib-only independent Challenge, source-backed Solution,
   supporting definitions and single root Comparator configuration.
 - [x] State the open-window convention and distinguish the vertex graph
@@ -3016,9 +3023,11 @@ min–max methods are classical, and spectral lifting has established
 antecedents. Formal checking does not establish mathematical originality
 or standalone research significance.
 
-- [x] Include the proved geometric summability and full-product application
-  (§§4.71–4.72) in the selected statement. The independent configuration
-  includes four supporting witness lemmas and no definition holes.
+- [x] Prove geometric counting and onsite summability in §4.71 and use the
+  latter in the full-product proof (§4.72). These are source results;
+  `radius_count_le` and `potential_invSq_summable` are not separate
+  Comparator selections. The independent configuration selects the main
+  theorem and four supporting witness lemmas, with no definition holes.
 - [ ] Compare the exact hypotheses/conclusions with the literature and
   obtain expert assessment of research interest.
 - [ ] Supply scalar cofactor/radius and finite-patch certificates when
