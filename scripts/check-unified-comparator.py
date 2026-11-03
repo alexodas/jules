@@ -24,15 +24,23 @@ except (OSError, UnicodeError, ValueError) as error:
 
 if config.get("challenge_module") != "Challenge" or config.get("solution_module") != "Solution":
     errors.append("Comparator must use root Challenge and Solution modules")
-expected = ["SpectralGeometry.infiniteLocalMatching_full_eigenspace_finrank_le_lowEnergyTiles"]
+expected = [
+    "SpectralGeometry.infiniteLocalMatchingFullEigenspace_finiteDimensional",
+    "SpectralGeometry.AmmannBeenker.mate_involutive",
+    "SpectralGeometry.AmmannBeenker.finite_norm_sublevel",
+    "SpectralGeometry.AmmannBeenker.potential_proper",
+    "SpectralGeometry.AmmannBeenker.exists_nine_level_fullProducts"
+]
 names = config.get("theorem_names")
 if names != expected:
-    errors.append("This Palomar candidate must select exactly the §4.40 eigenspace theorem")
+    errors.append("This Palomar candidate must select the geometric full-product response and its four supporting witness lemmas")
+if config.get("definition_names") != []:
+    errors.append("Concrete model definitions must be compared by body, with no definition holes")
 for key in ("theorem_names", "definition_names"):
     names = config.get(key)
     if not isinstance(names, list) or not all(isinstance(n, str) for n in names):
         errors.append(f"{key} must be a list of qualified names")
-    elif len(names) != len(set(names)) or not names:
+    elif len(names) != len(set(names)) or (key == "theorem_names" and not names):
         errors.append(f"{key} has duplicates or an empty selection")
 
 headers = re.findall(r"^\s*(?:public\s+)?import\s+([^\n]+)", statement, re.MULTILINE)
@@ -46,9 +54,18 @@ if len(statement.splitlines()) > 1000 or len(statement.encode("utf-8")) > 100 * 
     errors.append("Challenge exceeds Palomar's 1000-line/100-KiB limits")
 
 decls = {"theorem": set(), "definition": set()}
-pattern = r"^\s*(?:@\[expose\]\s+)?(?:noncomputable\s+)?(theorem|def|abbrev)\s+([A-Za-z_][A-Za-z0-9_']*)"
-for kind, name in re.findall(pattern, statement, re.MULTILINE):
-    decls["theorem" if kind == "theorem" else "definition"].add("SpectralGeometry." + name)
+pattern = r"^\s*(?:@\[expose\]\s+)?(?:noncomputable\s+)?(theorem|def|abbrev|structure)\s+([A-Za-z_][A-Za-z0-9_'.]*)"
+namespaces = []
+for line in statement.splitlines():
+    namespace = re.fullmatch(r"namespace\s+([A-Za-z_][A-Za-z0-9_'.]*)", line.strip())
+    if namespace:
+        namespaces.append(namespace.group(1))
+    elif namespaces and line.strip() == "end " + namespaces[-1]:
+        namespaces.pop()
+    declaration = re.match(pattern, line)
+    if declaration:
+        kind, name = declaration.groups()
+        decls["theorem" if kind == "theorem" else "definition"].add(".".join(namespaces + [name]))
 for key, kind in (("theorem_names", "theorem"), ("definition_names", "definition")):
     for name in config.get(key, []) if isinstance(config.get(key), list) else []:
         if name not in decls[kind]:

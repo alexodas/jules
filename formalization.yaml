@@ -1,8 +1,8 @@
 {
   "version": "v0.4",
   "project": {
-    "name": "Jules Spectral Geometry — low-energy eigenspace multiplicity bound",
-    "description": "A Lean 4 formalization prepared for independent Comparator verification of one theorem about the geometric multiplicity of low-energy real eigenvalues for an infinite onsite-plus-bounded-interaction operator H = M_V + B on real ℓ²(Tile). Under finite onsite sublevel sets, a unit-gap regular resolvent shift a, a small resolvent correction, λ ≠ a and λ < R − ‖B‖, the full eigenspace at λ has dimension at most #{t : V(t) ≤ R}. The bounded correction may include infinite finite-color matching interactions and need not be symmetric. This is a per-eigenspace bound, not a total low-energy eigenvalue count, an indexed min–max theorem or a concrete aperiodic-tiling result. In the README research program, this is the first selected substantive observation milestone toward quantitative spectral response to finite local changes and the response of zeros of normalized spectral products on a common prescribed line. The abstract spectral and analytic consequences are now formalized outside the selection. The explicit octagonal vertex graph also has a proved nonempty nine-level spectral response. Its geometric full-product instantiation, relative products and finite-patch certificates remain open.",
+    "name": "Jules Spectral Geometry — exact geometric products and nine-level zero response",
+    "description": "For the explicit infinite octagonal vertex graph with V(x)=1+|p(x)|², matching edge weight 1/16 and S={x:|p(x)|≤2}, construct complete monotone natural-domain spectra for H and H+τP_S, all levels at least one, and a nine-level baseline window below three. Derive geometric onsite and full-spectrum inverse-square summability. For arbitrary fixed c,d in ℂ with d≠0, obtain entire canonical products with exact full real bounded-inverse spectral zero sets and operator-specific geometric zero multiplicities. For n<9 and 0≤τ≤4, retain τ/2≤μ_n−λ_n≤τ and prove oriented indexed zero differences ±d(μ_n−λ_n), with norm between |d|τ/2 and |d|τ and nonzero motion for τ>0. Repetitions and crossings are permitted. Geometric, operator, summability and nonempty-window inputs are derived.",
     "authors": [
       "Alessandro Odasso"
     ],
@@ -25,14 +25,14 @@
   },
   "sources": [
     {
-      "title": "Low-energy eigenspace multiplicity bound for bounded corrections of proper onsite multiplication (statement first recorded in the Jules Lean development)",
+      "title": "Exact full spectral products and nine-level zero response for the explicit octagonal graph",
       "authors": [
         "Alessandro Odasso"
       ],
       "type": "original-proof",
       "relationship": "other",
-      "id": "https://github.com/alexodas/jules/blob/main/SpectralGeometry/InfiniteLocalFullLowEnergyCounting.lean",
-      "note": "The Jules Lean development is the first identified documentation of this precise selected formal statement. The initial informal project idea and scientific direction came from Alessandro Odasso, who reports using GPT-6 throughout the GitHub development and Lean formalization. The `authors` entry names the responsible human project initiator/maintainer; it does not claim that all Lean proofs were personally written without AI assistance. This `original-proof` classification records the first identified presentation of the specific statement, NOT verified mathematical priority or novelty. A focused non-exhaustive literature search on 27 October 2026 did not identify the exact bound with all these hypotheses; equivalent earlier results may exist and would require correcting the source record."
+      "id": "https://github.com/alexodas/jules/blob/main/SpectralGeometry/AmmannBeenkerSpectralProducts.lean",
+      "note": "The precise statement and proof are recorded in the AI-assisted Jules development under the maintainer’s direction. The proof combines explicit geometric counting and summability with established form, min–max and canonical-product arguments. This source classification identifies that presentation; it does not certify mathematical priority, a new analytic technique or standalone research interest."
     },
     {
       "title": "Perturbation Theory for Linear Operators",
@@ -42,26 +42,14 @@
       "type": "book",
       "id": "https://doi.org/10.1007/978-3-642-66282-9",
       "relationship": "background",
-      "note": "General theory of bounded perturbations and spectral comparison; not cited as the source of this exact coordinate-injection or multiplicity statement."
-    },
-    {
-      "title": "Counting eigenvalues of Schrödinger operators using the landscape function",
-      "authors": [
-        "Sven Bachmann",
-        "Richard Froese",
-        "Severin Schraven"
-      ],
-      "type": "paper",
-      "id": "https://doi.org/10.4171/JST/488",
-      "relationship": "background",
-      "note": "Related research on upper and lower bounds for the rank of spectral projections using sublevel volumes of an effective potential. It is not identified as the source of our particular one-eigenspace coordinate-injection bound, and its assumptions and conclusions differ. Its existence limits any unsupported claim that potential-sublevel spectral estimates are a new theme."
+      "note": "Background for the spectral-response formalization; not an identified source of the exact selected quantitative statement or a claim of novelty."
     },
     {
       "title": "Mathlib4 — Lean mathematical library",
       "type": "other",
       "id": "https://github.com/leanprover-community/mathlib4",
       "relationship": "background",
-      "note": "Pinned Lean library used for lp Hilbert spaces, bounded maps, finite-dimensionality and basic functional analysis; not a source from which the selected theorem is adapted."
+      "note": "Background for the spectral-response formalization; not an identified source of the exact selected quantitative statement or a claim of novelty."
     },
     {
       "title": "Unique continuation and lifting of spectral band edges of Schrödinger operators on unbounded domains",
@@ -74,11 +62,21 @@
       "type": "paper",
       "id": "https://doi.org/10.4171/JST/314",
       "relationship": "background",
-      "note": "Background for assessment of the later positive-perturbation response program. The paper studies spectral lifting under semidefinite perturbations. It is not identified as the source of the currently selected single-eigenspace statement, nor has equivalence with the concrete nine-level result been established."
+      "note": "Background for the spectral-response formalization; not an identified source of the exact selected quantitative statement or a claim of novelty."
+    },
+    {
+      "title": "Algebraic theory of non-periodic tilings of the plane by two simple building blocks: a square and a rhombus",
+      "authors": [
+        "F. P. M. Beenker"
+      ],
+      "type": "other",
+      "relationship": "background",
+      "id": "https://pure.tue.nl/ws/files/4269555/253166.pdf",
+      "note": "Geometric background. Polygonal coverage and aperiodicity are not conclusions of the selected graph theorem."
     }
   ],
   "status": {
-    "scope": "One Comparator-selected theorem, SpectralGeometry.infiniteLocalMatching_full_eigenspace_finrank_le_lowEnergyTiles, plus 16 independently reproduced definitions and abbreviations needed for its statement. The full 80-module mathematical library remains built by Lean; the new geometric response is not part of the Comparator selection. The selected result bounds geometric multiplicity of ONE eigenvalue below R - ‖B‖ by #{t : V(t) ≤ R}, assuming a finite-sublevel onsite potential, a unit-gap regular shift, a small resolvent correction and λ ≠ a. It does not bound total low-energy eigenvalue counts, compare nth interacting and onsite eigenvalues, establish full-spectrum inverse-square summability, supply a named aperiodic tiling or prove any claim about zeta.",
+    "scope": "One main theorem, SpectralGeometry.AmmannBeenker.exists_nine_level_fullProducts, and four supporting witness lemmas: matching involutivity, finite radius sublevels, onsite properness and finite-dimensional compact-resolvent eigenspaces. All concrete model definitions are compared transitively with no definition holes. The entire 82-module mathematical library is built. The selected result constructs complete spectra, geometric summability, exact entire full products and a nine-slot indexed zero response on each branch throughout 0≤τ≤4.",
     "sorry_count": 0,
     "sorry_in_definitions": 0,
     "axioms": [
@@ -95,7 +93,7 @@
           "OpenAI ChatGPT GPT-6"
         ],
         "framework": "ChatGPT",
-        "tool_setup": "OpenAI GPT-6 was used, under Alessandro Odasso's direction, throughout the GitHub development of Jules, including Lean mathematical formalization, proof development and related repository/documentation work, as reported by the responsible maintainer. This method record is not limited to the later Palomar packaging.",
+        "tool_setup": "OpenAI GPT-6 assisted the GitHub development, Lean formalization and documentation under Alessandro Odasso’s direction, according to the responsible maintainer’s account.",
         "prompting_notes": "Alessandro Odasso supplied the initial non-formal research idea and directed the project. He describes himself as not being a mathematician and as being interested in the use of LLMs for scientific research. He states that he used OpenAI GPT-6 throughout the GitHub development. The exact historical prompts and model contributions were not independently audited; this declaration reports the maintainer's account and does not assert mathematical priority."
       }
     ],
@@ -103,22 +101,22 @@
     "notes": "The initial non-formal research idea and the direction of the Jules project originated with Alessandro Odasso. Odasso does not identify as a mathematician; his stated motivation is to investigate how large language models can be used in scientific work. According to the responsible maintainer, he used OpenAI GPT-6 throughout development of the GitHub repository, including the Lean formalization and its associated repository work. The human originated the informal idea and directed the project; GPT-6 was the AI assistant used for technical development. This is a disclosure of the human/AI workflow, not proof of mathematical originality, not a claim that the human independently wrote all Lean proofs, and not independent evidence that every historical interaction is recoverable. The checked mathematical statements are verified by Lean/Comparator, not by the AI's authority. Costs were not tracked. Challenge-only sorry placeholders are never treated as proofs in Solution."
   },
   "fidelity": {
-    "divergences": "The selected Lean theorem retains its precise per-eigenspace conclusion: λ ≠ a and λ < R − ‖B‖ imply geometric multiplicity at λ is at most #{t : V(t) ≤ R}. The full bounded correction B includes matching-family interactions, a bounded perturbation and scalar shift. The natural domain, properness, unit-gap and small-resolvent-correction assumptions remain explicit; the result does not require B to be self-adjoint. It proves neither a sum of multiplicities over different eigenvalues nor index-wise growth, inverse-square summability or a spectral-product instantiation."
+    "divergences": "The open octagonal window, excluded boundary, coordinate-step adjacency, edge weight 1/16, potential 1+|p(x)|², finite sector |p(x)|≤2 and common natural domain are explicit. c and nonzero d are arbitrary and fixed during the intervention. Exact zero orders belong to each product’s own operator. Repeated levels and crossings are allowed; nine slots do not imply nine distinct locations or disjoint zero sets. Polygonal coverage, aperiodicity, uniform separation, rotational symmetry, optimal constants, numerical cofactor/radius certificates, relative determinants and finite-patch errors are not claimed."
   },
   "review": {
-    "status": "AI-assisted packaging; mathematical originality unconfirmed; no human mathematical peer review",
+    "status": "AI-assisted formalization; mathematical originality unconfirmed; no human mathematical peer review",
     "reviewers": [],
-    "notes": "This candidate selects the existing full-interacting-operator low-energy eigenspace multiplicity bound. The recorded origin of the precise formal statement is distinguished from general mathematical literature and Mathlib as a library dependency; citations and bibliographic uncertainty are detailed in `sources`. The research motivation is finite-coordinate observability and a quantitative upper bound on the geometric multiplicity of one real eigenspace, without requiring symmetry of the bounded correction. Within README §§1.2 and 6.2–6.6, the theorem identifies a finite observation sector from which to pursue simultaneous quantitative observation, response of ordered spectral levels to finite interventions, and comparison of normalized spectral products on a prescribed line. The abstract observation, counting, response and analytic-product stages are now proved. The explicit octagonal cut-and-project vertex graph and its nine-level response are proved in AmmannBeenkerCutProject, AmmannBeenkerGraph and AmmannBeenkerOperator. Geometric inverse-square summability, its full-product instantiation, relative determinants and finite-patch zero response remain open. Polygonal coverage, aperiodicity and global rotational symmetry are not conclusions of the graph theorem. These source results remain outside the selected theorem. Injectivity alone supplies no stability constant or determinant identity, and the broader roadmap does not establish originality or research significance for the current standalone candidate. The proof uses a standard quadratic-form and coordinate-restriction technique; mathematical novelty and research significance have not been independently established. Mechanical verification is commit-specific and must pass on the exact immutable commit used for submission. Human/AI contribution disclosure: Alessandro Odasso originated the informal idea, steered the project and is the responsible maintainer; according to his account, GPT-6 supported the full GitHub/Lean development. This is distinct from mathematical-source provenance and does not establish mathematical novelty or peer-reviewed research significance. The maintainer reported a negative automatic Palomar research-interest review of the selected single-eigenspace bound. The stronger source declaration SpectralGeometry.AmmannBeenker.exists_nine_level_response is now a candidate for assessment: it constructs complete ordered eigenbases, proves a baseline window containing nine levels and gives τ/2 to τ response on 0 ≤ τ ≤ 4 with positive gap preserved. It is not yet selected. The intended geometric zero-response specialization still requires summability and a precise literature comparison; no novelty or acceptance claim is made."
+    "notes": "Assess the end-to-end concrete geometric application: finite intervention, derived planar counting and summability, complete spectra, exact operator-specific entire-product divisors and quantitative indexed zero motion for a nonempty window. The form/min–max, spectral-lifting and canonical-product methods have classical antecedents. Choosing a prescribed line alone is not an originality claim. Precise literature comparison and expert assessment remain open. Mechanical verification is distinct from research significance and must pass on the exact immutable submission commit."
   },
   "alignment": {
-    "namespace": "SpectralGeometry",
+    "namespace": "SpectralGeometry.AmmannBeenker",
     "statements": [
       {
-        "source": "Per-eigenvalue coordinate-injection dimension bound in the Jules formalization, section 4.40",
-        "lean": "SpectralGeometry.infiniteLocalMatching_full_eigenspace_finrank_le_lowEnergyTiles",
-        "module": "SpectralGeometry.InfiniteLocalFullLowEnergyCounting",
-        "status": "Existing fully proved Lean source theorem; its selected statement was independently matched by Comparator. Recheck the final immutable submission commit.",
-        "note": "Genuine proved Lean theorem, statement already independently matched by Comparator before this metadata revision. A finite-coordinate restriction on ONE eigenspace yields its finrank bound, conditional on the original natural-domain, regular shift, properness, smallness and threshold hypotheses. No self-adjointness of B, global eigenvalue count or spectral product is claimed."
+        "source": "Geometric counting, summability and exact full-product response, README §§4.71–4.72",
+        "lean": "SpectralGeometry.AmmannBeenker.exists_nine_level_fullProducts",
+        "module": "SpectralGeometry.AmmannBeenkerSpectralProducts",
+        "status": "Complete Lean source proof; independent statement and kernel checks must pass on the submission commit.",
+        "note": "All inputs except affine center/direction are derived for the explicit operator. The conclusion includes complete ordered eigenbases, positive gaps, inverse-square summability, exact entire-product geometric zero orders and nine-slot indexed response on each branch."
       }
     ]
   },

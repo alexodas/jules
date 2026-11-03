@@ -1,12 +1,5 @@
 module
 
-public import SpectralGeometry.InfiniteLocalFullLowEnergyCounting
+public import SpectralGeometry.AmmannBeenkerSpectralProducts
 
-/-!
-# Palomar solution: one selected low-energy eigenspace multiplicity bound
-
-The proved declaration and its entire mathematical dependency closure come
-from the original SpectralGeometry modules. This file introduces no theorem
-or replacement proof.
--/
-
+/-! The selected theorem and its dependencies come from the proved source. -/

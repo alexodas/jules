@@ -38,6 +38,16 @@ defined on the unchanged natural onsite domain. -/
     (ψ : infiniteOnsiteDomain V) : TileHilbert Tile :=
   infiniteOnsiteOperator V ψ - a • (ψ.1 : TileHilbert Tile) + B ψ.1
 
+/-- Negating the bounded correction preserves the strict norm bound used
+to construct the Neumann-series unit. Keeping this witness named also makes
+the independent statement use the same proof constant across modules. -/
+theorem infiniteBoundedOnsiteCorrection_norm_neg_lt_one
+    (V : Tile → ℝ) (a : ℝ) (hgap : ∀ t, 1 ≤ V t - a)
+    (B : OnsiteEnd Tile)
+    (hsmall : ‖B.comp (infiniteOnsiteResolventCLM V a hgap)‖ < 1) :
+    ‖-(B.comp (infiniteOnsiteResolventCLM V a hgap))‖ < 1 := by
+  simpa only [norm_neg] using hsmall
+
 /-- A Neumann-series unit for the bounded correction to the onsite
 resolvent under the quantitative smallness hypothesis. -/
 @[expose] noncomputable def infiniteBoundedOnsiteCorrectionUnit
@@ -46,7 +56,7 @@ resolvent under the quantitative smallness hypothesis. -/
     (hsmall : ‖B.comp (infiniteOnsiteResolventCLM V a hgap)‖ < 1) :
     (OnsiteEnd Tile)ˣ :=
   Units.oneSub (-(B.comp (infiniteOnsiteResolventCLM V a hgap)))
-    (by simpa only [norm_neg] using hsmall)
+    (infiniteBoundedOnsiteCorrection_norm_neg_lt_one V a hgap B hsmall)
 
 private theorem infiniteBoundedOnsiteCorrectionUnit_val
     (V : Tile → ℝ) (a : ℝ) (hgap : ∀ t, 1 ≤ V t - a)
