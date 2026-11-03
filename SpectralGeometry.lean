@@ -91,3 +91,4 @@ public section
 Entry point for the formally checked analytic product and the developing
 geometric-operator theory.
 -/
+public import SpectralGeometry.AmmannBeenkerRadialGap
