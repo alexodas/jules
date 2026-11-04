@@ -83,6 +83,9 @@ public import SpectralGeometry.AmmannBeenkerOperator
 public import SpectralGeometry.AmmannBeenkerSummability
 public import SpectralGeometry.AmmannBeenkerSpectralProducts
 
+public import SpectralGeometry.AmmannBeenkerRadialGap
+public import SpectralGeometry.AmmannBeenkerCompactModes
+
 public section
 
 /-!
@@ -91,4 +94,3 @@ public section
 Entry point for the formally checked analytic product and the developing
 geometric-operator theory.
 -/
-public import SpectralGeometry.AmmannBeenkerRadialGap

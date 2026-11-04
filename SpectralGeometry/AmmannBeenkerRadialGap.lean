@@ -51,8 +51,8 @@ theorem internal_norm_sq_lt_two {n : Lattice} (hn : Admitted n) :
   dsimp [x, y] at hbound
   nlinarith
 
-/-- An admitted vertex below the next shell lies within physical radius two. -/
 set_option maxHeartbeats 4000000 in
+/-- An admitted vertex below the next shell lies within physical radius two. -/
 theorem physical_sq_gap {n : Lattice} (hn : Admitted n)
     (hr : ‖physical n‖ ^ 2 < 3 + 4 * alpha) : ‖physical n‖ ^ 2 ≤ 4 := by
   have ha := alpha_sq
