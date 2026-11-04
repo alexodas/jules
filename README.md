@@ -12,10 +12,11 @@ complete ordered spectra and entire products with exact geometric zero
 multiplicities, and bounds the response of nine indexed zeros on each
 reflected branch to a finite positive intervention.
 The foundational observation and analytic results remain documented below.
-Sections 4.73–4.75 strengthen the original sector estimate and construct
+Sections 4.73–4.76 strengthen the original sector estimate and construct
 an exact crossing of two independent compact eigenvectors, with a state
-that stays fixed after a one-edge change. Exact multiplicity, an explicit
-gap and the motion of the other perturbed eigenvalue remain open. The
+that stays fixed after a one-edge change. They also identify the exact
+17-vertex central sector and its 16 edges to the exterior. Exact multiplicity,
+an explicit gap and the motion of the other perturbed eigenvalue remain open. The
 selected Palomar statement remains the full-product theorem of §4.72.
 
 | Part of the program | Status |
@@ -35,6 +36,7 @@ selected Palomar statement remains the full-product theorem of §4.72.
 | Explicit octagonal cut-and-project vertex graph and nine-level finite-sector response | Formalized in §§4.68–4.70: infinite embedded vertices, exact central star, matching Laplacian and a nonempty controlled window |
 | Planar vertex counting, geometric summability and full-product zero response | Formalized in §§4.71–4.72 for the explicit graph, with a nonempty nine-level window and no supplied summability hypothesis |
 | Radial barrier, compact eigenvectors and ring-induced crossing | Formalized in §§4.73–4.75; includes a stationary one-edge state and an exact Rayleigh response, but not a certified split spectral pair |
+| Exact central sector and its boundary | Formalized in §4.76: origin and two eight-site rings, complete internal adjacency, ring degrees three and four, and exactly sixteen edges to the exterior |
 | Relative products and certified finite-patch zero response | Remaining obligations in §§6.5–6.6; geometric scalar cofactor/radius certificates also remain open |
 
 The research objective is an end-to-end statement relating an explicitly defined
@@ -2503,9 +2505,38 @@ This is an exact Rayleigh quotient identity. It does not yet establish
 another eigenvalue's value, derivative or quadratic remainder. The
 isolation and perturbation estimates needed for those claims remain open.
 
+### 4.76. The exact central sector and its boundary
+
+[AmmannBeenkerCentralPatch.lean](SpectralGeometry/AmmannBeenkerCentralPatch.lean)
+proves that the radius-two sector $S$ is exactly the origin together with
+the two eight-site compact rings of §4.74. `sector_eq_centralPatch` gives
+an explicit indexing by `Fin 17`, and `sector_card` proves $\#S=17$.
+The reverse inclusion uses the joint physical/internal norm identity to
+bound the integer lift, followed by exhaustive Lean arithmetic checks.
+
+Write the cyclic ring vertices as $A_i,B_i$, with $i\in\mathbb Z/8\mathbb Z$,
+in the rotation order of §4.74. The origin is adjacent to all $A_i$ and
+to no $B_i$. Neither ring has edges within itself, and
+```math
+A_i\sim B_j\quad\Longleftrightarrow\quad j=i\ \text{or}\ j+1=i.
+```
+All neighbors of the origin and of the first ring lie in $S$.
+The compact-state equations recover the full graph degrees:
+`firstRing_degree` gives three, and `secondRing_degree` gives four.
+Each $B_i$ has exactly two neighbors inside $S$, namely $A_i,A_{i+1}$,
+and exactly two outside. `mem_centralBoundaryEdges` identifies the
+complete set of boundary edges, oriented from $S$ to its complement;
+`centralBoundaryEdges_card` proves that this set has sixteen elements.
+This counts edges, not distinct exterior vertices.
+
+These results describe the central block and its coupling locations using
+the previously proved compact states and radial barrier. They do not yet
+bound the coupling operator norm, exclude additional eigenvectors at
+$E_*$, or certify an interval free of other spectral levels.
+
 ## 5. Building and verification
 
-The canonical import list is maintained in [`SpectralGeometry.lean`](SpectralGeometry.lean). It currently imports **86 Lean modules**: eleven analytic and window modules, four finite-dimensional geometry modules, and seventy-one infinite geometry/operator/spectral modules (including domain-generic interfaces).
+The canonical import list is maintained in [`SpectralGeometry.lean`](SpectralGeometry.lean). It currently imports **87 Lean modules**: eleven analytic and window modules, four finite-dimensional geometry modules, and seventy-two infinite geometry/operator/spectral modules (including domain-generic interfaces).
 
 - **Analytic core, indexed points and certified windows (11):**
   - [`CanonicalProduct.lean`](SpectralGeometry/CanonicalProduct.lean)
@@ -2593,7 +2624,7 @@ The canonical import list is maintained in [`SpectralGeometry.lean`](SpectralGeo
   - [`FullSpectralZeroCounts.lean`](SpectralGeometry/FullSpectralZeroCounts.lean)
   - [`LinearOnsiteZeroCertificate.lean`](SpectralGeometry/LinearOnsiteZeroCertificate.lean)
 
-- **Explicit octagonal geometry, operator and spectral products (9):**
+- **Explicit octagonal geometry, operator and spectral products (10):**
   - [`AmmannBeenkerCutProject.lean`](SpectralGeometry/AmmannBeenkerCutProject.lean)
   - [`AmmannBeenkerGraph.lean`](SpectralGeometry/AmmannBeenkerGraph.lean)
   - [`AmmannBeenkerOperator.lean`](SpectralGeometry/AmmannBeenkerOperator.lean)
@@ -2603,6 +2634,7 @@ The canonical import list is maintained in [`SpectralGeometry.lean`](SpectralGeo
   - [`AmmannBeenkerCompactModes.lean`](SpectralGeometry/AmmannBeenkerCompactModes.lean)
   - [`AmmannBeenkerCompactStates.lean`](SpectralGeometry/AmmannBeenkerCompactStates.lean)
   - [`AmmannBeenkerCompactCrossing.lean`](SpectralGeometry/AmmannBeenkerCompactCrossing.lean)
+  - [`AmmannBeenkerCentralPatch.lean`](SpectralGeometry/AmmannBeenkerCentralPatch.lean)
 
 - **Bounded spectral errors and full zero-cluster certificates (2):**
   - [`InfiniteBoundedSpectralStability.lean`](SpectralGeometry/InfiniteBoundedSpectralStability.lean)
@@ -2948,6 +2980,9 @@ The relation to the standard Ammann–Beenker construction is documented in
   ring-induced crossing on the infinite natural domain (§§4.74–4.75).
 - [x] Prove the stationary state under a one-edge change and the exact
   Rayleigh response of the affected unit direction (§4.75).
+- [x] Identify the radius-two sector as exactly the origin and the two
+  compact rings; prove its internal adjacency, the ring degrees three and
+  four, and the exact count of sixteen edges to the exterior (§4.76).
 - [ ] Prove that the crossing eigenspace has exactly dimension two and
   give an explicit gap to all other levels of the infinite operator.
 - [ ] Use that gap to control the moving eigenvalue after the one-edge

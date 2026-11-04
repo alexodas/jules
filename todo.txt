@@ -2,25 +2,46 @@ TODO PRIMA DEL MERGE — PR #82
 Branch: feat/compact-mode-crossing
 
 CONTROLLI SUL CHECKPOINT
-[ ] Attendere dall'utente l'esito delle due Actions sull'ultimo commit:
+[x] Esito verde per il commit 32141b3 comunicato dall'utente il 2026-11-04.
+[x] Compilazione locale completa: lake build SpectralGeometry Challenge
+    Solution terminata con successo; controlli statici di sorgenti, copertura
+    di tutti gli 87 moduli, assenza di proof hole e layout Comparator superati.
+    Questi controlli non sostituiscono le due Actions sul nuovo commit.
+[ ] Attendere dall'utente l'esito delle due Actions su ogni nuovo commit:
     "Lean 4 / Mathlib proof check" e "Palomar preparation checks".
     La verifica delle Actions resta all'utente, anche dopo nuovi commit.
+    Non interrogare Actions, log o check remoti autonomamente.
 [ ] Correggere eventuali errori di build, confezionamento o Comparator.
     Il controllo complessivo deve includere SpectralGeometry, Challenge e
     Solution, tutti i moduli matematici e il confronto con i kernel previsti.
-[ ] Riesaminare i nuovi risultati e i loro limiti: barriera radiale, risposta
+[x] Riesaminare i nuovi risultati e i loro limiti: barriera radiale, risposta
     dei nove livelli, autostati compatti, incrocio e stato fisso dopo la
-    variazione di un arco. La formula E* + epsilon/4 e' un valore medio
+    variazione di un arco, settore centrale esatto e archi verso l'esterno.
+    La formula E* + epsilon/4 e' un valore medio
     di energia, non ancora una stima per un altro autovalore.
-[ ] Verificare coerenza di README, roadmap, note di sviluppo e metadati:
+[x] Verificare coerenza di README, roadmap, note di sviluppo e metadati:
     nessuna affermazione di molteplicita' esattamente due, isolamento o
     separazione quantitativa dei livelli prima delle relative prove.
-[ ] Confermare che Challenge/Solution/Comparator restino allineati sul
+[x] Confermare che Challenge/Solution/Comparator restino allineati sul
     teorema full-product gia' selezionato. Cambiare il target Palomar solo
     dopo aver completato e verificato il nuovo risultato e il suo Challenge.
+    I tre file non cambiano in questo checkpoint; nei metadati cambia
+    soltanto il conteggio dei moduli matematici (87).
 [ ] Riesaminare il diff finale e la compatibilita' con main. Se si integra
     un checkpoint intermedio, dichiararlo nella descrizione della PR e
     mantenere espliciti in roadmap gli obiettivi di ricerca ancora aperti.
+
+PASSO PREPARATORIO: SETTORE CENTRALE
+[x] Completare la verifica Lean del nuovo modulo AmmannBeenkerCentralPatch:
+    settore esattamente di 17 vertici; adiacenze interne dei due anelli;
+    gradi 3 e 4; due vicini esterni per ogni vertice del secondo anello;
+    esattamente 16 archi dal settore al suo complemento.
+[x] Documentare questi enunciati in README 4.76 e roadmap 6.4 mantenendo
+    tutti i risultati precedenti. Distinguere il conteggio degli archi da
+    quello dei vertici esterni e da una stima della norma di accoppiamento.
+[x] Annotare nelle note di sviluppo una possibile identita' di energia con
+    cambio di segno per la molteplicita' esatta, esplicitamente ancora da
+    formalizzare; non presentarla come un risultato Lean.
 
 OBIETTIVI ANCORA APERTI PER COMPLETARE IL NUOVO RISULTATO
 Questi punti sono necessari per presentare come completo il nuovo obiettivo
