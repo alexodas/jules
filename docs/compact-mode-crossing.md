@@ -4,7 +4,8 @@ The existing nine-level theorem and Palomar target remain the verified baseline.
 The compact eigenvectors, their crossing, and the exact central patch are
 formalized. The complete spectral-isolation and splitting certificate
 remains a research target.
-The central-kernel implementation described below is the current branch
+The central-kernel and supported-eigenvector results are verified. The
+global support and exact-multiplicity implementation is the current branch
 increment and is awaiting GitHub Actions validation.
 
 For the same confined operator H = 1 + |p|² + Δ/16, consider the alternating
@@ -42,15 +43,18 @@ additional eigenvectors or coupling to the orthogonal complement.
   and exactly sixteen central-to-exterior edges. Only the second ring
   meets the exterior, with two exterior neighbors per vertex. The count
   is of edges; it does not assert sixteen distinct exterior vertices.
-- `AmmannBeenkerCentralKernel.lean` now implements the next finite-block
-  step, pending GitHub Actions validation. Its principal block retains
+- `AmmannBeenkerCentralKernel.lean` proves the finite-block
+  step. Its principal block retains
   the full graph degrees, has exactly the two alternating ring parameters
-  in its proposed kernel classification, and is related to the actual
+  in its kernel classification, and is related to the actual
   natural-domain operator for centrally supported vectors. The final
   theorem explicitly assumes vanishing outside the sector; it does not
   establish global multiplicity two.
-- Exact eigenspace dimension, spectral isolation, and the quantitative
-  one-edge splitting certificate remain open.
+- `AmmannBeenkerCrossingMultiplicity.lean` implements the removal of that
+  support hypothesis and a linear equivalence of the full eigenspace with
+  two real coordinates. Its exact finrank-two theorem awaits GitHub Actions.
+- Explicit spectral isolation and the quantitative one-edge splitting
+  certificate remain open.
 - Product-zero conclusions should follow through the existing exact-divisor
   bridge after the new spectral conclusions have been proved.
 - Prototype the independent Challenge before changing the Palomar target.
@@ -60,31 +64,30 @@ The ring intervention differs from the radius-two intervention in the
 nine-level theorem; its lifting estimate cannot simply be reused.
 The selected Palomar/Comparator statement remains the full-product theorem.
 
-## Next step: exact eigenspace dimension
+## Current increment: exact eigenspace dimension
 
-The following is a proof plan, not yet a Lean result. The exact central
-patch permits a sign-changing energy identity without first computing a
-finite inverse. Write B for the second ring, Q = I - P_S, and
-J = I - 2 P_{ {0} union B }. At the crossing, the diagonal entries on both
-rings equal E*, while the origin's diagonal entry is 3/2. The intended
-identity, for x in the natural domain, is
+The following argument is implemented in `AmmannBeenkerCrossingMultiplicity.lean`
+and awaits branch CI validation. Write L = H_t* - E*, p = P_S x and q = x - p
+for an arbitrary natural-domain vector satisfying Lx = 0. Finite projection
+preserves the domain. The first-ring neighbors all lie in S, so Lq and
+therefore Lp vanish on that ring.
 
-    <Jx, (H_t* - E*)x>
-      = (E* - 3/2) |x(0)|² + <Qx, (H_t* - E*)Qx>.
+The exact central-form identity and symmetry give
 
-The proved adjacency pattern suggests cancellation of every term joining
-opposite signs. The exterior onsite barrier and nonnegative interaction
-would then bound the last term below by (3/4 + sqrt(2)) ||Qx||².
-For an eigenvector at E*, this would force x(0) = 0 and Qx = 0.
-The remaining coordinate equations should force alternating amplitudes
-on each ring, placing x in the span of the two known compact states.
+    <q, Lq> = <p, Lp> = (3/2 - E*) |p(0)|² <= 0.
 
-The alternating-recurrence calculation and the restriction to centrally
-supported domain vectors are implemented in `AmmannBeenkerCentralKernel.lean`,
-with validation pending. Formalizing the energy identity and proving the
-support condition for every crossing eigenvector are still required.
-This route addresses exact multiplicity;
-it does not by itself give an explicit gap to the other spectral levels.
+The exterior onsite barrier and nonnegative interaction give
+
+    (3/4 + sqrt(2)) ||q||² <= <q, Lq>.
+
+Together these imply q = 0. The verified central-kernel classification
+then expresses x in the two compact directions. The implementation builds
+a linear equivalence from the full natural-domain eigenspace to R × R,
+with seed amplitudes as coordinates, and concludes finrank exactly two.
+No central-support hypothesis remains in that conclusion.
+
+Validation of these new declarations is pending. Even after validation,
+an explicit gap and the quantitative splitting estimate remain separate tasks.
 
 ## Route to a spectral-isolation certificate
 

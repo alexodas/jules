@@ -5,6 +5,9 @@ CONTROLLI SUL CHECKPOINT
 [x] Esito verde per il commit 32141b3 comunicato dall'utente il 2026-11-04.
 [x] Esito verde della PR #82 al commit 8b48ce5 comunicato dall'utente
     il 2026-11-04: settore centrale e conteggio dei 16 archi confermati.
+[x] Esito verde della PR #82 al commit 29975cb comunicato dall'utente
+    il 2026-11-04: kernel centrale e riduzione degli autovettori con
+    supporto centrale verificati nell'ambiente Lean/Comparator GitHub.
 [x] Per il checkpoint 8b48ce5, compilazione locale completa:
     lake build SpectralGeometry Challenge
     Solution terminata con successo; controlli statici di sorgenti, copertura
@@ -14,7 +17,7 @@ CONTROLLI SUL CHECKPOINT
     "Lean 4 / Mathlib proof check" e "Palomar preparation checks".
     La verifica delle Actions resta all'utente, anche dopo nuovi commit.
     Non interrogare Actions, log o check remoti autonomamente.
-    Per il nuovo modulo CentralKernel usare l'ambiente Lean/Comparator
+    Per i nuovi moduli usare l'ambiente Lean/Comparator
     delle Actions esistenti sul branch di lavoro, come richiesto dall'utente.
 [ ] Correggere eventuali errori di build, confezionamento o Comparator.
     Il controllo complessivo deve includere SpectralGeometry, Challenge e
@@ -31,7 +34,7 @@ CONTROLLI SUL CHECKPOINT
     teorema full-product gia' selezionato. Cambiare il target Palomar solo
     dopo aver completato e verificato il nuovo risultato e il suo Challenge.
     I tre file non cambiano in questo checkpoint; nei metadati cambia
-    soltanto la descrizione del target di build e il conteggio dei moduli (88).
+    soltanto la descrizione del target di build e il conteggio dei moduli (89).
 [ ] Riesaminare il diff finale e la compatibilita' con main. Se si integra
     un checkpoint intermedio, dichiararlo nella descrizione della PR e
     mantenere espliciti in roadmap gli obiettivi di ricerca ancora aperti.
@@ -44,11 +47,11 @@ PASSO PREPARATORIO: SETTORE CENTRALE
 [x] Documentare questi enunciati in README 4.76 e roadmap 6.4 mantenendo
     tutti i risultati precedenti. Distinguere il conteggio degli archi da
     quello dei vertici esterni e da una stima della norma di accoppiamento.
-[x] Annotare nelle note di sviluppo una possibile identita' di energia con
-    cambio di segno per la molteplicita' esatta, esplicitamente ancora da
-    formalizzare; non presentarla come un risultato Lean.
+[x] Documentare la strada verso la molteplicita' esatta; le note ora
+    descrivono l'argomento di energia centrale/esterna implementato nel
+    passo corrente, ancora in attesa di validazione.
 
-PASSO ATTUALE: KERNEL CENTRALE (IN ATTESA DI VALIDAZIONE GITHUB)
+PASSO COMPLETATO: KERNEL CENTRALE (VERDE CONFERMATO SU 29975cb)
 [x] Implementare AmmannBeenkerCentralKernel con la diagonale del grafo
     completo, la classificazione di tutti i vettori nulli del blocco a
     17 vertici e il collegamento all'operatore sul dominio naturale.
@@ -60,17 +63,34 @@ PASSO ATTUALE: KERNEL CENTRALE (IN ATTESA DI VALIDAZIONE GITHUB)
 [x] Controllare indipendentemente la matrice centrale con aritmetica
     esatta su Q(sqrt(2)): rango 15, nullita' 2, due stati compatti nel kernel.
     Questo calcolo e i controlli statici non sostituiscono Lean/Comparator.
-[ ] Ottenere dall'utente il verde delle due Actions sul nuovo commit.
-    Le nuove prove non sono state compilate in locale: il loro stato
-    nel README resta esplicitamente in attesa di validazione.
-[ ] Dopo il verde, aggiornare lo stato della verifica e proseguire con
-    l'identita' di energia per escludere la massa esterna di ogni
-    autovettore a E*. Solo allora concludere la molteplicita' globale.
+[x] Ottenere dall'utente il verde delle due Actions: confermato su 29975cb.
+[x] Aggiornare README 4.77 e roadmap come risultati verificati e passare
+    all'argomento di energia per il caso infinito.
+
+PASSO ATTUALE: MOLTEPLICITA' GLOBALE (IN ATTESA DI VALIDAZIONE GITHUB)
+[x] Implementare AmmannBeenkerCrossingMultiplicity: proiezioni sul dominio
+    naturale, localita' del primo anello, identita' di energia centrale,
+    uguaglianza delle energie centrale/esterna e barriera positiva esterna.
+[x] Implementare la deduzione del supporto centrale per ogni autovettore
+    all'incrocio, senza assumere quel supporto, e riusare CentralKernel.
+[x] Implementare la corrispondenza lineare dell'autospazio completo con
+    R x R e il teorema crossingEigenspace_finrank = 2.
+[x] Verificare staticamente il target di 89 moduli e l'assenza di proof hole;
+    controllare indipendentemente i 289 coefficienti dell'identita' centrale.
+    Questi controlli non sostituiscono la compilazione Lean/Comparator.
+[x] Aggiornare README 4.78, roadmap, note e metadati distinguendo i nuovi
+    enunciati in attesa di validazione da quelli gia' verificati.
+[ ] Attendere dall'utente il verde delle due Actions sul prossimo commit.
+    Il nuovo modulo non e' stato compilato in locale.
+[ ] Dopo il verde, registrare la molteplicita' esatta come verificata e
+    affrontare il gap esplicito, includendo la stima dell'accoppiamento
+    con l'esterno. Non ripetere il lavoro sul kernel centrale.
 
 OBIETTIVI ANCORA APERTI PER COMPLETARE IL NUOVO RISULTATO
 Questi punti sono necessari per presentare come completo il nuovo obiettivo
 di ricerca; possono restare in roadmap se si integra soltanto un checkpoint.
 [ ] Dimostrare che l'autospazio all'incrocio ha dimensione esattamente due.
+    Implementazione completa nel passo corrente; validazione GitHub pendente.
 [ ] Certificare un intervallo esplicito senza altri livelli dello spettro
     infinito, con controllo del blocco centrale e del suo accoppiamento
     all'esterno; i soli calcoli numerici su patch finite non bastano.

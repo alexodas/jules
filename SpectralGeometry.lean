@@ -88,6 +88,7 @@ public import SpectralGeometry.AmmannBeenkerCompactStates
 public import SpectralGeometry.AmmannBeenkerCompactCrossing
 public import SpectralGeometry.AmmannBeenkerCentralPatch
 public import SpectralGeometry.AmmannBeenkerCentralKernel
+public import SpectralGeometry.AmmannBeenkerCrossingMultiplicity
 
 public section
 

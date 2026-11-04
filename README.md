@@ -12,14 +12,15 @@ complete ordered spectra and entire products with exact geometric zero
 multiplicities, and bounds the response of nine indexed zeros on each
 reflected branch to a finite positive intervention.
 The foundational observation and analytic results remain documented below.
-Sections 4.73–4.76 strengthen the original sector estimate and construct
+Sections 4.73–4.77 strengthen the original sector estimate and construct
 an exact crossing of two independent compact eigenvectors, with a state
 that stays fixed after a one-edge change. They also identify the exact
-17-vertex central sector and its 16 edges to the exterior. Exact multiplicity,
-an explicit gap and the motion of the other perturbed eigenvalue remain open. The
-selected Palomar statement remains the full-product theorem of §4.72.
-The next central-kernel proof implementation is described in §4.77 and
-awaits validation by the branch's GitHub Actions.
+17-vertex central sector, its 16 edges to the exterior, and the complete
+central crossing kernel. The proof implementation for exact multiplicity
+of the infinite crossing eigenspace is described in §4.78 and awaits
+GitHub Actions validation. An explicit gap and the motion of the other
+perturbed eigenvalue remain open. The selected Palomar statement remains
+the full-product theorem of §4.72.
 
 | Part of the program | Status |
 | --- | --- |
@@ -39,7 +40,8 @@ awaits validation by the branch's GitHub Actions.
 | Planar vertex counting, geometric summability and full-product zero response | Formalized in §§4.71–4.72 for the explicit graph, with a nonempty nine-level window and no supplied summability hypothesis |
 | Radial barrier, compact eigenvectors and ring-induced crossing | Formalized in §§4.73–4.75; includes a stationary one-edge state and an exact Rayleigh response, but not a certified split spectral pair |
 | Exact central sector and its boundary | Formalized in §4.76: origin and two eight-site rings, complete internal adjacency, ring degrees three and four, and exactly sixteen edges to the exterior |
-| Complete central crossing kernel and supported eigenvectors | Proof implementation in §4.77, pending GitHub Actions; the central-support hypothesis remains explicit |
+| Complete central crossing kernel and supported eigenvectors | Formalized in §4.77; the central-support hypothesis remains explicit |
+| Central support and exact global crossing multiplicity | Proof implementation in §4.78, pending GitHub Actions; includes a linear equivalence of the full natural-domain eigenspace with two real coordinates |
 | Relative products and certified finite-patch zero response | Remaining obligations in §§6.5–6.6; geometric scalar cofactor/radius certificates also remain open |
 
 The research objective is an end-to-end statement relating an explicitly defined
@@ -2539,7 +2541,6 @@ $E_*$, or certify an interval free of other spectral levels.
 
 ### 4.77. The central crossing kernel and centrally supported eigenvectors
 
-**Branch status: proof implementation awaiting GitHub Actions validation.**
 [AmmannBeenkerCentralKernel.lean](SpectralGeometry/AmmannBeenkerCentralKernel.lean)
 defines the principal block of $K_{t_*}-E_*$ on the exact sector from §4.76.
 Its diagonal uses the **full graph degree**, including the contribution
@@ -2547,12 +2548,12 @@ of edges to the exterior. The shifted diagonal is $3/2-E_*$ at the origin
 and zero on both rings. The off-diagonal entries come from the actual
 coordinate-step adjacency, with weight $-1/16$.
 
-The implemented `centralCrossingBlock_kernel_iff` identifies every null
+`centralCrossingBlock_kernel_iff` identifies every null
 vector in the central indexing as
 ```math
 (0,a,-a,a,-a,a,-a,a,-a,b,-b,b,-b,b,-b,b,-b).
 ```
-The parameters are its coordinates 1 and 9. The implementation also checks
+The parameters are its coordinates 1 and 9. Lean also checks
 that this parametrization is injective, that every such vector is in the
 kernel, and that its two coordinate directions are the restrictions of
 the previously constructed compact states.
@@ -2570,14 +2571,47 @@ calculation uses the second-ring equations to force alternating first-ring
 amplitudes; the origin equation forces its amplitude to vanish; the
 first-ring equations then force alternation on the second ring.
 
-The support condition is a hypothesis here. Proving it for every crossing
-eigenvector remains the next step toward exact multiplicity for the
-infinite operator. Neither a gap nor a quantitative splitting estimate
+The support condition is a hypothesis here. Removing it for every crossing
+eigenvector is the purpose of the pending implementation in §4.78.
+Neither a gap nor a quantitative splitting estimate
 follows from this finite-block calculation alone.
+
+### 4.78. Central support and exact multiplicity of the infinite crossing
+
+**Branch status: proof implementation awaiting GitHub Actions validation.**
+[AmmannBeenkerCrossingMultiplicity.lean](SpectralGeometry/AmmannBeenkerCrossingMultiplicity.lean)
+implements the removal of the support hypothesis in §4.77. For an arbitrary
+natural-domain eigenvector $x$ at $E_*$, write
+$L=K_{t_*}-E_*$, $p=P_Sx$ and $q=x-p$. Finite coordinate projection preserves
+the natural domain, so every operator evaluation below has its domain witness.
+
+All neighbors of a first-ring vertex lie in $S$, hence $Lq$ vanishes on
+that ring. Since $Lx=0$, $Lp$ also vanishes there. The finite central-form
+identity and symmetry give
+```math
+\langle q,Lq\rangle=\langle p,Lp\rangle
+  =(3/2-E_*)|p(0)|^2\le0.
+```
+The previously proved exterior potential barrier and positivity of the
+interaction, including the first-ring intervention, supply
+```math
+(3/4+\sqrt2)\|q\|^2\le\langle q,Lq\rangle.
+```
+The strictly positive coefficient forces $q=0$. The implemented
+`crossing_eigenvector_central_support` therefore derives central support
+from the full infinite eigenvector equation. `crossing_eigenvector_representation`
+then reuses §4.77 to express every eigenvector in the two compact directions.
+
+`crossingEigenspaceCoordinates` constructs a linear equivalence between
+the actual eigenspace inside the natural domain and $\mathbb R^2$, using
+the amplitudes at $A_0$ and $B_0$. The implemented
+`crossingEigenspace_finrank` concludes dimension exactly two. These new
+declarations await branch CI validation. They assert no explicit spectral
+gap and no quantitative motion for the second level after an edge change.
 
 ## 5. Building and verification
 
-The canonical import list is maintained in [`SpectralGeometry.lean`](SpectralGeometry.lean). It currently imports **88 Lean modules**: eleven analytic and window modules, four finite-dimensional geometry modules, and seventy-three infinite geometry/operator/spectral modules (including domain-generic interfaces). The newly added central-kernel module has the pending validation status stated in §4.77.
+The canonical import list is maintained in [`SpectralGeometry.lean`](SpectralGeometry.lean). It currently imports **89 Lean modules**: eleven analytic and window modules, four finite-dimensional geometry modules, and seventy-four infinite geometry/operator/spectral modules (including domain-generic interfaces). The newly added crossing-multiplicity module has the pending validation status stated in §4.78.
 
 - **Analytic core, indexed points and certified windows (11):**
   - [`CanonicalProduct.lean`](SpectralGeometry/CanonicalProduct.lean)
@@ -2665,7 +2699,7 @@ The canonical import list is maintained in [`SpectralGeometry.lean`](SpectralGeo
   - [`FullSpectralZeroCounts.lean`](SpectralGeometry/FullSpectralZeroCounts.lean)
   - [`LinearOnsiteZeroCertificate.lean`](SpectralGeometry/LinearOnsiteZeroCertificate.lean)
 
-- **Explicit octagonal geometry, operator and spectral products (11):**
+- **Explicit octagonal geometry, operator and spectral products (12):**
   - [`AmmannBeenkerCutProject.lean`](SpectralGeometry/AmmannBeenkerCutProject.lean)
   - [`AmmannBeenkerGraph.lean`](SpectralGeometry/AmmannBeenkerGraph.lean)
   - [`AmmannBeenkerOperator.lean`](SpectralGeometry/AmmannBeenkerOperator.lean)
@@ -2677,6 +2711,7 @@ The canonical import list is maintained in [`SpectralGeometry.lean`](SpectralGeo
   - [`AmmannBeenkerCompactCrossing.lean`](SpectralGeometry/AmmannBeenkerCompactCrossing.lean)
   - [`AmmannBeenkerCentralPatch.lean`](SpectralGeometry/AmmannBeenkerCentralPatch.lean)
   - [`AmmannBeenkerCentralKernel.lean`](SpectralGeometry/AmmannBeenkerCentralKernel.lean)
+  - [`AmmannBeenkerCrossingMultiplicity.lean`](SpectralGeometry/AmmannBeenkerCrossingMultiplicity.lean)
 
 - **Bounded spectral errors and full zero-cluster certificates (2):**
   - [`InfiniteBoundedSpectralStability.lean`](SpectralGeometry/InfiniteBoundedSpectralStability.lean)
@@ -3025,13 +3060,12 @@ The relation to the standard Ammann–Beenker construction is documented in
 - [x] Identify the radius-two sector as exactly the origin and the two
   compact rings; prove its internal adjacency, the ring degrees three and
   four, and the exact count of sixteen edges to the exterior (§4.76).
-- [ ] Validate the central-block kernel classification and its transfer
-  to centrally supported natural-domain eigenvectors (§4.77); the proof
-  implementation is awaiting GitHub Actions.
-- [ ] Prove that every crossing eigenvector vanishes outside the central
-  sector, completing the support condition of §4.77.
-- [ ] Prove that the crossing eigenspace has exactly dimension two and
-  give an explicit gap to all other levels of the infinite operator.
+- [x] Validate the central-block kernel classification and its transfer
+  to centrally supported natural-domain eigenvectors (§4.77).
+- [ ] Validate the proof that every crossing eigenvector has central
+  support and that the full natural-domain eigenspace has dimension exactly
+  two (§4.78); the implementation is awaiting GitHub Actions.
+- [ ] Give an explicit gap to all other levels of the infinite operator.
 - [ ] Use that gap to control the moving eigenvalue after the one-edge
   change on an explicit parameter interval, including a remainder bound.
 - [ ] Derive an isolation radius and a nonzero analytic-cofactor lower
