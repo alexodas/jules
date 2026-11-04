@@ -1,0 +1,46 @@
+TODO PRIMA DEL MERGE — PR #82
+Branch: feat/compact-mode-crossing
+
+CONTROLLI SUL CHECKPOINT
+[ ] Attendere dall'utente l'esito delle due Actions sull'ultimo commit:
+    "Lean 4 / Mathlib proof check" e "Palomar preparation checks".
+    La verifica delle Actions resta all'utente, anche dopo nuovi commit.
+[ ] Correggere eventuali errori di build, confezionamento o Comparator.
+    Il controllo complessivo deve includere SpectralGeometry, Challenge e
+    Solution, tutti i moduli matematici e il confronto con i kernel previsti.
+[ ] Riesaminare i nuovi risultati e i loro limiti: barriera radiale, risposta
+    dei nove livelli, autostati compatti, incrocio e stato fisso dopo la
+    variazione di un arco. La formula E* + epsilon/4 e' un valore medio
+    di energia, non ancora una stima per un altro autovalore.
+[ ] Verificare coerenza di README, roadmap, note di sviluppo e metadati:
+    nessuna affermazione di molteplicita' esattamente due, isolamento o
+    separazione quantitativa dei livelli prima delle relative prove.
+[ ] Confermare che Challenge/Solution/Comparator restino allineati sul
+    teorema full-product gia' selezionato. Cambiare il target Palomar solo
+    dopo aver completato e verificato il nuovo risultato e il suo Challenge.
+[ ] Riesaminare il diff finale e la compatibilita' con main. Se si integra
+    un checkpoint intermedio, dichiararlo nella descrizione della PR e
+    mantenere espliciti in roadmap gli obiettivi di ricerca ancora aperti.
+
+OBIETTIVI ANCORA APERTI PER COMPLETARE IL NUOVO RISULTATO
+Questi punti sono necessari per presentare come completo il nuovo obiettivo
+di ricerca; possono restare in roadmap se si integra soltanto un checkpoint.
+[ ] Dimostrare che l'autospazio all'incrocio ha dimensione esattamente due.
+[ ] Certificare un intervallo esplicito senza altri livelli dello spettro
+    infinito, con controllo del blocco centrale e del suo accoppiamento
+    all'esterno; i soli calcoli numerici su patch finite non bastano.
+[ ] Controllare l'autovalore che si muove dopo la variazione dell'arco,
+    con intervallo esplicito del parametro e stima del resto.
+[ ] Trasferire le nuove conclusioni ai prodotti spettrali mediante i
+    risultati gia' disponibili e prototipare il Challenge indipendente.
+[ ] Valutare il contributo matematico rispetto alla letteratura:
+    compilazione e verifica meccanica non stabiliscono l'interesse
+    scientifico richiesto per una nuova submission.
+
+CHIUSURA
+[ ] Quando tutti i requisiti dell'ambito scelto sono soddisfatti e si decide
+    di procedere al merge, cancellare questo todo.txt con un commit dedicato.
+    Il file NON deve essere presente nell'albero che viene integrato in main.
+[ ] Lasciare all'utente la verifica delle Actions sul commit finale, inclusa
+    la cancellazione di todo.txt. Eseguire il merge solo dopo esito verde
+    confermato per quel commit; poi ricordare di cancellare il branch.
