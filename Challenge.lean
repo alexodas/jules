@@ -5,19 +5,17 @@ public import Mathlib
 public section
 
 /-!
-# Exact full spectral products and nine-level geometric zero response
+# Exact multiplicity of a compact crossing on the infinite octagonal graph
 
-The independent statement specifies the octagonal vertex graph, its matching
-Laplacian, natural domain, complete ordered eigenbases and exact entire
-spectral products, including operator-specific geometric zero orders. Only supporting
-proposition witnesses and the target theorem have Challenge placeholders.
-Solution imports the fully proved source; these placeholders are not proofs.
+The checked statements concern the full natural-domain eigenspace at the
+first-ring crossing: its real dimension is two, and each vector is recovered
+from two site amplitudes in the alternating compact states. No support
+condition or spectral-gap assumption is imposed on the vector.
 
-Each block mirrors one source module. Lean's auxiliary-proof cache is local
-and is not serialized in .olean files; resetting only that cache at block
-boundaries reproduces the generated helper names of separate source modules.
-This does not add, remove or replace kernel declarations. All definitions and
-auxiliary proofs remain subject to the unmodified Comparator and kernels.
+Each block states model data independently of Solution. Only the two
+conclusions and three proposition witnesses have Challenge placeholders.
+Resetting Lean's module-local auxiliary-proof cache at source boundaries
+reproduces the names of generated proofs; all definitions are compared.
 -/
 
 namespace SpectralGeometry
@@ -88,18 +86,6 @@ variable {Tile : Type*}
 
 end
 
--- Source module: SpectralGeometry.InfiniteOnsiteFiniteLowEnergy
-run_elab Lean.modifyEnv fun env => Lean.Meta.auxLemmasExt.modifyState env (fun _ => {})
-
-section
-
-variable {Tile : Type*}
-
-@[expose] def infiniteOnsiteLowEnergyTiles (V : Tile → ℝ) (R : ℝ) :
-    Set Tile := {t | V t ≤ R}
-
-end
-
 -- Source module: SpectralGeometry.InfiniteOnsiteCompactResolvent
 run_elab Lean.modifyEnv fun env => Lean.Meta.auxLemmasExt.modifyState env (fun _ => {})
 
@@ -141,61 +127,6 @@ variable {Tile : Type*}
             mul_le_mul_of_nonneg_right (hc t) (norm_nonneg _)
           _ = ‖f t‖ := one_mul _)
       _ = 1 * ‖f‖ := (one_mul _).symm)
-
-theorem onsiteUnitGap_inverse_norm_le_one
-    (V : Tile → ℝ) (a : ℝ) (hgap : ∀ t, 1 ≤ V t - a)
-    (t : Tile) : ‖(V t - a)⁻¹‖ ≤ 1 := by
-  have hp : 0 < V t - a := lt_of_lt_of_le (by norm_num) (hgap t)
-  rw [Real.norm_eq_abs, abs_of_pos (inv_pos.mpr hp)]
-  have h := one_div_le_one_div_of_le (by norm_num : (0 : ℝ) < 1) (hgap t)
-  simpa [one_div] using h
-
-@[expose] noncomputable def infiniteOnsiteResolventCLM
-    (V : Tile → ℝ) (a : ℝ) (hgap : ∀ t, 1 ≤ V t - a) :
-    TileHilbert Tile →L[ℝ] TileHilbert Tile :=
-  infiniteOnsiteDiagonalContraction
-    (fun t => (V t - a)⁻¹) (onsiteUnitGap_inverse_norm_le_one V a hgap)
-
-end
-
--- Source module: SpectralGeometry.InfiniteLocalCompactResolvent
-run_elab Lean.modifyEnv fun env => Lean.Meta.auxLemmasExt.modifyState env (fun _ => {})
-
-section
-
-variable {Tile : Type*}
-
-abbrev OnsiteEnd (Tile : Type*) :=
-  TileHilbert Tile →L[ℝ] TileHilbert Tile
-
-@[expose] noncomputable def infiniteBoundedOnsiteShift
-    (V : Tile → ℝ) (a : ℝ) (B : OnsiteEnd Tile)
-    (ψ : infiniteOnsiteDomain V) : TileHilbert Tile :=
-  infiniteOnsiteOperator V ψ - a • (ψ.1 : TileHilbert Tile) + B ψ.1
-
-theorem infiniteBoundedOnsiteCorrection_norm_neg_lt_one
-    (V : Tile → ℝ) (a : ℝ) (hgap : ∀ t, 1 ≤ V t - a)
-    (B : OnsiteEnd Tile)
-    (hsmall : ‖B.comp (infiniteOnsiteResolventCLM V a hgap)‖ < 1) :
-    ‖-(B.comp (infiniteOnsiteResolventCLM V a hgap))‖ < 1 := by
-  simpa only [norm_neg] using hsmall
-
-@[expose] noncomputable def infiniteBoundedOnsiteCorrectionUnit
-    (V : Tile → ℝ) (a : ℝ) (hgap : ∀ t, 1 ≤ V t - a)
-    (B : OnsiteEnd Tile)
-    (hsmall : ‖B.comp (infiniteOnsiteResolventCLM V a hgap)‖ < 1) :
-    (OnsiteEnd Tile)ˣ :=
-  Units.oneSub (-(B.comp (infiniteOnsiteResolventCLM V a hgap)))
-    (infiniteBoundedOnsiteCorrection_norm_neg_lt_one V a hgap B hsmall)
-
-@[expose] noncomputable def infiniteBoundedOnsiteResolvent
-    (V : Tile → ℝ) (a : ℝ) (hgap : ∀ t, 1 ≤ V t - a)
-    (B : OnsiteEnd Tile)
-    (hsmall : ‖B.comp (infiniteOnsiteResolventCLM V a hgap)‖ < 1) :
-    OnsiteEnd Tile :=
-  (infiniteOnsiteResolventCLM V a hgap).comp
-    (↑((infiniteBoundedOnsiteCorrectionUnit V a hgap B hsmall)⁻¹) :
-      OnsiteEnd Tile)
 
 end
 
@@ -271,124 +202,6 @@ variable {Tile : Type*} [DecidableEq Tile]
 
 end
 
--- Source module: SpectralGeometry.InfiniteLocalClosedGraph
-run_elab Lean.modifyEnv fun env => Lean.Meta.auxLemmasExt.modifyState env (fun _ => {})
-
-section
-
-variable {Tile : Type*}
-
-@[expose] def infiniteOnsiteGraph (V : Tile → ℝ) :
-    Set (TileHilbert Tile × TileHilbert Tile) :=
-  Set.range (fun ψ : infiniteOnsiteDomain V =>
-    ((ψ.1 : TileHilbert Tile), infiniteOnsiteOperator V ψ))
-
-variable [DecidableEq Tile]
-
-@[expose] noncomputable def infiniteLocalBoundedCorrection
-    (D : ℕ) (σ : Fin D → Tile ≃ Tile) (w : Fin D → ℝ)
-    (P : TileHilbert Tile →L[ℝ] TileHilbert Tile)
-    (ε shift : ℝ) :
-    TileHilbert Tile →L[ℝ] TileHilbert Tile :=
-  infiniteLocalMatchingLaplacian D σ w + ε • P +
-    shift • ContinuousLinearMap.id ℝ (TileHilbert Tile)
-
-end
-
--- Source module: SpectralGeometry.InfiniteLocalFullEigenspaces
-run_elab Lean.modifyEnv fun env => Lean.Meta.auxLemmasExt.modifyState env (fun _ => {})
-
-section
-
-variable {Tile : Type*} [DecidableEq Tile]
-
-abbrev FullEnd (Tile : Type*) :=
-  TileHilbert Tile →L[ℝ] TileHilbert Tile
-
-@[expose] noncomputable def infiniteLocalMatchingFullEigenspace
-    (D : ℕ) (V : Tile → ℝ) (σ : Fin D → Tile ≃ Tile)
-    (w : Fin D → ℝ) (P : FullEnd Tile)
-    (ε shift a : ℝ) (hgap : ∀ t, 1 ≤ V t - a)
-    (hsmall : ‖(infiniteLocalBoundedCorrection D σ w P ε shift).comp
-      (infiniteOnsiteResolventCLM V a hgap)‖ < 1)
-    (eigenvalue : ℝ) (_hne : eigenvalue ≠ a) :
-    Submodule ℝ (TileHilbert Tile) :=
-  Module.End.eigenspace
-    (infiniteBoundedOnsiteResolvent V a hgap
-      (infiniteLocalBoundedCorrection D σ w P ε shift) hsmall).toLinearMap
-    (eigenvalue - a)⁻¹
-
-theorem infiniteLocalMatchingFullEigenspace_finiteDimensional
-    (D : ℕ) (V : Tile → ℝ) (σ : Fin D → Tile ≃ Tile)
-    (w : Fin D → ℝ) (P : FullEnd Tile)
-    (ε shift a : ℝ) (hgap : ∀ t, 1 ≤ V t - a)
-    (hproper : ∀ R : ℝ, (infiniteOnsiteLowEnergyTiles V R).Finite)
-    (hsmall : ‖(infiniteLocalBoundedCorrection D σ w P ε shift).comp
-      (infiniteOnsiteResolventCLM V a hgap)‖ < 1)
-    (eigenvalue : ℝ) (hne : eigenvalue ≠ a) :
-    FiniteDimensional ℝ
-      (infiniteLocalMatchingFullEigenspace
-        D V σ w P ε shift a hgap hsmall eigenvalue hne) := by
-  sorry
-
-end
-
--- Source module: SpectralGeometry.InfiniteLocalFullEigenvalueMultiplicity
-run_elab Lean.modifyEnv fun env => Lean.Meta.auxLemmasExt.modifyState env (fun _ => {})
-
-section
-
-variable {Tile : Type*} [DecidableEq Tile]
-
-abbrev MultiplicityEnd (Tile : Type*) :=
-  TileHilbert Tile →L[ℝ] TileHilbert Tile
-
-@[expose] noncomputable def infiniteLocalMatchingFullMultiplicity
-    (D : ℕ) (V : Tile → ℝ) (σ : Fin D → Tile ≃ Tile)
-    (w : Fin D → ℝ) (P : MultiplicityEnd Tile)
-    (ε shift a : ℝ) (hgap : ∀ t, 1 ≤ V t - a)
-    (hproper : ∀ R : ℝ, (infiniteOnsiteLowEnergyTiles V R).Finite)
-    (hsmall : ‖(infiniteLocalBoundedCorrection D σ w P ε shift).comp
-      (infiniteOnsiteResolventCLM V a hgap)‖ < 1)
-    (eigenvalue : ℝ) : ℕ := by
-  classical
-  by_cases hne : eigenvalue ≠ a
-  · letI := infiniteLocalMatchingFullEigenspace_finiteDimensional
-      D V σ w P ε shift a hgap hproper hsmall eigenvalue hne
-    exact Module.finrank ℝ
-      (infiniteLocalMatchingFullEigenspace
-        D V σ w P ε shift a hgap hsmall eigenvalue hne)
-  · exact 0
-
-end
-
--- Source module: SpectralGeometry.InfiniteLocalFullRealResolvent
-run_elab Lean.modifyEnv fun env => Lean.Meta.auxLemmasExt.modifyState env (fun _ => {})
-
-section
-
-variable {Tile : Type*} [DecidableEq Tile]
-
-abbrev ShiftEnd (Tile : Type*) :=
-  TileHilbert Tile →L[ℝ] TileHilbert Tile
-
-@[expose] def infiniteBoundedOnsiteRealRegular
-    (V : Tile → ℝ) (B : ShiftEnd Tile) (b : ℝ) : Prop :=
-  ∃ Q : ShiftEnd Tile,
-    (∀ f : TileHilbert Tile,
-      ∃ ψ : infiniteOnsiteDomain V,
-        (ψ.1 : TileHilbert Tile) = Q f ∧
-          infiniteBoundedOnsiteShift V b B ψ = f) ∧
-    (∀ ψ : infiniteOnsiteDomain V,
-      Q (infiniteBoundedOnsiteShift V b B ψ) =
-        (ψ.1 : TileHilbert Tile))
-
-@[expose] def infiniteBoundedOnsiteRealSpectrum (V : Tile → ℝ)
-    (B : ShiftEnd Tile) : Set ℝ :=
-  {b | ¬ infiniteBoundedOnsiteRealRegular V B b}
-
-end
-
 -- Source module: SpectralGeometry.InfiniteLowEnergyObservation
 run_elab Lean.modifyEnv fun env => Lean.Meta.auxLemmasExt.modifyState env (fun _ => {})
 
@@ -407,79 +220,16 @@ variable {Tile : Type*} [DecidableEq Tile]
 
 end
 
--- Source module: SpectralGeometry.DomainEigenbasis
+-- Source module: SpectralGeometry.DomainSpectralSubspace
 run_elab Lean.modifyEnv fun env => Lean.Meta.auxLemmasExt.modifyState env (fun _ => {})
 
 section
 
 variable {H : Type*} [NormedAddCommGroup H] [InnerProductSpace ℝ H]
+variable (d : Submodule ℝ H) (A : d →ₗ[ℝ] H)
 
-structure DomainEigenbasis {ι : Type*} (d : Submodule ℝ H) (A : d →ₗ[ℝ] H)
-    (ev : ι → ℝ) where
-  basis : HilbertBasis ι ℝ H
-  mem_domain : ∀ i, basis i ∈ d
-  eigen : ∀ i, A ⟨basis i, mem_domain i⟩ = ev i • basis i
-
-end
-
--- Source module: SpectralGeometry.CanonicalProduct
-run_elab Lean.modifyEnv fun env => Lean.Meta.auxLemmasExt.modifyState env (fun _ => {})
-
-section
-
-variable {Tile : Type*}
-
-@[expose] def perturb (q : ℕ → ℝ) (center direction : ℂ) (n : ℕ) (s : ℂ) : ℂ :=
-  -(((s - center) / direction) ^ 2 / ((q n : ℂ) ^ 2))
-
-@[expose] def factor (q : ℕ → ℝ) (center direction : ℂ) (n : ℕ) (s : ℂ) : ℂ :=
-  1 + perturb q center direction n s
-
-@[expose] def canonicalProduct (q : ℕ → ℝ) (center direction : ℂ) (s : ℂ) : ℂ :=
-  ∏' n : ℕ, factor q center direction n s
-
-end
-
--- Source module: SpectralGeometry.OrderedSpectralProductBridge
-run_elab Lean.modifyEnv fun env => Lean.Meta.auxLemmasExt.modifyState env (fun _ => {})
-
-section
-
-variable {Tile : Type*} [DecidableEq Tile]
-
-@[expose] def HasExactFullSpectralProduct (V : Tile → ℝ)
-    (B : TileHilbert Tile →L[ℝ] TileHilbert Tile)
-    (hproper : ∀ R : ℝ, (infiniteOnsiteLowEnergyTiles V R).Finite)
-    (ev : ℕ → ℝ) (c d : ℂ) : Prop :=
-  ∃ (a : ℝ) (hunit : ∀ t, 1 ≤ V t - a),
-    ∃ (hsmall : ‖(infiniteLocalBoundedCorrection 0
-      (fun i => Fin.elim0 i) (fun _ => 0) B 1 0).comp
-        (infiniteOnsiteResolventCLM V a hunit)‖ < 1),
-      Differentiable ℂ (canonicalProduct ev c d) ∧
-      (∀ s : ℂ, canonicalProduct ev c d s = 0 ↔
-        ∃ r ∈ infiniteBoundedOnsiteRealSpectrum V B,
-          s = c + d * (r : ℂ) ∨ s = c - d * (r : ℂ)) ∧
-      (∀ r : ℝ, 0 < r → ∀ sign : ℝ, sign = 1 ∨ sign = -1 →
-        analyticOrderAt (canonicalProduct ev c d)
-          (c + d * ((sign * r : ℝ) : ℂ)) =
-        (infiniteLocalMatchingFullMultiplicity 0 V
-          (fun i => Fin.elim0 i) (fun _ => 0) B 1 0
-          a hunit hproper hsmall r : ℕ∞))
-
-end
-
--- Source module: SpectralGeometry.IndexedSpectralPoints
-run_elab Lean.modifyEnv fun env => Lean.Meta.auxLemmasExt.modifyState env (fun _ => {})
-
-section
-
-variable {Tile : Type*}
-
-@[expose] def positiveSpectralPoint (ev : ℕ → ℝ) (c d : ℂ) (n : ℕ) : ℂ :=
-  c + d * (ev n : ℂ)
-
-@[expose] def negativeSpectralPoint (ev : ℕ → ℝ) (c d : ℂ) (n : ℕ) : ℂ :=
-  c - d * (ev n : ℂ)
+@[expose] def domainEigenspace (ev : ℝ) : Submodule ℝ d :=
+  LinearMap.ker (A - ev • d.subtype)
 
 end
 
@@ -487,6 +237,8 @@ namespace AmmannBeenker
 
 -- Source module: SpectralGeometry.AmmannBeenkerCutProject
 run_elab Lean.modifyEnv fun env => Lean.Meta.auxLemmasExt.modifyState env (fun _ => {})
+
+section
 
 abbrev Lattice := Fin 4 → ℤ
 
@@ -510,13 +262,19 @@ instance : DecidableEq Vertex := Classical.decEq _
 
 @[expose] def position (v : Vertex) : ℂ := physical v.val
 
+theorem admitted_zero : Admitted 0 := by
+  sorry
+
+@[expose] def origin : Vertex := ⟨0, admitted_zero⟩
+
 @[expose] def basis (i : Fin 4) : Lattice := Pi.single i 1
 
-theorem finite_norm_sublevel (R : ℝ) : {v : Vertex | ‖position v‖ ≤ R}.Finite := by
-  sorry
+end
 
 -- Source module: SpectralGeometry.AmmannBeenkerGraph
 run_elab Lean.modifyEnv fun env => Lean.Meta.auxLemmasExt.modifyState env (fun _ => {})
+
+section
 
 abbrev Color := Fin 4 × Fin 2
 
@@ -534,61 +292,140 @@ theorem mate_involutive (c : Color) : Function.Involutive (mate c) := by
 @[expose] def matching (c : Color) : Vertex ≃ Vertex :=
   ⟨mate c, mate c, mate_involutive c, mate_involutive c⟩
 
+@[expose] def neighbors (v : Vertex) : Finset Vertex :=
+  (Finset.univ.image (fun c : Color => mate c v)).erase v
+
 @[expose] def matching8 (i : Fin 8) : Vertex ≃ Vertex :=
   matching (finProdFinEquiv.symm i)
 
 @[expose] def interaction : TileHilbert Vertex →L[ℝ] TileHilbert Vertex :=
   infiniteLocalMatchingLaplacian 8 matching8 (fun _ => 1 / 16)
 
+end
+
 -- Source module: SpectralGeometry.AmmannBeenkerOperator
 run_elab Lean.modifyEnv fun env => Lean.Meta.auxLemmasExt.modifyState env (fun _ => {})
 
+section
+
 @[expose] def potential (v : Vertex) : ℝ := 1 + ‖position v‖ ^ 2
 
-theorem potential_proper (R : ℝ) : (infiniteOnsiteLowEnergyTiles potential R).Finite := by
-  sorry
+end
 
-@[expose] def sector : Finset Vertex := (finite_norm_sublevel 2).toFinset
-
--- Source module: SpectralGeometry.AmmannBeenkerSpectralProducts
+-- Source module: SpectralGeometry.AmmannBeenkerCompactModes
 run_elab Lean.modifyEnv fun env => Lean.Meta.auxLemmasExt.modifyState env (fun _ => {})
 
-theorem exists_nine_level_fullProducts (c d : ℂ) (hd : d ≠ 0) :
-    ∃ ev : ℕ → ℝ, Monotone ev ∧
-      Nonempty (DomainEigenbasis (infiniteOnsiteDomain potential)
-        (onsitePlusBounded potential interaction) ev) ∧
-      (∀ n : ℕ, 1 ≤ ev n) ∧
-      (∀ n : ℕ, n < 9 → ev n ≤ 3) ∧
-      Summable (fun n => 1 / (ev n) ^ 2) ∧
-      HasExactFullSpectralProduct potential interaction potential_proper ev c d ∧
-      ∀ τ : ℝ, 0 ≤ τ → τ ≤ 4 →
-        ∃ μ : ℕ → ℝ, Monotone μ ∧
-          Nonempty (DomainEigenbasis (infiniteOnsiteDomain potential)
-            (onsitePlusBounded potential (interaction + τ • finiteSectorProjection sector)) μ) ∧
-          (∀ n : ℕ, 1 ≤ μ n) ∧
-          Summable (fun n => 1 / (μ n) ^ 2) ∧
-          HasExactFullSpectralProduct potential (interaction + τ • finiteSectorProjection sector)
-            potential_proper μ c d ∧
-          ∀ n : ℕ, n < 9 →
-            (τ / 2 ≤ μ n - ev n ∧ μ n - ev n ≤ τ) ∧
-            (canonicalProduct ev c d (positiveSpectralPoint ev c d n) = 0 ∧
-              canonicalProduct ev c d (negativeSpectralPoint ev c d n) = 0) ∧
-            (canonicalProduct μ c d (positiveSpectralPoint μ c d n) = 0 ∧
-              canonicalProduct μ c d (negativeSpectralPoint μ c d n) = 0) ∧
-            (positiveSpectralPoint μ c d n - positiveSpectralPoint ev c d n =
-                d * ((μ n - ev n : ℝ) : ℂ) ∧
-              negativeSpectralPoint μ c d n - negativeSpectralPoint ev c d n =
-                -d * ((μ n - ev n : ℝ) : ℂ)) ∧
-            ((‖d‖ * (τ / 2) ≤
-                ‖positiveSpectralPoint μ c d n - positiveSpectralPoint ev c d n‖ ∧
-              ‖positiveSpectralPoint μ c d n - positiveSpectralPoint ev c d n‖ ≤ ‖d‖ * τ) ∧
-             (‖d‖ * (τ / 2) ≤
-                ‖negativeSpectralPoint μ c d n - negativeSpectralPoint ev c d n‖ ∧
-              ‖negativeSpectralPoint μ c d n - negativeSpectralPoint ev c d n‖ ≤ ‖d‖ * τ)) ∧
-            (0 < τ →
-              positiveSpectralPoint μ c d n ≠ positiveSpectralPoint ev c d n ∧
-              negativeSpectralPoint μ c d n ≠ negativeSpectralPoint ev c d n) := by
+section
+
+open scoped Classical
+
+@[expose] def latticeSingle (n : Lattice) : TileHilbert Vertex :=
+  if h : Admitted n then lp.single (α := Vertex) (E := fun _ => ℝ) (2 : ENNReal) (⟨n, h⟩ : Vertex) 1 else 0
+
+@[expose] def compactA : TileHilbert Vertex :=
+  latticeSingle ![1, 0, 0, 0]
+    - latticeSingle ![0, 1, 0, 0]
+    + latticeSingle ![0, 0, 1, 0]
+    - latticeSingle ![0, 0, 0, 1]
+    + latticeSingle ![-1, 0, 0, 0]
+    - latticeSingle ![0, -1, 0, 0]
+    + latticeSingle ![0, 0, -1, 0]
+    - latticeSingle ![0, 0, 0, -1]
+
+@[expose] def compactB : TileHilbert Vertex :=
+  latticeSingle ![1, 1, 0, 0]
+    - latticeSingle ![0, 1, 1, 0]
+    + latticeSingle ![0, 0, 1, 1]
+    - latticeSingle ![-1, 0, 0, 1]
+    + latticeSingle ![-1, -1, 0, 0]
+    - latticeSingle ![0, -1, -1, 0]
+    + latticeSingle ![0, 0, -1, -1]
+    - latticeSingle ![1, 0, 0, -1]
+
+end
+
+-- Source module: SpectralGeometry.AmmannBeenkerCompactStates
+run_elab Lean.modifyEnv fun env => Lean.Meta.auxLemmasExt.modifyState env (fun _ => {})
+
+section
+
+open scoped Classical
+
+@[expose] def latticeVertex (n : Lattice) (hn : Admitted n) : Vertex := ⟨n, hn⟩
+
+end
+
+-- Source module: SpectralGeometry.AmmannBeenkerCompactCrossing
+run_elab Lean.modifyEnv fun env => Lean.Meta.auxLemmasExt.modifyState env (fun _ => {})
+
+section
+
+@[expose] def ringInteraction (t : ℝ) : TileHilbert Vertex →L[ℝ] TileHilbert Vertex :=
+  interaction + t • finiteSectorProjection (neighbors origin)
+
+@[expose] def crossingParameter : ℝ := 17 / 16 + 2 * alpha
+
+@[expose] def crossingEnergy : ℝ := 13 / 4 + 2 * alpha
+
+end
+
+-- Source module: SpectralGeometry.AmmannBeenkerCentralPatch
+run_elab Lean.modifyEnv fun env => Lean.Meta.auxLemmasExt.modifyState env (fun _ => {})
+
+section
+
+@[expose] def centralLift (i : Fin 17) : Lattice :=
+  ![![0, 0, 0, 0],
+    ![1, 0, 0, 0],
+    ![0, 1, 0, 0],
+    ![0, 0, 1, 0],
+    ![0, 0, 0, 1],
+    ![-1, 0, 0, 0],
+    ![0, -1, 0, 0],
+    ![0, 0, -1, 0],
+    ![0, 0, 0, -1],
+    ![1, 1, 0, 0],
+    ![0, 1, 1, 0],
+    ![0, 0, 1, 1],
+    ![-1, 0, 0, 1],
+    ![-1, -1, 0, 0],
+    ![0, -1, -1, 0],
+    ![0, 0, -1, -1],
+    ![1, 0, 0, -1]] i
+
+theorem centralLift_admitted (i : Fin 17) : Admitted (centralLift i) := by
   sorry
+
+@[expose] def centralVertex (i : Fin 17) : Vertex :=
+  latticeVertex (centralLift i) (centralLift_admitted i)
+
+end
+
+-- Source module: SpectralGeometry.AmmannBeenkerCrossingMultiplicity
+run_elab Lean.modifyEnv fun env => Lean.Meta.auxLemmasExt.modifyState env (fun _ => {})
+
+section
+
+open scoped Classical
+
+/-- The amplitudes at the first site on each ring determine every crossing eigenvector. -/
+theorem crossing_eigenvector_representation (x : infiniteOnsiteDomain potential)
+    (he : onsitePlusBounded potential (ringInteraction crossingParameter) x =
+      crossingEnergy • (x : TileHilbert Vertex)) :
+    (x : TileHilbert Vertex) =
+      x.1 (centralVertex 1) • compactA + x.1 (centralVertex 9) • compactB := by
+  sorry
+
+/-- The kernel on the full natural domain of the confined operator. -/
+@[expose] def crossingEigenspace : Submodule ℝ (infiniteOnsiteDomain potential) :=
+  domainEigenspace (infiniteOnsiteDomain potential)
+    (onsitePlusBounded potential (ringInteraction crossingParameter)) crossingEnergy
+
+/-- The real geometric multiplicity of the crossing is exactly two. -/
+theorem crossingEigenspace_finrank : Module.finrank ℝ crossingEigenspace = 2 := by
+  sorry
+
+end
 
 end AmmannBeenker
 end

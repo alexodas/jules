@@ -1,5 +1,5 @@
 module
 
-public import SpectralGeometry.AmmannBeenkerSpectralProducts
+public import SpectralGeometry.AmmannBeenkerCrossingMultiplicity
 
-/-! The selected theorem and its dependencies come from the proved source. -/
+/-! The crossing classification and multiplicity are proved on the infinite natural domain. -/

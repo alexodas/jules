@@ -1,8 +1,8 @@
 {
   "version": "v0.4",
   "project": {
-    "name": "Jules Spectral Geometry — exact geometric products and nine-level zero response",
-    "description": "For the explicit infinite octagonal vertex graph with V(x)=1+|p(x)|², matching edge weight 1/16 and S={x:|p(x)|≤2}, construct complete monotone natural-domain spectra for H and H+τP_S, all levels at least one, and a nine-level baseline window below three. Derive geometric onsite and full-spectrum inverse-square summability. For arbitrary fixed c,d in ℂ with d≠0, obtain entire canonical products with exact full real bounded-inverse spectral zero sets and operator-specific geometric zero multiplicities. For n<9 and 0≤τ≤4, retain τ/2≤μ_n−λ_n≤τ and prove oriented indexed zero differences ±d(μ_n−λ_n), with norm between |d|τ/2 and |d|τ and nonzero motion for τ>0. Repetitions and crossings are permitted. Geometric, operator, summability and nonempty-window inputs are derived.",
+    "name": "Jules Spectral Geometry — exact multiplicity of a compact crossing on an infinite octagonal graph",
+    "description": "On the real square-summable states of the infinite centered octagonal cut-and-project vertex graph, take the graph Laplacian with edge weight 1/16, onsite potential V(x)=1+|p(x)|² and natural domain D(V). Add t times the coordinate projection onto the eight neighbors of the origin. At t*=17/16+√2 the two alternating ring modes meet at E*=13/4+√2. The full eigenspace at E* has real dimension exactly two. Every solution of the eigenvector equation is its amplitude at the lift (1,0,0,0) times the first compact state plus its amplitude at (1,1,0,0) times the second. No support restriction is assumed. Locality, symmetry and a strictly positive exterior energy force the exterior part to vanish; the complete central kernel supplies the two ring patterns.",
     "authors": [
       "Alessandro Odasso"
     ],
@@ -25,44 +25,36 @@
   },
   "sources": [
     {
-      "title": "Exact full spectral products and nine-level zero response for the explicit octagonal graph",
+      "title": "Exact multiplicity of the compact-state crossing",
       "authors": [
         "Alessandro Odasso"
       ],
       "type": "original-proof",
       "relationship": "other",
-      "id": "https://github.com/alexodas/jules/blob/main/SpectralGeometry/AmmannBeenkerSpectralProducts.lean",
-      "note": "The precise statement and proof are recorded in the AI-assisted Jules development under the maintainer’s direction. The proof combines explicit geometric counting and summability with established form, min–max and canonical-product arguments. This source classification identifies that presentation; it does not certify mathematical priority, a new analytic technique or standalone research interest."
+      "id": "https://github.com/alexodas/jules/blob/c178e4c0048d9c2a349ae64dcae38d9460a15a20/SpectralGeometry/AmmannBeenkerCrossingMultiplicity.lean",
+      "note": "Source of the two precise statements and their proofs in the AI-assisted Jules development. The original-proof classification identifies this presentation, not mathematical priority."
     },
     {
-      "title": "Perturbation Theory for Linear Operators",
+      "title": "Strictly localized states in the octagonal Ammann–Beenker quasicrystal",
       "authors": [
-        "Tosio Kato"
-      ],
-      "type": "book",
-      "id": "https://doi.org/10.1007/978-3-642-66282-9",
-      "relationship": "background",
-      "note": "Background for the spectral-response formalization; not an identified source of the exact selected quantitative statement or a claim of novelty."
-    },
-    {
-      "title": "Mathlib4 — Lean mathematical library",
-      "type": "other",
-      "id": "https://github.com/leanprover-community/mathlib4",
-      "relationship": "background",
-      "note": "Background for the spectral-response formalization; not an identified source of the exact selected quantitative statement or a claim of novelty."
-    },
-    {
-      "title": "Unique continuation and lifting of spectral band edges of Schrödinger operators on unbounded domains",
-      "authors": [
-        "Ivica Nakić",
-        "Matthias Täufer",
-        "Martin Tautenhahn",
-        "Ivan Veselić"
+        "M. Ö. Oktel"
       ],
       "type": "paper",
-      "id": "https://doi.org/10.4171/JST/314",
       "relationship": "background",
-      "note": "Background for the spectral-response formalization; not an identified source of the exact selected quantitative statement or a claim of novelty."
+      "id": "https://doi.org/10.1103/PhysRevB.104.014204",
+      "note": "Section IV describes the type-A and type-B patterns for the vertex tight-binding model. We use these known patterns; our theorem asks whether they exhaust a level of the graph Laplacian with quadratic confinement and a first-ring intervention."
+    },
+    {
+      "title": "Compact localized states and flat bands from local symmetry partitioning",
+      "authors": [
+        "M. Röntgen",
+        "C. V. Morfonios",
+        "P. Schmelcher"
+      ],
+      "type": "paper",
+      "relationship": "background",
+      "id": "https://doi.org/10.1103/PhysRevB.97.035161",
+      "note": "Background on producing and tuning compact states by local symmetries; a construction of localized states alone does not determine the full eigenspace in this confined model."
     },
     {
       "title": "Algebraic theory of non-periodic tilings of the plane by two simple building blocks: a square and a rhombus",
@@ -73,10 +65,17 @@
       "relationship": "background",
       "id": "https://pure.tue.nl/ws/files/4269555/253166.pdf",
       "note": "Geometric background. Polygonal coverage and aperiodicity are not conclusions of the selected graph theorem."
+    },
+    {
+      "title": "Mathlib4 — Lean mathematical library",
+      "type": "other",
+      "relationship": "background",
+      "id": "https://github.com/leanprover-community/mathlib4",
+      "note": "Provides the Hilbert-space, linear-algebra and verification infrastructure."
     }
   ],
   "status": {
-    "scope": "One main theorem, SpectralGeometry.AmmannBeenker.exists_nine_level_fullProducts, and four supporting witness lemmas: matching involutivity, finite radius sublevels, onsite properness and finite-dimensional compact-resolvent eigenspaces. All concrete model definitions are compared transitively with no definition holes. The whole-project build target includes all 89 mathematical modules; the new global crossing-multiplicity implementation awaits branch CI validation and is outside the selected theorem. The selected result constructs complete spectra, geometric summability, exact entire full products and a nine-slot indexed zero response on each branch throughout 0≤τ≤4.",
+    "scope": "Main theorem: crossingEigenspace_finrank. Companion: crossing_eigenvector_representation. They determine the geometric multiplicity and all crossing eigenvectors on the infinite natural domain. Three additional proposition witnesses are compared: admitted_zero, mate_involutive and centralLift_admitted. All five are proved in the source; only Challenge uses a statement placeholder for each. No definitions are holed. The zero proof-hole counts refer to the substantive library, whose root imports all 89 mathematical modules.",
     "sorry_count": 0,
     "sorry_in_definitions": 0,
     "axioms": [
@@ -101,22 +100,50 @@
     "notes": "The initial non-formal research idea and the direction of the Jules project originated with Alessandro Odasso. Odasso does not identify as a mathematician; his stated motivation is to investigate how large language models can be used in scientific work. According to the responsible maintainer, he used OpenAI GPT-6 throughout development of the GitHub repository, including the Lean formalization and its associated repository work. The human originated the informal idea and directed the project; GPT-6 was the AI assistant used for technical development. This is a disclosure of the human/AI workflow, not proof of mathematical originality, not a claim that the human independently wrote all Lean proofs, and not independent evidence that every historical interaction is recoverable. The checked mathematical statements are verified by Lean/Comparator, not by the AI's authority. Costs were not tracked. Challenge-only sorry placeholders are never treated as proofs in Solution."
   },
   "fidelity": {
-    "divergences": "The open octagonal window, excluded boundary, coordinate-step adjacency, edge weight 1/16, potential 1+|p(x)|², finite sector |p(x)|≤2 and common natural domain are explicit. c and nonzero d are arbitrary and fixed during the intervention. Exact zero orders belong to each product’s own operator. Repeated levels and crossings are allowed; nine slots do not imply nine distinct locations or disjoint zero sets. Polygonal coverage, aperiodicity, uniform separation, rotational symmetry, optimal constants, numerical cofactor/radius certificates, relative determinants and finite-patch errors are not claimed."
+    "divergences": "The open octagonal window excludes its boundary. The Hilbert space and eigenspace are real. The perturbation is a coordinate projection onto the first ring A, not onto the entire 17-vertex sector S used in the support proof. The result is for the specified centered vertex graph, potential, edge weight and crossing parameter; it makes no assertion for every tiling in the hull, every Hamiltonian or every energy. A numerical separation from other levels, quantitative one-edge splitting and new conclusions about product zeros are not part of this selection."
   },
   "review": {
     "status": "AI-assisted formalization; mathematical originality unconfirmed; no human mathematical peer review",
     "reviewers": [],
-    "notes": "Assess the end-to-end concrete geometric application: finite intervention, derived planar counting and summability, complete spectra, exact operator-specific entire-product divisors and quantitative indexed zero motion for a nonempty window. The form/min–max, spectral-lifting and canonical-product methods have classical antecedents. Choosing a prescribed line alone is not an originality claim. Precise literature comparison and expert assessment remain open. Mechanical verification is distinct from research significance and must pass on the exact immutable submission commit."
+    "notes": "Potentially of interest to researchers studying localized states and spectral multiplicities in quasicrystals: two known local patterns exhaust one exact eigenspace of a concrete infinite confined operator. The central/exterior energy comparison excludes any further eigenvector, including one extending beyond the central patch; it is not a finite-patch dimension count. This exact classification may be new for the stated model. The cited works establish relevant antecedents; priority and independent expert assessment remain open."
   },
   "alignment": {
     "namespace": "SpectralGeometry.AmmannBeenker",
     "statements": [
       {
-        "source": "Geometric counting, summability and exact full-product response, README §§4.71–4.72",
-        "lean": "SpectralGeometry.AmmannBeenker.exists_nine_level_fullProducts",
-        "module": "SpectralGeometry.AmmannBeenkerSpectralProducts",
-        "status": "Complete Lean source proof; independent statement and kernel checks must pass on the submission commit.",
-        "note": "All inputs except affine center/direction are derived for the explicit operator. The conclusion includes complete ordered eigenbases, positive gaps, inverse-square summability, exact entire-product geometric zero orders and nine-slot indexed response on each branch."
+        "source": "README §4.78; PALOMAR.md, mathematical statement",
+        "lean": "SpectralGeometry.AmmannBeenker.crossingEigenspace_finrank",
+        "module": "SpectralGeometry.AmmannBeenkerCrossingMultiplicity",
+        "status": "Proved in the substantive Lean source.",
+        "note": "Principal conclusion: the actual kernel inside D(V) has real dimension two at t*, E*."
+      },
+      {
+        "source": "README §§4.74, 4.77–4.78; PALOMAR.md, mathematical statement",
+        "lean": "SpectralGeometry.AmmannBeenker.crossing_eigenvector_representation",
+        "module": "SpectralGeometry.AmmannBeenkerCrossingMultiplicity",
+        "status": "Proved in the substantive Lean source.",
+        "note": "Companion conclusion: every natural-domain crossing vector is determined by the two seed amplitudes, with no support hypothesis."
+      },
+      {
+        "source": "README §4.68",
+        "lean": "SpectralGeometry.AmmannBeenker.admitted_zero",
+        "module": "SpectralGeometry.AmmannBeenkerCutProject",
+        "status": "Proved in the substantive Lean source.",
+        "note": "Model witness: the zero lift is inside the open window and defines the origin."
+      },
+      {
+        "source": "README §4.69",
+        "lean": "SpectralGeometry.AmmannBeenker.mate_involutive",
+        "module": "SpectralGeometry.AmmannBeenkerGraph",
+        "status": "Proved in the substantive Lean source.",
+        "note": "Model witness: each matching map is involutive and defines an equivalence."
+      },
+      {
+        "source": "README §4.76",
+        "lean": "SpectralGeometry.AmmannBeenker.centralLift_admitted",
+        "module": "SpectralGeometry.AmmannBeenkerCentralPatch",
+        "status": "Proved in the substantive Lean source.",
+        "note": "Model witness: each of the 17 listed lifts is admitted, so the seed evaluations are at actual vertices."
       }
     ]
   },

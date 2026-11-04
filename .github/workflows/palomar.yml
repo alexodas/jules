@@ -36,7 +36,7 @@ jobs:
         run: lake exe cache get
       - name: Build complete mathematical library and Comparator modules
         run: lake build SpectralGeometry Challenge Solution
-      - name: Compare selected concrete spectral-response theorem with bundled kernels
+      - name: Compare crossing eigenspace statements with bundled kernels
         id: comparator
         run: |
           sudo apt-get update -qq >/dev/null

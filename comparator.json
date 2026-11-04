@@ -2,11 +2,11 @@
   "challenge_module": "Challenge",
   "solution_module": "Solution",
   "theorem_names": [
-    "SpectralGeometry.infiniteLocalMatchingFullEigenspace_finiteDimensional",
+    "SpectralGeometry.AmmannBeenker.admitted_zero",
     "SpectralGeometry.AmmannBeenker.mate_involutive",
-    "SpectralGeometry.AmmannBeenker.finite_norm_sublevel",
-    "SpectralGeometry.AmmannBeenker.potential_proper",
-    "SpectralGeometry.AmmannBeenker.exists_nine_level_fullProducts"
+    "SpectralGeometry.AmmannBeenker.centralLift_admitted",
+    "SpectralGeometry.AmmannBeenker.crossing_eigenvector_representation",
+    "SpectralGeometry.AmmannBeenker.crossingEigenspace_finrank"
   ],
   "definition_names": [],
   "permitted_axioms": [

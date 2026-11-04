@@ -1,26 +1,24 @@
 # Jules Spectral Geometry
 
 **A mathematical research program in Lean 4 and Mathlib connecting local
-geometric operators, finite-coordinate observation, and the response of zeros
+geometric operators, compact eigenstates, finite-coordinate observation, and the response of zeros
 on a prescribed complex line.**
 
 ## Current status
 
-The selected result is the **concrete nine-level full-product zero response**
-of §4.72 on the explicit infinite octagonal vertex graph. It constructs
-complete ordered spectra and entire products with exact geometric zero
-multiplicities, and bounds the response of nine indexed zeros on each
-reflected branch to a finite positive intervention.
-The foundational observation and analytic results remain documented below.
-Sections 4.73–4.77 strengthen the original sector estimate and construct
-an exact crossing of two independent compact eigenvectors, with a state
-that stays fixed after a one-edge change. They also identify the exact
-17-vertex central sector, its 16 edges to the exterior, and the complete
-central crossing kernel. The proof implementation for exact multiplicity
-of the infinite crossing eigenspace is described in §4.78 and awaits
-GitHub Actions validation. An explicit gap and the motion of the other
-perturbed eigenvalue remain open. The selected Palomar statement remains
-the full-product theorem of §4.72.
+The selected Palomar result is the **exact multiplicity of a crossing of two
+compact states on the infinite confined octagonal graph** (§4.78). The
+intervention acts on the eight neighbors of the origin. At
+$t_*=17/16+\sqrt2$, the entire real eigenspace at $E_*=13/4+\sqrt2$ is spanned
+by the two alternating ring states. Every eigenvector is determined by its
+amplitudes at two specified vertices; no central-support hypothesis is needed.
+
+Sections 4.68–4.72 also prove complete ordered spectra, exact full-product
+zero multiplicities and a nine-level response for an intervention on the
+radius-two sector. Sections 4.73–4.77 sharpen its radial bound and identify
+the compact modes, the 17-vertex central sector, its sixteen boundary edges
+and its central kernel. A state stays fixed when one edge weight changes;
+an explicit gap and a quantitative bound for the other level remain open.
 
 | Part of the program | Status |
 | --- | --- |
@@ -41,7 +39,7 @@ the full-product theorem of §4.72.
 | Radial barrier, compact eigenvectors and ring-induced crossing | Formalized in §§4.73–4.75; includes a stationary one-edge state and an exact Rayleigh response, but not a certified split spectral pair |
 | Exact central sector and its boundary | Formalized in §4.76: origin and two eight-site rings, complete internal adjacency, ring degrees three and four, and exactly sixteen edges to the exterior |
 | Complete central crossing kernel and supported eigenvectors | Formalized in §4.77; the central-support hypothesis remains explicit |
-| Central support and exact global crossing multiplicity | Proof implementation in §4.78, pending GitHub Actions; includes a linear equivalence of the full natural-domain eigenspace with two real coordinates |
+| Central support and exact global crossing multiplicity | Proved in §4.78: the two seed amplitudes give coordinates on the entire natural-domain eigenspace, of real dimension exactly two |
 | Relative products and certified finite-patch zero response | Remaining obligations in §§6.5–6.6; geometric scalar cofactor/radius certificates also remain open |
 
 The research objective is an end-to-end statement relating an explicitly defined
@@ -71,8 +69,9 @@ Its planar counting bound, onsite and full-spectrum inverse-square
 summability, and exact entire-product zero-response instantiation are now
 proved. Geometric cofactor/radius certificates, finite-patch approximation
 and statistical results remain open. Counting on arbitrary noncircular contours is not
-formalized. Comparator selects the concrete nine-level full-product response of §4.72;
-§6.8 records its scope and verification requirements.
+formalized. The Palomar selection concerns the same graph under a first-ring
+intervention: §4.78 classifies its entire crossing eigenspace. Section 6.8
+records the precise scope and verification requirements.
 
 The chosen affine line is part of the definition of the analytic family.
 Originality and research significance must come from the geometric and spectral
@@ -186,7 +185,7 @@ its first nine ordered levels. Sections 4.71–4.72 prove the geometric
 counting/summability inputs and the exact entire-product zero response,
 with the same positive gap and multiplicities throughout the intervention.
 
-The selected concrete full-product response of §4.72 uses these source results under
+The concrete full-product response of §4.72 uses these source results under
 its verified geometric hypotheses. They do not provide a numerical reconstruction
 algorithm or independent control of several zeros. The relative
 determinant identity in §6.5 is a separate proof obligation; it does not follow
@@ -2183,7 +2182,7 @@ These results supply the disk-counting step of §6.3. Sections 4.66–4.67
 provide numerical data for a worked onsite example. Cofactor/radius
 certificates for interacting geometric models and finite-patch
 operator/resolvent errors remain to be supplied. Counting on noncircular
-contours is outside this interface. The concrete full-product response selected for Palomar is documented in §4.72.
+contours is outside this interface. The concrete full-product response is documented in §4.72.
 
 ### 4.66. Numerical tail rates and finite-factor lower certificates
 
@@ -2409,7 +2408,7 @@ uniform-separation estimate is not proved or needed for this argument.
 ### 4.72. Exact geometric full products and nine-level zero response
 
 [AmmannBeenkerSpectralProducts.lean](SpectralGeometry/AmmannBeenkerSpectralProducts.lean)
-proves the selected theorem `AmmannBeenker.exists_nine_level_fullProducts`.
+proves `AmmannBeenker.exists_nine_level_fullProducts`.
 For arbitrary fixed $c,d\in\mathbb C$ with $d\ne0$, it constructs
 complete monotone natural-domain eigenbases for $H$ and $H_\tau=H+\tau P_S$,
 with $V(x)=1+|p(x)|^2$, matching edge weight $1/16$ and $S=\{|p(x)|\le2\}$.
@@ -2464,7 +2463,7 @@ constructs the perturbed eigenbases, and proves
 \qquad n<9,\quad 0\le\tau\le3+2\sqrt2.
 ```
 The coefficient is approximately $0.65685$. This sharpens the spectral
-estimate for the same operator, domain and sector. The selected full-product
+estimate for the same operator, domain and sector. The full-product
 statement of §4.72 retains its original constants and interval.
 
 ### 4.74. Compact eigenvectors on the infinite natural domain
@@ -2495,8 +2494,8 @@ This intervention differs from the radius-two sector $S$. For every real $t$,
 K_ta=(35/16+t)a,\qquad K_tb=E_*b,\qquad E_*=13/4+\sqrt2.
 ```
 At $t_*=17/16+\sqrt2$, `compact_crossing` proves the two independent
-eigenvector equations at $E_*$. This establishes multiplicity **at least
-two**, not exactly two or isolation from the remaining spectrum.
+eigenvector equations at $E_*$. These equations give multiplicity **at least two**. Section 4.78 proves
+that it is exactly two; an explicit isolation interval is still open.
 
 The endpoints in $u=\delta_{(1,0,0,0)}-\delta_{(1,1,0,0)}$ are proved
 adjacent. Hence $K_{t_*}+\varepsilon|u\rangle\langle u|$ changes an actual
@@ -2535,9 +2534,8 @@ complete set of boundary edges, oriented from $S$ to its complement;
 This counts edges, not distinct exterior vertices.
 
 These results describe the central block and its coupling locations using
-the previously proved compact states and radial barrier. They do not yet
-bound the coupling operator norm, exclude additional eigenvectors at
-$E_*$, or certify an interval free of other spectral levels.
+the previously proved compact states and radial barrier. Section 4.78 uses them to exclude additional eigenvectors at $E_*$.
+A coupling-norm bound and an explicit interval free of other levels remain open.
 
 ### 4.77. The central crossing kernel and centrally supported eigenvectors
 
@@ -2571,16 +2569,15 @@ calculation uses the second-ring equations to force alternating first-ring
 amplitudes; the origin equation forces its amplitude to vanish; the
 first-ring equations then force alternation on the second ring.
 
-The support condition is a hypothesis here. Removing it for every crossing
-eigenvector is the purpose of the pending implementation in §4.78.
+The support condition is a hypothesis of this lemma. Section 4.78 derives
+it for every crossing eigenvector on the infinite domain.
 Neither a gap nor a quantitative splitting estimate
 follows from this finite-block calculation alone.
 
 ### 4.78. Central support and exact multiplicity of the infinite crossing
 
-**Branch status: proof implementation awaiting GitHub Actions validation.**
 [AmmannBeenkerCrossingMultiplicity.lean](SpectralGeometry/AmmannBeenkerCrossingMultiplicity.lean)
-implements the removal of the support hypothesis in §4.77. For an arbitrary
+removes the support hypothesis in §4.77. For an arbitrary
 natural-domain eigenvector $x$ at $E_*$, write
 $L=K_{t_*}-E_*$, $p=P_Sx$ and $q=x-p$. Finite coordinate projection preserves
 the natural domain, so every operator evaluation below has its domain witness.
@@ -2597,21 +2594,29 @@ interaction, including the first-ring intervention, supply
 ```math
 (3/4+\sqrt2)\|q\|^2\le\langle q,Lq\rangle.
 ```
-The strictly positive coefficient forces $q=0$. The implemented
+The strictly positive coefficient forces $q=0$. The theorem
 `crossing_eigenvector_central_support` therefore derives central support
 from the full infinite eigenvector equation. `crossing_eigenvector_representation`
 then reuses §4.77 to express every eigenvector in the two compact directions.
 
 `crossingEigenspaceCoordinates` constructs a linear equivalence between
 the actual eigenspace inside the natural domain and $\mathbb R^2$, using
-the amplitudes at $A_0$ and $B_0$. The implemented
-`crossingEigenspace_finrank` concludes dimension exactly two. These new
-declarations await branch CI validation. They assert no explicit spectral
-gap and no quantitative motion for the second level after an edge change.
+the amplitudes at $A_0=(1,0,0,0)$ and $B_0=(1,1,0,0)$ in lift coordinates.
+Together the representation and dimension theorems give
+```math
+\ker(K_{t_*}-E_* I)=\operatorname{span}_{\mathbb R}\{a,b\},
+\qquad \dim_{\mathbb R}\ker(K_{t_*}-E_* I)=2,
+```
+where domain vectors are identified with their images in real $\ell^2$.
+The span description uses `crossing_eigenvector_representation` together
+with the eigenvector equations of §4.75; `crossingEigenspace_finrank` gives the
+dimension. The exterior lower bound above is a form estimate on the
+exterior component. It gives no numerical distance to every other spectral
+level and no quantitative motion for the second level after an edge change.
 
 ## 5. Building and verification
 
-The canonical import list is maintained in [`SpectralGeometry.lean`](SpectralGeometry.lean). It currently imports **89 Lean modules**: eleven analytic and window modules, four finite-dimensional geometry modules, and seventy-four infinite geometry/operator/spectral modules (including domain-generic interfaces). The newly added crossing-multiplicity module has the pending validation status stated in §4.78.
+The canonical import list is maintained in [`SpectralGeometry.lean`](SpectralGeometry.lean). It currently imports **89 Lean modules**: eleven analytic and window modules, four finite-dimensional geometry modules, and seventy-four infinite geometry/operator/spectral modules (including domain-generic interfaces).
 
 - **Analytic core, indexed points and certified windows (11):**
   - [`CanonicalProduct.lean`](SpectralGeometry/CanonicalProduct.lean)
@@ -2734,15 +2739,14 @@ treated as an independently proved library.
 **Palomar / independent statement verification:** the repository has
 one [`comparator.json`](comparator.json), one
 [`Challenge.lean`](Challenge.lean) and one [`Solution.lean`](Solution.lean).
-Comparator selects **one theorem**,
-`SpectralGeometry.AmmannBeenker.exists_nine_level_fullProducts` (§4.72),
-with four supporting witness lemmas: matching involutivity, finite radius
-sublevels, onsite properness and finite-dimensional resolvent eigenspaces. All model definitions and the
-eigenbasis structure are compared transitively, with no definition holes. Lean, NanoDa and con-ron
-must verify the comparison on the exact submission commit. The separate
-Lean build covers **all 82 mathematical source modules**. The source
-presentation and geometric/operator-theory background are distinguished
-in the metadata; mathematical priority and novelty are not asserted.
+The principal selection is `SpectralGeometry.AmmannBeenker.crossingEigenspace_finrank`
+(§4.78); `crossing_eigenvector_representation` is its companion statement.
+Three model witnesses are also compared: `admitted_zero`, `mate_involutive`
+and `centralLift_admitted`. Definitions of the graph, natural-domain
+operator, compact states, sites and eigenspace are compared transitively;
+there are no definition holes. Lean, NanoDa and con-ron must verify the
+comparison on the exact submission commit. The separate full-project Lean
+build covers all **89 mathematical source modules**.
 
 Challenge mirrors the source module boundaries when generating auxiliary
 proof names: only Lean's module-local auxiliary-proof cache is reset between
@@ -2959,7 +2963,7 @@ with a numerical worked onsite certificate and quantitative tails for its
 nonnegative interacting family (§§4.66–4.67). Interacting geometric
 cofactor/radius data and finite-patch approximation certificates remain
 open in §§6.3 and 6.6; noncircular contours are not covered by the disk theorem.
-The selected concrete theorem of §4.72 uses this spectral infrastructure;
+The concrete full-product theorem of §4.72 uses this spectral infrastructure;
 analytic-product consequences have their own hypotheses.
 
 ### 6.3. P3 — Full spectral products and their exact zero divisors
@@ -3062,9 +3066,9 @@ The relation to the standard Ammann–Beenker construction is documented in
   four, and the exact count of sixteen edges to the exterior (§4.76).
 - [x] Validate the central-block kernel classification and its transfer
   to centrally supported natural-domain eigenvectors (§4.77).
-- [ ] Validate the proof that every crossing eigenvector has central
-  support and that the full natural-domain eigenspace has dimension exactly
-  two (§4.78); the implementation is awaiting GitHub Actions.
+- [x] Derive central support for every crossing eigenvector and prove
+  that its two seed amplitudes parametrize the entire natural-domain
+  eigenspace, of real dimension exactly two (§4.78).
 - [ ] Give an explicit gap to all other levels of the infinite operator.
 - [ ] Use that gap to control the moving eigenvalue after the one-edge
   change on an explicit parameter interval, including a remainder bound.
@@ -3200,39 +3204,38 @@ theorem, and carries no asserted connection to the Riemann zeta function.
 
 **Current selected result**
 
-- [x] Select `SpectralGeometry.AmmannBeenker.exists_nine_level_fullProducts`
-  (§4.72): complete ordered spectra, positive gaps, inverse-square summability
-  of both full spectra, entire full products with exact geometric zero orders
-  and quantitative response for nine slots on each branch on 0≤τ≤4.
-  Geometric onsite summability is proved in §4.71 and used as a supporting
-  input to the proof. The geometric/operator inputs and nonempty window
-  are derived.
-- [x] Supply the Mathlib-only independent Challenge, source-backed Solution,
-  supporting definitions and single root Comparator configuration.
-- [x] State the open-window convention and distinguish the vertex graph
-  from unproved polygonal coverage, aperiodicity and rotational symmetry.
+- [x] Select `SpectralGeometry.AmmannBeenker.crossingEigenspace_finrank`
+  and its companion `crossing_eigenvector_representation` (§4.78): at
+  $t_*=17/16+\sqrt2$ and $E_*=13/4+\sqrt2$ the entire real eigenspace
+  on the infinite natural domain has dimension two, with coordinates
+  given by the two ring seed amplitudes. No support assumption is made.
+- [x] Supply the Mathlib-only independent Challenge, the source-backed
+  Solution, and one Comparator configuration with both conclusions and
+  the three model witnesses. No definitions are replaced by placeholders.
+- [x] State the centered open-window convention, the first-ring intervention
+  and the natural domain; distinguish the proved multiplicity from the
+  open spectral-gap and one-edge splitting estimates (§6.4).
 
 **Research-interest assessment and verification**
 
-The contribution to assess is the explicit infinite geometric application
-with complete, quantitative, multiplicity-aware conclusions. The form and
-min–max methods are classical, and spectral lifting has established
-antecedents. Formal checking does not establish mathematical originality
-or standalone research significance.
+The type-A and type-B patterns are known in the vertex tight-binding
+literature ([Oktel, 2021](https://doi.org/10.1103/PhysRevB.104.014204)).
+What may be new, and of interest to researchers studying quasicrystal
+localization, is the proof that these two patterns exhaust a level of
+this particular infinite confined operator. The central/exterior argument
+rules out states a finite-patch computation could miss. Priority and
+standalone research interest are open to expert assessment.
 
-- [x] Prove geometric counting and onsite summability in §4.71 and use the
-  latter in the full-product proof (§4.72). These are source results;
-  `radius_count_le` and `potential_invSq_summable` are not separate
-  Comparator selections. The independent configuration selects the main
-  theorem and four supporting witness lemmas, with no definition holes.
-- [ ] Compare the exact hypotheses/conclusions with the literature and
-  obtain expert assessment of research interest.
-- [ ] Supply scalar cofactor/radius and finite-patch certificates when
-  those numerical applications are claimed (§§6.3 and 6.6).
-- [ ] Use a public immutable 40-character commit SHA whose complete Lean,
-  NanoDa, con-ron and metadata checks pass. Keep PALOMAR.md,
-  formalization.yaml, Challenge.lean, Solution.lean and comparator.json
-  aligned with the exact selected statement.
+- [x] Identify the pattern source, related compact-state constructions and
+  the precise operator in [PALOMAR.md](PALOMAR.md). The geometric counting,
+  summability and nine-level product conclusions remain proved in §§4.71–4.72.
+- [ ] Compare the exact hypotheses and conclusions more broadly with the
+  literature and obtain expert assessment of research interest.
+- [ ] Supply scalar cofactor/radius and finite-patch certificates for the
+  separate numerical applications in §§6.3 and 6.6.
+- [ ] For submission, use a public immutable 40-character commit SHA whose
+  complete Lean, Comparator (including NanoDa and con-ron) and metadata
+  checks pass.
 
 **Maintenance rule:** document each new proved result in §4, its roadmap
 entry and the canonical §5 module list. Mark a proof obligation complete only
