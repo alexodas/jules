@@ -2,7 +2,7 @@
 """Ensure all mathematical source modules are imported by the Lake root.
 
 The standard CI build compiles this root with Lean. Comparator separately
-compares one independently stated theorem and 16 supporting definitions and abbreviations.
+compares the selected Challenge statements and their transitive model definitions.
 This static script checks module reachability, not proof correctness.
 """
 from pathlib import Path

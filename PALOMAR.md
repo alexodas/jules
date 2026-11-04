@@ -1,95 +1,78 @@
-# Palomar candidate — exact geometric spectral products and nine-level zero response
+# Palomar candidate — exact multiplicity of a compact crossing on an infinite octagonal graph
 
-The selected theorem is
-`SpectralGeometry.AmmannBeenker.exists_nine_level_fullProducts` in
-[`AmmannBeenkerSpectralProducts.lean`](SpectralGeometry/AmmannBeenkerSpectralProducts.lean),
-documented in README §§4.71–4.72.
+The principal theorem is `SpectralGeometry.AmmannBeenker.crossingEigenspace_finrank`.
+The companion `SpectralGeometry.AmmannBeenker.crossing_eigenvector_representation`
+identifies every vector in that eigenspace. Both are proved in
+[AmmannBeenkerCrossingMultiplicity.lean](SpectralGeometry/AmmannBeenkerCrossingMultiplicity.lean)
+and described in [README §4.78](README.md#478-central-support-and-exact-multiplicity-of-the-infinite-crossing).
 
 ## Mathematical statement
 
-The vertices are the accepted integer lifts in the explicit open octagonal
-cut-and-project construction of README §4.68. The physical projection is
-injective, the graph is infinite and has degree at most eight; edges join
-lifts differing by a signed standard basis vector. The boundary convention
-and physical/internal projections are independently defined in Challenge.
-
-On real ℓ² of the vertices, put V(x)=1+|p(x)|² and use the natural domain
-D(V)={ψ∈ℓ²:Vψ∈ℓ²}. The operator and finite intervention are
+Vertices are the admitted integer lifts in the centered open octagonal
+cut-and-project window of README §4.68. The boundary is excluded; two
+vertices are adjacent when their lifts differ by a signed coordinate step.
+On real $\ell^2$ of this infinite graph, let $p(v)$ be physical position,
+$V(v)=1+|p(v)|^2$, and $D(V)=\{x\in\ell^2:Vx\in\ell^2\}$. Let $A$ be the
+eight neighbors of the origin. On $D(V)$ define
 ```math
-(Hψ)(x)=V(x)ψ(x)+\frac1{16}\sum_{y\sim x}(ψ(x)-ψ(y)),
-\qquad H_τ=H+τP_S,\qquad S=\{x:|p(x)|≤2\}.
+(K_t x)(v)=(V(v)+t\,\mathbf{1}_A(v))x(v)
+  +\tfrac1{16}\sum_{w\sim v}\bigl(x(v)-x(w)\bigr).
 ```
-The theorem constructs complete nondecreasing Hilbert eigenbases for H
-and Hτ on that common domain, with ordered levels λ and μτ satisfying
+The alternating states $a,b$ have amplitudes $+1,-1$ in cyclic order on
+their respective eight-site rings and vanish elsewhere. Their first sites
+are $A_0=(1,0,0,0)$ and $B_0=(1,1,0,0)$ in lift coordinates. The source
+proves that their eigenvalues are $35/16+t$ and $13/4+\sqrt2$, respectively.
+Set $t_*=17/16+\sqrt2$ and $E_*=13/4+\sqrt2$. The selected conclusions are
 ```math
-λ_n≥1,\quad λ_n≤3\ (n<9),\quad μ_{τ,n}≥1,
-\qquad \fracτ2≤μ_{τ,n}-λ_n≤τ\quad(n<9,\ 0≤τ≤4).
+\dim_{\mathbb R}\ker(K_{t_*}-E_* I)=2,\qquad
+K_{t_*}x=E_*x\ \Longrightarrow\ x=x(A_0)a+x(B_0)b\quad(x\in D(V)).
 ```
-Multiplicity is retained; no eigenvalue simplicity or nonempty spectral
-window is assumed. The source proves nine distinct central sites with V≤2,
-interaction norm at most one, positivity/symmetry, properness and V≥5
-outside S. The natural-domain self-adjoint compact-resolvent construction
-supplies the complete ordered spectra.
+Thus, identifying domain vectors with their images in $\ell^2$, the kernel
+is precisely $\operatorname{span}_{\mathbb R}\{a,b\}$. Support is a
+conclusion: no eigenvector at this energy can extend beyond the two rings.
 
-For any fixed center $c\in\mathbb C$ and direction $d\ne0$, the theorem
-also derives inverse-square summability of both complete spectra and proves
-`HasExactFullSpectralProduct` for each operator. Thus
+## Why the infinite graph matters
+
+Two independent compact eigenvectors would only give a lower bound of two.
+Even a complete calculation on a finite patch would not rule out another
+eigenvector with an exterior component. The proof does rule this out.
+Let $S=\{v:|p(v)|\le2\}$, consisting of the origin and the two rings, and
+write $x=u+q$ with $u=P_Sx$. For $L=K_{t_*}-E_* I$, locality of the first
+ring, the central block identity and symmetry give
 ```math
-D_τ(s)=\prod_{n\ge0}\left(1-\frac{(s-c)^2}{d^2μ_{τ,n}^2}\right)
+\langle q,Lq\rangle=\langle u,Lu\rangle=(3/2-E_*)|u(0)|^2\le0.
 ```
-is entire, its zeros are exactly the reflected full real bounded-inverse
-spectrum, and its analytic zero orders are the geometric eigenspace
-multiplicities of that same operator. With $z_n^\pm(τ)=c\pm dμ_{τ,n}$,
-```math
-z_n^\pm(τ)-z_n^\pm(0)=\pm d(μ_{τ,n}-λ_n),
-\qquad |d|\fracτ2≤|z_n^\pm(τ)-z_n^\pm(0)|≤|d|τ
-\quad(n<9,\ 0≤τ≤4).
-```
-All indexed points are zeros of their respective products, and each indexed
-branch moves when τ>0. Repeated levels are allowed: nine multiplicity slots
-need not be nine distinct locations, and zero sets at different parameters
-need not be disjoint. The common natural domain and affine data are fixed;
-the compact-resolvent witnessing shift may vary with τ.
+The exterior onsite barrier and the nonnegative interaction also give
+$(3/4+\sqrt2)\|q\|^2\le\langle q,Lq\rangle$, hence $q=0$. The central
+block retains the full graph degrees, including edges to the exterior;
+its kernel gives precisely the two alternating directions. The amplitudes
+at the two first sites give a linear equivalence with $\mathbb R^2$.
 
-The geometric summability is proved, not assumed. An injective code by two
-integer coordinates and two residues in {-2,-1,0,1,2} yields
-$\#\{|p(x)|≤R\}≤25(2\lceil R+3\rceil+1)^2$ for R≥0, and a product-of-series
-majorant proves $\sum_x V(x)^{-2}<\infty$. Positivity and the variational
-comparison transfer this to the full spectra throughout the intervention.
+## Research interest, sources and limits
 
-## Research motivation and scope
+For researchers studying localization in quasicrystals, the question is
+whether two familiar local patterns account for a whole spectral level, or
+merely coexist with other states at the same energy. The theorem answers
+that question exactly for a specified confined operator on an infinite
+octagonal graph. This classification **may be new for this model**.
+Priority has not been established.
 
-The result connects a concrete finite intervention in an infinite geometric
-operator to quantitatively controlled motion of exact full-product zeros
-on an arbitrary prescribed affine line. The contribution to assess is the
-complete application with derived geometry, summability, operator inputs,
-a nonempty window and operator-specific geometric zero multiplicities. Its form and min–max methods are classical;
-positive spectral lifting is an established topic.
+- M. Ö. Oktel, [*Strictly localized states in the octagonal Ammann–Beenker
+  quasicrystal*](https://doi.org/10.1103/PhysRevB.104.014204), §IV (2021):
+  source of the type-A and type-B patterns for the vertex tight-binding
+  model. The patterns themselves are not claimed as new.
+- M. Röntgen, C. V. Morfonios and P. Schmelcher, [*Compact localized states
+  and flat bands from local symmetry partitioning*](https://doi.org/10.1103/PhysRevB.97.035161)
+  (2018): background on constructing and tuning compact states by local symmetry.
+- F. P. M. Beenker, [*Algebraic theory of non-periodic tilings of the plane
+  by two simple building blocks: a square and a rhombus*](https://pure.tue.nl/ws/files/4269555/253166.pdf)
+  (1982): geometric background.
 
-Polygonal tiling coverage, aperiodicity, global rotational symmetry,
-uniform vertex separation, optimality of the sector/constants, numerical
-cofactor/radius certificates, relative determinants, finite-patch errors and
-CUE statistics are not conclusions.
-Choosing an affine line for spectral zeros is not by itself a novelty claim.
-No relation to Riemann zeta zeros is asserted.
-
-## Sources and assessment
-
-- F. P. M. Beenker, *Algebraic theory of non-periodic tilings of the plane
-  by two simple building blocks: a square and a rhombus* (1982),
-  [report](https://pure.tue.nl/ws/files/4269555/253166.pdf): geometric background.
-- T. Kato, *Perturbation Theory for Linear Operators*,
-  [DOI](https://doi.org/10.1007/978-3-642-66282-9): spectral background.
-- I. Nakić, M. Täufer, M. Tautenhahn and I. Veselić, *Unique continuation
-  and lifting of spectral band edges of Schrödinger operators on unbounded
-  domains* (2020), [DOI](https://doi.org/10.4171/JST/314): spectral-lifting background.
-- [Mathlib4](https://github.com/leanprover-community/mathlib4): formal infrastructure.
-
-The precise statement is recorded in the Jules source. The `original-proof`
-classification records that presentation, not verified priority or a novel
-proof technique. Precise literature comparison and expert assessment of
-standalone research interest remain necessary. Mechanical checking is not
-editorial acceptance.
+The result concerns the centered graph, the quadratic potential, the
+specified ring intervention, and one crossing energy. It gives neither
+an explicit gap to every other level nor a quantitative law for the
+eigenvalue that may move under a one-edge change. These are separate
+research questions. The exterior energy estimate above is not such a gap.
 
 ## Human origin and AI-assisted development
 
@@ -97,26 +80,22 @@ Alessandro Odasso originated the informal project idea, directs the work
 and is the responsible maintainer. He does not identify as a mathematician;
 his stated interest is exploring LLMs in scientific research. According to
 his account, OpenAI GPT-6 assisted throughout the GitHub/Lean development.
-The AI is a development assistant, not a human mathematical coauthor.
-Human responsibility does not imply independent authorship of every proof.
-No human mathematical peer review or exhaustive provenance audit is claimed.
+No human mathematical peer review or exhaustive priority assessment is claimed.
+[formalization.yaml](formalization.yaml) records the contributor roles,
+sources and correspondence between the statements and the Lean declarations.
 
 ## Independent statement verification
 
-Challenge imports only Mathlib and independently states the model, natural
-domain, eigenbasis structure and theorem. Solution imports the proved source.
-The Comparator selects the main theorem and four supporting witness lemmas:
-matching involutivity, finite radius sublevels, onsite properness and
-finite-dimensional compact-resolvent eigenspaces. All model definitions
-and the eigenbasis structure are compared transitively, with no definition holes. Challenge-only
-proposition placeholders are not substantive proofs. Lean, NanoDa and con-ron
-must check the comparison; the complete source library is also built.
-Toolchain and dependencies are pinned.
-
-Challenge groups its independent declarations by source module and resets
-only Lean's module-local auxiliary-proof cache between groups. This keeps
-generated helper names aligned with separate source compilation; it does
-not change kernel declarations or relax any Comparator checks.
+[Challenge](Challenge.lean) imports only Mathlib and specifies the graph,
+operator, domain, two compact modes, sites and eigenspace. [Solution](Solution.lean)
+imports the substantive proof module. [Comparator](comparator.json) selects
+the two conclusions above and three proposition witnesses used to define
+the model: `admitted_zero`, `mate_involutive` and `centralLift_admitted`.
+Only these five statements have placeholders in Challenge; all are proved
+in the source. Definitions are compared transitively with no definition
+holes. Challenge groups declarations by source module to preserve the names
+of Lean's generated proof terms. The independent checks use Lean and the
+bundled NanoDa and con-ron kernels; the full library is built separately.
 
 ```sh
 python3 scripts/check-palomar-layout.py
@@ -130,6 +109,5 @@ lake build SpectralGeometry Challenge Solution
 bash scripts/verify-comparator.sh
 ```
 
-Use a public immutable 40-character commit SHA with all required checks
-passing; see [GitHub Actions](https://github.com/alexodas/jules/actions).
-Preparing the package does not automatically submit it to Palomar.
+Use a public immutable commit SHA with all checks passing. Preparing the
+package does not submit or register a result.
