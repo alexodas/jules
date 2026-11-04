@@ -176,7 +176,7 @@ theorem exterior_energy_eq_central_of_kernel (x : infiniteOnsiteDomain potential
       -crossingResidual (centralDomainPart x) := by
     simp only [exteriorDomainPart, map_sub, hx, zero_sub]
   have hp : inner ℝ x.1 (crossingResidual (centralDomainPart x)) = 0 := by
-    rw [← crossingResidual_symmetric x (centralDomainPart x), hx, zero_inner]
+    rw [← crossingResidual_symmetric x (centralDomainPart x), hx, inner_zero_left]
   rw [hq]
   change inner ℝ (x.1 - (centralDomainPart x).1)
     (-crossingResidual (centralDomainPart x)) = _
@@ -201,13 +201,23 @@ theorem exterior_energy_lower_bound (x : infiniteOnsiteDomain potential) :
     crossingInteraction_nonneg 1 (4 + 4 * alpha) potential_lower sector
     potential_outside_sector_sharp (exteriorDomainPart x)
   norm_num only [exteriorDomainPart_projection, norm_zero, zero_pow, mul_zero, sub_zero] at h
-  change (3 / 4 + 2 * alpha) * ‖(exteriorDomainPart x).1‖ ^ 2 ≤
-    inner ℝ (exteriorDomainPart x).1
-      (onsitePlusBounded potential (ringInteraction crossingParameter) (exteriorDomainPart x) -
-        crossingEnergy • (exteriorDomainPart x).1)
-  rw [inner_sub_right, real_inner_smul_right, real_inner_self_eq_norm_sq]
-  dsimp [crossingEnergy]
-  nlinarith only [h]
+  calc
+    (3 / 4 + 2 * alpha) * ‖(exteriorDomainPart x).1‖ ^ 2 =
+        (4 + 4 * alpha) * ‖(exteriorDomainPart x).1‖ ^ 2 -
+          crossingEnergy * ‖(exteriorDomainPart x).1‖ ^ 2 := by
+      dsimp only [crossingEnergy]
+      ring
+    _ ≤ inner ℝ (exteriorDomainPart x).1
+        (onsitePlusBounded potential (ringInteraction crossingParameter) (exteriorDomainPart x)) -
+          crossingEnergy * ‖(exteriorDomainPart x).1‖ ^ 2 := sub_le_sub_right h _
+    _ = inner ℝ (exteriorDomainPart x).1 (crossingResidual (exteriorDomainPart x)) := by
+      change inner ℝ (exteriorDomainPart x).1
+          (onsitePlusBounded potential (ringInteraction crossingParameter) (exteriorDomainPart x)) -
+            crossingEnergy * ‖(exteriorDomainPart x).1‖ ^ 2 =
+        inner ℝ (exteriorDomainPart x).1
+          (onsitePlusBounded potential (ringInteraction crossingParameter) (exteriorDomainPart x) -
+            crossingEnergy • (exteriorDomainPart x).1)
+      rw [inner_sub_right, real_inner_smul_right, real_inner_self_eq_norm_sq]
 
 /-- No nonzero exterior component is possible at the crossing energy. -/
 theorem exteriorPart_eq_zero_of_kernel (x : infiniteOnsiteDomain potential)
@@ -221,7 +231,7 @@ theorem exteriorPart_eq_zero_of_kernel (x : infiniteOnsiteDomain potential)
     rw [exterior_energy_eq_central_of_kernel x hx, centralPart_energy_of_kernel x hx]
     exact mul_nonpos_of_nonpos_of_nonneg hd (sq_nonneg _)
   have hs : ‖(exteriorDomainPart x).1‖ ^ 2 ≤ 0 := by
-    apply (mul_le_mul_left hc).mp
+    apply le_of_mul_le_mul_left ?_ hc
     simpa only [mul_zero] using (exterior_energy_lower_bound x).trans he
   have hn : ‖(exteriorDomainPart x).1‖ = 0 := by
     nlinarith [norm_nonneg (exteriorDomainPart x).1]

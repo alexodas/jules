@@ -17,6 +17,8 @@ CONTROLLI SUL CHECKPOINT
     "Lean 4 / Mathlib proof check" e "Palomar preparation checks".
     La verifica delle Actions resta all'utente, anche dopo nuovi commit.
     Non interrogare Actions, log o check remoti autonomamente.
+    Se l'utente segnala un fallimento, leggere i log di quelle esecuzioni
+    per correggerlo; dopo il nuovo commit attendere di nuovo il suo esito.
     Per i nuovi moduli usare l'ambiente Lean/Comparator
     delle Actions esistenti sul branch di lavoro, come richiesto dall'utente.
 [ ] Correggere eventuali errori di build, confezionamento o Comparator.
@@ -80,6 +82,14 @@ PASSO ATTUALE: MOLTEPLICITA' GLOBALE (IN ATTESA DI VALIDAZIONE GITHUB)
     Questi controlli non sostituiscono la compilazione Lean/Comparator.
 [x] Aggiornare README 4.78, roadmap, note e metadati distinguendo i nuovi
     enunciati in attesa di validazione da quelli gia' verificati.
+[x] Diagnosticare il fallimento segnalato dall'utente di Lean #366 e
+    Palomar preparation #153 sul commit e0cf8c3. Entrambe si fermano nella
+    compilazione di CrossingMultiplicity; il confronto Comparator e'
+    saltato, non fallito per divergenze tra dichiarazioni.
+[x] Correggere i tre punti indicati dai log: inner_zero_left al posto di
+    zero_inner; confronto esplicito delle energie con sub_le_sub_right;
+    cancellazione del fattore positivo con le_of_mul_le_mul_left.
+    Gli enunciati matematici e il target Palomar restano invariati.
 [ ] Attendere dall'utente il verde delle due Actions sul prossimo commit.
     Il nuovo modulo non e' stato compilato in locale.
 [ ] Dopo il verde, registrare la molteplicita' esatta come verificata e
