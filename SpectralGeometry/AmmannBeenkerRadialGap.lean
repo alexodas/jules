@@ -1,6 +1,6 @@
 module
 
-public import SpectralGeometry.AmmannBeenkerCutProject
+public import SpectralGeometry.AmmannBeenkerOperator
 
 public section
 
@@ -93,5 +93,53 @@ theorem physical_sq_gap {n : Lattice} (hn : Admitted n)
   all_goals norm_num [Admitted, Window, internal, abs_lt] at hn
   all_goals norm_num [physical, Complex.sq_norm, Complex.normSq_apply] at hr ⊢
   all_goals nlinarith
+
+/-- The first omitted shell gives the exterior barrier `4 + 2 * sqrt 2`. -/
+theorem potential_outside_sector_sharp (v : Vertex) (hv : v ∉ sector) :
+    4 + 4 * alpha ≤ potential v := by
+  have hn : 2 < ‖position v‖ := lt_of_not_ge ((mem_sector v).not.mp hv)
+  have hr : 3 + 4 * alpha ≤ ‖position v‖ ^ 2 := by
+    by_contra h
+    have hh := physical_sq_gap v.property (lt_of_not_ge h)
+    change ‖position v‖ ^ 2 ≤ 4 at hh
+    nlinarith
+  unfold potential
+  linarith
+
+/-- A sharper nine-level response for the same operator and sector.
+The coefficient is `4 * sqrt 2 - 5`, on the enlarged interval
+`0 ≤ τ ≤ 3 + 2 * sqrt 2`. -/
+theorem exists_nine_level_response_sharp :
+    ∃ ev : ℕ → ℝ, Monotone ev ∧
+      Nonempty (DomainEigenbasis (infiniteOnsiteDomain potential)
+        (onsitePlusBounded potential interaction) ev) ∧
+      (∀ n : ℕ, 1 ≤ ev n) ∧
+      (∀ n : ℕ, n < 9 → ev n ≤ 3) ∧
+      ∀ τ : ℝ, 0 ≤ τ → τ ≤ 3 + 4 * alpha →
+        ∃ μ : ℕ → ℝ, Monotone μ ∧
+          Nonempty (DomainEigenbasis (infiniteOnsiteDomain potential)
+            (onsitePlusBounded potential (interaction + τ • finiteSectorProjection sector)) μ) ∧
+          (∀ n : ℕ, 1 ≤ μ n) ∧
+          (∀ n : ℕ, n < 9 →
+            (8 * alpha - 5) * τ ≤ μ n - ev n ∧ μ n - ev n ≤ τ) := by
+  obtain ⟨ev, hev, ⟨b⟩, hgap, hl, _⟩ := exists_nine_level_response
+  refine ⟨ev, hev, ⟨b⟩, hgap, hl, ?_⟩
+  intro τ ht htR
+  have hsym := finiteSectorCorrection_symmetric interaction interaction_symmetric sector τ
+  obtain ⟨μ, hμ, ⟨bt⟩⟩ := onsitePlusBounded_exists_orderedEigenbasis
+    potential 1 potential_lower potential_proper _ hsym
+  have hgapμ : ∀ n : ℕ, 1 ≤ μ n := fun n => (hgap n).trans
+    (finiteSector_ordered_mono potential interaction interaction_symmetric sector
+      τ ht ev μ hev hμ b bt n)
+  refine ⟨μ, hμ, ⟨bt⟩, hgapμ, ?_⟩
+  intro n hn
+  have ha := alpha_bounds.1
+  have hr := finiteSector_ordered_response_of_nonneg potential interaction interaction_symmetric
+    interaction_nonneg 1 (4 + 4 * alpha) 3 potential_lower (by linarith)
+    sector potential_outside_sector_sharp τ ht (by linarith) ev μ hev hμ b bt n (hl n hn)
+  have hc : ((4 + 4 * alpha - 3) / (4 + 4 * alpha - 1)) = 8 * alpha - 5 := by
+    apply (div_eq_iff (by linarith : 4 + 4 * alpha - 1 ≠ 0)).2
+    nlinarith [alpha_sq]
+  simpa only [hc] using hr
 
 end SpectralGeometry.AmmannBeenker

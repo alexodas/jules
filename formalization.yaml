@@ -76,7 +76,7 @@
     }
   ],
   "status": {
-    "scope": "One main theorem, SpectralGeometry.AmmannBeenker.exists_nine_level_fullProducts, and four supporting witness lemmas: matching involutivity, finite radius sublevels, onsite properness and finite-dimensional compact-resolvent eigenspaces. All concrete model definitions are compared transitively with no definition holes. The entire 82-module mathematical library is built. The selected result constructs complete spectra, geometric summability, exact entire full products and a nine-slot indexed zero response on each branch throughout 0≤τ≤4.",
+    "scope": "One main theorem, SpectralGeometry.AmmannBeenker.exists_nine_level_fullProducts, and four supporting witness lemmas: matching involutivity, finite radius sublevels, onsite properness and finite-dimensional compact-resolvent eigenspaces. All concrete model definitions are compared transitively with no definition holes. The entire 86-module mathematical library is built. The selected result constructs complete spectra, geometric summability, exact entire full products and a nine-slot indexed zero response on each branch throughout 0≤τ≤4.",
     "sorry_count": 0,
     "sorry_in_definitions": 0,
     "axioms": [

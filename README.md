@@ -12,6 +12,11 @@ complete ordered spectra and entire products with exact geometric zero
 multiplicities, and bounds the response of nine indexed zeros on each
 reflected branch to a finite positive intervention.
 The foundational observation and analytic results remain documented below.
+Sections 4.73–4.75 strengthen the original sector estimate and construct
+an exact crossing of two independent compact eigenvectors, with a state
+that stays fixed after a one-edge change. Exact multiplicity, an explicit
+gap and the motion of the other perturbed eigenvalue remain open. The
+selected Palomar statement remains the full-product theorem of §4.72.
 
 | Part of the program | Status |
 | --- | --- |
@@ -29,6 +34,7 @@ The foundational observation and analytic results remain documented below.
 | Numerical tail rates and a worked scalar zero certificate | Formalized in §§4.66–4.67: explicit radius, cofactor bound and cutoff for the linear onsite model; numerical tail bounds also hold after symmetric nonnegative bounded interactions |
 | Explicit octagonal cut-and-project vertex graph and nine-level finite-sector response | Formalized in §§4.68–4.70: infinite embedded vertices, exact central star, matching Laplacian and a nonempty controlled window |
 | Planar vertex counting, geometric summability and full-product zero response | Formalized in §§4.71–4.72 for the explicit graph, with a nonempty nine-level window and no supplied summability hypothesis |
+| Radial barrier, compact eigenvectors and ring-induced crossing | Formalized in §§4.73–4.75; includes a stationary one-edge state and an exact Rayleigh response, but not a certified split spectral pair |
 | Relative products and certified finite-patch zero response | Remaining obligations in §§6.5–6.6; geometric scalar cofactor/radius certificates also remain open |
 
 The research objective is an end-to-end statement relating an explicitly defined
@@ -2435,9 +2441,71 @@ aperiodicity, optimal constants, numerical cofactor/radius data, relative
 determinants and finite-patch errors are not conclusions. Formal verification
 is distinct from originality or research-interest assessment.
 
+### 4.73. A radial gap and a stronger nine-level response
+
+[AmmannBeenkerRadialGap.lean](SpectralGeometry/AmmannBeenkerRadialGap.lean)
+proves that the internal window has squared radius less than two. The
+joint norm identity reduces the small-radius classification to 81 integer
+cases. Every admitted vertex with $|p|^2<3+2\sqrt2$ has $|p|\le2$.
+Thus `potential_outside_sector_sharp` gives $V\ge4+2\sqrt2$ outside the
+same radius-two sector $S$ used in §4.72.
+
+`exists_nine_level_response_sharp` reuses the baseline nine-level theorem,
+constructs the perturbed eigenbases, and proves
+```math
+(4\sqrt2-5)\tau\le\lambda_n(H+\tau P_S)-\lambda_n(H)\le\tau,
+\qquad n<9,\quad 0\le\tau\le3+2\sqrt2.
+```
+The coefficient is approximately $0.65685$. This sharpens the spectral
+estimate for the same operator, domain and sector. The selected full-product
+statement of §4.72 retains its original constants and interval.
+
+### 4.74. Compact eigenvectors on the infinite natural domain
+
+[AmmannBeenkerCompactModes.lean](SpectralGeometry/AmmannBeenkerCompactModes.lean)
+and [AmmannBeenkerCompactStates.lean](SpectralGeometry/AmmannBeenkerCompactStates.lean)
+construct alternating states $a,b$ on the eight-point orbits of
+$(1,0,0,0)$ and $(1,1,0,0)$ under
+$(n_0,n_1,n_2,n_3)\mapsto(-n_3,n_0,n_1,n_2)$.
+Their amplitudes alternate between $+1$ and $-1$, and vanish elsewhere.
+Lean checks the window decisions, all matching actions and cancellation
+outside the supports. The resulting natural-domain identities are
+```math
+Ha=\frac{35}{16}a,\qquad Hb=\left(\frac{13}{4}+\sqrt2\right)b,
+\qquad \langle a,b\rangle=0,\quad \|a\|^2=\|b\|^2=8.
+```
+The vectors are explicitly proved nonzero and linearly independent.
+These local patterns are known type-A and type-B states; their source is
+recorded in the [development notes](docs/compact-mode-crossing.md).
+The construction alone is not presented as a novelty claim.
+
+### 4.75. A ring crossing and a single-edge change
+
+[AmmannBeenkerCompactCrossing.lean](SpectralGeometry/AmmannBeenkerCompactCrossing.lean)
+uses $A=\operatorname{neighbors}(0)$, the first compact ring, and $K_t=H+tP_A$.
+This intervention differs from the radius-two sector $S$. For every real $t$,
+```math
+K_ta=(35/16+t)a,\qquad K_tb=E_*b,\qquad E_*=13/4+\sqrt2.
+```
+At $t_*=17/16+\sqrt2$, `compact_crossing` proves the two independent
+eigenvector equations at $E_*$. This establishes multiplicity **at least
+two**, not exactly two or isolation from the remaining spectrum.
+
+The endpoints in $u=\delta_{(1,0,0,0)}-\delta_{(1,1,0,0)}$ are proved
+adjacent. Hence $K_{t_*}+\varepsilon|u\rangle\langle u|$ changes an actual
+edge weight. For every real $\varepsilon$, `crossing_dark_eigenvector`
+proves that the nonzero vector $a+b$ remains an eigenvector at $E_*$.
+For the unit vector $q=(a-b)/4$, it also proves
+```math
+\langle q,(K_{t_*}+\varepsilon|u\rangle\langle u|)q\rangle=E_*+\varepsilon/4.
+```
+This is an exact Rayleigh quotient identity. It does not yet establish
+another eigenvalue's value, derivative or quadratic remainder. The
+isolation and perturbation estimates needed for those claims remain open.
+
 ## 5. Building and verification
 
-The canonical import list is maintained in [`SpectralGeometry.lean`](SpectralGeometry.lean). It currently imports **82 Lean modules**: eleven analytic and window modules, four finite-dimensional geometry modules, and sixty-seven infinite geometry/operator/spectral modules (including domain-generic interfaces).
+The canonical import list is maintained in [`SpectralGeometry.lean`](SpectralGeometry.lean). It currently imports **86 Lean modules**: eleven analytic and window modules, four finite-dimensional geometry modules, and seventy-one infinite geometry/operator/spectral modules (including domain-generic interfaces).
 
 - **Analytic core, indexed points and certified windows (11):**
   - [`CanonicalProduct.lean`](SpectralGeometry/CanonicalProduct.lean)
@@ -2525,12 +2593,16 @@ The canonical import list is maintained in [`SpectralGeometry.lean`](SpectralGeo
   - [`FullSpectralZeroCounts.lean`](SpectralGeometry/FullSpectralZeroCounts.lean)
   - [`LinearOnsiteZeroCertificate.lean`](SpectralGeometry/LinearOnsiteZeroCertificate.lean)
 
-- **Explicit octagonal geometry, operator and spectral products (5):**
+- **Explicit octagonal geometry, operator and spectral products (9):**
   - [`AmmannBeenkerCutProject.lean`](SpectralGeometry/AmmannBeenkerCutProject.lean)
   - [`AmmannBeenkerGraph.lean`](SpectralGeometry/AmmannBeenkerGraph.lean)
   - [`AmmannBeenkerOperator.lean`](SpectralGeometry/AmmannBeenkerOperator.lean)
   - [`AmmannBeenkerSummability.lean`](SpectralGeometry/AmmannBeenkerSummability.lean)
   - [`AmmannBeenkerSpectralProducts.lean`](SpectralGeometry/AmmannBeenkerSpectralProducts.lean)
+  - [`AmmannBeenkerRadialGap.lean`](SpectralGeometry/AmmannBeenkerRadialGap.lean)
+  - [`AmmannBeenkerCompactModes.lean`](SpectralGeometry/AmmannBeenkerCompactModes.lean)
+  - [`AmmannBeenkerCompactStates.lean`](SpectralGeometry/AmmannBeenkerCompactStates.lean)
+  - [`AmmannBeenkerCompactCrossing.lean`](SpectralGeometry/AmmannBeenkerCompactCrossing.lean)
 
 - **Bounded spectral errors and full zero-cluster certificates (2):**
   - [`InfiniteBoundedSpectralStability.lean`](SpectralGeometry/InfiniteBoundedSpectralStability.lean)
@@ -2870,6 +2942,16 @@ The relation to the standard Ammann–Beenker construction is documented in
 
 **Next application tasks**
 
+- [x] Strengthen the existing nine-level response to coefficient
+  $4\sqrt2-5$ on $0\le\tau\le3+2\sqrt2$ using the next-shell barrier (§4.73).
+- [x] Prove the two compact-state equations, orthogonality and exact
+  ring-induced crossing on the infinite natural domain (§§4.74–4.75).
+- [x] Prove the stationary state under a one-edge change and the exact
+  Rayleigh response of the affected unit direction (§4.75).
+- [ ] Prove that the crossing eigenspace has exactly dimension two and
+  give an explicit gap to all other levels of the infinite operator.
+- [ ] Use that gap to control the moving eigenvalue after the one-edge
+  change on an explicit parameter interval, including a remainder bound.
 - [ ] Derive an isolation radius and a nonzero analytic-cofactor lower
   certificate for a specified geometric spectral level or cluster.
   Account for multiplicity; do not assume simple spectrum.
@@ -2885,10 +2967,9 @@ The relation to the standard Ammann–Beenker construction is documented in
 - [ ] Formalize global rotational symmetry, polygonal tiling coverage and
   aperiodicity when these properties are part of a claimed application.
   The present spectral theorem is about the explicitly defined graph.
-- [ ] Investigate whether the geometry permits a smaller intervention
-  sector or stronger quantitative bounds than the generic form argument.
-  This is a possible research contribution, not a consequence of the
-  existing nine-level estimate.
+- [ ] Assess the research contribution after exact multiplicity, isolation
+  and quantitative splitting have been proved. The smaller ring intervention
+  and stronger original-sector bound do not alone establish research interest.
 
 The graph, planar count, summability and exact full-product response are
 proved source results. The remaining geometric and numerical certificates
