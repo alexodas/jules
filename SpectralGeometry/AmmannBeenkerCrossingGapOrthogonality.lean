@@ -662,5 +662,61 @@ theorem crossingDifferentLevel_central_projected_norm_sq_lower
   · simpa only [crossingCentralPart_centralVertex_apply] using ha
   · simpa only [crossingCentralPart_centralVertex_apply] using hb
 
+
+/-!
+## Operator-norm estimate for the exterior-to-central coupling
+
+The mixed-term estimate is upgraded to a norm bound for the
+central projection of the residual of a genuine exterior domain
+vector. The test vector is itself the finite central projection
+of that residual, so it belongs to the natural onsite domain.
+-/
+
+/-- The norm of the exterior-to-central hopping block is at most
+1/4 on every exterior component of a domain vector. Unlike a
+bilinear pairing estimate, this controls the entire projected
+residual and is suitable for the central eigenvector equation. -/
+theorem crossingResidual_exterior_projected_norm_le
+    (y : infiniteOnsiteDomain potential) :
+    ‖finiteSectorProjection sector
+      (crossingResidual (exteriorDomainPart y))‖ ≤
+      (1 / 4 : ℝ) * ‖(exteriorDomainPart y).1‖ := by
+  let r := crossingResidual (exteriorDomainPart y)
+  let z := finiteSectorProjection sector r
+  let test : infiniteOnsiteDomain potential :=
+    ⟨z, finiteProjection_mem_domain sector r⟩
+  have htest : (centralDomainPart test).1 = z := by
+    apply lp.ext
+    funext v
+    rw [centralDomainPart_apply]
+    by_cases hv : v ∈ sector
+    · simp [z, finiteSectorProjection_apply, hv]
+    · simp [z, finiteSectorProjection_apply, hv]
+  have hpair := crossingResidual_central_exterior_inner_abs_bound test y
+  rw [htest] at hpair
+  change |inner ℝ z r| ≤
+      (1 / 4 : ℝ) * ‖z‖ * ‖(exteriorDomainPart y).1‖ at hpair
+  have hself : inner ℝ z r = ‖z‖ ^ 2 := by
+    calc
+      _ = inner ℝ r z := real_inner_comm _ _
+      _ = _ := finiteSectorProjection_inner sector r
+  have hsquared :
+      ‖z‖ ^ 2 ≤
+        (1 / 4 : ℝ) * ‖z‖ * ‖(exteriorDomainPart y).1‖ := by
+    calc
+      _ = |inner ℝ z r| := by rw [hself, abs_of_nonneg (sq_nonneg _)]
+      _ ≤ _ := hpair
+  change ‖z‖ ≤ (1 / 4 : ℝ) * ‖(exteriorDomainPart y).1‖
+  by_cases hzero : ‖z‖ = 0
+  · rw [hzero]
+    positivity
+  · have hpos : 0 < ‖z‖ :=
+      lt_of_le_of_ne (norm_nonneg z) (Ne.symm hzero)
+    by_contra hn
+    have hgt : (1 / 4 : ℝ) * ‖(exteriorDomainPart y).1‖ < ‖z‖ :=
+      lt_of_not_ge hn
+    have hcontr := mul_lt_mul_of_pos_left hgt hpos
+    nlinarith only [hsquared, hcontr]
+
 end
 end SpectralGeometry.AmmannBeenker
