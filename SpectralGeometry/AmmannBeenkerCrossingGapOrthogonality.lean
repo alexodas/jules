@@ -548,5 +548,84 @@ theorem crossingExteriorEnergy_off_crossing_bound
       ‖q.1‖ ^ 2 ≤ (1 / 4 : ℝ) * ‖c.1‖ * ‖q.1‖
   nlinarith only [hbarrier, hshift, hmix]
 
+
+/-!
+## Lifting the 17-vertex central singular-value gap
+
+The finite estimate is now applied to the actual central component
+of a natural-domain vector. The central restriction theorem identifies
+its finite block action with the central coordinates of the full
+shifted operator. Both squared norms are exact Hilbert norms.
+
+The two alternating-sum hypotheses are kept explicit here; they
+follow for off-crossing eigenvectors from the orthogonality theorem.
+-/
+
+/-- The certified singular-value estimate for the 17-vertex block,
+expressed using the genuine Hilbert norms of the central domain
+component and the projected infinite crossing residual. -/
+theorem crossingCentralResidual_projected_norm_sq_lower
+    (x : infiniteOnsiteDomain potential)
+    (hxa :
+      (centralDomainPart x).1 (centralVertex 1) -
+        (centralDomainPart x).1 (centralVertex 2) +
+        (centralDomainPart x).1 (centralVertex 3) -
+        (centralDomainPart x).1 (centralVertex 4) +
+        (centralDomainPart x).1 (centralVertex 5) -
+        (centralDomainPart x).1 (centralVertex 6) +
+        (centralDomainPart x).1 (centralVertex 7) -
+        (centralDomainPart x).1 (centralVertex 8) = 0)
+    (hya :
+      (centralDomainPart x).1 (centralVertex 9) -
+        (centralDomainPart x).1 (centralVertex 10) +
+        (centralDomainPart x).1 (centralVertex 11) -
+        (centralDomainPart x).1 (centralVertex 12) +
+        (centralDomainPart x).1 (centralVertex 13) -
+        (centralDomainPart x).1 (centralVertex 14) +
+        (centralDomainPart x).1 (centralVertex 15) -
+        (centralDomainPart x).1 (centralVertex 16) = 0) :
+    (1 / 576 : ℝ) * ‖(centralDomainPart x).1‖ ^ 2 ≤
+      ‖finiteSectorProjection sector
+        (crossingResidual (centralDomainPart x))‖ ^ 2 := by
+  let u : Fin 17 → ℝ := fun i => (centralDomainPart x).1 (centralVertex i)
+  have hblock (i : Fin 17) :
+      centralCrossingBlock u i =
+        crossingResidual (centralDomainPart x) (centralVertex i) := by
+    have h := congrFun (centralCrossingBlock_restriction (centralDomainPart x)
+      (centralDomainPart_outside x)) i
+    simpa only [crossingResidual_apply] using h
+  have hnormc :
+      (∑ i : Fin 17, (u i) ^ 2) = ‖(centralDomainPart x).1‖ ^ 2 := by
+    rw [← real_inner_self_eq_norm_sq,
+      inner_eq_central_sum _ _ (centralDomainPart_outside x)]
+    apply Finset.sum_congr rfl
+    intro i _
+    dsimp [u]
+    ring
+  have hnormr :
+      (∑ i : Fin 17,
+        (crossingResidual (centralDomainPart x) (centralVertex i)) ^ 2) =
+        ‖finiteSectorProjection sector
+          (crossingResidual (centralDomainPart x))‖ ^ 2 := by
+    rw [← crossingFiniteProjection_norm_sq sector
+      (crossingResidual (centralDomainPart x))]
+    rw [sector_eq_centralPatch, centralPatch, Finset.sum_image]
+    intro i _ j _ h
+    exact centralVertex_injective h
+  have hfinite : (1 / 576 : ℝ) * (∑ i : Fin 17, (u i) ^ 2) ≤
+      ∑ i : Fin 17, (centralCrossingBlock u i) ^ 2 :=
+    crossingCentralBlock_norm_sq_lower u hxa hya
+  calc
+    (1 / 576 : ℝ) * ‖(centralDomainPart x).1‖ ^ 2 =
+        (1 / 576 : ℝ) * (∑ i : Fin 17, (u i) ^ 2) := by
+      rw [hnormc]
+    _ ≤ ∑ i : Fin 17, (centralCrossingBlock u i) ^ 2 := hfinite
+    _ = ∑ i : Fin 17,
+        (crossingResidual (centralDomainPart x) (centralVertex i)) ^ 2 := by
+      apply Finset.sum_congr rfl
+      intro i _
+      rw [hblock]
+    _ = _ := hnormr
+
 end
 end SpectralGeometry.AmmannBeenker
