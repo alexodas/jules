@@ -689,8 +689,9 @@ theorem crossingResidual_exterior_projected_norm_le
     apply lp.ext
     funext v
     rw [centralDomainPart_apply]
+    change (if v ∈ sector then z v else 0) = z v
     by_cases hv : v ∈ sector
-    · simp [z, finiteSectorProjection_apply, hv]
+    · simp only [if_pos hv]
     · simp [z, finiteSectorProjection_apply, hv]
   have hpair := crossingResidual_central_exterior_inner_abs_bound test y
   rw [htest] at hpair
