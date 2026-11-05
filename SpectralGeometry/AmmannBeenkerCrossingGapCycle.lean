@@ -106,5 +106,61 @@ theorem crossingEightCycle_threshold :
     (1 / 24 : ℝ) ^ 2 < (1 / 16 : ℝ) ^ 2 * (1 / 2 : ℝ) := by
   norm_num
 
+
+/-!
+The rotationally invariant component of the 17-vertex central block has
+three coordinates: the origin amplitude z, and the mean amplitudes u, v
+on the first and second rings. Its squared norm and residual squared norm
+are respectively
+  z^2 + 8*u^2 + 8*v^2
+and
+  (d*z+u/2)^2 + (z+2*v)^2/32 + u^2/8,
+where d = crossingEnergy-3/2 > 3.
+
+The following estimate proves a squared lower bound 1/144 for that
+three-coordinate sector. Combined with the eight-cycle estimate on the
+zero-mean parts, this is sufficient for the targeted central-block
+constant 1/24; the actual 17-coordinate orthogonal-decomposition
+identity has not yet been formalized.
+-/
+
+/-- A rational, fully algebraic singular-value certificate for the
+three-coordinate constant Fourier sector of the central crossing block. -/
+theorem crossingCentralConstantMode_gap
+    (d z u v : ℝ) (hd : 3 ≤ d) :
+    (1 / 144 : ℝ) * (z ^ 2 + 8 * u ^ 2 + 8 * v ^ 2) ≤
+      (d * z + u / 2) ^ 2 + (z + 2 * v) ^ 2 / 32 + u ^ 2 / 8 := by
+  have hdplus : 0 ≤ d + 3 := by linarith
+  have hdminus : 0 ≤ d - 3 := by linarith
+  have hcoeff : 0 ≤ (d - 3) * (d + 3) := mul_nonneg hdminus hdplus
+  have hnonneg : 0 ≤ (d - 3) * (d + 3) * z ^ 2 :=
+    mul_nonneg hcoeff (sq_nonneg z)
+  have hdz : 9 * z ^ 2 ≤ (d * z) ^ 2 := by
+    nlinarith only [hnonneg]
+  have hsum : (d * z) ^ 2 ≤ 2 * (d * z + u / 2) ^ 2 + u ^ 2 / 2 := by
+    nlinarith only [sq_nonneg (d * z + u)]
+  have hz : z ^ 2 ≤ (2 / 9 : ℝ) * (d * z + u / 2) ^ 2 +
+      (1 / 18 : ℝ) * u ^ 2 := by
+    nlinarith only [hdz, hsum]
+  have hv : 8 * v ^ 2 ≤ 4 * (z + 2 * v) ^ 2 + 4 * z ^ 2 := by
+    nlinarith only [sq_nonneg (2 * z + 2 * v)]
+  nlinarith [sq_nonneg (d * z + u / 2), sq_nonneg (z + 2 * v),
+    sq_nonneg u]
+
+/-- The known exterior bound also certifies d > 3 for the actual model. -/
+theorem crossingCentralConstantDiagonal_gt_three :
+    (3 : ℝ) < crossingEnergy - 3 / 2 := by
+  have h := crossingExteriorCoefficient_gt_two
+  dsimp only [crossingEnergy] at *
+  linarith
+
+/-- Instantiate the algebraic three-coordinate gap at the exact crossing. -/
+theorem crossingCentralConstantMode_concrete (z u v : ℝ) :
+    (1 / 144 : ℝ) * (z ^ 2 + 8 * u ^ 2 + 8 * v ^ 2) ≤
+      ((crossingEnergy - 3 / 2) * z + u / 2) ^ 2 +
+        (z + 2 * v) ^ 2 / 32 + u ^ 2 / 8 :=
+  crossingCentralConstantMode_gap _ _ _ _
+    (le_of_lt crossingCentralConstantDiagonal_gt_three)
+
 end
 end SpectralGeometry.AmmannBeenker
