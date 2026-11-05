@@ -627,5 +627,40 @@ theorem crossingCentralResidual_projected_norm_sq_lower
       rw [hblock]
     _ = _ := hnormr
 
+
+/-!
+## Applying the central singular-value estimate to off-crossing eigenvectors
+
+The orthogonality of distinct eigenspaces now discharges both
+alternating-ring conditions required by the finite 17-vertex
+singular-value certificate. The conclusion concerns the full
+natural-domain infinite eigenvector, not an arbitrary finite patch.
+-/
+
+/-- The central projection preserves every coordinate in the
+17-vertex sector. -/
+theorem crossingCentralPart_centralVertex_apply
+    (x : infiniteOnsiteDomain potential) (i : Fin 17) :
+    (centralDomainPart x).1 (centralVertex i) = x.1 (centralVertex i) := by
+  rw [centralDomainPart_apply, if_pos (centralVertex_mem_sector i)]
+
+/-- Every actual eigenvector at an energy distinct from the
+crossing has central coordinates in the coercive codimension-two
+subspace, and hence satisfies the full projected Hilbert-norm
+singular-value estimate. -/
+theorem crossingDifferentLevel_central_projected_norm_sq_lower
+    (x : infiniteOnsiteDomain potential) (energy : ℝ)
+    (hx : onsitePlusBounded potential (ringInteraction crossingParameter) x =
+      energy • (x : TileHilbert Vertex))
+    (hne : energy ≠ crossingEnergy) :
+    (1 / 576 : ℝ) * ‖(centralDomainPart x).1‖ ^ 2 ≤
+      ‖finiteSectorProjection sector
+        (crossingResidual (centralDomainPart x))‖ ^ 2 := by
+  obtain ⟨ha, hb⟩ :=
+    crossingDifferentLevel_ring_orthogonality x energy hx hne
+  apply crossingCentralResidual_projected_norm_sq_lower x
+  · simpa only [crossingCentralPart_centralVertex_apply] using ha
+  · simpa only [crossingCentralPart_centralVertex_apply] using hb
+
 end
 end SpectralGeometry.AmmannBeenker
