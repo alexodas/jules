@@ -241,5 +241,75 @@ theorem crossingBoundaryCoupling_squared_bound
       mul_le_mul_of_nonneg_left hle (by norm_num)
     _ = _ := by ring
 
+
+/-!
+## Coupling in the ambient infinite Hilbert-space norm
+
+The preceding finite certificate becomes a genuine Hilbert-norm
+estimate using the contractivity of coordinate projections. This
+step makes no claim yet about identification with the mixed
+crossingResidual term.
+-/
+
+/-- The square norm of a finite coordinate projection is exactly
+the sum of squared amplitudes at those vertices. -/
+private theorem crossingFiniteProjection_norm_sq
+    (F : Finset Vertex) (x : TileHilbert Vertex) :
+    (∑ v ∈ F, (x v) ^ 2) = ‖finiteSectorProjection F x‖ ^ 2 := by
+  rw [← real_inner_self_eq_norm_sq, lp.inner_eq_tsum]
+  calc
+    (∑ v ∈ F, (x v) ^ 2) =
+        ∑ v ∈ F, inner ℝ ((finiteSectorProjection F x) v)
+          ((finiteSectorProjection F x) v) := by
+      apply Finset.sum_congr rfl
+      intro v hv
+      simp only [finiteSectorProjection_apply, if_pos hv,
+        RCLike.inner_apply, conj_trivial]
+      ring
+    _ = ∑' v : Vertex, inner ℝ ((finiteSectorProjection F x) v)
+        ((finiteSectorProjection F x) v) := by
+      symm
+      apply tsum_eq_sum
+      intro v hv
+      simp [finiteSectorProjection_apply, hv]
+
+/-- Any finite sum of coordinate squares is bounded by the full
+square Hilbert norm. -/
+theorem crossingFiniteCoordinate_energy_le
+    (F : Finset Vertex) (x : TileHilbert Vertex) :
+    (∑ v ∈ F, (x v) ^ 2) ≤ ‖x‖ ^ 2 := by
+  rw [crossingFiniteProjection_norm_sq]
+  have hnorm : ‖finiteSectorProjection F x‖ ≤ ‖x‖ :=
+    (ContinuousLinearMap.le_opNorm _ _).trans (by
+      simpa using mul_le_mul_of_nonneg_right
+        (finiteSectorProjection_norm_le F) (norm_nonneg x))
+  nlinarith [norm_nonneg (finiteSectorProjection F x), norm_nonneg x]
+
+/-- Boundary pairing controlled by the *ambient infinite-dimensional*
+Hilbert norms; the squared coefficient 1/16 corresponds to
+a coupling-norm upper bound of 1/4. -/
+theorem crossingBoundaryCoupling_hilbert_squared_bound
+    (u q : TileHilbert Vertex) :
+    ((∑ e ∈ centralBoundaryEdges, u e.1 * q e.2) / 16) ^ 2 ≤
+      (1 / 16 : ℝ) * ‖u‖ ^ 2 * ‖q‖ ^ 2 := by
+  let S := centralBoundaryEdges.image Prod.fst
+  let T := centralBoundaryEdges.image Prod.snd
+  have hU : (∑ v ∈ S, (u v) ^ 2) ≤ ‖u‖ ^ 2 :=
+    crossingFiniteCoordinate_energy_le S u
+  have hQ : (∑ w ∈ T, (q w) ^ 2) ≤ ‖q‖ ^ 2 :=
+    crossingFiniteCoordinate_energy_le T q
+  have hQnonneg : 0 ≤ (∑ w ∈ T, (q w) ^ 2) :=
+    Finset.sum_nonneg (fun w hw => sq_nonneg _)
+  calc
+    _ ≤ (1 / 16 : ℝ) * (∑ v ∈ S, (u v) ^ 2) *
+        (∑ w ∈ T, (q w) ^ 2) :=
+      crossingBoundaryCoupling_squared_bound u q
+    _ ≤ (1 / 16 : ℝ) * ‖u‖ ^ 2 * (∑ w ∈ T, (q w) ^ 2) :=
+      mul_le_mul_of_nonneg_right
+        (mul_le_mul_of_nonneg_left hU (by norm_num)) hQnonneg
+    _ ≤ (1 / 16 : ℝ) * ‖u‖ ^ 2 * ‖q‖ ^ 2 :=
+      mul_le_mul_of_nonneg_left hQ
+        (mul_nonneg (by norm_num) (sq_nonneg _))
+
 end
 end SpectralGeometry.AmmannBeenker
