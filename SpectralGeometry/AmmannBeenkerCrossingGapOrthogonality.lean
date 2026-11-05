@@ -25,20 +25,20 @@ noncomputable section
 between different eigenvalues. The second vector is a zero of the shifted
 operator, not an assumed finite-support test vector. -/
 theorem crossingDifferentLevel_orthogonal_kernel
-    (x y : infiniteOnsiteDomain potential) (λ : ℝ)
+    (x y : infiniteOnsiteDomain potential) (energy : ℝ)
     (hx : onsitePlusBounded potential (ringInteraction crossingParameter) x =
-      λ • (x : TileHilbert Vertex))
+      energy • (x : TileHilbert Vertex))
     (hy : crossingResidual y = 0)
-    (hne : λ ≠ crossingEnergy) :
+    (hne : energy ≠ crossingEnergy) :
     inner ℝ x.1 y.1 = 0 := by
-  have hxres : crossingResidual x = (λ - crossingEnergy) • x.1 := by
+  have hxres : crossingResidual x = (energy - crossingEnergy) • x.1 := by
     change onsitePlusBounded potential (ringInteraction crossingParameter) x -
-      crossingEnergy • x.1 = (λ - crossingEnergy) • x.1
+      crossingEnergy • x.1 = (energy - crossingEnergy) • x.1
     rw [hx]
     module
   have hs := crossingResidual_symmetric x y
   rw [hxres, hy, inner_zero_right, real_inner_smul_left] at hs
-  have hc : λ - crossingEnergy ≠ 0 := sub_ne_zero.mpr hne
+  have hc : energy - crossingEnergy ≠ 0 := sub_ne_zero.mpr hne
   exact (mul_eq_zero.mp hs).resolve_left hc
 
 /-- Both known compact modes lie in the zero space of crossingResidual. -/
@@ -72,7 +72,7 @@ theorem crossingCompactA_inner_coordinates (x : infiniteOnsiteDomain potential) 
       rw [show compactA (centralVertex i) = centralCompactCoordinates 1 0 i from
         congrFun compactA_centralCoordinates i]
     _ = _ := by
-      norm_num [Fin.sum_univ_succ, centralCompactCoordinates] <;> ring
+      norm_num [Fin.sum_univ_succ, centralCompactCoordinates] <;> ring_nf
 
 
 /-- The B compact mode tests the corresponding alternating ring sum. -/
@@ -94,25 +94,25 @@ theorem crossingCompactB_inner_coordinates (x : infiniteOnsiteDomain potential) 
       rw [show compactB (centralVertex i) = centralCompactCoordinates 0 1 i from
         congrFun compactB_centralCoordinates i]
     _ = _ := by
-      norm_num [Fin.sum_univ_succ, centralCompactCoordinates] <;> ring
+      norm_num [Fin.sum_univ_succ, centralCompactCoordinates] <;> ring_nf
 
 
 /-- Different eigenvalues force first-ring and second-ring alternating
 amplitudes to vanish separately. The hypothesis is on the full infinite
 operator, not on a finite patch. -/
 theorem crossingDifferentLevel_ring_orthogonality
-    (x : infiniteOnsiteDomain potential) (λ : ℝ)
+    (x : infiniteOnsiteDomain potential) (energy : ℝ)
     (hx : onsitePlusBounded potential (ringInteraction crossingParameter) x =
-      λ • (x : TileHilbert Vertex))
-    (hne : λ ≠ crossingEnergy) :
+      energy • (x : TileHilbert Vertex))
+    (hne : energy ≠ crossingEnergy) :
     ((x.1 (centralVertex 1)) - (x.1 (centralVertex 2)) + (x.1 (centralVertex 3)) - (x.1 (centralVertex 4)) + (x.1 (centralVertex 5)) - (x.1 (centralVertex 6)) + (x.1 (centralVertex 7)) - (x.1 (centralVertex 8)) = 0) ∧
     ((x.1 (centralVertex 9)) - (x.1 (centralVertex 10)) + (x.1 (centralVertex 11)) - (x.1 (centralVertex 12)) + (x.1 (centralVertex 13)) - (x.1 (centralVertex 14)) + (x.1 (centralVertex 15)) - (x.1 (centralVertex 16)) = 0) := by
   constructor
   · rw [← crossingCompactA_inner_coordinates x]
-    exact crossingDifferentLevel_orthogonal_kernel x domainCompactA λ
+    exact crossingDifferentLevel_orthogonal_kernel x domainCompactA energy
       hx crossingResidual_compactA hne
   · rw [← crossingCompactB_inner_coordinates x]
-    exact crossingDifferentLevel_orthogonal_kernel x domainCompactB λ
+    exact crossingDifferentLevel_orthogonal_kernel x domainCompactB energy
       hx crossingResidual_compactB hne
 
 end
