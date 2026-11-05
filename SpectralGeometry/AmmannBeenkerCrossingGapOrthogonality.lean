@@ -2,6 +2,8 @@ module
 
 public import SpectralGeometry.AmmannBeenkerCrossingGapFinite
 
+import Mathlib.Algebra.Order.Chebyshev
+
 public section
 
 /-!
@@ -148,6 +150,95 @@ theorem crossingDifferentLevel_ring_orthogonality
   · rw [← crossingCompactB_inner_coordinates x]
     exact crossingDifferentLevel_orthogonal_kernel x domainCompactB energy
       hx crossingResidual_compactB hne
+
+
+/-!
+## Boundary coupling: a finite Hilbert–Schmidt certificate
+
+There are exactly sixteen oriented edges from the 17-vertex sector to
+the exterior. Cauchy–Schwarz over the edge list and a comparison with
+the complete product of the finite endpoint sets give a squared
+bilinear bound with constant 1/16 for hopping coefficient 1/16.
+
+This estimate is completely finite; identifying the boundary sum with
+the cross term of the unbounded full operator and passing from finite
+coordinate sums to Hilbert norms are subsequent steps.
+-/
+
+/-- The sum of squared weights over actual boundary edges is bounded
+by the product of the squared-weight sums over the two endpoint sets. -/
+private theorem crossingBoundaryCoupling_squared_weights
+    (u q : Vertex → ℝ) :
+    (∑ e ∈ centralBoundaryEdges, (u e.1 * q e.2) ^ 2) ≤
+      (∑ v ∈ centralBoundaryEdges.image Prod.fst, (u v) ^ 2) *
+      (∑ w ∈ centralBoundaryEdges.image Prod.snd, (q w) ^ 2) := by
+  let S : Finset Vertex := centralBoundaryEdges.image Prod.fst
+  let T : Finset Vertex := centralBoundaryEdges.image Prod.snd
+  have hsubset : centralBoundaryEdges ⊆ S.product T := by
+    intro e he
+    exact Finset.mem_product.mpr
+      ⟨Finset.mem_image_of_mem Prod.fst he,
+       Finset.mem_image_of_mem Prod.snd he⟩
+  have hle :
+      (∑ e ∈ centralBoundaryEdges, (u e.1 * q e.2) ^ 2) ≤
+        ∑ e ∈ S.product T, (u e.1 * q e.2) ^ 2 :=
+    Finset.sum_le_sum_of_subset_of_nonneg hsubset (by
+      intro e _ _
+      positivity)
+  have hproduct :
+      (∑ e ∈ S.product T, (u e.1 * q e.2) ^ 2) =
+        (∑ v ∈ S, (u v) ^ 2) * (∑ w ∈ T, (q w) ^ 2) := by
+    calc
+      (∑ e ∈ S.product T, (u e.1 * q e.2) ^ 2) =
+          ∑ v ∈ S, ∑ w ∈ T, (u v * q w) ^ 2 := by
+        rw [Finset.sum_product]
+      _ = ∑ v ∈ S, (u v) ^ 2 * (∑ w ∈ T, (q w) ^ 2) := by
+        apply Finset.sum_congr rfl
+        intro v hv
+        simp_rw [mul_pow]
+        rw [Finset.mul_sum]
+      _ = _ := by rw [Finset.sum_mul]
+  exact hle.trans (le_of_eq hproduct)
+
+/-- Exact sixteen-edge Hilbert–Schmidt bound for the cross-boundary
+hopping pairing. The constant 1/16 is the square of the intended
+operator-norm bound 1/4. -/
+theorem crossingBoundaryCoupling_squared_bound
+    (u q : Vertex → ℝ) :
+    ((∑ e ∈ centralBoundaryEdges, u e.1 * q e.2) / 16) ^ 2 ≤
+      (1 / 16 : ℝ) *
+        (∑ v ∈ centralBoundaryEdges.image Prod.fst, (u v) ^ 2) *
+        (∑ w ∈ centralBoundaryEdges.image Prod.snd, (q w) ^ 2) := by
+  have hs :
+      (∑ e ∈ centralBoundaryEdges, u e.1 * q e.2) ^ 2 ≤
+        (centralBoundaryEdges.card : ℝ) *
+          (∑ e ∈ centralBoundaryEdges, (u e.1 * q e.2) ^ 2) :=
+    sq_sum_le_card_mul_sum_sq
+  have hp := crossingBoundaryCoupling_squared_weights u q
+  have hnonneg : 0 ≤ (centralBoundaryEdges.card : ℝ) := Nat.cast_nonneg _
+  have hle :
+      (∑ e ∈ centralBoundaryEdges, u e.1 * q e.2) ^ 2 ≤
+        (16 : ℝ) *
+          (∑ v ∈ centralBoundaryEdges.image Prod.fst, (u v) ^ 2) *
+          (∑ w ∈ centralBoundaryEdges.image Prod.snd, (q w) ^ 2) := by
+    calc
+      _ ≤ (centralBoundaryEdges.card : ℝ) *
+          (∑ e ∈ centralBoundaryEdges, (u e.1 * q e.2) ^ 2) := hs
+      _ ≤ (centralBoundaryEdges.card : ℝ) *
+          ((∑ v ∈ centralBoundaryEdges.image Prod.fst, (u v) ^ 2) *
+            (∑ w ∈ centralBoundaryEdges.image Prod.snd, (q w) ^ 2)) :=
+        mul_le_mul_of_nonneg_left hp hnonneg
+      _ = _ := by rw [centralBoundaryEdges_card]; ring
+  calc
+    ((∑ e ∈ centralBoundaryEdges, u e.1 * q e.2) / 16) ^ 2 =
+        (1 / 256 : ℝ) *
+          (∑ e ∈ centralBoundaryEdges, u e.1 * q e.2) ^ 2 := by ring
+    _ ≤ (1 / 256 : ℝ) *
+          ((16 : ℝ) *
+            (∑ v ∈ centralBoundaryEdges.image Prod.fst, (u v) ^ 2) *
+            (∑ w ∈ centralBoundaryEdges.image Prod.snd, (q w) ^ 2)) :=
+      mul_le_mul_of_nonneg_left hle (by norm_num)
+    _ = _ := by ring
 
 end
 end SpectralGeometry.AmmannBeenker
