@@ -92,12 +92,12 @@
           "OpenAI ChatGPT GPT-6"
         ],
         "framework": "ChatGPT",
-        "tool_setup": "OpenAI GPT-6 assisted the GitHub development, Lean formalization and documentation under Alessandro Odasso’s direction, according to the responsible maintainer’s account.",
-        "prompting_notes": "Alessandro Odasso supplied the initial non-formal research idea and directed the project. He describes himself as not being a mathematician and as being interested in the use of LLMs for scientific research. He states that he used OpenAI GPT-6 throughout the GitHub development. The exact historical prompts and model contributions were not independently audited; this declaration reports the maintainer's account and does not assert mathematical priority."
+        "tool_setup": "The assistant helped develop the Lean proofs and repository documentation throughout the GitHub project.",
+        "prompting_notes": "Alessandro Odasso supplied the original informal research idea and directed the work. The prompt history and individual proof contributions remain unaudited."
       }
     ],
     "spend_usd": "not tracked",
-    "notes": "The initial non-formal research idea and the direction of the Jules project originated with Alessandro Odasso. Odasso does not identify as a mathematician; his stated motivation is to investigate how large language models can be used in scientific work. According to the responsible maintainer, he used OpenAI GPT-6 throughout development of the GitHub repository, including the Lean formalization and its associated repository work. The human originated the informal idea and directed the project; GPT-6 was the AI assistant used for technical development. This is a disclosure of the human/AI workflow, not proof of mathematical originality, not a claim that the human independently wrote all Lean proofs, and not independent evidence that every historical interaction is recoverable. The checked mathematical statements are verified by Lean/Comparator, not by the AI's authority. Costs were not tracked. Challenge-only sorry placeholders are never treated as proofs in Solution."
+    "notes": "This account of the workflow comes from the maintainer, who describes himself as a non-mathematician interested in how language models can assist scientific research."
   },
   "fidelity": {
     "divergences": "The open octagonal window excludes its boundary. The Hilbert space and eigenspace are real. The perturbation is a coordinate projection onto the first ring A, not onto the entire 17-vertex sector S used in the support proof. The result is for the specified centered vertex graph, potential, edge weight and crossing parameter; it makes no assertion for every tiling in the hull, every Hamiltonian or every energy. A numerical separation from other levels, quantitative one-edge splitting and new conclusions about product zeros are not part of this selection."
@@ -147,5 +147,5 @@
       }
     ]
   },
-  "acknowledgements": "The project reports use of OpenAI GPT-6 throughout its GitHub/Lean development under Alessandro Odasso's direction. Lean, Mathlib and PalomarTemplate provide the verification and development infrastructure; neither OpenAI nor these projects or the cited mathematical authors endorse this submission."
+  "acknowledgements": "The project uses Lean and Mathlib for formalization and PalomarTemplate for the verification workflow. The maintainer is responsible for the submission."
 }

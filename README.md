@@ -92,8 +92,10 @@ response?
 The program studies these questions for an operator with a confining onsite
 potential, bounded local interactions and controlled perturbations. It then
 transports the spectral information to a normalized canonical product on a
-fixed complex line. A concrete aperiodic model is needed to turn abstract
-bounds into an application with independently verified geometric hypotheses.
+fixed complex line. The concrete application uses the centered octagonal
+cut-and-project vertex graph (§§4.68–4.78). The spectral proofs use its
+verified vertex and edge geometry. Polygonal tiling coverage and aperiodicity
+remain open (§6.4).
 
 The intended audience includes discrete Schrödinger and graph-operator
 spectral theory, rigorous spectral approximation, entire functions associated
@@ -181,9 +183,11 @@ quantitative tail estimates apply to its full spectrum with a symmetric
 nonnegative bounded interaction, while the explicit cofactor and radius
 are proved for the onsite model. Sections 4.68–4.70 now construct the
 octagonal cut-and-project vertex graph and prove a concrete response for
-its first nine ordered levels. Sections 4.71–4.72 prove the geometric
-counting/summability inputs and the exact entire-product zero response,
-with the same positive gap and multiplicities throughout the intervention.
+its first nine ordered levels. Sections 4.71–4.72 use the geometric counting
+and summability estimates to prove how the corresponding product zeros move.
+For $0\le\tau\le4$, every level of $H$ and $H_\tau$ is at least one.
+In either product, the order of a zero equals the geometric multiplicity of
+the corresponding eigenvalue for that product's operator.
 
 The concrete full-product response of §4.72 uses these source results under
 its verified geometric hypotheses. They do not provide a numerical reconstruction
@@ -248,23 +252,26 @@ already establish a representation theorem for every bounded-degree graph.
 Finite onsite sublevel sets are a genuine growth assumption. On a
 finite-local-complexity tiling, a potential determined only by a finite set of
 local tile types takes finitely many values and cannot by itself supply that
-assumption on infinitely many sites. The concrete model must specify and
-justify confinement. A position-dependent potential such as
-$1+|x|^2$ is an explicit modeling choice, not a consequence of aperiodicity.
+assumption on infinitely many sites. On the octagonal graph, the chosen
+potential is $V(v)=1+|p(v)|^2$, where $p(v)$ is the physical position.
+Each bounded disk contains finitely many vertices, so the onsite sublevels
+are finite (§§4.68, 4.70).
 
-The first controlled modification will increase onsite energies on a finite
-sector:
+Raising the onsite energies by $\tau$ on $F_R$ gives the operator
 ```math
 H_\tau=H+\tau P_{F_R},\qquad \tau\ge0.
 ```
-Later local changes may alter finitely many couplings or site energies.
-After any necessary identification of site sets, their operator difference
-must be proved to have the finite-support form
-$\iota_S K\iota_S^*$. This representation is an obligation for the chosen
-geometric change, not an assumption that every tiling modification has it.
+On the octagonal graph, $F_5=\{v:|p(v)|\le2\}$ is the radius-two sector.
+For this intervention, §4.72 compares the zeros of the full spectral products
+of $H$ and $H_\tau$ using a common center, direction and normalization.
+Perturbing just the eight neighbors of the origin produces the crossing of
+§4.78. Changing the weight of the edge specified in §4.75 leaves the sum of
+the two compact modes at the crossing energy.
 
-The desired analytic response will compare the corresponding canonical
-products with a common center, direction and normalization.
+For a more general local change, the relative-product program in §6.5
+requires a proof that the operator difference has the form $\iota_S K\iota_S^*$
+on a finite set $S$. A change of site sets also requires identifying the two
+Hilbert spaces.
 
 ## 2. Canonical product and analytic foundations
 
@@ -341,11 +348,11 @@ Using the same $c,d$ for every operator makes zero displacement comparable
 across the family. For $c=\tfrac12$ and $d=i$, the positive zero heights
 are the positive eigenvalues. The affine coordinate fixes the line; it does
 not create spectral correlations or encode a preferred distribution.
-For the positive finite-sector intervention of §4.52, fixed $c,d$ give the
-verified response bound $|d|\kappa\tau\le |z_n^\pm(\tau)-z_n^\pm(0)|\le |d|\tau$
-for exactly the indices with baseline energy at most $E$. The positive
-coefficient follows from $E<R-\|B\|$ and $v_0<R$; the theorem does not assert
-a nonempty energy window or disjoint zero sets.
+For the positive finite-sector intervention of §4.52, the bound
+$|d|\kappa\tau\le |z_n^\pm(\tau)-z_n^\pm(0)|\le |d|\tau$ holds for every
+index $n$ with $\lambda_n(H)\le E$, throughout $0\le\tau\le R-v_0$ and for
+fixed $c,d$. The coefficient is positive since $E<R-\|B\|$ and $v_0<R$.
+The energy window may be empty and different indices may share a zero.
 For nonnegative $B$, §4.59 proves the same type of conclusion with the sharper
 $\kappa=(R-E)/(R-v_0)>0$ under $E<R$, again with the explicit interval
 $0\le\tau\le R-v_0$ and without asserting a nonempty target window.
@@ -1044,7 +1051,7 @@ The proof shows that the coordinatewise inverse gives a square-summable state be
 
 **What this establishes:** the shifted **onsite** operator `M_V-aI : D(V)→ℓ²(T)` is a bijection under the explicit unit-gap assumption, with a concrete coordinate formula for its inverse. This is a genuine solvability statement, stronger than merely excluding real point eigenvalues.
 
-**Relation to subsequent results:** this module establishes bijectivity and the coordinate formula, but does not itself package the inverse as a continuous linear map. The bounded inverse and its compactness are established in §§4.18–4.19. Sections 4.20–4.21 subsequently prove two-sided invertibility of a shifted **interacting** operator and compactness of its resolvent under explicit hypotheses; §§4.29–4.30 establish isolation and local finiteness of genuine real eigenvalues. Full real bounded-inverse spectral mapping is subsequently established in §4.32; its complex extension and a specialized aperiodic-tiling model remain open. Sufficient full-spectrum inverse-square summability is proved separately in §4.48. The one-unit condition is a convenient sufficient hypothesis, not a necessary one.
+**Relation to subsequent results:** this module establishes bijectivity and the coordinate formula, but does not itself package the inverse as a continuous linear map. The bounded inverse and its compactness are established in §§4.18–4.19. Sections 4.20–4.21 subsequently prove two-sided invertibility of a shifted **interacting** operator and compactness of its resolvent under explicit hypotheses; §§4.29–4.30 establish isolation and local finiteness of genuine real eigenvalues. Section 4.32 establishes spectral mapping for the full real bounded-inverse spectrum. Its complex extension remains open (§6.1). Section 4.70 applies the real operator theory to the octagonal vertex graph. Sufficient full-spectrum inverse-square summability is proved separately in §4.48. The one-unit condition is a convenient sufficient hypothesis, not a necessary one.
 
 ### 4.17. Finite low-energy sectors under a proper onsite potential
 
@@ -1445,7 +1452,7 @@ Writing `λₙ=(t_n)_1` yields a **nondecreasing sequence of real full-operator 
 
 Consequently each real eigenvalue occurs precisely as often as its **finite geometric eigenspace dimension**, rather than merely being included in an unordered set-theoretic range. This does not follow from countability alone; the key additional ingredients are local finiteness, lower boundedness, and infinitude.
 
-**Precise scope:** the hypotheses of lower boundedness and infinite spectrum are explicit, not inferred for all possible geometric models. Empty and finite spectra are handled separately by §4.36. The theorem concerns the *real* full interacting point/bounded-inverse spectrum, not the unformalized complex spectrum. **Divergence `λₙ→+∞` is proved in §4.38; quantitative comparison with onsite levels and sufficient inverse-square summability are proved under the additional hypotheses in §§4.44–4.48.** A concrete aperiodic model remains open (§6.4).
+**Precise scope:** the hypotheses of lower boundedness and infinite spectrum are explicit, not inferred for all possible geometric models. Empty and finite spectra are handled separately by §4.36. The theorem concerns the *real* full interacting point/bounded-inverse spectrum, not the unformalized complex spectrum. **Divergence `λₙ→+∞` is proved in §4.38; quantitative comparison with onsite levels and sufficient inverse-square summability are proved under the additional hypotheses in §§4.44–4.48.** Sections 4.68–4.70 verify the hypotheses for the octagonal vertex graph. A proof of its aperiodicity remains open (§6.4).
 
 ### 4.38. Divergence to +∞ of the globally ordered full real spectrum
 
@@ -1464,7 +1471,7 @@ Lean establishes the full limit in the filter formulation:
 
 equivalently, `λₙ → +∞`. It also proves an existence theorem combining a **strictly increasing, range-exact global enumeration of tags** with divergence of the projected real eigenvalues. With §4.37, each eigenvalue is represented **exactly as many times as its finite geometric eigenspace dimension**.
 
-**Scope:** the assumptions that the tagged spectrum is infinite and the real eigenvalues are bounded below are explicit and are **not** established here for every geometric potential. A limit of `+∞` is a **qualitative** result: it does not imply a polynomial growth rate, a positive spectral gap, or `∑ₙ λₙ⁻² < ∞`. Sections 4.44–4.48 now prove sufficient quantitative comparison and summability conditions for the full operator. They also derive infinite tag sets from infinite site types in the proper symmetric setting. No claim about the unformalized complex spectrum or a concrete aperiodic model is made.
+**Scope:** the assumptions that the tagged spectrum is infinite and the real eigenvalues are bounded below are explicit and are **not** established here for every geometric potential. A limit of `+∞` is a **qualitative** result: it does not imply a polynomial growth rate, a positive spectral gap, or `∑ₙ λₙ⁻² < ∞`. Sections 4.44–4.48 now prove sufficient quantitative comparison and summability conditions for the full operator. They also derive infinite tag sets from infinite site types in the proper symmetric setting. These conclusions concern the real spectrum. Section 4.70 constructs the ordered spectrum for the octagonal vertex graph.
 
 ### 4.39. Variational comparison and uniform real spectral gap for the full operator
 
@@ -1483,7 +1490,7 @@ In particular, `\langle\psi,M_V\psi\rangle-\|B\|\|\psi\|^2
 
 **Full real spectrum, not just point eigenvalues.** If `V(t)\ge c` for every tile, the onsite quadratic form is at least `c\|\psi\|^2`. Hence every genuine real eigenvalue of `H` satisfies `\lambda\ge c-\|B\|`. Under the previously verified compact-resolvent/real spectral-exhaustion hypotheses (§4.32), this bound extends to the **entire real bounded-inverse spectrum**, not only eigenvectors selected in advance. In particular, the sufficient condition `c>\|B\|` yields the **uniform positive real spectral gap** `\lambda\ge c-\|B\|>0`.
 
-**Scope and subsequent use:** this module proves the variational **form inequality**. The multiplicity-aware min–max principle and its bridge to the §4.37 enumeration are now proved in §§4.44–4.45, yielding the index-wise comparison `\lambda_n(H)\ge\lambda_n(M_V)-\|B\|` in §4.46. Sufficient full-spectrum summability is derived in §4.48 with additional growth and positivity hypotheses. These conclusions do not follow from the form inequality alone; the complex-spectrum interface and a concrete geometric tiling remain open (§§6.1, 6.4).
+**Scope and subsequent use:** this module proves the variational **form inequality**. The multiplicity-aware min–max principle and its bridge to the §4.37 enumeration are now proved in §§4.44–4.45, yielding the index-wise comparison `\lambda_n(H)\ge\lambda_n(M_V)-\|B\|` in §4.46. Sufficient full-spectrum summability is derived in §4.48 with additional growth and positivity hypotheses. Section 4.70 applies the comparison to the octagonal graph. The complex-spectrum interface remains a separate goal (§6.1).
 
 ### 4.40. Low-energy coordinate injection and eigenspace multiplicity counting
 
@@ -1680,8 +1687,9 @@ the existing canonical-product predicate. Sections 2.4 and 4.49 now supply
 entire holomorphy and exact zero orders from that input. The indexed
 finite-sector zero-response theorem is proved in §4.52. Section 4.55 now
 preserves a positive gap and summability for symmetric bounded errors of
-either sign whose norm is smaller than the supplied gap. Relative determinants,
-the concrete tiling and extensions beyond this small-error criterion remain open.
+either sign whose norm is smaller than the supplied gap. Sections 4.71–4.72
+prove summability and construct the full products for the octagonal graph.
+Relative determinants and extensions beyond the stated error bound remain open.
 
 ### 4.49. Full spectral products with exact geometric zero multiplicities
 
@@ -2501,7 +2509,7 @@ The endpoints in $u=\delta_{(1,0,0,0)}-\delta_{(1,1,0,0)}$ are proved
 adjacent. Hence $K_{t_*}+\varepsilon|u\rangle\langle u|$ changes an actual
 edge weight. For every real $\varepsilon$, `crossing_dark_eigenvector`
 proves that the nonzero vector $a+b$ remains an eigenvector at $E_*$.
-For the unit vector $q=(a-b)/4$, it also proves
+For the unit vector $q=(a-b)/4$, `crossingBright_energy_response` proves
 ```math
 \langle q,(K_{t_*}+\varepsilon|u\rangle\langle u|)q\rangle=E_*+\varepsilon/4.
 ```
@@ -2792,10 +2800,12 @@ bridge (§6.3), and the explicit geometric full-product application (§6.4)
 are proved. The next numerical task is a scalar cofactor/isolation-radius
 certificate for this interacting geometric product, followed by a certified
 truncation cutoff. The planar finite-residue code already supplies the
-summability input; uniform separation is a separate geometric refinement.
-The complex Green-matrix interface in §6.1 serves relative determinants in
-§6.5, and finite-patch operator errors remain in §6.6. Neither is a hidden
-hypothesis of the proved geometric product theorem.
+summability input. Uniform separation is a separate geometric refinement.
+For the first-ring intervention, §4.78 determines the full crossing
+eigenspace. The explicit isolation interval and the one-edge splitting
+estimate remain open (§6.4). The complex Green-matrix interface in §6.1
+serves relative determinants in §6.5. Finite-patch operator errors belong
+to the approximation problem in §6.6.
 
 ### 6.1. P2 — Spectral foundations and the complex-resolvent interface
 
@@ -3069,7 +3079,8 @@ The relation to the standard Ammann–Beenker construction is documented in
 - [x] Derive central support for every crossing eigenvector and prove
   that its two seed amplitudes parametrize the entire natural-domain
   eigenspace, of real dimension exactly two (§4.78).
-- [ ] Give an explicit gap to all other levels of the infinite operator.
+- [ ] Give an explicit interval around $E_*$ that separates it from every
+  other spectral level of $K_{t_*}$.
 - [ ] Use that gap to control the moving eigenvalue after the one-edge
   change on an explicit parameter interval, including a remainder bound.
 - [ ] Derive an isolation radius and a nonzero analytic-cofactor lower
@@ -3087,14 +3098,14 @@ The relation to the standard Ammann–Beenker construction is documented in
 - [ ] Formalize global rotational symmetry, polygonal tiling coverage and
   aperiodicity when these properties are part of a claimed application.
   The present spectral theorem is about the explicitly defined graph.
-- [ ] Assess the research contribution after exact multiplicity, isolation
-  and quantitative splitting have been proved. The smaller ring intervention
-  and stronger original-sector bound do not alone establish research interest.
+- [ ] Compare the proved multiplicity-two classification of §4.78 with
+  the compact-state literature and obtain an expert assessment (§6.8).
 
-The graph, planar count, summability and exact full-product response are
-proved source results. The remaining geometric and numerical certificates
-are open. Their status is distinct from mathematical novelty and the
-research-interest assessment in §6.8.
+The radius-two intervention gives the nine-level full-product response of
+§4.72. The first-ring intervention gives the exact crossing eigenspace of
+§4.78. For this crossing the next spectral goals are an explicit gap and
+a quantitative bound on how the other level moves after one edge weight
+changes.
 
 ### 6.5. Local geometric defects and relative spectral products
 
