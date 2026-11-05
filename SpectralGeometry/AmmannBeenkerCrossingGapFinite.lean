@@ -188,7 +188,7 @@ theorem crossingCentralBlock_norm_sq_lower
         (x 14) ^ 2 +
         (x 15) ^ 2 +
         (x 16) ^ 2 := by
-    norm_num [Fin.sum_univ_succ]
+    norm_num [Fin.sum_univ_succ] <;> ring
   have hright :
       (∑ i : Fin 17, (centralCrossingBlock x i) ^ 2) =
         ((crossingEnergy - 3 / 2) * x 0 +
@@ -209,8 +209,7 @@ theorem crossingCentralBlock_norm_sq_lower
         (x 6 + x 7) ^ 2 +
         (x 7 + x 8) ^ 2 +
         (x 8 + x 1) ^ 2) / 256 := by
-    simp only [Fin.sum_univ_succ, centralCrossingBlock_values]
-    ring
+    norm_num [Fin.sum_univ_succ, centralCrossingBlock_values] <;> ring
   rw [hleft, hright]
   exact hscalar
 
