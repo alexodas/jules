@@ -430,5 +430,123 @@ theorem crossingResidual_central_exterior_inner_sq_bound
     (crossingBoundaryCoupling_hilbert_squared_bound
       (centralDomainPart x).1 (exteriorDomainPart y).1)
 
+
+/-!
+## Exterior block inequality for genuine off-crossing eigenvectors
+
+The true infinite-dimensional mixed-term estimate and symmetry of
+crossingResidual turn exterior coercivity into an eigenvector inequality.
+No claim about the full spectral gap is made at this stage.
+-/
+
+/-- Absolute-value version of the mixed central/exterior bound. -/
+theorem crossingResidual_central_exterior_inner_abs_bound
+    (x y : infiniteOnsiteDomain potential) :
+    |inner ℝ (centralDomainPart x).1
+        (crossingResidual (exteriorDomainPart y))| ≤
+      (1 / 4 : ℝ) * ‖(centralDomainPart x).1‖ *
+        ‖(exteriorDomainPart y).1‖ := by
+  apply abs_le_of_sq_le_sq ?_ (by positivity)
+  calc
+    (inner ℝ (centralDomainPart x).1
+        (crossingResidual (exteriorDomainPart y))) ^ 2 ≤
+        (1 / 16 : ℝ) * ‖(centralDomainPart x).1‖ ^ 2 *
+          ‖(exteriorDomainPart y).1‖ ^ 2 :=
+      crossingResidual_central_exterior_inner_sq_bound x y
+    _ = ((1 / 4 : ℝ) * ‖(centralDomainPart x).1‖ *
+        ‖(exteriorDomainPart y).1‖) ^ 2 := by ring
+
+/-- The actual central and exterior components are orthogonal. -/
+theorem crossingCentralExterior_inner_zero
+    (x : infiniteOnsiteDomain potential) :
+    inner ℝ (exteriorDomainPart x).1 (centralDomainPart x).1 = 0 := by
+  rw [lp.inner_eq_tsum]
+  have hz (v : Vertex) :
+      inner ℝ ((exteriorDomainPart x).1 v) ((centralDomainPart x).1 v) = 0 := by
+    by_cases hv : v ∈ sector
+    · rw [exteriorDomainPart_inside x v hv]
+      simp
+    · rw [centralDomainPart_outside x v hv]
+      simp
+  simp only [hz, tsum_zero]
+
+/-- A full eigenvalue equation becomes a scalar shift of the
+crossing residual, with no support hypothesis. -/
+theorem crossingResidual_of_eigenvector
+    (x : infiniteOnsiteDomain potential) (energy : ℝ)
+    (hx : onsitePlusBounded potential (ringInteraction crossingParameter) x =
+      energy • (x : TileHilbert Vertex)) :
+    crossingResidual x = (energy - crossingEnergy) • x.1 := by
+  change onsitePlusBounded potential (ringInteraction crossingParameter) x -
+    crossingEnergy • x.1 = (energy - crossingEnergy) • x.1
+  rw [hx]
+  module
+
+/-- For every actual eigenvector of the infinite operator,
+the exterior block obeys the coercive inequality with the precise
+energy displacement and coupling coefficient 1/4. -/
+theorem crossingExteriorEnergy_off_crossing_bound
+    (x : infiniteOnsiteDomain potential) (energy : ℝ)
+    (hx : onsitePlusBounded potential (ringInteraction crossingParameter) x =
+      energy • (x : TileHilbert Vertex)) :
+    ((3 / 4 : ℝ) + 2 * alpha - |energy - crossingEnergy|) *
+        ‖(exteriorDomainPart x).1‖ ^ 2 ≤
+      (1 / 4 : ℝ) * ‖(centralDomainPart x).1‖ *
+        ‖(exteriorDomainPart x).1‖ := by
+  let c := centralDomainPart x
+  let q := exteriorDomainPart x
+  have hsum : x.1 = c.1 + q.1 := by
+    change x.1 = (centralDomainPart x).1 +
+      (x.1 - (centralDomainPart x).1)
+    abel
+  have horth : inner ℝ q.1 c.1 = 0 :=
+    crossingCentralExterior_inner_zero x
+  have hqinner : inner ℝ q.1 x.1 = ‖q.1‖ ^ 2 := by
+    rw [hsum, inner_add_right, horth, real_inner_self_eq_norm_sq, zero_add]
+  have hqres :
+      crossingResidual q =
+        (energy - crossingEnergy) • x.1 - crossingResidual c := by
+    calc
+      crossingResidual q = crossingResidual x - crossingResidual c := by
+        change crossingResidual (x - centralDomainPart x) =
+          crossingResidual x - crossingResidual (centralDomainPart x)
+        rw [map_sub]
+      _ = _ := by rw [crossingResidual_of_eigenvector x energy hx]
+  have hsym :
+      inner ℝ q.1 (crossingResidual c) =
+        inner ℝ c.1 (crossingResidual q) := by
+    calc
+      _ = inner ℝ (crossingResidual c) q.1 := real_inner_comm _ _
+      _ = _ := crossingResidual_symmetric c q
+  have henergy :
+      inner ℝ q.1 (crossingResidual q) =
+        (energy - crossingEnergy) * ‖q.1‖ ^ 2 -
+          inner ℝ c.1 (crossingResidual q) := by
+    calc
+      _ = inner ℝ q.1
+          ((energy - crossingEnergy) • x.1 - crossingResidual c) := by
+        rw [hqres]
+      _ = (energy - crossingEnergy) * ‖q.1‖ ^ 2 -
+          inner ℝ q.1 (crossingResidual c) := by
+        rw [inner_sub_right, real_inner_smul_right, hqinner]
+      _ = _ := by rw [hsym]
+  have hbarrier : ((3 / 4 : ℝ) + 2 * alpha) * ‖q.1‖ ^ 2 ≤
+      (energy - crossingEnergy) * ‖q.1‖ ^ 2 -
+        inner ℝ c.1 (crossingResidual q) := by
+    rw [← henergy]
+    exact exterior_energy_lower_bound x
+  have hshift :
+      (energy - crossingEnergy) * ‖q.1‖ ^ 2 ≤
+        |energy - crossingEnergy| * ‖q.1‖ ^ 2 :=
+    mul_le_mul_of_nonneg_right (le_abs_self _) (sq_nonneg _)
+  have hmix : -(inner ℝ c.1 (crossingResidual q)) ≤
+      (1 / 4 : ℝ) * ‖c.1‖ * ‖q.1‖ := by
+    have h := (abs_le.mp (crossingResidual_central_exterior_inner_abs_bound x x)).1
+    dsimp only [c, q]
+    linarith only [h]
+  change ((3 / 4 : ℝ) + 2 * alpha - |energy - crossingEnergy|) *
+      ‖q.1‖ ^ 2 ≤ (1 / 4 : ℝ) * ‖c.1‖ * ‖q.1‖
+  nlinarith only [hbarrier, hshift, hmix]
+
 end
 end SpectralGeometry.AmmannBeenker
