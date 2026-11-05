@@ -90,6 +90,7 @@ public import SpectralGeometry.AmmannBeenkerCentralPatch
 public import SpectralGeometry.AmmannBeenkerCentralKernel
 public import SpectralGeometry.AmmannBeenkerCrossingMultiplicity
 public import SpectralGeometry.AmmannBeenkerCrossingGapCycle
+public import SpectralGeometry.AmmannBeenkerCrossingGapFinite
 
 public section
 
