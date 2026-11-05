@@ -311,5 +311,124 @@ theorem crossingBoundaryCoupling_hilbert_squared_bound
       mul_le_mul_of_nonneg_left hQ
         (mul_nonneg (by norm_num) (sq_nonneg _))
 
+
+/-!
+## Exact identification with the infinite crossing operator
+
+For an exterior domain vector, the shifted operator at a central
+vertex sees only the neighbors across the boundary. Regrouping this
+finite sum recovers exactly the sixteen oriented boundary edges.
+This identifies the Hilbert–Schmidt certificate with a genuine
+mixed term of the unbounded crossing operator on its natural domain.
+-/
+
+/-- On the central sector, the residual of an exterior vector
+is precisely the negative hopping sum across the boundary. -/
+theorem crossingResidual_exterior_at_central
+    (x : infiniteOnsiteDomain potential) (v : Vertex) (hv : v ∈ sector) :
+    crossingResidual (exteriorDomainPart x) v =
+      - (∑ w ∈ neighbors v \ sector, (exteriorDomainPart x).1 w) / 16 := by
+  have hz := exteriorDomainPart_inside x v hv
+  have hneighbors :
+      (∑ w ∈ neighbors v, (exteriorDomainPart x).1 w) =
+        ∑ w ∈ neighbors v \ sector, (exteriorDomainPart x).1 w := by
+    symm
+    apply Finset.sum_subset Finset.sdiff_subset
+    intro w hw hn
+    have hws : w ∈ sector := by
+      by_contra hnot
+      exact hn (Finset.mem_sdiff.mpr ⟨hw, hnot⟩)
+    exact exteriorDomainPart_inside x w hws
+  rw [crossingResidual_apply, crossingOperator_coordinate, hz, hneighbors]
+  ring
+
+/-- Reindex the boundary-edge list as a sum over the
+central sector and its exterior neighbors. -/
+theorem crossingBoundaryEdges_sum (f : Vertex → Vertex → ℝ) :
+    (∑ e ∈ centralBoundaryEdges, f e.1 e.2) =
+      ∑ v ∈ sector, ∑ w ∈ neighbors v \ sector, f v w := by
+  let F : Finset (Σ _ : Vertex, Vertex) :=
+    sector.sigma (fun v => neighbors v \ sector)
+  let toPair : (Σ _ : Vertex, Vertex) → Vertex × Vertex :=
+    fun p => (p.1, p.2)
+  have hinj : Function.Injective toPair := by
+    rintro ⟨v, w⟩ ⟨v', w'⟩ h
+    have hp := Prod.mk.inj h
+    rcases hp with ⟨rfl, rfl⟩
+    rfl
+  have himage : F.image toPair = centralBoundaryEdges := by
+    ext e
+    rcases e with ⟨v, w⟩
+    constructor
+    · intro he
+      obtain ⟨⟨v', w'⟩, hmem, hp⟩ := Finset.mem_image.mp he
+      obtain ⟨hv, hw⟩ := Finset.mem_sigma.mp hmem
+      obtain ⟨rfl, rfl⟩ := Prod.mk.inj hp
+      obtain ⟨hn, hout⟩ := Finset.mem_sdiff.mp hw
+      exact (mem_centralBoundaryEdges _ _).2
+        ⟨hv, hout, (mem_neighbors_iff _ _).1 hn⟩
+    · intro he
+      obtain ⟨hv, hout, ha⟩ := (mem_centralBoundaryEdges v w).1 he
+      exact Finset.mem_image.mpr
+        ⟨⟨v, w⟩, Finset.mem_sigma.mpr
+          ⟨hv, Finset.mem_sdiff.mpr
+            ⟨(mem_neighbors_iff _ _).2 ha, hout⟩⟩, rfl⟩
+  calc
+    (∑ e ∈ centralBoundaryEdges, f e.1 e.2) =
+        ∑ e ∈ F.image toPair, f e.1 e.2 := by rw [himage]
+    _ = ∑ e ∈ F, f e.1 e.2 := by
+      rw [Finset.sum_image]
+      intro e _ e' _ he
+      exact hinj he
+    _ = ∑ v ∈ sector, ∑ w ∈ neighbors v \ sector, f v w := by
+      exact Finset.sum_sigma sector (fun v => neighbors v \ sector)
+        (fun e : Σ _ : Vertex, Vertex => f e.1 e.2)
+
+/-- The central/exterior mixed residual is EXACTLY the hopping
+pairing across the sixteen boundary edges, with coefficient -1/16. -/
+theorem crossingResidual_central_exterior_inner_eq_boundary
+    (x y : infiniteOnsiteDomain potential) :
+    inner ℝ (centralDomainPart x).1
+      (crossingResidual (exteriorDomainPart y)) =
+      - ((∑ e ∈ centralBoundaryEdges,
+        (centralDomainPart x).1 e.1 * (exteriorDomainPart y).1 e.2) / 16) := by
+  calc
+    inner ℝ (centralDomainPart x).1
+        (crossingResidual (exteriorDomainPart y)) =
+        ∑ i : Fin 17, (centralDomainPart x).1 (centralVertex i) *
+          crossingResidual (exteriorDomainPart y) (centralVertex i) :=
+      inner_eq_central_sum _ _ (centralDomainPart_outside x)
+    _ = ∑ v ∈ sector, (centralDomainPart x).1 v *
+        crossingResidual (exteriorDomainPart y) v := by
+      rw [sector_eq_centralPatch, centralPatch, Finset.sum_image]
+      intro i _ j _ h
+      exact centralVertex_injective h
+    _ = (-1 / 16 : ℝ) *
+        (∑ v ∈ sector, ∑ w ∈ neighbors v \ sector,
+          (centralDomainPart x).1 v * (exteriorDomainPart y).1 w) := by
+      rw [Finset.mul_sum]
+      apply Finset.sum_congr rfl
+      intro v hv
+      rw [crossingResidual_exterior_at_central y v hv]
+      rw [← Finset.mul_sum]
+      ring
+    _ = - ((∑ e ∈ centralBoundaryEdges,
+        (centralDomainPart x).1 e.1 * (exteriorDomainPart y).1 e.2) / 16) := by
+      rw [← crossingBoundaryEdges_sum]
+      ring
+
+/-- The genuine mixed residual pairing of central/exterior domain
+components obeys the certified Hilbert–Schmidt bound. -/
+theorem crossingResidual_central_exterior_inner_sq_bound
+    (x y : infiniteOnsiteDomain potential) :
+    (inner ℝ (centralDomainPart x).1
+        (crossingResidual (exteriorDomainPart y))) ^ 2 ≤
+      (1 / 16 : ℝ) * ‖(centralDomainPart x).1‖ ^ 2 *
+        ‖(exteriorDomainPart y).1‖ ^ 2 := by
+  rw [crossingResidual_central_exterior_inner_eq_boundary]
+  simpa only [neg_sq] using
+    (crossingBoundaryCoupling_hilbert_squared_bound
+      (centralDomainPart x).1 (exteriorDomainPart y).1)
+
 end
 end SpectralGeometry.AmmannBeenker
