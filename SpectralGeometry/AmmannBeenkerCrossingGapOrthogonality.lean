@@ -191,7 +191,8 @@ private theorem crossingBoundaryCoupling_squared_weights
     calc
       (∑ e ∈ S.product T, (u e.1 * q e.2) ^ 2) =
           ∑ v ∈ S, ∑ w ∈ T, (u v * q w) ^ 2 := by
-        rw [Finset.sum_product]
+        exact Finset.sum_product S T
+          (fun e : Vertex × Vertex => (u e.1 * q e.2) ^ 2)
       _ = ∑ v ∈ S, (u v) ^ 2 * (∑ w ∈ T, (q w) ^ 2) := by
         apply Finset.sum_congr rfl
         intro v hv
