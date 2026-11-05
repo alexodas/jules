@@ -144,5 +144,75 @@ theorem crossingCentralSeventeenScalar_gap
       nlinarith only [hconstant, hxc, hyc]
     _ = _ := henergy.symm
 
+
+/-!
+The scalar formula above is exactly the Euclidean squared norm of
+\`centralCrossingBlock\`. The following theorem is the actual finite
+17-vertex singular-value estimate, on the orthogonal complement of
+the compact ring directions; its only hypotheses are the two
+alternating-sum orthogonality conditions.
+
+The remaining task is to transfer this estimate through the
+central/exterior coupling to exclude additional infinite-operator
+eigenvalues near E*.
+-/
+
+set_option maxHeartbeats 6000000 in
+theorem crossingCentralBlock_norm_sq_lower
+    (x : Fin 17 → ℝ)
+    (hxa : x 1 - x 2 + x 3 - x 4 + x 5 - x 6 + x 7 - x 8 = 0)
+    (hya : x 9 - x 10 + x 11 - x 12 + x 13 - x 14 + x 15 - x 16 = 0) :
+    (1 / 576 : ℝ) * (∑ i : Fin 17, (x i) ^ 2) ≤
+      ∑ i : Fin 17, (centralCrossingBlock x i) ^ 2 := by
+  have hscalar := crossingCentralSeventeenScalar_gap
+    (crossingEnergy - 3 / 2) (x 0)
+    (x 1) (x 2) (x 3) (x 4) (x 5) (x 6) (x 7) (x 8)
+    (x 9) (x 10) (x 11) (x 12) (x 13) (x 14) (x 15) (x 16)
+    (le_of_lt crossingCentralConstantDiagonal_gt_three)
+    hxa hya
+  have hleft :
+      (∑ i : Fin 17, (x i) ^ 2) =
+        (x 0) ^ 2 + (x 1) ^ 2 +
+        (x 2) ^ 2 +
+        (x 3) ^ 2 +
+        (x 4) ^ 2 +
+        (x 5) ^ 2 +
+        (x 6) ^ 2 +
+        (x 7) ^ 2 +
+        (x 8) ^ 2 +
+        (x 9) ^ 2 +
+        (x 10) ^ 2 +
+        (x 11) ^ 2 +
+        (x 12) ^ 2 +
+        (x 13) ^ 2 +
+        (x 14) ^ 2 +
+        (x 15) ^ 2 +
+        (x 16) ^ 2 := by
+    norm_num [Fin.sum_univ_succ]
+  have hright :
+      (∑ i : Fin 17, (centralCrossingBlock x i) ^ 2) =
+        ((crossingEnergy - 3 / 2) * x 0 +
+          (x 1 + x 2 + x 3 + x 4 + x 5 + x 6 + x 7 + x 8) / 16) ^ 2 +
+        ((x 0 + x 9 + x 16) ^ 2 +
+        (x 0 + x 10 + x 9) ^ 2 +
+        (x 0 + x 11 + x 10) ^ 2 +
+        (x 0 + x 12 + x 11) ^ 2 +
+        (x 0 + x 13 + x 12) ^ 2 +
+        (x 0 + x 14 + x 13) ^ 2 +
+        (x 0 + x 15 + x 14) ^ 2 +
+        (x 0 + x 16 + x 15) ^ 2) / 256 +
+        ((x 1 + x 2) ^ 2 +
+        (x 2 + x 3) ^ 2 +
+        (x 3 + x 4) ^ 2 +
+        (x 4 + x 5) ^ 2 +
+        (x 5 + x 6) ^ 2 +
+        (x 6 + x 7) ^ 2 +
+        (x 7 + x 8) ^ 2 +
+        (x 8 + x 1) ^ 2) / 256 := by
+    simp only [Fin.sum_univ_succ, centralCrossingBlock_values]
+    ring
+  rw [hleft, hright]
+  exact hscalar
+
 end
 end SpectralGeometry.AmmannBeenker
