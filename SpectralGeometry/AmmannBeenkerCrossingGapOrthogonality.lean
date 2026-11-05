@@ -72,7 +72,7 @@ theorem crossingCompactA_inner_coordinates (x : infiniteOnsiteDomain potential) 
       rw [show compactA (centralVertex i) = centralCompactCoordinates 1 0 i from
         congrFun compactA_centralCoordinates i]
     _ = _ := by
-      norm_num [Fin.sum_univ_succ, centralCompactCoordinates]
+      norm_num [Fin.sum_univ_succ, centralCompactCoordinates] <;> ring
 
 
 /-- The B compact mode tests the corresponding alternating ring sum. -/
@@ -94,7 +94,7 @@ theorem crossingCompactB_inner_coordinates (x : infiniteOnsiteDomain potential) 
       rw [show compactB (centralVertex i) = centralCompactCoordinates 0 1 i from
         congrFun compactB_centralCoordinates i]
     _ = _ := by
-      norm_num [Fin.sum_univ_succ, centralCompactCoordinates]
+      norm_num [Fin.sum_univ_succ, centralCompactCoordinates] <;> ring
 
 
 /-- Different eigenvalues force first-ring and second-ring alternating
