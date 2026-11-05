@@ -72,7 +72,24 @@ theorem crossingCompactA_inner_coordinates (x : infiniteOnsiteDomain potential) 
       rw [show compactA (centralVertex i) = centralCompactCoordinates 1 0 i from
         congrFun compactA_centralCoordinates i]
     _ = _ := by
-      norm_num [Fin.sum_univ_succ, centralCompactCoordinates, Fin.succ] <;> ring_nf
+      have hi1 : (Fin.succ ((0 : Fin 16)) : Fin 17) = 1 := by decide
+      have hi2 : (Fin.succ (Fin.succ ((0 : Fin 15))) : Fin 17) = 2 := by decide
+      have hi3 : (Fin.succ (Fin.succ (Fin.succ ((0 : Fin 14)))) : Fin 17) = 3 := by decide
+      have hi4 : (Fin.succ (Fin.succ (Fin.succ (Fin.succ ((0 : Fin 13))))) : Fin 17) = 4 := by decide
+      have hi5 : (Fin.succ (Fin.succ (Fin.succ (Fin.succ (Fin.succ ((0 : Fin 12)))))) : Fin 17) = 5 := by decide
+      have hi6 : (Fin.succ (Fin.succ (Fin.succ (Fin.succ (Fin.succ (Fin.succ ((0 : Fin 11))))))) : Fin 17) = 6 := by decide
+      have hi7 : (Fin.succ (Fin.succ (Fin.succ (Fin.succ (Fin.succ (Fin.succ (Fin.succ ((0 : Fin 10)))))))) : Fin 17) = 7 := by decide
+      have hi8 : (Fin.succ (Fin.succ (Fin.succ (Fin.succ (Fin.succ (Fin.succ (Fin.succ (Fin.succ ((0 : Fin 9))))))))) : Fin 17) = 8 := by decide
+      have hi9 : (Fin.succ (Fin.succ (Fin.succ (Fin.succ (Fin.succ (Fin.succ (Fin.succ (Fin.succ (Fin.succ ((0 : Fin 8)))))))))) : Fin 17) = 9 := by decide
+      have hi10 : (Fin.succ (Fin.succ (Fin.succ (Fin.succ (Fin.succ (Fin.succ (Fin.succ (Fin.succ (Fin.succ (Fin.succ ((0 : Fin 7))))))))))) : Fin 17) = 10 := by decide
+      have hi11 : (Fin.succ (Fin.succ (Fin.succ (Fin.succ (Fin.succ (Fin.succ (Fin.succ (Fin.succ (Fin.succ (Fin.succ (Fin.succ ((0 : Fin 6)))))))))))) : Fin 17) = 11 := by decide
+      have hi12 : (Fin.succ (Fin.succ (Fin.succ (Fin.succ (Fin.succ (Fin.succ (Fin.succ (Fin.succ (Fin.succ (Fin.succ (Fin.succ (Fin.succ ((0 : Fin 5))))))))))))) : Fin 17) = 12 := by decide
+      have hi13 : (Fin.succ (Fin.succ (Fin.succ (Fin.succ (Fin.succ (Fin.succ (Fin.succ (Fin.succ (Fin.succ (Fin.succ (Fin.succ (Fin.succ (Fin.succ ((0 : Fin 4)))))))))))))) : Fin 17) = 13 := by decide
+      have hi14 : (Fin.succ (Fin.succ (Fin.succ (Fin.succ (Fin.succ (Fin.succ (Fin.succ (Fin.succ (Fin.succ (Fin.succ (Fin.succ (Fin.succ (Fin.succ (Fin.succ ((0 : Fin 3))))))))))))))) : Fin 17) = 14 := by decide
+      have hi15 : (Fin.succ (Fin.succ (Fin.succ (Fin.succ (Fin.succ (Fin.succ (Fin.succ (Fin.succ (Fin.succ (Fin.succ (Fin.succ (Fin.succ (Fin.succ (Fin.succ (Fin.succ ((0 : Fin 2)))))))))))))))) : Fin 17) = 15 := by decide
+      have hi16 : (Fin.succ (Fin.succ (Fin.succ (Fin.succ (Fin.succ (Fin.succ (Fin.succ (Fin.succ (Fin.succ (Fin.succ (Fin.succ (Fin.succ (Fin.succ (Fin.succ (Fin.succ (Fin.succ ((0 : Fin 1))))))))))))))))) : Fin 17) = 16 := by decide
+      norm_num [Fin.sum_univ_succ, centralCompactCoordinates] <;>
+        simp only [hi1, hi2, hi3, hi4, hi5, hi6, hi7, hi8, hi9, hi10, hi11, hi12, hi13, hi14, hi15, hi16] <;> ring
 
 
 /-- The B compact mode tests the corresponding alternating ring sum. -/
@@ -94,7 +111,24 @@ theorem crossingCompactB_inner_coordinates (x : infiniteOnsiteDomain potential) 
       rw [show compactB (centralVertex i) = centralCompactCoordinates 0 1 i from
         congrFun compactB_centralCoordinates i]
     _ = _ := by
-      norm_num [Fin.sum_univ_succ, centralCompactCoordinates, Fin.succ] <;> ring_nf
+      have hi1 : (Fin.succ ((0 : Fin 16)) : Fin 17) = 1 := by decide
+      have hi2 : (Fin.succ (Fin.succ ((0 : Fin 15))) : Fin 17) = 2 := by decide
+      have hi3 : (Fin.succ (Fin.succ (Fin.succ ((0 : Fin 14)))) : Fin 17) = 3 := by decide
+      have hi4 : (Fin.succ (Fin.succ (Fin.succ (Fin.succ ((0 : Fin 13))))) : Fin 17) = 4 := by decide
+      have hi5 : (Fin.succ (Fin.succ (Fin.succ (Fin.succ (Fin.succ ((0 : Fin 12)))))) : Fin 17) = 5 := by decide
+      have hi6 : (Fin.succ (Fin.succ (Fin.succ (Fin.succ (Fin.succ (Fin.succ ((0 : Fin 11))))))) : Fin 17) = 6 := by decide
+      have hi7 : (Fin.succ (Fin.succ (Fin.succ (Fin.succ (Fin.succ (Fin.succ (Fin.succ ((0 : Fin 10)))))))) : Fin 17) = 7 := by decide
+      have hi8 : (Fin.succ (Fin.succ (Fin.succ (Fin.succ (Fin.succ (Fin.succ (Fin.succ (Fin.succ ((0 : Fin 9))))))))) : Fin 17) = 8 := by decide
+      have hi9 : (Fin.succ (Fin.succ (Fin.succ (Fin.succ (Fin.succ (Fin.succ (Fin.succ (Fin.succ (Fin.succ ((0 : Fin 8)))))))))) : Fin 17) = 9 := by decide
+      have hi10 : (Fin.succ (Fin.succ (Fin.succ (Fin.succ (Fin.succ (Fin.succ (Fin.succ (Fin.succ (Fin.succ (Fin.succ ((0 : Fin 7))))))))))) : Fin 17) = 10 := by decide
+      have hi11 : (Fin.succ (Fin.succ (Fin.succ (Fin.succ (Fin.succ (Fin.succ (Fin.succ (Fin.succ (Fin.succ (Fin.succ (Fin.succ ((0 : Fin 6)))))))))))) : Fin 17) = 11 := by decide
+      have hi12 : (Fin.succ (Fin.succ (Fin.succ (Fin.succ (Fin.succ (Fin.succ (Fin.succ (Fin.succ (Fin.succ (Fin.succ (Fin.succ (Fin.succ ((0 : Fin 5))))))))))))) : Fin 17) = 12 := by decide
+      have hi13 : (Fin.succ (Fin.succ (Fin.succ (Fin.succ (Fin.succ (Fin.succ (Fin.succ (Fin.succ (Fin.succ (Fin.succ (Fin.succ (Fin.succ (Fin.succ ((0 : Fin 4)))))))))))))) : Fin 17) = 13 := by decide
+      have hi14 : (Fin.succ (Fin.succ (Fin.succ (Fin.succ (Fin.succ (Fin.succ (Fin.succ (Fin.succ (Fin.succ (Fin.succ (Fin.succ (Fin.succ (Fin.succ (Fin.succ ((0 : Fin 3))))))))))))))) : Fin 17) = 14 := by decide
+      have hi15 : (Fin.succ (Fin.succ (Fin.succ (Fin.succ (Fin.succ (Fin.succ (Fin.succ (Fin.succ (Fin.succ (Fin.succ (Fin.succ (Fin.succ (Fin.succ (Fin.succ (Fin.succ ((0 : Fin 2)))))))))))))))) : Fin 17) = 15 := by decide
+      have hi16 : (Fin.succ (Fin.succ (Fin.succ (Fin.succ (Fin.succ (Fin.succ (Fin.succ (Fin.succ (Fin.succ (Fin.succ (Fin.succ (Fin.succ (Fin.succ (Fin.succ (Fin.succ (Fin.succ ((0 : Fin 1))))))))))))))))) : Fin 17) = 16 := by decide
+      norm_num [Fin.sum_univ_succ, centralCompactCoordinates] <;>
+        simp only [hi1, hi2, hi3, hi4, hi5, hi6, hi7, hi8, hi9, hi10, hi11, hi12, hi13, hi14, hi15, hi16] <;> ring
 
 
 /-- Different eigenvalues force first-ring and second-ring alternating
