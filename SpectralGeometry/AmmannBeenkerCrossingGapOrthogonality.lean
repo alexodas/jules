@@ -3,6 +3,7 @@ module
 public import SpectralGeometry.AmmannBeenkerCrossingGapFinite
 
 import Mathlib.Algebra.Order.Chebyshev
+import SpectralGeometry.InfiniteOrderedSpectralExistence
 
 public section
 
@@ -886,6 +887,82 @@ theorem crossingGapCandidate_no_other_full_eigenvector
   rintro ⟨x, hxne, he⟩
   exact hxne
     (crossingGapCandidate_off_crossing_eigenvector_zero x energy he hne hnear)
+
+
+/-!
+## The full real spectral gap from compact resolvent
+
+The existing generic compact-resolvent theorem applies to every bounded
+correction of the proper, bounded-below onsite potential. Express the
+crossing interaction as a matching family with zero matching colors;
+the full real bounded-inverse spectrum then equals the true infinite
+natural-domain point spectrum. Combining this identification with the
+already certified exclusion of off-crossing eigenvalues gives a
+quantitative full real spectral exclusion window.
+-/
+
+/-- The real bounded-inverse spectrum of the crossing operator is
+exactly its genuine full-domain point spectrum. Compactness is supplied
+by the proper Ammann–Beenker onsite potential, not assumed here. -/
+theorem crossingRealSpectrum_iff_full_eigenvector (energy : ℝ) :
+    energy ∈ infiniteBoundedOnsiteRealSpectrum potential
+      (ringInteraction crossingParameter) ↔
+      ∃ x : infiniteOnsiteDomain potential,
+        (x : TileHilbert Vertex) ≠ 0 ∧
+        onsitePlusBounded potential (ringInteraction crossingParameter) x =
+          energy • (x : TileHilbert Vertex) := by
+  let B := ringInteraction crossingParameter
+  let σ : Fin 0 → Vertex ≃ Vertex := fun i => Fin.elim0 i
+  let w : Fin 0 → ℝ := fun _ => 0
+  have hB : infiniteLocalBoundedCorrection 0 σ w B 1 0 = B :=
+    zeroMatching_correction B
+  obtain ⟨a, hunit, hsmall, _⟩ :=
+    infiniteBoundedOnsite_exists_compact_shift
+      potential 1 potential_lower potential_proper B
+  have hs :
+      ‖(infiniteLocalBoundedCorrection 0 σ w B 1 0).comp
+        (infiniteOnsiteResolventCLM potential a hunit)‖ < 1 := by
+    simpa only [hB] using hsmall
+  have hspectrum :=
+    infiniteLocalMatching_fullRealSpectrum_iff_hasFullEigenvalue
+      0 potential σ w B 1 0 a hunit potential_proper hs energy
+  rw [hB] at hspectrum
+  change energy ∈ infiniteBoundedOnsiteRealSpectrum potential B ↔
+    (∃ x : infiniteOnsiteDomain potential,
+      (x : TileHilbert Vertex) ≠ 0 ∧
+      infiniteLocalShiftedPerturbedOperator 0 potential σ w B 1 0 x =
+        energy • (x : TileHilbert Vertex)) at hspectrum
+  have hoperator :
+      infiniteLocalShiftedPerturbedOperator 0 potential σ w B 1 0 =
+        onsitePlusBounded potential B := by
+    have h := (onsitePlusBounded_eq_local 0 potential σ w B 1 0).symm
+    simpa only [hB] using h
+  rw [hoperator] at hspectrum
+  exact hspectrum
+
+/-- Fully quantitative exclusion of all other points of the
+real bounded-inverse spectrum within the closed radius 1/128
+around the exact two-mode crossing. -/
+theorem crossingGapCandidate_no_other_realSpectrum
+    (energy : ℝ)
+    (hne : energy ≠ crossingEnergy)
+    (hnear : |energy - crossingEnergy| ≤ crossingGapCandidate) :
+    energy ∉ infiniteBoundedOnsiteRealSpectrum potential
+      (ringInteraction crossingParameter) := by
+  intro hspectrum
+  exact crossingGapCandidate_no_other_full_eigenvector energy hne hnear
+    ((crossingRealSpectrum_iff_full_eigenvector energy).mp hspectrum)
+
+/-- Every real spectral point within the certified crossing window
+must equal the exact crossing energy. -/
+theorem crossingGapCandidate_realSpectrum_isolated
+    (energy : ℝ)
+    (hspectrum : energy ∈ infiniteBoundedOnsiteRealSpectrum potential
+      (ringInteraction crossingParameter))
+    (hnear : |energy - crossingEnergy| ≤ crossingGapCandidate) :
+    energy = crossingEnergy := by
+  by_contra hne
+  exact crossingGapCandidate_no_other_realSpectrum energy hne hnear hspectrum
 
 end
 end SpectralGeometry.AmmannBeenker
