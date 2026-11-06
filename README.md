@@ -107,9 +107,14 @@ remain open (§6.4).
 
 The intended audience includes discrete Schrödinger and graph-operator
 spectral theory, rigorous spectral approximation, entire functions associated
-with spectra, and formal methods in infinite-dimensional analysis. A useful
-application must identify an actual geometric construction and an informative
-estimate, not only a list of possible audiences.
+with spectra, and formal methods in infinite-dimensional analysis. The
+Comparator-selected crossing-multiplicity result may also interest
+theoretical condensed-matter physicists studying quasicrystal localization
+and compact localized states: it shows that two known compact modes exhaust
+the eigenspace at one energy of this specified infinite confined Hamiltonian,
+excluding additional eigenstates that finite-patch calculations alone cannot
+rule out. A useful application must identify an actual geometric construction
+and an informative estimate, not only a list of possible audiences.
 
 ### 1.2. First substantive milestone: finite-coordinate observation
 
@@ -3323,8 +3328,12 @@ literature ([Oktel, 2021](https://doi.org/10.1103/PhysRevB.104.014204)).
 What may be new, and of interest to researchers studying quasicrystal
 localization, is the proof that these two patterns exhaust a level of
 this particular infinite confined operator. The central/exterior argument
-rules out states a finite-patch computation could miss. Priority and
-standalone research interest are open to expert assessment.
+rules out states a finite-patch computation could miss. This distinction
+between exhibiting two compact modes and proving the complete degeneracy
+of their level may also be of interest in theoretical condensed-matter physics.
+It does not establish a universal property of quasicrystals or a
+perturbation-stability theorem. Priority and standalone research interest
+are open to expert assessment.
 
 - [x] Identify the pattern source, related compact-state constructions and
   the precise operator in [PALOMAR.md](PALOMAR.md). The geometric counting,

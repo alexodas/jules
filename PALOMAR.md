@@ -54,8 +54,12 @@ For researchers studying localization in quasicrystals, the question is
 whether two familiar local patterns account for a whole spectral level, or
 merely coexist with other states at the same energy. The theorem answers
 that question exactly for a specified confined operator on an infinite
-octagonal graph. This classification **may be new for this model**.
-Priority has not been established.
+octagonal graph. The Comparator-selected result may also interest theoretical
+condensed-matter physicists studying compact localized states and
+quasicrystal localization: beyond constructing two degenerate compact modes,
+it excludes any additional eigenstate at their energy, including one
+extending outside the central finite patch. This classification **may be
+new for this model**. Priority has not been established.
 
 - M. Ö. Oktel, [*Strictly localized states in the octagonal Ammann–Beenker
   quasicrystal*](https://doi.org/10.1103/PhysRevB.104.014204), §IV (2021):
@@ -68,11 +72,18 @@ Priority has not been established.
   by two simple building blocks: a square and a rhombus*](https://pure.tue.nl/ws/files/4269555/253166.pdf)
   (1982): geometric background.
 
-The result concerns the centered graph, the quadratic potential, the
-specified ring intervention, and one crossing energy. It gives neither
-an explicit gap to every other level nor a quantitative law for the
-eigenvalue that may move under a one-edge change. These are separate
-research questions. The exterior energy estimate above is not such a gap.
+The Comparator-selected result concerns the centered graph, the quadratic
+potential, the specified ring intervention, and one crossing energy. Its
+exact-multiplicity statements do not themselves assert a spectral gap.
+Separately, the full-project theorem
+`crossingGapCandidate_no_other_realSpectrum`
+([README §4.79](README.md#479-a-conservative-quantitative-real-spectral-gap-at-the-crossing))
+certifies that no other point of the real bounded-inverse spectrum of this
+same unperturbed infinite operator lies within the closed radius $1/128$
+of $E_*$. That conservative isolation bound is **not** an additional
+Comparator-selected statement. A quantitative law for the eigenvalue
+that may move under a one-edge change remains open. The exterior energy
+estimate above, on its own, is not the quantitative gap proof.
 
 ## Human origin and AI-assisted development
 
