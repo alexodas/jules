@@ -1,7 +1,7 @@
 {
   "version": "v0.4",
   "project": {
-    "name": "Jules Spectral Geometry — exact multiplicity of a compact crossing on an infinite octagonal graph",
+    "name": "Spectral Geometry — exact multiplicity of a compact crossing on an infinite octagonal graph",
     "description": "On the real square-summable states of the infinite centered octagonal cut-and-project vertex graph, take the graph Laplacian with edge weight 1/16, onsite potential V(x)=1+|p(x)|² and natural domain D(V). Add t times the coordinate projection onto the eight neighbors of the origin. At t*=17/16+√2 the two alternating ring modes meet at E*=13/4+√2. The full eigenspace at E* has real dimension exactly two. Every solution of the eigenvector equation is its amplitude at the lift (1,0,0,0) times the first compact state plus its amplitude at (1,1,0,0) times the second. No support restriction is assumed. Locality, symmetry and a strictly positive exterior energy force the exterior part to vanish; the complete central kernel supplies the two ring patterns.",
     "authors": [
       "Alessandro Odasso"
@@ -75,7 +75,7 @@
     }
   ],
   "status": {
-    "scope": "Main theorem: crossingEigenspace_finrank. Companion: crossing_eigenvector_representation. They determine the geometric multiplicity and all crossing eigenvectors on the infinite natural domain. Three additional proposition witnesses are compared: admitted_zero, mate_involutive and centralLift_admitted. All five are proved in the source; only Challenge uses a statement placeholder for each. No definitions are holed. The zero proof-hole counts refer to the substantive library, whose root imports all 89 mathematical modules.",
+    "scope": "Main theorem: crossingEigenspace_finrank. Companion: crossing_eigenvector_representation. They determine the geometric multiplicity and all crossing eigenvectors on the infinite natural domain. Three additional proposition witnesses are compared: admitted_zero, mate_involutive and centralLift_admitted. All five are proved in the source; only Challenge uses a statement placeholder for each. No definitions are holed. The zero proof-hole counts refer to the substantive library, whose root imports all 92 mathematical modules.",
     "sorry_count": 0,
     "sorry_in_definitions": 0,
     "axioms": [
