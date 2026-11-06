@@ -1,9 +1,8 @@
 name: Lean 4 / Mathlib proof check
 
 on:
-  push:
-    branches: [main]
-  pull_request:
+  # Reused by Palomar on pull requests and pushes; independently available on demand.
+  workflow_call:
   workflow_dispatch:
 
 jobs:

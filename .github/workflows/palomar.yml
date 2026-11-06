@@ -6,7 +6,14 @@ on:
   workflow_dispatch:
 
 jobs:
+  lean:
+    # Run the original proof job itself: Palomar cannot pass if Lean fails.
+    name: Full Lean 4 / Mathlib proof check
+    uses: ./.github/workflows/lean.yml
+
   lean-and-comparator:
+    # Only run the Comparator-specific checks after every original Lean step succeeds.
+    needs: lean
     # Match the PalomarTemplate disposable-runner environment.
     runs-on: ubuntu-24.04
     timeout-minutes: 75
