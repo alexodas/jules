@@ -719,5 +719,99 @@ theorem crossingResidual_exterior_projected_norm_le
     have hcontr := mul_lt_mul_of_pos_left hgt hpos
     nlinarith only [hsquared, hcontr]
 
+
+/-!
+## The central block inequality for off-crossing eigenvectors
+
+The finite singular-value certificate gives a lower bound on the
+central projected residual. The eigenvalue equation, together with
+the genuine exterior-to-central operator-norm estimate, gives the
+matching upper bound. Their combination is precisely the central
+Schur inequality, without an auxiliary coupling hypothesis.
+-/
+
+/-- The finite 17-site singular-value certificate yields the
+linear central coercivity inequality in ambient Hilbert norm. -/
+theorem crossingDifferentLevel_central_projected_norm_lower
+    (x : infiniteOnsiteDomain potential) (energy : ℝ)
+    (hx : onsitePlusBounded potential (ringInteraction crossingParameter) x =
+      energy • (x : TileHilbert Vertex))
+    (hne : energy ≠ crossingEnergy) :
+    (1 / 24 : ℝ) * ‖(centralDomainPart x).1‖ ≤
+      ‖finiteSectorProjection sector
+        (crossingResidual (centralDomainPart x))‖ := by
+  have hsqr :=
+    crossingDifferentLevel_central_projected_norm_sq_lower x energy hx hne
+  apply (sq_le_sq₀ (by positivity) (norm_nonneg _)).mp
+  calc
+    ((1 / 24 : ℝ) * ‖(centralDomainPart x).1‖) ^ 2 =
+        (1 / 576 : ℝ) * ‖(centralDomainPart x).1‖ ^ 2 := by ring
+    _ ≤ _ := hsqr
+
+/-- For an eigenvector with energy distinct from the crossing,
+the central block satisfies the exact Schur-complement inequality:
+the spectral displacement reduces its coercivity by at most its
+absolute value, while the exterior-to-central coupling costs 1/4. -/
+theorem crossingCentralEnergy_off_crossing_bound
+    (x : infiniteOnsiteDomain potential) (energy : ℝ)
+    (hx : onsitePlusBounded potential (ringInteraction crossingParameter) x =
+      energy • (x : TileHilbert Vertex))
+    (hne : energy ≠ crossingEnergy) :
+    ((1 / 24 : ℝ) - |energy - crossingEnergy|) *
+        ‖(centralDomainPart x).1‖ ≤
+      (1 / 4 : ℝ) * ‖(exteriorDomainPart x).1‖ := by
+  let c := centralDomainPart x
+  let q := exteriorDomainPart x
+  have hqres :
+      crossingResidual q =
+        (energy - crossingEnergy) • x.1 - crossingResidual c := by
+    calc
+      crossingResidual q = crossingResidual x - crossingResidual c := by
+        change crossingResidual (x - centralDomainPart x) =
+          crossingResidual x - crossingResidual (centralDomainPart x)
+        rw [map_sub]
+      _ = _ := by rw [crossingResidual_of_eigenvector x energy hx]
+  have hcres :
+      crossingResidual c =
+        (energy - crossingEnergy) • x.1 - crossingResidual q := by
+    rw [hqres]
+    module
+  have hproj :
+      finiteSectorProjection sector (crossingResidual c) =
+        (energy - crossingEnergy) • c.1 -
+          finiteSectorProjection sector (crossingResidual q) := by
+    calc
+      finiteSectorProjection sector (crossingResidual c) =
+          finiteSectorProjection sector
+            ((energy - crossingEnergy) • x.1 - crossingResidual q) := by
+        rw [hcres]
+      _ = (energy - crossingEnergy) •
+            finiteSectorProjection sector x.1 -
+          finiteSectorProjection sector (crossingResidual q) := by
+        rw [map_sub, map_smul]
+      _ = _ := by rfl
+  have hupper :
+      ‖finiteSectorProjection sector (crossingResidual c)‖ ≤
+        |energy - crossingEnergy| * ‖c.1‖ +
+          (1 / 4 : ℝ) * ‖q.1‖ := by
+    rw [hproj]
+    calc
+      ‖(energy - crossingEnergy) • c.1 -
+          finiteSectorProjection sector (crossingResidual q)‖ ≤
+          ‖(energy - crossingEnergy) • c.1‖ +
+            ‖finiteSectorProjection sector (crossingResidual q)‖ :=
+        norm_sub_le _ _
+      _ = |energy - crossingEnergy| * ‖c.1‖ +
+            ‖finiteSectorProjection sector (crossingResidual q)‖ := by
+        rw [norm_smul, Real.norm_eq_abs]
+      _ ≤ |energy - crossingEnergy| * ‖c.1‖ +
+          (1 / 4 : ℝ) * ‖q.1‖ :=
+        add_le_add_left (crossingResidual_exterior_projected_norm_le x) _
+  have hlower :=
+    crossingDifferentLevel_central_projected_norm_lower x energy hx hne
+  change ((1 / 24 : ℝ) - |energy - crossingEnergy|) * ‖c.1‖ ≤
+    (1 / 4 : ℝ) * ‖q.1‖
+  nlinarith only [hlower, hupper]
+
 end
 end SpectralGeometry.AmmannBeenker
