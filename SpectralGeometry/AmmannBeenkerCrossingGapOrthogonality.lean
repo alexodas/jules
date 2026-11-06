@@ -846,5 +846,46 @@ theorem crossingExteriorEnergy_off_crossing_linear_bound
     have hmul := mul_lt_mul_of_pos_right hgt hpos
     nlinarith only [hsquared, hmul]
 
+
+/-!
+## Exclusion of other eigenvalues in the explicit crossing window
+
+Both block inequalities are now proved for every genuine eigenvector
+at an energy different from crossingEnergy. Applying the already
+certified strict Schur margin forces its central and exterior
+components to vanish. This is an eigenvalue-exclusion theorem:
+identification of the full real spectrum with genuine eigenvalues
+still requires the compact-resolvent spectral theory.
+-/
+
+/-- No nonzero eigenvector at a different energy can lie within
+the closed radius crossingGapCandidate around crossingEnergy. -/
+theorem crossingGapCandidate_off_crossing_eigenvector_zero
+    (x : infiniteOnsiteDomain potential) (energy : ℝ)
+    (hx : onsitePlusBounded potential (ringInteraction crossingParameter) x =
+      energy • (x : TileHilbert Vertex))
+    (hne : energy ≠ crossingEnergy)
+    (hnear : |energy - crossingEnergy| ≤ crossingGapCandidate) :
+    (x : TileHilbert Vertex) = 0 := by
+  exact crossingGapCandidate_zero_of_block_norm_bounds x
+    |energy - crossingEnergy| ⟨abs_nonneg _, hnear⟩
+    (crossingCentralEnergy_off_crossing_bound x energy hx hne)
+    (crossingExteriorEnergy_off_crossing_linear_bound x energy hx)
+
+/-- Explicit exclusion of all *other eigenvalues* in the certified
+window, for the genuine full operator on its natural infinite domain.
+This does not yet claim the exclusion of continuous-spectrum points. -/
+theorem crossingGapCandidate_no_other_full_eigenvector
+    (energy : ℝ)
+    (hne : energy ≠ crossingEnergy)
+    (hnear : |energy - crossingEnergy| ≤ crossingGapCandidate) :
+    ¬ ∃ x : infiniteOnsiteDomain potential,
+      (x : TileHilbert Vertex) ≠ 0 ∧
+      onsitePlusBounded potential (ringInteraction crossingParameter) x =
+        energy • (x : TileHilbert Vertex) := by
+  rintro ⟨x, hxne, he⟩
+  exact hxne
+    (crossingGapCandidate_off_crossing_eigenvector_zero x energy he hne hnear)
+
 end
 end SpectralGeometry.AmmannBeenker
