@@ -806,7 +806,7 @@ theorem crossingCentralEnergy_off_crossing_bound
         rw [norm_smul, Real.norm_eq_abs]
       _ ≤ |energy - crossingEnergy| * ‖c.1‖ +
           (1 / 4 : ℝ) * ‖q.1‖ :=
-        add_le_add_left (crossingResidual_exterior_projected_norm_le x) _
+        add_le_add_right (crossingResidual_exterior_projected_norm_le x) _
   have hlower :=
     crossingDifferentLevel_central_projected_norm_lower x energy hx hne
   change ((1 / 24 : ℝ) - |energy - crossingEnergy|) * ‖c.1‖ ≤
