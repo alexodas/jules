@@ -2640,6 +2640,12 @@ exterior component. This §4.78 argument alone gives no numerical distance
 to every other spectral level; §4.79 establishes that distance conservatively.
 Quantitative motion of the second level after an edge change remains open.
 
+**Palomar registration:** The exact-multiplicity result in this section, represented
+by the Comparator-selected `crossingEigenspace_finrank` and
+`crossing_eigenvector_representation` statements, was registered as
+**PALOMAR-2026-11-06-000012 (version 1)** on 2026-11-06. The separate
+spectral-gap theorems of §4.79 are not Comparator-selected statements.
+
 
 ### 4.79. A conservative quantitative real spectral gap at the crossing
 
