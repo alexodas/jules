@@ -813,5 +813,38 @@ theorem crossingCentralEnergy_off_crossing_bound
     (1 / 4 : ℝ) * ‖q.1‖
   nlinarith only [hlower, hupper]
 
+
+/-!
+## Linear exterior inequality for the Schur criterion
+
+The already certified quadratic exterior block inequality may be
+cancelled by the nonzero exterior norm. If that norm vanishes, the
+desired linear bound follows immediately from nonnegativity.
+-/
+
+/-- Every infinite-operator eigenvector satisfies the linear exterior
+Schur estimate, without any support or nonvanishing assumption. -/
+theorem crossingExteriorEnergy_off_crossing_linear_bound
+    (x : infiniteOnsiteDomain potential) (energy : ℝ)
+    (hx : onsitePlusBounded potential (ringInteraction crossingParameter) x =
+      energy • (x : TileHilbert Vertex)) :
+    ((3 / 4 : ℝ) + 2 * alpha - |energy - crossingEnergy|) *
+        ‖(exteriorDomainPart x).1‖ ≤
+      (1 / 4 : ℝ) * ‖(centralDomainPart x).1‖ := by
+  have hsquared := crossingExteriorEnergy_off_crossing_bound x energy hx
+  by_cases hzero : ‖(exteriorDomainPart x).1‖ = 0
+  · rw [hzero, mul_zero]
+    positivity
+  · have hpos : 0 < ‖(exteriorDomainPart x).1‖ :=
+      lt_of_le_of_ne (norm_nonneg _) (Ne.symm hzero)
+    by_contra hn
+    have hgt :
+        (1 / 4 : ℝ) * ‖(centralDomainPart x).1‖ <
+          ((3 / 4 : ℝ) + 2 * alpha - |energy - crossingEnergy|) *
+            ‖(exteriorDomainPart x).1‖ :=
+      lt_of_not_ge hn
+    have hmul := mul_lt_mul_of_pos_right hgt hpos
+    nlinarith only [hsquared, hmul]
+
 end
 end SpectralGeometry.AmmannBeenker
