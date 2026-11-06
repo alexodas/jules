@@ -1,7 +1,7 @@
 {
   "version": "v0.4",
   "project": {
-    "name": "Jules Spectral Geometry — exact multiplicity of a compact crossing on an infinite octagonal graph",
+    "name": "Spectral Geometry — exact multiplicity of a compact crossing on an infinite octagonal graph",
     "description": "On the real square-summable states of the infinite centered octagonal cut-and-project vertex graph, take the graph Laplacian with edge weight 1/16, onsite potential V(x)=1+|p(x)|² and natural domain D(V). Add t times the coordinate projection onto the eight neighbors of the origin. At t*=17/16+√2 the two alternating ring modes meet at E*=13/4+√2. The full eigenspace at E* has real dimension exactly two. Every solution of the eigenvector equation is its amplitude at the lift (1,0,0,0) times the first compact state plus its amplitude at (1,1,0,0) times the second. No support restriction is assumed. Locality, symmetry and a strictly positive exterior energy force the exterior part to vanish; the complete central kernel supplies the two ring patterns.",
     "authors": [
       "Alessandro Odasso"
@@ -75,7 +75,7 @@
     }
   ],
   "status": {
-    "scope": "Main theorem: crossingEigenspace_finrank. Companion: crossing_eigenvector_representation. They determine the geometric multiplicity and all crossing eigenvectors on the infinite natural domain. Three additional proposition witnesses are compared: admitted_zero, mate_involutive and centralLift_admitted. All five are proved in the source; only Challenge uses a statement placeholder for each. No definitions are holed. The zero proof-hole counts refer to the substantive library, whose root imports all 89 mathematical modules.",
+    "scope": "Main theorem: crossingEigenspace_finrank. Companion: crossing_eigenvector_representation. They determine the geometric multiplicity and all crossing eigenvectors on the infinite natural domain. Three additional proposition witnesses are compared: admitted_zero, mate_involutive and centralLift_admitted. All five are proved in the source; only Challenge uses a statement placeholder for each. No definitions are holed. The zero proof-hole counts refer to the substantive library, whose root imports all 92 mathematical modules.",
     "sorry_count": 0,
     "sorry_in_definitions": 0,
     "axioms": [
@@ -100,12 +100,12 @@
     "notes": "This account of the workflow comes from the maintainer, who describes himself as a non-mathematician interested in how language models can assist scientific research."
   },
   "fidelity": {
-    "divergences": "The open octagonal window excludes its boundary. The Hilbert space and eigenspace are real. The perturbation is a coordinate projection onto the first ring A, not onto the entire 17-vertex sector S used in the support proof. The result is for the specified centered vertex graph, potential, edge weight and crossing parameter; it makes no assertion for every tiling in the hull, every Hamiltonian or every energy. A numerical separation from other levels, quantitative one-edge splitting and new conclusions about product zeros are not part of this selection."
+    "divergences": "The open octagonal window excludes its boundary. The Hilbert space and eigenspace are real. The perturbation is a coordinate projection onto the first ring A, not onto the entire 17-vertex sector S used in the support proof. The result is for the specified centered vertex graph, potential, edge weight and crossing parameter; it makes no assertion for every tiling in the hull, every Hamiltonian or every energy. A numerical separation from other levels, quantitative one-edge splitting and new conclusions about product zeros are not part of this Comparator selection. Separately, the full source development proves real spectral exclusion within closed radius 1/128 about the crossing (README §4.79); that theorem is not among the selected Comparator statements."
   },
   "review": {
     "status": "AI-assisted formalization; mathematical originality unconfirmed; no human mathematical peer review",
     "reviewers": [],
-    "notes": "Potentially of interest to researchers studying localized states and spectral multiplicities in quasicrystals: two known local patterns exhaust one exact eigenspace of a concrete infinite confined operator. The central/exterior energy comparison excludes any further eigenvector, including one extending beyond the central patch; it is not a finite-patch dimension count. This exact classification may be new for the stated model. The cited works establish relevant antecedents; priority and independent expert assessment remain open."
+    "notes": "Potentially of interest to researchers studying localized states and spectral multiplicities in quasicrystals, including theoretical condensed-matter physicists: two known local patterns exhaust one exact eigenspace of a concrete infinite confined operator. This distinction between observing compact modes and excluding every additional state at the same energy matters for the characterization of localized degeneracies in the specified model. The central/exterior energy comparison excludes any further eigenvector, including one extending beyond the central patch; it is not a finite-patch dimension count. This exact classification may be new for the stated model. The cited works establish relevant antecedents; priority and independent expert assessment remain open."
   },
   "alignment": {
     "namespace": "SpectralGeometry.AmmannBeenker",

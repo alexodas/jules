@@ -1,4 +1,4 @@
-# Jules Spectral Geometry
+# Spectral Geometry
 
 **A mathematical research program in Lean 4 and Mathlib connecting local
 geometric operators, compact eigenstates, finite-coordinate observation, and the response of zeros
@@ -12,13 +12,19 @@ intervention acts on the eight neighbors of the origin. At
 $t_*=17/16+\sqrt2$, the entire real eigenspace at $E_*=13/4+\sqrt2$ is spanned
 by the two alternating ring states. Every eigenvector is determined by its
 amplitudes at two specified vertices; no central-support hypothesis is needed.
+Section 4.79 also certifies a **conservative quantitative real spectral
+gap** for the same infinite natural-domain operator: no other real spectral
+point lies within distance $1/128$ of $E_*$. This does not determine the
+exact nearest-level distance.
 
 Sections 4.68–4.72 also prove complete ordered spectra, exact full-product
 zero multiplicities and a nine-level response for an intervention on the
 radius-two sector. Sections 4.73–4.77 sharpen its radial bound and identify
 the compact modes, the 17-vertex central sector, its sixteen boundary edges
 and its central kernel. A state stays fixed when one edge weight changes;
-an explicit gap and a quantitative bound for the other level remain open.
+§4.79 proves an explicit real spectral isolation interval using
+central/exterior estimates and compact-resolvent spectral completeness.
+A quantitative bound for the other level after an edge change remains open.
 
 | Part of the program | Status |
 | --- | --- |
@@ -40,6 +46,7 @@ an explicit gap and a quantitative bound for the other level remain open.
 | Exact central sector and its boundary | Formalized in §4.76: origin and two eight-site rings, complete internal adjacency, ring degrees three and four, and exactly sixteen edges to the exterior |
 | Complete central crossing kernel and supported eigenvectors | Formalized in §4.77; the central-support hypothesis remains explicit |
 | Central support and exact global crossing multiplicity | Proved in §4.78: the two seed amplitudes give coordinates on the entire natural-domain eigenspace, of real dimension exactly two |
+| Conservative quantitative real spectral gap at the crossing | Proved in §4.79: for $K_{t_*}$ the complete real bounded-inverse spectrum has no point other than $E_*$ within the closed radius $1/128$; exact spacing and edge-change splitting estimates are not claimed |
 | Relative products and certified finite-patch zero response | Remaining obligations in §§6.5–6.6; geometric scalar cofactor/radius certificates also remain open |
 
 The research objective is an end-to-end statement relating an explicitly defined
@@ -70,8 +77,9 @@ summability, and exact entire-product zero-response instantiation are now
 proved. Geometric cofactor/radius certificates, finite-patch approximation
 and statistical results remain open. Counting on arbitrary noncircular contours is not
 formalized. The Palomar selection concerns the same graph under a first-ring
-intervention: §4.78 classifies its entire crossing eigenspace. Section 6.8
-records the precise scope and verification requirements.
+intervention: §4.78 classifies its entire crossing eigenspace and §4.79
+proves its explicit real spectral isolation. Section 6.8 records the
+precise scope and verification requirements.
 
 The chosen affine line is part of the definition of the analytic family.
 Originality and research significance must come from the geometric and spectral
@@ -93,15 +101,20 @@ The program studies these questions for an operator with a confining onsite
 potential, bounded local interactions and controlled perturbations. It then
 transports the spectral information to a normalized canonical product on a
 fixed complex line. The concrete application uses the centered octagonal
-cut-and-project vertex graph (§§4.68–4.78). The spectral proofs use its
+cut-and-project vertex graph (§§4.68–4.79). The spectral proofs use its
 verified vertex and edge geometry. Polygonal tiling coverage and aperiodicity
 remain open (§6.4).
 
 The intended audience includes discrete Schrödinger and graph-operator
 spectral theory, rigorous spectral approximation, entire functions associated
-with spectra, and formal methods in infinite-dimensional analysis. A useful
-application must identify an actual geometric construction and an informative
-estimate, not only a list of possible audiences.
+with spectra, and formal methods in infinite-dimensional analysis. The
+Comparator-selected crossing-multiplicity result may also interest
+theoretical condensed-matter physicists studying quasicrystal localization
+and compact localized states: it shows that two known compact modes exhaust
+the eigenspace at one energy of this specified infinite confined Hamiltonian,
+excluding additional eigenstates that finite-patch calculations alone cannot
+rule out. A useful application must identify an actual geometric construction
+and an informative estimate, not only a list of possible audiences.
 
 ### 1.2. First substantive milestone: finite-coordinate observation
 
@@ -265,7 +278,8 @@ On the octagonal graph, $F_5=\{v:|p(v)|\le2\}$ is the radius-two sector.
 For this intervention, §4.72 compares the zeros of the full spectral products
 of $H$ and $H_\tau$ using a common center, direction and normalization.
 Perturbing just the eight neighbors of the origin produces the crossing of
-§4.78. Changing the weight of the edge specified in §4.75 leaves the sum of
+§4.78, with the conservative real spectral isolation proved in §4.79.
+Changing the weight of the edge specified in §4.75 leaves the sum of
 the two compact modes at the crossing energy.
 
 For a more general local change, the relative-product program in §6.5
@@ -2503,7 +2517,7 @@ K_ta=(35/16+t)a,\qquad K_tb=E_*b,\qquad E_*=13/4+\sqrt2.
 ```
 At $t_*=17/16+\sqrt2$, `compact_crossing` proves the two independent
 eigenvector equations at $E_*$. These equations give multiplicity **at least two**. Section 4.78 proves
-that it is exactly two; an explicit isolation interval is still open.
+that it is exactly two; §4.79 certifies a real spectral isolation interval.
 
 The endpoints in $u=\delta_{(1,0,0,0)}-\delta_{(1,1,0,0)}$ are proved
 adjacent. Hence $K_{t_*}+\varepsilon|u\rangle\langle u|$ changes an actual
@@ -2514,8 +2528,9 @@ For the unit vector $q=(a-b)/4$, `crossingBright_energy_response` proves
 \langle q,(K_{t_*}+\varepsilon|u\rangle\langle u|)q\rangle=E_*+\varepsilon/4.
 ```
 This is an exact Rayleigh quotient identity. It does not yet establish
-another eigenvalue's value, derivative or quadratic remainder. The
-isolation and perturbation estimates needed for those claims remain open.
+another eigenvalue's value, derivative or quadratic remainder. Section 4.79
+provides isolation for the **unperturbed** $K_{t_*}$; quantitative
+perturbed-level motion and remainder estimates remain open.
 
 ### 4.76. The exact central sector and its boundary
 
@@ -2543,7 +2558,8 @@ This counts edges, not distinct exterior vertices.
 
 These results describe the central block and its coupling locations using
 the previously proved compact states and radial barrier. Section 4.78 uses them to exclude additional eigenvectors at $E_*$.
-A coupling-norm bound and an explicit interval free of other levels remain open.
+Section 4.79 subsequently bounds the exterior-to-central coupling in norm
+and proves an explicit real spectral exclusion window.
 
 ### 4.77. The central crossing kernel and centrally supported eigenvectors
 
@@ -2579,8 +2595,9 @@ first-ring equations then force alternation on the second ring.
 
 The support condition is a hypothesis of this lemma. Section 4.78 derives
 it for every crossing eigenvector on the infinite domain.
-Neither a gap nor a quantitative splitting estimate
-follows from this finite-block calculation alone.
+Neither a gap nor a quantitative splitting estimate follows from this
+finite-block calculation alone. The gap is established separately in
+§4.79, while the one-edge splitting estimate remains open.
 
 ### 4.78. Central support and exact multiplicity of the infinite crossing
 
@@ -2619,12 +2636,74 @@ where domain vectors are identified with their images in real $\ell^2$.
 The span description uses `crossing_eigenvector_representation` together
 with the eigenvector equations of §4.75; `crossingEigenspace_finrank` gives the
 dimension. The exterior lower bound above is a form estimate on the
-exterior component. It gives no numerical distance to every other spectral
-level and no quantitative motion for the second level after an edge change.
+exterior component. This §4.78 argument alone gives no numerical distance
+to every other spectral level; §4.79 establishes that distance conservatively.
+Quantitative motion of the second level after an edge change remains open.
+
+
+### 4.79. A conservative quantitative real spectral gap at the crossing
+
+[AmmannBeenkerCrossingGapCycle.lean](SpectralGeometry/AmmannBeenkerCrossingGapCycle.lean),
+[AmmannBeenkerCrossingGapFinite.lean](SpectralGeometry/AmmannBeenkerCrossingGapFinite.lean)
+and
+[AmmannBeenkerCrossingGapOrthogonality.lean](SpectralGeometry/AmmannBeenkerCrossingGapOrthogonality.lean)
+upgrade the exact crossing of §§4.75–4.78 to a **quantitatively isolated
+point of the full real spectrum**. The operator and its domain are unchanged:
+$K_t=H+tP_A$ on $D(V)$, with
+$t_*=17/16+\sqrt2$ and $E_*=13/4+\sqrt2$.
+
+For a genuine eigenvector at $E\ne E_*$, set $r=|E-E_*|$ and decompose
+$x=u+q$, where $u=P_Sx$ is supported on the exact 17-vertex central
+sector and $q=x-u$ is exterior. Orthogonality to the two compact
+crossing modes eliminates the alternating-ring kernel directions.
+`crossingCentralBlock_norm_sq_lower` then gives the central finite-block
+squared singular-value bound $1/576$, equivalent to a norm factor $1/24$.
+The sixteen oriented boundary edges and the mixed-term estimate yield
+`crossingResidual_exterior_projected_norm_le`, controlling the entire
+exterior-to-central projected residual with coefficient $1/4$.
+
+The resulting natural-domain inequalities, proved as
+`crossingCentralEnergy_off_crossing_bound` and
+`crossingExteriorEnergy_off_crossing_linear_bound`, are
+```math
+\left(\frac1{24}-r\right)\|u\|\le\frac14\|q\|,
+\qquad
+\left(\frac34+\sqrt2-r\right)\|q\|\le\frac14\|u\|.
+```
+The strict Schur margin in `crossingGapCandidate_block_no_solution`
+forces both norms to vanish for $0\le r\le1/128$. Thus
+`crossingGapCandidate_no_other_full_eigenvector` excludes every
+nonzero full-domain eigenvector at a different energy in that window.
+
+Crucially, the result does **not** stop at the point spectrum.
+`crossingRealSpectrum_iff_full_eigenvector` applies the established
+compact-resolvent real spectral-mapping theorem (§§4.21 and 4.32)
+to the concrete potential, using its proved lower bound and finite
+onsite sublevels. Hence `crossingGapCandidate_no_other_realSpectrum`
+and `crossingGapCandidate_realSpectrum_isolated` certify
+```math
+\sigma_{\mathbb R}(K_{t_*})\cap
+\left[E_*-\frac1{128},\,E_*+\frac1{128}\right]=\{E_*\}.
+```
+Here $\sigma_{\mathbb R}$ is the **real bounded-inverse spectrum on
+the natural domain**, not a newly formalized complex-spectrum API.
+The inclusion of $E_*$ follows from the nonzero compact-state
+eigenvectors (§4.75); the exclusion of all other points follows from
+§4.79. The closed interval, including its endpoints, is covered.
+
+The value $g=1/128$ is a **certified conservative lower bound on
+the isolation radius**, not the exact spectral spacing or an optimal
+constant. This theorem does not assert stability of the twofold
+crossing under arbitrary perturbations, identify the moving eigenvalue
+after the one-edge change, or provide a derivative, remainder or
+finite-patch zero certificate. The Comparator submission still selects
+the exact-multiplicity statements of §4.78; the gap theorems are
+included in the full Lean/Mathlib build, not separately selected as
+Comparator challenge declarations.
 
 ## 5. Building and verification
 
-The canonical import list is maintained in [`SpectralGeometry.lean`](SpectralGeometry.lean). It currently imports **89 Lean modules**: eleven analytic and window modules, four finite-dimensional geometry modules, and seventy-four infinite geometry/operator/spectral modules (including domain-generic interfaces).
+The canonical import list is maintained in [`SpectralGeometry.lean`](SpectralGeometry.lean). It currently imports **92 Lean modules**: eleven analytic and window modules, four finite-dimensional geometry modules, and seventy-seven infinite geometry/operator/spectral modules (including domain-generic interfaces).
 
 - **Analytic core, indexed points and certified windows (11):**
   - [`CanonicalProduct.lean`](SpectralGeometry/CanonicalProduct.lean)
@@ -2712,7 +2791,7 @@ The canonical import list is maintained in [`SpectralGeometry.lean`](SpectralGeo
   - [`FullSpectralZeroCounts.lean`](SpectralGeometry/FullSpectralZeroCounts.lean)
   - [`LinearOnsiteZeroCertificate.lean`](SpectralGeometry/LinearOnsiteZeroCertificate.lean)
 
-- **Explicit octagonal geometry, operator and spectral products (12):**
+- **Explicit octagonal geometry, operator and spectral products (15):**
   - [`AmmannBeenkerCutProject.lean`](SpectralGeometry/AmmannBeenkerCutProject.lean)
   - [`AmmannBeenkerGraph.lean`](SpectralGeometry/AmmannBeenkerGraph.lean)
   - [`AmmannBeenkerOperator.lean`](SpectralGeometry/AmmannBeenkerOperator.lean)
@@ -2725,6 +2804,9 @@ The canonical import list is maintained in [`SpectralGeometry.lean`](SpectralGeo
   - [`AmmannBeenkerCentralPatch.lean`](SpectralGeometry/AmmannBeenkerCentralPatch.lean)
   - [`AmmannBeenkerCentralKernel.lean`](SpectralGeometry/AmmannBeenkerCentralKernel.lean)
   - [`AmmannBeenkerCrossingMultiplicity.lean`](SpectralGeometry/AmmannBeenkerCrossingMultiplicity.lean)
+  - [`AmmannBeenkerCrossingGapCycle.lean`](SpectralGeometry/AmmannBeenkerCrossingGapCycle.lean)
+  - [`AmmannBeenkerCrossingGapFinite.lean`](SpectralGeometry/AmmannBeenkerCrossingGapFinite.lean)
+  - [`AmmannBeenkerCrossingGapOrthogonality.lean`](SpectralGeometry/AmmannBeenkerCrossingGapOrthogonality.lean)
 
 - **Bounded spectral errors and full zero-cluster certificates (2):**
   - [`InfiniteBoundedSpectralStability.lean`](SpectralGeometry/InfiniteBoundedSpectralStability.lean)
@@ -2754,7 +2836,8 @@ and `centralLift_admitted`. Definitions of the graph, natural-domain
 operator, compact states, sites and eigenspace are compared transitively;
 there are no definition holes. Lean, NanoDa and con-ron must verify the
 comparison on the exact submission commit. The separate full-project Lean
-build covers all **89 mathematical source modules**.
+build covers all **92 mathematical source modules**, including the
+§4.79 gap certificates (which are not additional Comparator-selected statements).
 
 Challenge mirrors the source module boundaries when generating auxiliary
 proof names: only Lean's module-local auxiliary-proof cache is reset between
@@ -2777,8 +2860,14 @@ python3 scripts/check-unified-comparator.py
 bash scripts/verify-comparator.sh
 ```
 
-GitHub Actions checks compilation and the unified Comparator on pull
-requests and changes to `main`. Both must be green before merging.
+GitHub Actions runs one automatic Palomar workflow on pull requests and
+changes to `main`: its first job calls the reusable `lean.yml` full proof
+check (`lake build SpectralGeometry Challenge Solution`), and the Comparator
+job has `needs: lean`. The latter retains the packaging, metadata and source
+audits and the independent Lean, NanoDa and con-ron comparison of the
+**selected** Challenge statements. A failure of the upstream Lean job
+prevents the Comparator job from running. The Lean workflow can also be
+dispatched manually; one green Palomar workflow requires both jobs to succeed.
 
 ## 6. Roadmap: proof status and next steps
 
@@ -2802,8 +2891,9 @@ certificate for this interacting geometric product, followed by a certified
 truncation cutoff. The planar finite-residue code already supplies the
 summability input. Uniform separation is a separate geometric refinement.
 For the first-ring intervention, §4.78 determines the full crossing
-eigenspace. The explicit isolation interval and the one-edge splitting
-estimate remain open (§6.4). The complex Green-matrix interface in §6.1
+eigenspace and §4.79 certifies a conservative real spectral exclusion
+radius of $1/128$. The one-edge splitting and remainder estimates
+remain open (§6.4). The complex Green-matrix interface in §6.1
 serves relative determinants in §6.5. Finite-patch operator errors belong
 to the approximation problem in §6.6.
 
@@ -3079,8 +3169,10 @@ The relation to the standard Ammann–Beenker construction is documented in
 - [x] Derive central support for every crossing eigenvector and prove
   that its two seed amplitudes parametrize the entire natural-domain
   eigenspace, of real dimension exactly two (§4.78).
-- [ ] Give an explicit interval around $E_*$ that separates it from every
-  other spectral level of $K_{t_*}$.
+- [x] Certify the closed real spectral isolation window
+  $|E-E_*|\le1/128$ around the exact multiplicity-two crossing, with no
+  other point of the full real bounded-inverse spectrum (§4.79).
+  This is a conservative bound, not the exact nearest-level spacing.
 - [ ] Use that gap to control the moving eigenvalue after the one-edge
   change on an explicit parameter interval, including a remainder bound.
 - [ ] Derive an isolation radius and a nonzero analytic-cofactor lower
@@ -3103,9 +3195,10 @@ The relation to the standard Ammann–Beenker construction is documented in
 
 The radius-two intervention gives the nine-level full-product response of
 §4.72. The first-ring intervention gives the exact crossing eigenspace of
-§4.78. For this crossing the next spectral goals are an explicit gap and
-a quantitative bound on how the other level moves after one edge weight
-changes.
+§4.78 and the conservative real spectral gap of §4.79. The next crossing
+task is a quantitative bound on how the other level moves after one edge
+weight changes; the certified unperturbed isolation does not itself
+supply that perturbation estimate.
 
 ### 6.5. Local geometric defects and relative spectral products
 
@@ -3224,8 +3317,9 @@ theorem, and carries no asserted connection to the Riemann zeta function.
   Solution, and one Comparator configuration with both conclusions and
   the three model witnesses. No definitions are replaced by placeholders.
 - [x] State the centered open-window convention, the first-ring intervention
-  and the natural domain; distinguish the proved multiplicity from the
-  open spectral-gap and one-edge splitting estimates (§6.4).
+  and the natural domain; distinguish the Comparator-selected multiplicity
+  theorem (§4.78), the separately proved real spectral gap (§4.79),
+  and the still-open one-edge splitting estimates (§6.4).
 
 **Research-interest assessment and verification**
 
@@ -3234,8 +3328,12 @@ literature ([Oktel, 2021](https://doi.org/10.1103/PhysRevB.104.014204)).
 What may be new, and of interest to researchers studying quasicrystal
 localization, is the proof that these two patterns exhaust a level of
 this particular infinite confined operator. The central/exterior argument
-rules out states a finite-patch computation could miss. Priority and
-standalone research interest are open to expert assessment.
+rules out states a finite-patch computation could miss. This distinction
+between exhibiting two compact modes and proving the complete degeneracy
+of their level may also be of interest in theoretical condensed-matter physics.
+It does not establish a universal property of quasicrystals or a
+perturbation-stability theorem. Priority and standalone research interest
+are open to expert assessment.
 
 - [x] Identify the pattern source, related compact-state constructions and
   the precise operator in [PALOMAR.md](PALOMAR.md). The geometric counting,
